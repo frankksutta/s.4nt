@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>s.4nt.org — Suttas, Side by Side</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#faf8f4;--text:#1a1612;--accent:#5c3d1e;--muted:#6b6055;--border:#ddd6c8;
+  --card:#fff;--head:#f0ebe0;--row-line:#eee2d0;--hover:#faf5e8;
+  --bar:#ede5d4;--bar-border:#c8b89a}
+[data-theme="dark"]{--bg:#1a1612;--text:#e8dfc8;--accent:#c8a060;--muted:#9a8878;
+  --border:#3a3028;--card:#231e18;--head:#2a2418;--row-line:#3a3028;--hover:#2a2418;
+  --bar:#201a12;--bar-border:#4a3c2c}
+.navbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;
+  justify-content:flex-end;gap:.45rem;background:var(--bar);
+  border-bottom:1px solid var(--bar-border);padding:.4rem .9rem;
+  box-shadow:0 1px 6px rgba(0,0,0,.15);transition:background .2s}
+.nav-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--bar-border);border-radius:5px;background:var(--bg);
+  color:var(--accent);cursor:pointer;font-size:1rem;line-height:1;transition:background .12s}
+.nav-btn:hover{background:var(--hover)}
+.fs-lbl{font-size:.7rem;color:var(--muted);font-family:sans-serif}
+.bar-crumbs{flex:1;display:flex;align-items:center;font-family:sans-serif;font-size:.82rem;min-width:0}
+.bar-crumbs a{color:var(--accent);text-decoration:none}
+.bar-crumbs a:hover{text-decoration:underline}
+.bar-crumbs .sep-c{margin:0 .3rem;color:var(--muted)}
+.bar-crumbs .cur{color:var(--text);font-weight:600}
+.bar-crumbs .cur-full{color:var(--muted);margin-left:.5rem;font-style:italic;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jump{position:relative;display:flex;align-items:center;gap:.35rem}
+.jump-input{width:7.5rem;padding:.32rem .5rem;border:1px solid var(--bar-border);
+  border-radius:5px;background:var(--card);color:var(--text);
+  font-family:monospace;font-size:.85rem}
+.jump-input::placeholder{color:var(--muted);opacity:.7}
+.jump-input:focus{outline:none;border-color:var(--accent);background:var(--card);color:var(--text)}
+.jump-input.bad{border-color:#b03030;background:#fdf0f0;color:#1a1612}
+.jump-msg{position:absolute;top:110%;right:0;background:#b03030;color:#fff;
+  font-family:sans-serif;font-size:.72rem;padding:.25rem .55rem;border-radius:4px;
+  white-space:nowrap;display:none;z-index:400}
+.jump-msg.show{display:block}
+.jump-hist{position:absolute;top:110%;right:0;min-width:9rem;max-height:50vh;overflow-y:auto;
+  background:var(--card);color:var(--text);border:1px solid var(--bar-border);border-radius:5px;
+  box-shadow:0 4px 12px rgba(0,0,0,.25);display:none;z-index:400}
+.jump-hist.show{display:block}
+.jump-hist div{padding:.3rem .6rem;font-family:monospace;font-size:.85rem;cursor:pointer}
+.jump-hist div:hover{background:var(--hover)}
+
+body{font-family:Georgia,serif;background:var(--bg);color:var(--text);line-height:1.55;
+  display:flex;flex-direction:column;align-items:center;padding:0 1rem 4rem;
+  transition:background .2s,color .2s}
+.navbar{align-self:stretch;margin:0 -1rem 2.2rem}
+h1{font-size:1.7rem;font-weight:normal;letter-spacing:.04em;color:var(--accent);margin-bottom:.2rem}
+.tagline{font-size:1rem;color:var(--text);margin-bottom:.35rem;font-style:italic}
+.sub{font-size:.85rem;color:var(--muted);margin-bottom:2rem}
+.logo-mini{width:88px;height:88px;object-fit:cover;border-radius:14px;
+  box-shadow:0 2px 10px rgba(0,0,0,.25);margin-bottom:.9rem}
+.motto{font-size:1.05rem;color:var(--text);font-style:italic;text-align:center;
+  line-height:1.7;margin:2.6rem 0 1.6rem}
+.logo-full{width:100%;max-width:1000px;height:auto;border-radius:10px;
+  box-shadow:0 4px 18px rgba(0,0,0,.3)}
+.cols{display:flex;flex-direction:column;gap:.55rem;width:100%;max-width:380px}
+.col{display:flex;align-items:baseline;gap:.8rem;padding:.65rem 1rem;
+  border:1px solid var(--border);border-radius:6px;background:var(--card);text-decoration:none}
+a.col:hover{background:var(--hover);border-color:var(--bar-border)}
+.ab{font-family:monospace;font-weight:700;font-size:1rem;color:var(--accent);
+  width:2.6rem;flex-shrink:0}
+.full{font-size:.95rem;color:var(--text)}
+.col.off{opacity:.45;cursor:default}
+.col.off .full::after{content:" — coming";font-size:.75rem;color:var(--muted);font-family:sans-serif}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="bar-crumbs"></div>
+  <span class="fs-lbl">A</span>
+  <button class="nav-btn" title="Decrease font size" onclick="siteAdjustFont(-1)">−</button>
+  <button class="nav-btn" title="Increase font size" onclick="siteAdjustFont(+1)">+</button>
+  <button class="nav-btn" id="siteThemeBtn" title="Toggle dark / light mode" onclick="siteToggleTheme()">☾</button>
+  <span>&emsp;</span>
+  <div class="jump" id="jump">
+    <span class="nav-btn" id="jumpBtn"
+          title="Jump to a sutta — type a ref like mn125 or dn16 and press Enter; add a segment to land right on it (mn125:2.5). Click for your recent suttas (up to 20). MN and DN only for now.">🦘</span>
+    <input class="jump-input" id="jumpInput" placeholder="mn125, dn16:2.5…"
+           title="Type a sutta ref (mn125, dn16, mn125:2.5…) and press Enter"
+           autocomplete="off" spellcheck="false">
+    <div class="jump-msg" id="jumpMsg"></div>
+    <div class="jump-hist" id="jumpHist"></div>
+  </div>
+  <span>&emsp;</span>
+  <button class="nav-btn" id="topBtn" title="Back to top"
+          onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
+</nav>
+
+
+<img class="logo-mini" src="debabel-logo-1k.jpg" alt="s.4nt.org">
+<h1>s.4nt.org</h1>
+<p class="tagline">Suttas, Side by Side</p>
+<p class="sub">Up to 6 sutta translations side by side, segment aligned</p>
+<div class="cols">
+<span class="col off" title="not yet available"><span class="ab">AN</span><span class="full">Aṅguttara Nikāya</span></span>
+<a class="col" href="dn/index.html"><span class="ab">DN</span><span class="full">Dīgha Nikāya</span></a>
+<span class="col off" title="not yet available"><span class="ab">KN</span><span class="full">Khuddaka Nikāya</span></span>
+<a class="col" href="mn/index.html"><span class="ab">MN</span><span class="full">Majjhima Nikāya</span></a>
+<span class="col off" title="not yet available"><span class="ab">SN</span><span class="full">Saṁyutta Nikāya</span></span>
+<span class="col off" title="not yet available"><span class="ab">Vin</span><span class="full">Vinaya</span></span>
+</div>
+
+<p class="motto">One tower of Dhamma,<br>
+many tongues.<br>
+Un-babbling translations,<br>
+one segment at a time.</p>
+<img class="logo-full" src="debabel-logo-1k.jpg"
+     alt="debabel — rebuilding the tower of Dhamma, one segment at a time"
+     title="debabel: the guerrilla rebuild of the tower of Dhamma — un-babbling translations one aligned segment at a time.">
+
+
+<script>
+const JUMP_ROOT = '.';
+// ── 🦘 QUICK-JUMP (shared source: quickjump.py) ──
+const JUMP_KEY = 'debabel.jump.v1';
+const JUMP_MAX = 20;
+const JUMP_LIMITS = {mn: 152, dn: 34};   // supported collections (for now)
+const jumpInputEl = document.getElementById('jumpInput');
+const jumpMsgEl = document.getElementById('jumpMsg');
+const jumpHistEl = document.getElementById('jumpHist');
+function loadJumpHist(){
+  try{ const h = JSON.parse(localStorage.getItem(JUMP_KEY)); return Array.isArray(h)?h:[]; }
+  catch(e){ return []; }
+}
+function saveJumpHist(h){
+  try{ localStorage.setItem(JUMP_KEY, JSON.stringify(h.slice(0, JUMP_MAX))); }catch(e){}
+}
+function parseJumpRef(raw){
+  // mn125 → sutta page; mn125:2.5 → deep link to that segment (#tr-mn125:2.5)
+  const m = /^\s*([a-z]+)\s*(\d+)\s*(?::\s*(\d+(?:\.\d+)*)\s*)?$/i.exec(raw||'');
+  if(!m) return null;
+  const nik = m[1].toLowerCase(), n = parseInt(m[2], 10), seg = m[3] || null;
+  if(!(nik in JUMP_LIMITS)) return {err: nik.toUpperCase()+' is not available yet — MN and DN only'};
+  if(n < 1 || n > JUMP_LIMITS[nik]) return {err: nik.toUpperCase()+' goes from 1 to '+JUMP_LIMITS[nik]};
+  const base = nik + n;
+  return {nik, base, seg, ref: base + (seg ? ':' + seg : '')};
+}
+function flashJumpErr(text){
+  jumpInputEl.classList.add('bad');
+  jumpMsgEl.textContent = text; jumpMsgEl.classList.add('show');
+  setTimeout(()=>{ jumpInputEl.classList.remove('bad'); jumpMsgEl.classList.remove('show'); }, 2200);
+}
+function jumpToRef(ref){
+  const r = parseJumpRef(ref);
+  if(!r || r.err){ flashJumpErr((r&&r.err) || 'Type a ref like mn125, dn16 or mn125:2.5'); return; }
+  saveJumpHist([r.ref].concat(loadJumpHist().filter(x=>x!==r.ref)));
+  window.location.href = JUMP_ROOT + '/' + r.nik + '/' + r.base + '/index.html'
+    + (r.seg ? '#tr-' + r.base + ':' + r.seg : '');
+}
+function renderJumpHist(){
+  const h = loadJumpHist();
+  jumpHistEl.innerHTML = '';
+  h.forEach(ref=>{
+    const d = document.createElement('div');
+    d.textContent = ref;
+    d.onmousedown = ev=>{ ev.preventDefault(); jumpToRef(ref); };
+    jumpHistEl.appendChild(d);
+  });
+  return h.length;
+}
+jumpInputEl.addEventListener('keydown', ev=>{
+  if(ev.key === 'Enter') jumpToRef(jumpInputEl.value);
+  else if(ev.key === 'Escape') jumpHistEl.classList.remove('show');
+});
+jumpInputEl.addEventListener('focus', ()=>{ if(renderJumpHist()) jumpHistEl.classList.add('show'); });
+jumpInputEl.addEventListener('blur', ()=>{ setTimeout(()=>jumpHistEl.classList.remove('show'), 120); });
+jumpInputEl.addEventListener('input', ()=>jumpHistEl.classList.remove('show'));
+document.getElementById('jumpBtn').onclick = ()=>{
+  jumpInputEl.focus();
+  if(renderJumpHist()) jumpHistEl.classList.toggle('show');
+};
+
+// ── THEME + FONT PREFS (shared with the sutta viewer via debabel.viewer.v1) ──
+const PREFS_KEY = 'debabel.viewer.v1';
+const PREFS_FS_MIN = 11, PREFS_FS_MAX = 22;
+let prefTheme = 'light', prefFs = 15;
+function loadPrefs(){
+  try{
+    const s = JSON.parse(localStorage.getItem(PREFS_KEY)) || {};
+    if(s.theme==='dark'||s.theme==='light') prefTheme = s.theme;
+    if(typeof s.fs==='number') prefFs = Math.min(PREFS_FS_MAX, Math.max(PREFS_FS_MIN, s.fs));
+  }catch(e){}
+}
+function savePrefs(){
+  try{
+    let s = {};
+    try{ s = JSON.parse(localStorage.getItem(PREFS_KEY)) || {}; }catch(e){ s = {}; }
+    s.theme = prefTheme; s.fs = prefFs;   // merge — never clobber colsBy/sidebar
+    localStorage.setItem(PREFS_KEY, JSON.stringify(s));
+  }catch(e){}
+}
+function applyPrefs(){
+  document.documentElement.setAttribute('data-theme', prefTheme);
+  document.documentElement.style.fontSize = prefFs + 'px';
+  const tb = document.getElementById('siteThemeBtn');
+  if(tb) tb.textContent = prefTheme==='dark'?'☀':'☾';
+}
+function siteToggleTheme(){ prefTheme = prefTheme==='dark'?'light':'dark'; savePrefs(); applyPrefs(); }
+function siteAdjustFont(d){
+  prefFs = Math.min(PREFS_FS_MAX, Math.max(PREFS_FS_MIN, prefFs + d));
+  savePrefs(); applyPrefs();
+}
+loadPrefs(); applyPrefs();
+
+</script>
+</body>
+</html>
