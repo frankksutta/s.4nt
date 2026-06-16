@@ -139,6 +139,7 @@ header{
 .settings-pop .icon-btn{width:auto;min-width:26px;padding:0 .4rem;
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
+.settings-pop .set-help{text-decoration:none;white-space:nowrap}
 
 /* 🦘 quick-jump in header */
 .jump{position:relative;display:flex;align-items:center;gap:.25rem}
@@ -284,7 +285,11 @@ header{
 .ft-logo img{height:64px;width:auto;border-radius:10px;display:block}
 .ft-text{flex:1;text-align:center;line-height:1.55;min-width:0}
 .ft-tagline{margin:0;color:var(--text)}
-.ft-copy{margin:.35rem 0 0;opacity:.8}
+.ft-links{margin:.45rem 0 0;display:flex;justify-content:center;flex-wrap:wrap;
+  gap:.3rem .9rem;font-family:sans-serif}
+.ft-links a{color:var(--accent);text-decoration:none}
+.ft-links a:hover{text-decoration:underline}
+.ft-copy{margin:.45rem 0 0;opacity:.8}
 
 .site-footer{margin-left:var(--sw);transition:margin-left .22s}  /* aligns with content column */
 .site-footer.full{margin-left:0}
@@ -502,6 +507,10 @@ tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
           <span class="set-lbl" title="These are SuttaCentral references (e.g. mn10:2.5).">SC segment refs</span>
           <button class="icon-btn" id="segBtn" title="Show / hide SuttaCentral segment numbers in the text" onclick="toggleSeg()">Off</button>
         </div>
+        <div class="set-row">
+          <span class="set-lbl">Help</span>
+          <a class="icon-btn set-help" href="../../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
+        </div>
       </div>
     </div>
   </div>
@@ -530,7 +539,7 @@ tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><p class="ft-copy">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../../help.html">Help</a><a href="../../../help.html#about">About</a><a href="../../../help.html#legal">Legal</a></nav><p class="ft-copy">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE (Sujato comments) — slides in from the right (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. -->

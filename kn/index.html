@@ -31,6 +31,7 @@
 .set-lbl{font-size:.82rem;font-family:sans-serif;color:var(--text);white-space:nowrap}
 .set-ctl{display:flex;align-items:center;gap:.25rem}
 .settings-pop .nav-btn{width:auto;min-width:30px;padding:0 .45rem}
+.set-help{text-decoration:none;white-space:nowrap}
 .bar-crumbs{flex:1;display:flex;align-items:center;font-family:sans-serif;font-size:.82rem;min-width:0}
 .bar-crumbs a{color:var(--accent);text-decoration:none}
 .bar-crumbs a:hover{text-decoration:underline}
@@ -123,6 +124,10 @@ a{color:var(--accent)}
       <div class="set-row">
         <span class="set-lbl">Theme</span>
         <button class="nav-btn" id="siteThemeBtn" title="Toggle dark / light mode" onclick="siteToggleTheme()">☀ Light</button>
+      </div>
+      <div class="set-row">
+        <span class="set-lbl">Help</span>
+        <a class="nav-btn set-help" href="../help.html" title="Open the reading guide">❔ Guide</a>
       </div>
     </div>
   </div>
