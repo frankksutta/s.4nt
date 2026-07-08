@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,6 +819,19 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
 const TREE=[{"id": "sn39-samandakavagga", "label": "Sāmaṇḍakavagga — The Chapter with Sāmaṇḍaka", "children": [{"id": "sn39.1-15", "label": "SN 39.1–15", "children": [{"id": "sn39.1-15/0", "label": "Saṁyutta Nikāya 39.1", "rows": [{"key": "sn39.1-15:0.1", "pali": "Saṁyutta Nikāya 39.1", "sujato-corrected": "Linked Discourses 39.1–15", "bodhi-esque": "Connected Discourses 39.1"}, {"key": "sn39.1-15:0.2", "pali": "1.\nSāmaṇḍaka·vagga", "sujato-corrected": "1.\nWith Sāmaṇḍaka", "bodhi-esque": "1.\nThe Chapter with Sāmaṇḍaka"}, {"key": "sn39.1-15:0.3", "pali": "Sāmaṇḍaka·sutta", "sujato-corrected": "With Sāmaṇḍaka on Nibbāna", "bodhi-esque": "Sāmaṇḍaka Sutta"}]}, {"id": "sn39.1-15/1", "label": "Ekaṁ samayaṁ āyasmā sāri·putto vajjīsu viharati ukka·celāyaṁ…", "rows": [{"key": "sn39.1-15:1.1", "pali": "Ekaṁ samayaṁ āyasmā sāri·putto vajjīsu viharati\nukka·celāyaṁ gaṅgāya nadiyā tīre.", "sujato-corrected": "At one time Venerable Sāriputta was staying in the land of the Vajjis near Ukkacelā on the bank of the Ganges river.", "bodhi-esque": "On one occasion the Venerable Sāriputta was dwelling among the Vajjians at Ukkacelā on the bank of the river Ganges."}, {"key": "sn39.1-15:1.2", "pali": "Atha kho sāmaṇḍako pari·b·bājako yenāyasmā sāri·putto tenupasaṅkami;\nupasaṅkamitvā āyasmatā sāri·puttena saddhiṁ sammodi.", "sujato-corrected": "Then the wanderer Sāmaṇḍaka went up to Venerable Sāriputta and exchanged greetings with him.", "bodhi-esque": "Then the wanderer Sāmaṇḍaka approached the Venerable Sāriputta;\nhaving approached, he exchanged greetings with the Venerable Sāriputta."}, {"key": "sn39.1-15:1.3", "pali": "Sammodanīyaṁ kathaṁ sā·raṇīyaṁ vīti·sāretvā ekam·antaṁ nisīdi.\nEkam·antaṁ nisinno kho sāmaṇḍako pari·b·bājako āyasmantaṁ sāri·puttaṁ etadavoca:", "sujato-corrected": "When the greetings and polite conversation were over, he sat down to one side and said to Sāriputta:", "bodhi-esque": "After they had concluded their cordial and memorable talk, he sat down to one side.\nThen, while sitting to one side, the wanderer Sāmaṇḍaka said to the Venerable Sāriputta:"}]}, {"id": "sn39.1-15/2", "label": "“‘Nibbānaṁ, nibbānan’ti, āvuso sāri·putta, vuccati.", "rows": [{"key": "sn39.1-15:2.1", "pali": "“‘Nibbānaṁ, nibbānan’ti, āvuso sāri·putta, vuccati.", "sujato-corrected": "\"Reverend Sāriputta, they speak of this thing called 'Nibbāna'.", "bodhi-esque": "‘Nibbāna, Nibbāna,’ it is said, friend Sāriputta."}, {"key": "sn39.1-15:2.2", "pali": "Katamaṁ nu kho, āvuso, nibbānan”ti?", "sujato-corrected": "What is Nibbāna?\"", "bodhi-esque": "What now, friend, is Nibbāna?”"}, {"key": "sn39.1-15:2.3", "pali": "“Yo kho, āvuso, rāga·k·khayo dosa·k·khayo moha·k·khayo—", "sujato-corrected": "“Reverend, the ending of greed, hate, and delusion", "bodhi-esque": "“The destruction of lust, the destruction of hatred, the destruction of delusion—"}, {"key": "sn39.1-15:2.4", "pali": "idaṁ vuccati nibbānan”ti.", "sujato-corrected": "is called Nibbāna.\"", "bodhi-esque": "this, friend, is called Nibbāna.”"}, {"key": "sn39.1-15:2.5", "pali": "“Atthi panāvuso, maggo\natthi paṭi·padā, etassa nibbānassa sacchi·kiri·yāyā”ti?", "sujato-corrected": "\"But, reverend, is there a path and a practice for realizing this Nibbāna?\"", "bodhi-esque": "“But, friend, is there a path, is there a way, for the realization of this Nibbāna?”"}, {"key": "sn39.1-15:2.6", "pali": "“Atthi kho, āvuso, maggo\natthi paṭi·padā, etassa nibbānassa sacchi·kiri·yāyā”ti.", "sujato-corrected": "“There is, reverend.”", "bodhi-esque": "“There is, friend, a path, there is a way, for the realization of this Nibbāna.”"}]}, {"id": "sn39.1-15/3", "label": "“Katamo panāvuso, maggo katamā paṭi·padā etassa nibbānassa…", "rows": [{"key": "sn39.1-15:3.1", "pali": "“Katamo panāvuso, maggo\nkatamā paṭi·padā etassa nibbānassa sacchi·kiri·yāyā”ti?", "sujato-corrected": "“Well, what is it?”", "bodhi-esque": "“What then, friend, is the path, what is the way, for the realization of this Nibbāna?”"}, {"key": "sn39.1-15:3.2", "pali": "“Ayameva kho, āvuso, ariyo a·ṭ·ṭha·ṅgiko maggo,\netassa nibbānassa sacchi·kiriyāya, seyyathidaṁ—", "sujato-corrected": "“It is simply this noble eightfold path, that is:", "bodhi-esque": "“It is, friend, precisely this Noble Eightfold Path for the realization of this Nibbāna;\nthat is,"}, {"key": "sn39.1-15:3.3", "pali": "sammā·diṭṭhi …pe… sammā·samādhi.", "sujato-corrected": "right view, right purpose, right speech, right action,\nright livelihood, right effort, right mindfulness, and right samādhi.", "bodhi-esque": "right view … right concentration."}, {"key": "sn39.1-15:3.4", "pali": "Ayaṁ kho, āvuso, maggo\nayaṁ paṭi·padā, etassa nibbānassa sacchi·kiri·yāyā”ti.", "sujato-corrected": "This is the path, the practice, for realizing this Nibbāna.\"", "bodhi-esque": "This, friend, is the path,\nthis is the practice, for the realization of Nibbāna.\""}, {"key": "sn39.1-15:3.5", "pali": "“Bhaddako, āvuso, maggo\nbhaddikā paṭi·padā, etassa nibbānassa sacchi·kiriyāya.", "sujato-corrected": "\"Reverend, this is a fine path, a fine practice, for realizing this Nibbāna.", "bodhi-esque": "\"Good, friend, is the path,\ngood is the practice, for the realization of Nibbāna."}, {"key": "sn39.1-15:3.6", "pali": "Alañca panāvuso sāri·putta, a·p·pamādāyā”ti.", "sujato-corrected": "Just this much is enough for diligence.”", "bodhi-esque": "\"But it is enough, friend Sāriputta, for heedfulness.\""}, {"key": "sn39.1-15:3.7", "pali": "Paṭhamaṁ.", "sujato-corrected": "", "bodhi-esque": "First."}]}, {"id": "sn39.1-15/4", "label": "(Yathā jambu·khādaka·saṁyuttaṁ, tathā vi·t·thāre·tabbaṁ.)", "rows": [{"key": "sn39.1-15:4.1", "pali": "(Yathā jambu·khādaka·saṁyuttaṁ, tathā vi·t·thāre·tabbaṁ.)", "sujato-corrected": "(Tell in full  as the Linked Discourses with Jambukhādaka.)", "bodhi-esque": "(As in the Jambukhādaka Saṃyutta, so should it be elaborated.)"}]}]}, {"id": "sn39.16", "label": "SN 39.16 · Hard to Do", "children": [{"id": "sn39.16/0", "label": "Saṁyutta Nikāya 39.16", "rows": [{"key": "sn39.16:0.1", "pali": "Saṁyutta Nikāya 39.16", "sujato-corrected": "Linked Discourses 39.16", "bodhi-esque": "Saṁyutta Nikāya 39.16"}, {"key": "sn39.16:0.2", "pali": "1.\nSāmaṇḍaka·vagga", "sujato-corrected": "1.\nWith Sāmaṇḍaka", "bodhi-esque": "1.\nSāmaṇḍaka Vagga"}, {"key": "sn39.16:0.3", "pali": "Dukkara·sutta", "sujato-corrected": "Hard to Do", "bodhi-esque": "The Sutta on What Is Difficult"}]}, {"id": "sn39.16/1", "label": "“Kiṁ nu kho, āvuso sāri·putta, imasmiṁ dhamma·vinaye…", "rows": [{"key": "sn39.16:1.1", "pali": "“Kiṁ nu kho, āvuso sāri·putta, imasmiṁ dhamma·vinaye dukkaran”ti?", "sujato-corrected": "“Reverend Sāriputta, in this teaching and training, what is hard to do?”", "bodhi-esque": "\"What, friend Sāriputta, is difficult to do in this Dhamma and discipline?\""}, {"key": "sn39.16:1.2", "pali": "“Pabbajjā kho, āvuso, imasmiṁ dhamma·vinaye dukkarā”ti.", "sujato-corrected": "“Going forth, reverend, is hard to do in this teaching and training.”", "bodhi-esque": "\"Going forth, friend, is difficult to do in this Dhamma and discipline.\""}, {"key": "sn39.16:1.3", "pali": "“Pabbajitena panāvuso, kiṁ dukkaran”ti?", "sujato-corrected": "“But what’s hard to do for someone who has gone forth?”", "bodhi-esque": "\"And for one who has gone forth, friend, what is difficult?\""}, {"key": "sn39.16:1.4", "pali": "“Pabbajitena kho, āvuso, abhi·rati dukkarā”ti.", "sujato-corrected": "“When you’ve gone forth it’s hard to be satisfied.”", "bodhi-esque": "\"For one who has gone forth, friend, to take delight is difficult.\""}, {"key": "sn39.16:1.5", "pali": "“Abhi·ratena panāvuso, kiṁ dukkaran”ti?", "sujato-corrected": "“But what’s hard to do for someone who is satisfied?”", "bodhi-esque": "\"And for one who has taken delight, friend, what is difficult?\""}, {"key": "sn39.16:1.6", "pali": "“Abhi·ratena kho, āvuso, dhammā·nudhamma·p·paṭi·patti dukkarā”ti.", "sujato-corrected": "“When you’re satisfied, it’s hard to practice in line with the teaching.”", "bodhi-esque": "\"For one who has taken delight, friend, the practice of the Dhamma in accordance with the Dhamma is difficult.\""}, {"key": "sn39.16:1.7", "pali": "“Kīva·ciraṁ panāvuso, dhammā·nudhamma·p·paṭi·panno bhikkhu a·rahaṁ assā”ti?", "sujato-corrected": "“But if a mendicant practices  in line with the teaching, will it take them long to become a perfected one?”", "bodhi-esque": "\"How long, friend, would a bhikkhu practicing the Dhamma in accordance with the Dhamma become an arahant?\""}, {"key": "sn39.16:1.8", "pali": "“Naciraṁ, āvuso”ti.", "sujato-corrected": "“Not long, reverend.”", "bodhi-esque": "\"Not long, friend.\""}, {"key": "sn39.16:1.9", "pali": "Soḷasamaṁ.", "sujato-corrected": "", "bodhi-esque": "The sixteenth."}, {"key": "sn39.16:1.10", "pali": "(Purimaka·sadisaṁ uddānaṁ.)", "sujato-corrected": "", "bodhi-esque": "(The udāna is similar to the preceding one.)"}, {"key": "sn39.16:1.11", "pali": "Sāmaṇḍaka·saṁyuttaṁ sama·t·taṁ.", "sujato-corrected": "The Linked Discourses with Sāmaṇḍaka are complete.", "bodhi-esque": "The Sāmaṇḍaka Saṃyutta is completed."}]}]}]}];
 
@@ -773,6 +843,11 @@ const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {"sujato-corrected": {"sn39.1-15:1.1": ["See notes on <a class=\"xref\" data-ref=\"dn16:2.1.2\" href=\"https://suttacentral.net/dn16/en/sujato#2.1.2\" target=\"_blank\" rel=\"noopener\">DN 16:2.1.2</a>, <a class=\"xref\" data-ref=\"sn47.13:1.1\" href=\"https://suttacentral.net/sn47.13/en/sujato#1.1\" target=\"_blank\" rel=\"noopener\">SN 47.13:1.1</a>, and <a class=\"xref\" data-ref=\"sn47.14:1.1\" href=\"https://suttacentral.net/sn47.14/en/sujato#1.1\" target=\"_blank\" rel=\"noopener\">SN 47.14:1.1</a>.\nThe Buddha taught there in <a class=\"xref\" data-ref=\"mn34\" href=\"https://suttacentral.net/mn34/en/sujato\" target=\"_blank\" rel=\"noopener\">MN 34</a>. | The commentary requires the reading <i>ukkacelā</i> (“cloth firebrand”) but its story is contrived.\nThe variant <i>ukkavelā</i> (“firebrand shore”) suggests there may have been a lighthouse there. "]}};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

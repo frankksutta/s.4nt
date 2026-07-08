@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,6 +819,19 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
 const TREE=[{"id": "ea9", "label": "", "children": [{"id": "ea9.1", "label": "EA 9.1 — 優婆斯", "children": [{"id": "ea9.1/1", "label": "聞如是：", "rows": [{"key": "ea9.1:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea9.1/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea9.1:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍada's Park in Sāvatthī."}]}, {"id": "ea9.1/3", "label": "爾時，世尊告諸比丘：「猶如母人，心懷篤 信，", "rows": [{"key": "ea9.1:3.1", "lzh": "爾時，世尊告諸比丘：「猶如母人，心懷篤 信，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n\"Just as a mother, with a heart of firm faith,"}, {"key": "ea9.1:3.2", "lzh": "唯有一子，恒作是念：『云何當教，使成 為人？』」", "deepsk-2026-line-by-line": "has only one son, and constantly thinks:\n'How should I teach him so that he becomes a proper person?'\""}]}, {"id": "ea9.1/4", "label": "爾時，諸比丘白世尊曰：「我等，世尊！", "rows": [{"key": "ea9.1:4.1", "lzh": "爾時，諸比丘白世尊曰：「我等，世尊！", "deepsk-2026-line-by-line": "Then the monks said to the Blessed One:\n\"We, O Blessed One,"}, {"key": "ea9.1:4.2", "lzh": "不 解此義。", "deepsk-2026-line-by-line": "do not understand the meaning of this."}, {"key": "ea9.1:4.3", "lzh": "世尊是諸法之本，如來所陳，靡不 承受。", "deepsk-2026-line-by-line": "The Blessed One is the root of all teachings;\nwhatever the Tathāgata sets forth, we all accept."}, {"key": "ea9.1:4.4", "lzh": "唯願世尊與諸比丘說此深法，聞已 奉行。」", "deepsk-2026-line-by-line": "We only ask that the Blessed One explain this profound teaching to the monks, and having heard it, we will practice it.\""}]}, {"id": "ea9.1/5", "label": "爾時，世尊告諸比丘：「諦聽！諦聽！", "rows": [{"key": "ea9.1:5.1", "lzh": "爾時，世尊告諸比丘：「諦聽！諦聽！", "deepsk-2026-line-by-line": "Then the Blessed One said to the monks:\n\"Listen carefully!\nListen carefully!"}, {"key": "ea9.1:5.2", "lzh": "善思念 之，吾當為汝分別其義。」", "deepsk-2026-line-by-line": "Reflect on it well, and I will explain its meaning for you.\""}]}, {"id": "ea9.1/6", "label": "諸比丘對曰：「如是。", "rows": [{"key": "ea9.1:6.1", "lzh": "諸比丘對曰：「如是。", "deepsk-2026-line-by-line": "The monks replied:\n\"Yes,"}, {"key": "ea9.1:6.2", "lzh": "世尊！", "deepsk-2026-line-by-line": "O Blessed One!"}, {"key": "ea9.1:6.3", "lzh": "」爾時，諸比丘從佛受教。", "deepsk-2026-line-by-line": "\" Then the monks received the instruction from the Buddha."}]}, {"id": "ea9.1/7", "label": "世尊告曰：「猶 彼優婆斯心懷篤信，作是教訓：", "rows": [{"key": "ea9.1:7.1", "lzh": "世尊告曰：「猶 彼優婆斯心懷篤信，作是教訓：", "deepsk-2026-line-by-line": "The Blessed One said:\n\"Just as that laywoman, with a heart of firm faith, gave this instruction:"}, {"key": "ea9.1:7.2", "lzh": "『汝今在家， 當如質多長者，亦如象童子。", "deepsk-2026-line-by-line": "'Now that you are a householder, you should be like the elder Citta, and also like the youth Elephant.'"}, {"key": "ea9.1:7.3", "lzh": "所以然者，此 是其限，此是其量。", "deepsk-2026-line-by-line": "Why is that?\nThis is its limit, this is its measure."}, {"key": "ea9.1:7.4", "lzh": "世尊受證弟子，所謂質多 長者、象童子也。", "deepsk-2026-line-by-line": "The disciples whom the World-Honored One has certified are the elder Citta and the youth Elephant."}, {"key": "ea9.1:7.5", "lzh": "』若童子意欲剃除鬚髮， 著三法衣，", "deepsk-2026-line-by-line": "If the youth wishes to shave off his hair and beard and don the three dharma robes,"}, {"key": "ea9.1:7.6", "lzh": "出家學道，當如舍利弗、目犍連 比丘。", "deepsk-2026-line-by-line": "and go forth to study the path, he should be like the monks Śāriputra and Maudgalyāyana."}, {"key": "ea9.1:7.7", "lzh": "所以然者，此是其限，此是其量。", "deepsk-2026-line-by-line": "Why is that?\nThis is its limit, this is its measure."}, {"key": "ea9.1:7.8", "lzh": "所謂 舍利弗、目犍連比丘！", "deepsk-2026-line-by-line": "That is to say, the monks Śāriputra and Maudgalyāyana!"}, {"key": "ea9.1:7.9", "lzh": "好學正法，莫作邪業， 興起非法；", "deepsk-2026-line-by-line": "Be fond of studying the true dharma;\ndo not engage in wrong deeds or initiate what is not dharma."}, {"key": "ea9.1:7.10", "lzh": "設汝生此染著之想，便當墜墮 三惡趣中。", "deepsk-2026-line-by-line": "If you give rise to such thoughts of attachment, you will fall into the three lower realms."}, {"key": "ea9.1:7.11", "lzh": "善念專心，不得者得，不獲者獲，", "deepsk-2026-line-by-line": "With wholesome thoughts and focused mind, attain what has not been attained, obtain what has not been obtained,"}, {"key": "ea9.1:7.12", "lzh": "未得證者，今當受證。", "deepsk-2026-line-by-line": "and what has not yet been realized, now realize it."}, {"key": "ea9.1:7.13", "lzh": "所以然者，諸比丘！", "deepsk-2026-line-by-line": "Why is that?\nMonks,"}, {"key": "ea9.1:7.14", "lzh": "信施之重，實不可消，令人不得至道。", "deepsk-2026-line-by-line": "the weight of faithful offerings is truly not easy to digest;\nit prevents one from reaching the supreme path."}, {"key": "ea9.1:7.15", "lzh": "是故， 諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks,"}, {"key": "ea9.1:7.16", "lzh": "莫生染著之意，已生當滅。", "deepsk-2026-line-by-line": "do not give rise to thoughts of attachment;\nif they have already arisen, abandon them."}, {"key": "ea9.1:7.17", "lzh": "如是，諸 比丘！", "deepsk-2026-line-by-line": "Thus, monks!"}, {"key": "ea9.1:7.18", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train thus."}]}, {"id": "ea9.1/8", "label": "爾時，諸比丘聞佛所說，歡 喜奉行。", "rows": [{"key": "ea9.1:8.1", "lzh": "爾時，諸比丘聞佛所說，歡 喜奉行。", "deepsk-2026-line-by-line": "Then, having heard what the Buddha said, the monks rejoiced and practiced accordingly."}]}]}, {"id": "ea9.2", "label": "EA 9.2 — 優婆斯", "children": [{"id": "ea9.2/1", "label": "聞如是：", "rows": [{"key": "ea9.2:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea9.2/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea9.2:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea9.2/3", "label": "爾時，世尊告諸比丘：", "rows": [{"key": "ea9.2:3.1", "lzh": "爾時，世尊告諸比丘：", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:"}, {"key": "ea9.2:3.2", "lzh": "「篤信優婆斯唯有一 女，彼當云何教訓成就？」", "deepsk-2026-line-by-line": "“A faithful female lay follower has only one daughter.\nHow should she instruct and guide her to success?”"}]}, {"id": "ea9.2/4", "label": "爾時，諸比丘白世 尊曰：「我等，世尊！", "rows": [{"key": "ea9.2:4.1", "lzh": "爾時，諸比丘白世 尊曰：「我等，世尊！", "deepsk-2026-line-by-line": "Then the monks said to the Blessed One:\n“We, O Blessed One,"}, {"key": "ea9.2:4.2", "lzh": "不解此義。", "deepsk-2026-line-by-line": "do not understand the meaning of this."}, {"key": "ea9.2:4.3", "lzh": "世尊是諸法之 本，如來所陳，靡不承受。", "deepsk-2026-line-by-line": "The Blessed One is the root of all teachings;\nwhatever the Tathāgata sets forth, we all accept."}, {"key": "ea9.2:4.4", "lzh": "唯願世尊與諸比 丘說此深法，聞已奉行。」", "deepsk-2026-line-by-line": "We only wish that the Blessed One would explain this profound teaching to the monks,\nand having heard it, we will practice accordingly.”"}]}, {"id": "ea9.2/5", "label": "爾時，世尊告諸比 丘：「諦聽！諦聽！", "rows": [{"key": "ea9.2:5.1", "lzh": "爾時，世尊告諸比 丘：「諦聽！諦聽！", "deepsk-2026-line-by-line": "Then the Blessed One said to the monks:\n“Listen carefully!\nListen carefully!"}, {"key": "ea9.2:5.2", "lzh": "善思念之，吾當為汝分別其 義。」", "deepsk-2026-line-by-line": "Think about it well, and I will explain its meaning for you.”"}]}, {"id": "ea9.2/6", "label": "諸比丘對曰：「如是。", "rows": [{"key": "ea9.2:6.1", "lzh": "諸比丘對曰：「如是。", "deepsk-2026-line-by-line": "The monks replied:\n“Yes."}, {"key": "ea9.2:6.2", "lzh": "」爾時，諸比丘從佛受 教。", "deepsk-2026-line-by-line": "” Then the monks received the teaching from the Buddha."}]}, {"id": "ea9.2/7", "label": "世尊告曰：「猶彼篤信優婆斯教訓女曰：", "rows": [{"key": "ea9.2:7.1", "lzh": "世尊告曰：「猶彼篤信優婆斯教訓女曰：", "deepsk-2026-line-by-line": "The Blessed One said:\n“Just as a faithful female lay follower instructs her daughter, saying:"}, {"key": "ea9.2:7.2", "lzh": "『汝今在家者，當如拘讎多羅優婆斯、難陀母。", "deepsk-2026-line-by-line": "‘Now, while you are at home, you should be like the laywoman Kujjuttarā or the mother of Nanda."}, {"key": "ea9.2:7.3", "lzh": "所以然者，此是其限，此是其量。", "deepsk-2026-line-by-line": "Why is that?\nThis is the standard, this is the measure."}, {"key": "ea9.2:7.4", "lzh": "世尊受證 弟子，所謂拘讎多羅優婆斯、難陀母是。", "deepsk-2026-line-by-line": "The World-Honored One certified disciples, namely the laywoman Jūdāra and Nanda's mother."}, {"key": "ea9.2:7.5", "lzh": "』若女 意欲剃除鬚髮，著三法衣，出家學道者，", "deepsk-2026-line-by-line": "If a woman wishes to shave off her hair and beard, put on the three dharma robes, and go forth to study the path,"}, {"key": "ea9.2:7.6", "lzh": "當 如讖摩比丘尼、優鉢花色比丘尼。", "deepsk-2026-line-by-line": "she should be like the bhikkhunī Kṣemā and the bhikkhunī Utpalavarṇā."}, {"key": "ea9.2:7.7", "lzh": "所以然 者，此是其量，此是其限。", "deepsk-2026-line-by-line": "Why is that?\nThis is the measure, this is the limit."}, {"key": "ea9.2:7.8", "lzh": "所謂讖摩比丘尼、優 鉢華色比丘尼，", "deepsk-2026-line-by-line": "That is to say, the bhikkhunī Kṣemā and the bhikkhunī Utpalavarṇā,"}, {"key": "ea9.2:7.9", "lzh": "好學正法，莫作邪業，", "deepsk-2026-line-by-line": "who delight in studying the true Dharma and do not engage in wrong deeds,"}, {"key": "ea9.2:7.10", "lzh": "興起 非法；設汝生此染著之想，", "deepsk-2026-line-by-line": "nor give rise to what is not Dharma.\nIf you give rise to such thoughts of attachment,"}, {"key": "ea9.2:7.11", "lzh": "便 當墜 墮 三惡 趣中。", "deepsk-2026-line-by-line": "you will then fall into the three lower realms."}, {"key": "ea9.2:7.12", "lzh": "善念專心，不果者果，不獲者獲，", "deepsk-2026-line-by-line": "With wholesome thoughts and focused mind, what has not been realized will be realized,\nwhat has not been attained will be attained,"}, {"key": "ea9.2:7.13", "lzh": "未得 證者，今當受證。", "deepsk-2026-line-by-line": "and what has not been certified will now be certified."}, {"key": "ea9.2:7.14", "lzh": "所以然者，諸比丘！", "deepsk-2026-line-by-line": "Why is that?\nMonks!"}, {"key": "ea9.2:7.15", "lzh": "信施 之重，實不可消，令人不得至道之趣。", "deepsk-2026-line-by-line": "The weight of faithful offerings is truly not easy to bear,\nand it prevents one from reaching the path to the ultimate goal."}, {"key": "ea9.2:7.16", "lzh": "是故， 諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea9.2:7.17", "lzh": "莫生染著之想，已生當滅。", "deepsk-2026-line-by-line": "Do not give rise to thoughts of attachment;\nif they have already arisen, they should be abandoned."}, {"key": "ea9.2:7.18", "lzh": "如是，諸 比丘！", "deepsk-2026-line-by-line": "Thus, monks!"}, {"key": "ea9.2:7.19", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train thus."}]}, {"id": "ea9.2/8", "label": "爾時，諸比丘聞佛所說，歡 喜奉行。", "rows": [{"key": "ea9.2:8.1", "lzh": "爾時，諸比丘聞佛所說，歡 喜奉行。", "deepsk-2026-line-by-line": "Then the monks, having heard what the Buddha said, joyfully practiced it."}]}]}, {"id": "ea9.3", "label": "EA 9.3 — 心", "children": [{"id": "ea9.3/1", "label": "聞如是：", "rows": [{"key": "ea9.3:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea9.3/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea9.3:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea9.3/3", "label": "爾時，世尊告諸比丘：「我不見一法疾於 心者，", "rows": [{"key": "ea9.3:3.1", "lzh": "爾時，世尊告諸比丘：「我不見一法疾於 心者，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'I do not see a single thing that is faster than the mind;"}, {"key": "ea9.3:3.2", "lzh": "無譬可喻，猶如獼猴捨一取一，心 不專定。", "deepsk-2026-line-by-line": "there is no simile for it.\nIt is like a monkey that lets go of one thing and grasps another, the mind is not settled."}, {"key": "ea9.3:3.3", "lzh": "心亦如是，前想、後想所不同者，", "deepsk-2026-line-by-line": "The mind is also like this:\nthe thoughts before and after are not the same."}, {"key": "ea9.3:3.4", "lzh": "以 方便法不可摸則，心迴轉疾。", "deepsk-2026-line-by-line": "Because the mind cannot be grasped by any expedient means, it turns around quickly."}, {"key": "ea9.3:3.5", "lzh": "是故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea9.3:3.6", "lzh": "凡夫之人不能觀察心意。", "deepsk-2026-line-by-line": "A worldling cannot observe the mind."}, {"key": "ea9.3:3.7", "lzh": "是故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea9.3:3.8", "lzh": "常 當降伏心意，令趣善道，亦當作是學。」", "deepsk-2026-line-by-line": "You should always subdue the mind, make it tend toward the wholesome path, and you should train thus.'"}]}, {"id": "ea9.3/4", "label": "爾時， 諸比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea9.3:4.1", "lzh": "爾時， 諸比丘聞佛所說，歡喜奉行。", "deepsk-2026-line-by-line": "At that time, the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea9.4", "label": "EA 9.4 — 心", "children": [{"id": "ea9.4/1", "label": "聞如是：", "rows": [{"key": "ea9.4:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea9.4/2", "label": "一時，佛在舍衛國祇樹給孤獨園。", "rows": [{"key": "ea9.4:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea9.4/3", "label": "爾時，世尊告諸比丘：「我不見一法疾於心 者，", "rows": [{"key": "ea9.4:3.1", "lzh": "爾時，世尊告諸比丘：「我不見一法疾於心 者，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'I do not see any phenomenon that is faster than the mind;"}, {"key": "ea9.4:3.2", "lzh": "無譬可喻，猶如獼猴捨一取一，心不 專定。", "deepsk-2026-line-by-line": "there is no simile for it.\nIt is like a monkey that lets go of one branch and grasps another, the mind is not settled."}, {"key": "ea9.4:3.3", "lzh": "心亦如是，前想、後想所念不同，是故， 諸比丘！", "deepsk-2026-line-by-line": "The mind is also like this:\nthe thoughts before and the thoughts after are different in what they think about.\nTherefore, monks!"}, {"key": "ea9.4:3.4", "lzh": "凡夫之人不能觀察心意所由。", "deepsk-2026-line-by-line": "A worldling cannot observe the origin of the mind's thoughts."}, {"key": "ea9.4:3.5", "lzh": "是 故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea9.4:3.6", "lzh": "常當降伏心意，得趣善道，是 故，諸比丘！", "deepsk-2026-line-by-line": "You should always subdue the mind, so that it may reach a good destination.\nTherefore, monks!"}, {"key": "ea9.4:3.7", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train yourselves like this.'"}]}, {"id": "ea9.4/4", "label": "爾時，諸比丘聞佛所 說，歡喜奉行。", "rows": [{"key": "ea9.4:4.1", "lzh": "爾時，諸比丘聞佛所 說，歡喜奉行。", "deepsk-2026-line-by-line": "At that time, the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea9.5", "label": "EA 9.5 — 墮", "children": [{"id": "ea9.5/1", "label": "聞如是：", "rows": [{"key": "ea9.5:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea9.5/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea9.5:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea9.5/3", "label": "爾時，世尊告諸比丘：「我恒觀見一人心中 所念之事，", "rows": [{"key": "ea9.5:3.1", "lzh": "爾時，世尊告諸比丘：「我恒觀見一人心中 所念之事，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'I constantly observe the thoughts in a single person's mind."}, {"key": "ea9.5:3.2", "lzh": "此人如屈伸臂頃墮泥 黎 中。", "deepsk-2026-line-by-line": "That person, in the time it takes to bend or straighten an arm, falls into hell."}, {"key": "ea9.5:3.3", "lzh": "所以然者，由惡心故，心之生病墜墮地 獄。」", "deepsk-2026-line-by-line": "Why is that?\nBecause of an evil mind;\nthe mind's sickness causes one to fall into hell.'"}]}, {"id": "ea9.5/4", "label": "爾時，世尊便說偈言：", "rows": [{"key": "ea9.5:4.1", "lzh": "爾時，世尊便說偈言：", "deepsk-2026-line-by-line": "Then the Blessed One spoke this verse:"}]}, {"id": "ea9.5/5", "label": "「猶如有一人， 心懷瞋恚想，", "rows": [{"key": "ea9.5:5.1", "lzh": "「猶如有一人，　　心懷瞋恚想，", "deepsk-2026-line-by-line": "'Just as there is a person who harbors thoughts of anger and hatred,"}, {"key": "ea9.5:5.2", "lzh": "今告諸比丘，　　廣演其義趣。", "deepsk-2026-line-by-line": "Now I tell the monks, extensively explaining its meaning."}, {"key": "ea9.5:5.3", "lzh": "今正是其時，　　設有命終者，", "deepsk-2026-line-by-line": "Now is the time;\nif one should die,"}, {"key": "ea9.5:5.4", "lzh": "假令入地獄，　　由心穢行故。", "deepsk-2026-line-by-line": "And enter hell, it is because of the mind's impure actions.'"}]}, {"id": "ea9.5/6", "label": "「是故，諸比丘！", "rows": [{"key": "ea9.5:6.1", "lzh": "「是故，諸比丘！", "deepsk-2026-line-by-line": "'Therefore, monks!"}, {"key": "ea9.5:6.2", "lzh": "當降伏心，勿生穢行。", "deepsk-2026-line-by-line": "You should subdue the mind and not produce impure actions."}, {"key": "ea9.5:6.3", "lzh": "如是，諸 比丘！", "deepsk-2026-line-by-line": "Thus, monks,"}, {"key": "ea9.5:6.4", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "you should train yourselves.'"}]}, {"id": "ea9.5/7", "label": "爾時，諸比丘聞佛所說，歡 喜奉行。", "rows": [{"key": "ea9.5:7.1", "lzh": "爾時，諸比丘聞佛所說，歡 喜奉行。", "deepsk-2026-line-by-line": "Then the monks, hearing what the Buddha said, joyfully practiced it."}]}]}, {"id": "ea9.6", "label": "EA 9.6 — 生天", "children": [{"id": "ea9.6/1", "label": "聞如是：", "rows": [{"key": "ea9.6:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea9.6/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea9.6:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea9.6/3", "label": "爾時，世尊告諸比丘：", "rows": [{"key": "ea9.6:3.1", "lzh": "爾時，世尊告諸比丘：", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:"}, {"key": "ea9.6:3.2", "lzh": "「我恒觀見一人心中 所念之事，如屈伸臂頃而生天上。", "deepsk-2026-line-by-line": "“I constantly see a person's thoughts in their mind,\nand in the time it takes to bend or stretch an arm, they are reborn in heaven."}, {"key": "ea9.6:3.3", "lzh": "所以 然者，由善心故；已生善心，便生天上。」", "deepsk-2026-line-by-line": "Why is that?\nBecause of a wholesome mind;\nhaving produced a wholesome mind, they are reborn in heaven.”"}]}, {"id": "ea9.6/4", "label": "爾 時，世尊便說偈言：", "rows": [{"key": "ea9.6:4.1", "lzh": "爾 時，世尊便說偈言：", "deepsk-2026-line-by-line": "Then the Blessed One spoke this verse:"}]}, {"id": "ea9.6/5", "label": "「設復有一人， 而生善妙心，", "rows": [{"key": "ea9.6:5.1", "lzh": "「設復有一人，　　而生善妙心，", "deepsk-2026-line-by-line": "“If there is a person who gives rise to a wholesome and excellent mind,"}, {"key": "ea9.6:5.2", "lzh": "今告諸比丘，　　廣演其義趣。", "deepsk-2026-line-by-line": "Now I tell the monks, extensively explaining its meaning."}, {"key": "ea9.6:5.3", "lzh": "今正是其時，　　設有命終者，", "deepsk-2026-line-by-line": "Now is the time;\nif someone should die,"}, {"key": "ea9.6:5.4", "lzh": "便得生天上，　　由心善行故。", "deepsk-2026-line-by-line": "They will be reborn in heaven, because of the mind's wholesome deeds."}]}, {"id": "ea9.6/6", "label": "「是故，諸比丘！", "rows": [{"key": "ea9.6:6.1", "lzh": "「是故，諸比丘！", "deepsk-2026-line-by-line": "“Therefore, monks!"}, {"key": "ea9.6:6.2", "lzh": "當發淨意，勿生穢行。", "deepsk-2026-line-by-line": "You should develop a pure mind, and not produce impure actions."}, {"key": "ea9.6:6.3", "lzh": "如是，諸 比丘！", "deepsk-2026-line-by-line": "Thus, monks!"}, {"key": "ea9.6:6.4", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train yourselves.”"}]}, {"id": "ea9.6/7", "label": "爾時，諸比丘聞佛所說，歡 喜奉行。", "rows": [{"key": "ea9.6:7.1", "lzh": "爾時，諸比丘聞佛所說，歡 喜奉行。", "deepsk-2026-line-by-line": "Then the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea9.7", "label": "EA 9.7 — 男女", "children": [{"id": "ea9.7/1", "label": "聞如是：", "rows": [{"key": "ea9.7:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea9.7/2", "label": "一時，佛在舍衛國祇樹給孤獨園。", "rows": [{"key": "ea9.7:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea9.7/3", "label": "爾時，世尊告諸比丘：", "rows": [{"key": "ea9.7:3.1", "lzh": "爾時，世尊告諸比丘：", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:"}, {"key": "ea9.7:3.2", "lzh": "「我於此眾中，不見一 法最勝最妙，", "deepsk-2026-line-by-line": "“In this assembly, I do not see a single thing that is most excellent and most sublime,"}, {"key": "ea9.7:3.3", "lzh": "眩惑世人，不至永寂，縛著牢 獄，無有解已。", "deepsk-2026-line-by-line": "which deludes people in the world, prevents them from reaching eternal peace,\nbinds them in a solid prison, and from which there is no release."}, {"key": "ea9.7:3.4", "lzh": "所謂男子見女色已，便起 想著，", "deepsk-2026-line-by-line": "That is, when a man sees a woman's form, he immediately gives rise to thoughts of attachment,"}, {"key": "ea9.7:3.5", "lzh": "意甚愛敬，令人不至永寂，縛著牢獄，", "deepsk-2026-line-by-line": "his mind greatly cherishes and adores her, which prevents him from reaching eternal peace, binds him in a solid prison,"}, {"key": "ea9.7:3.6", "lzh": "無有解已，意不捨離，周旋往來，", "deepsk-2026-line-by-line": "from which there is no release, and his mind does not abandon or depart from her,\nbut keeps revolving and coming and going,"}, {"key": "ea9.7:3.7", "lzh": "今世後世， 迴轉五道，動歷劫數。」", "deepsk-2026-line-by-line": "in this life and future lives, turning through the five realms of existence, passing through countless kalpas.”"}]}, {"id": "ea9.7/4", "label": "爾時，世尊便說偈曰：", "rows": [{"key": "ea9.7:4.1", "lzh": "爾時，世尊便說偈曰：", "deepsk-2026-line-by-line": "At that time, the Blessed One spoke these verses:"}]}, {"id": "ea9.7/5", "label": "「梵音柔軟聲， 如來說難見；", "rows": [{"key": "ea9.7:5.1", "lzh": "「梵音柔軟聲，　　如來說難見；", "deepsk-2026-line-by-line": "“The Brahmā-like voice, soft and gentle, the Tathāgata speaks of as hard to see;"}, {"key": "ea9.7:5.2", "lzh": "或復有時見，　　繫念在目前。", "deepsk-2026-line-by-line": "Or sometimes it is seen, with mindfulness fixed before the eyes."}, {"key": "ea9.7:5.3", "lzh": "亦莫與女人，　　往來與言語；", "deepsk-2026-line-by-line": "Also, do not associate with women, nor converse with them;"}, {"key": "ea9.7:5.4", "lzh": "恒羅伺捕人，　　不得至無為。", "deepsk-2026-line-by-line": "They are always lying in wait to catch people, so that one cannot reach the unconditioned."}]}, {"id": "ea9.7/6", "label": "「是故，諸比丘！", "rows": [{"key": "ea9.7:6.1", "lzh": "「是故，諸比丘！", "deepsk-2026-line-by-line": "“Therefore, monks!"}, {"key": "ea9.7:6.2", "lzh": "當除諸色，莫起想著。", "deepsk-2026-line-by-line": "One should remove all forms and not give rise to thoughts of attachment."}, {"key": "ea9.7:6.3", "lzh": "如是， 諸比丘！", "deepsk-2026-line-by-line": "Thus, O monks,"}, {"key": "ea9.7:6.4", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "you should train yourselves accordingly.”"}]}, {"id": "ea9.7/7", "label": "爾時，諸比丘聞佛所說， 歡喜奉行。", "rows": [{"key": "ea9.7:7.1", "lzh": "爾時，諸比丘聞佛所說， 歡喜奉行。", "deepsk-2026-line-by-line": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}]}, {"id": "ea9.8", "label": "EA 9.8 — 想受樂", "children": [{"id": "ea9.8/1", "label": "聞如是：", "rows": [{"key": "ea9.8:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea9.8/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea9.8:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea9.8/3", "label": "爾時，世尊告諸比丘：", "rows": [{"key": "ea9.8:3.1", "lzh": "爾時，世尊告諸比丘：", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:"}, {"key": "ea9.8:3.2", "lzh": "「我於此眾中，不見 一法最勝最妙，", "deepsk-2026-line-by-line": "“In this assembly, I do not see a single thing that is most excellent and most sublime,"}, {"key": "ea9.8:3.3", "lzh": "眩惑世人，不生永寂，縛 著牢獄，無有解已。", "deepsk-2026-line-by-line": "which deludes people in the world, prevents them from attaining eternal peace, and binds them in prison without release."}, {"key": "ea9.8:3.4", "lzh": "所謂女見男子色已， 便起想著，意甚愛敬，", "deepsk-2026-line-by-line": "That is, when a woman sees a man's appearance,\nshe immediately gives rise to thoughts of attachment, with great affection and admiration,"}, {"key": "ea9.8:3.5", "lzh": "令人不至永寂，縛著 牢獄，無有解已。", "deepsk-2026-line-by-line": "which prevents one from attaining eternal peace, binds one in prison without release."}, {"key": "ea9.8:3.6", "lzh": "意不捨離，周旋往來，", "deepsk-2026-line-by-line": "The mind does not abandon or depart, but keeps revolving and coming back,"}, {"key": "ea9.8:3.7", "lzh": "今 世後世，迴轉五道，動歷劫數。」", "deepsk-2026-line-by-line": "in this life and the next, turning through the five realms, moving through countless eons.”"}]}, {"id": "ea9.8/4", "label": "爾時，世尊便 說偈曰：", "rows": [{"key": "ea9.8:4.1", "lzh": "爾時，世尊便 說偈曰：", "deepsk-2026-line-by-line": "At that time, the Blessed One then spoke this verse:"}]}, {"id": "ea9.8/5", "label": "「若生顛倒想， 興念恩愛心，", "rows": [{"key": "ea9.8:5.1", "lzh": "「若生顛倒想，　　興念恩愛心，", "deepsk-2026-line-by-line": "“If one gives rise to perverted thoughts, and arouses thoughts of affection and love,"}, {"key": "ea9.8:5.2", "lzh": "除念意染著，　　便無此諸穢。", "deepsk-2026-line-by-line": "Removing thoughts and abandoning mental defilement, then one will be free from these impurities."}]}, {"id": "ea9.8/6", "label": "「是故，諸比丘！", "rows": [{"key": "ea9.8:6.1", "lzh": "「是故，諸比丘！", "deepsk-2026-line-by-line": "“Therefore, monks!"}, {"key": "ea9.8:6.2", "lzh": "當除諸色，莫起想著。", "deepsk-2026-line-by-line": "You should abandon all forms and not give rise to thoughts of attachment."}, {"key": "ea9.8:6.3", "lzh": "如是，諸 比丘！", "deepsk-2026-line-by-line": "Thus, monks!”"}, {"key": "ea9.8:6.4", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train thus."}]}, {"id": "ea9.8/7", "label": "爾時，諸比丘聞佛所說，歡 喜奉行。", "rows": [{"key": "ea9.8:7.1", "lzh": "爾時，諸比丘聞佛所說，歡 喜奉行。", "deepsk-2026-line-by-line": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}]}, {"id": "ea9.9", "label": "EA 9.9 — 欲想", "children": [{"id": "ea9.9/1", "label": "聞如是：", "rows": [{"key": "ea9.9:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea9.9/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea9.9:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea9.9/3", "label": "爾時，世尊告諸比丘：「我於此眾中，", "rows": [{"key": "ea9.9:3.1", "lzh": "爾時，世尊告諸比丘：「我於此眾中，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n“In this assembly, I"}, {"key": "ea9.9:3.2", "lzh": "不見 一法，無欲想便起欲想；已起欲想便增益。", "deepsk-2026-line-by-line": "do not see a single thing that, without a thought of desire, gives rise to a thought of desire;\nonce a thought of desire has arisen, it increases."}, {"key": "ea9.9:3.3", "lzh": "無瞋恚想便起瞋恚；已起瞋恚便增多。", "deepsk-2026-line-by-line": "Without a thought of anger, it gives rise to anger;\nonce anger has arisen, it increases."}, {"key": "ea9.9:3.4", "lzh": "無 睡眠想便起睡眠；已起睡眠便增多。", "deepsk-2026-line-by-line": "Without a thought of drowsiness, it gives rise to drowsiness;\nonce drowsiness has arisen, it increases."}, {"key": "ea9.9:3.5", "lzh": "無調 戲想便起調戲；已起調戲便增多。", "deepsk-2026-line-by-line": "Without a thought of restlessness, it gives rise to restlessness;\nonce restlessness has arisen, it increases."}, {"key": "ea9.9:3.6", "lzh": "無疑想 便起疑想；已起疑想便增多。", "deepsk-2026-line-by-line": "Without a thought of doubt, it gives rise to a thought of doubt;\nonce a thought of doubt has arisen, it increases."}, {"key": "ea9.9:3.7", "lzh": "亦當觀惡露 不淨想，設作亂想，", "deepsk-2026-line-by-line": "One should also contemplate the impure perception of the foul;\nif one gives rise to distracted thoughts,"}, {"key": "ea9.9:3.8", "lzh": "無欲想便有欲想；已 有欲想便增多。", "deepsk-2026-line-by-line": "without a thought of desire, there will be a thought of desire;\nonce a thought of desire has arisen, it increases."}, {"key": "ea9.9:3.9", "lzh": "瞋恚、睡眠，本無疑想便起 疑想；疑想已起便增多。", "deepsk-2026-line-by-line": "Anger, drowsiness—without a thought of doubt, it gives rise to a thought of doubt;\nonce a thought of doubt has arisen, it increases."}, {"key": "ea9.9:3.10", "lzh": "是故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea9.9:3.11", "lzh": "莫作 亂想，常當專意。", "deepsk-2026-line-by-line": "Do not give rise to distracted thoughts;\nalways maintain single-minded attention."}, {"key": "ea9.9:3.12", "lzh": "如是，諸比丘！", "deepsk-2026-line-by-line": "Thus, monks!"}, {"key": "ea9.9:3.13", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train yourselves in this way.”"}]}, {"id": "ea9.9/4", "label": "爾 時，諸比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea9.9:4.1", "lzh": "爾 時，諸比丘聞佛所說，歡喜奉行。", "deepsk-2026-line-by-line": "At that time, the monks heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea9.10", "label": "EA 9.10 — 欲想", "children": [{"id": "ea9.10/1", "label": "聞如是：", "rows": [{"key": "ea9.10:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea9.10/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea9.10:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea9.10/3", "label": "爾時，世尊告諸比丘：「我於此法中，不見 一法，", "rows": [{"key": "ea9.10:3.1", "lzh": "爾時，世尊告諸比丘：「我於此法中，不見 一法，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'In this teaching, I do not see a single thing"}, {"key": "ea9.10:3.2", "lzh": "未有欲想便不生欲想；已生欲想 便能滅之。", "deepsk-2026-line-by-line": "that, when a thought of desire has not yet arisen, prevents it from arising;\nand when it has already arisen, can dispel it."}, {"key": "ea9.10:3.3", "lzh": "未生瞋恚想便不生，已生瞋恚 想便能滅之。", "deepsk-2026-line-by-line": "When a thought of anger has not yet arisen, it prevents it from arising;\nwhen it has already arisen, it can dispel it."}, {"key": "ea9.10:3.4", "lzh": "未生睡眠想便不生；已生 睡眠想便能滅之。", "deepsk-2026-line-by-line": "When a thought of drowsiness has not yet arisen, it prevents it from arising;\nwhen it has already arisen, it can dispel it."}, {"key": "ea9.10:3.5", "lzh": "未生調戲想便不生；已 生調戲想便能滅之。", "deepsk-2026-line-by-line": "When a thought of restlessness has not yet arisen, it prevents it from arising;\nwhen it has already arisen, it can dispel it."}, {"key": "ea9.10:3.6", "lzh": "未生疑想便不生； 已生疑想便能滅之。", "deepsk-2026-line-by-line": "When a thought of doubt has not yet arisen, it prevents it from arising;\nwhen it has already arisen, it can dispel it."}, {"key": "ea9.10:3.7", "lzh": "亦當觀惡露不淨，已 觀惡露不淨，", "deepsk-2026-line-by-line": "One should also contemplate the foulness of the impure;\nhaving contemplated the foulness of the impure,"}, {"key": "ea9.10:3.8", "lzh": "未生欲想便不生；已生便能 滅之。", "deepsk-2026-line-by-line": "when a thought of desire has not yet arisen, it prevents it from arising;\nwhen it has already arisen, it can dispel it."}, {"key": "ea9.10:3.9", "lzh": "未生瞋恚便不生；已生瞋恚便能 滅之。", "deepsk-2026-line-by-line": "When anger has not yet arisen, it prevents it from arising;\nwhen it has already arisen, it can dispel it."}, {"key": "ea9.10:3.10", "lzh": "乃至疑，未生疑想便不生；已生疑 想便能滅之。", "deepsk-2026-line-by-line": "Up to doubt:\nwhen a thought of doubt has not yet arisen, it prevents it from arising;\nwhen it has already arisen, it can dispel it."}, {"key": "ea9.10:3.11", "lzh": "是故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea9.10:3.12", "lzh": "常當專意觀不 淨想。", "deepsk-2026-line-by-line": "You should always intently contemplate the perception of the impure."}, {"key": "ea9.10:3.13", "lzh": "如是，諸比丘！", "deepsk-2026-line-by-line": "Thus, monks!'"}, {"key": "ea9.10:3.14", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train thus.”"}]}, {"id": "ea9.10/4", "label": "爾時，諸比丘 聞佛所說，歡喜奉行。", "rows": [{"key": "ea9.10:4.1", "lzh": "爾時，諸比丘 聞佛所說，歡喜奉行。", "deepsk-2026-line-by-line": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}, {"id": "ea9.10/5", "label": "二斯及二心 一墮一生天 男女想受樂 二欲想在後", "rows": [{"key": "ea9.10:5.1", "lzh": "二斯及二心　　一墮一生天 \n男女想受樂　　二欲想在後", "deepsk-2026-line-by-line": "Two on the Sthāna, and two on the mind;\none on falling, one on being reborn in heaven;\nthe perception of male and female, and experiencing pleasure;\ntwo on sensual desire come later."}]}]}]}];
 
@@ -773,6 +843,11 @@ const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {"ea9.1": {"full": [{"uid": "sn17.6", "href": "../../sn/sn17/index.html#sn17.6"}, {"uid": "sn17.24", "href": "../../sn/sn17/index.html#sn17.24"}, {"uid": "sn17.23", "href": "../../sn/sn17/index.html#sn17.23"}, {"uid": "ea9.2", "href": "../../ea/ea9/index.html#ea9.2"}]}, "ea9.2": {"full": [{"uid": "sn17.6", "href": "../../sn/sn17/index.html#sn17.6"}, {"uid": "sn17.24", "href": "../../sn/sn17/index.html#sn17.24"}, {"uid": "sn17.23", "href": "../../sn/sn17/index.html#sn17.23"}, {"uid": "ea9.1", "href": "../../ea/ea9/index.html#ea9.1"}]}, "ea9.5": {"full": [{"uid": "an1.43", "href": "../../an/an1/index.html#an1.43"}]}, "ea9.6": {"full": [{"uid": "an1.44", "href": "../../an/an1/index.html#an1.44"}]}, "ea9.7": {"full": [{"uid": "t792", "href": null}, {"uid": "an1.1-5", "href": "../../an/an1/index.html#an1.1-5"}]}, "ea9.8": {"full": [{"uid": "an1.6-10", "href": "../../an/an1/index.html#an1.6-10"}]}, "ea9.9": {"full": [{"uid": "sf203#tri16.101-#tri16.105", "href": null}, {"uid": "an1.11-15", "href": "../../an/an1/index.html#an1.11-15"}]}, "ea9.10": {"full": [{"uid": "sf203#tri16.106-#tri16.111", "href": null}, {"uid": "an1.16-20", "href": "../../an/an1/index.html#an1.16-20"}]}};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

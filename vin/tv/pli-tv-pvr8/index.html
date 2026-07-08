@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,6 +819,19 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
 const TREE=[{"id": "pli-tv-pvr8/0", "label": "Pari·vāra", "rows": [{"key": "pli-tv-pvr8:0.1", "pali": "Pari·vāra", "brahmali-corrected": "The Compendium", "bodhi-esque": "The Parivāra"}, {"key": "pli-tv-pvr8:0.2", "pali": "8.\nUposath·ādi·pucchā·vissajjanā", "brahmali-corrected": "Aspects of the legal procedures", "bodhi-esque": "8.\nQuestions and Answers on the Uposatha, etc."}, {"key": "pli-tv-pvr8:0.3", "pali": "1 Ādi·majjh·anta·pucchana", "brahmali-corrected": "1.\nQuestions on the beginning, the middle, and the end", "bodhi-esque": "1.\nQuestions on Beginning, Middle, and End"}]}, {"id": "pli-tv-pvr8/1", "label": "Uposatha·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "rows": [{"key": "pli-tv-pvr8:1.1", "pali": "Uposatha·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of the observance-day procedure?", "bodhi-esque": "Of the Uposatha act, what is the beginning, what is the middle, what is the conclusion?"}, {"key": "pli-tv-pvr8:1.2", "pali": "Pavā·raṇā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of the invitation procedure?", "bodhi-esque": "Of the Pavāraṇā act, what is the beginning, what is the middle, what is the conclusion?"}, {"key": "pli-tv-pvr8:1.3", "pali": "Tajjanīya·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of a legal procedure of condemnation?", "bodhi-esque": "Of the act of censure, what is the beginning, what is the middle, what is the conclusion?"}, {"key": "pli-tv-pvr8:1.4", "pali": "Niyassa·kammassa …pe…", "brahmali-corrected": "What is the beginning, the middle, and the end of a legal procedure of demotion?", "bodhi-esque": "Of the act of suspension …"}, {"key": "pli-tv-pvr8:1.5", "pali": "pabbājanīya·kammassa …pe…", "brahmali-corrected": "What is the beginning, the middle, and the end of a legal procedure of banishment?", "bodhi-esque": "Of the act of banishment …"}, {"key": "pli-tv-pvr8:1.6", "pali": "paṭisā·raṇīya·kammassa …pe…", "brahmali-corrected": "What is the beginning, the middle, and the end of a legal procedure of reconciliation?", "bodhi-esque": "Of the act of reconciliation …"}, {"key": "pli-tv-pvr8:1.7", "pali": "ukkhepanīya·kammassa …pe…", "brahmali-corrected": "What is the beginning, the middle, and the end of a legal procedure of ejection?", "bodhi-esque": "Of the act of suspension …"}, {"key": "pli-tv-pvr8:1.8", "pali": "pari·vāsa·dānassa …pe…", "brahmali-corrected": "What is the beginning, the middle, and the end of giving probation?", "bodhi-esque": "Of the granting of probation …"}, {"key": "pli-tv-pvr8:1.9", "pali": "mūlāya·paṭi·kassa·nāya …pe…", "brahmali-corrected": "What is the beginning, the middle, and the end of sending back to the beginning?", "bodhi-esque": "Of the sending back to the beginning …"}, {"key": "pli-tv-pvr8:1.10", "pali": "mānatta·dānassa …pe…", "brahmali-corrected": "What is the beginning, the middle, and the end of giving the trial period?", "bodhi-esque": "Of the granting of penance …"}, {"key": "pli-tv-pvr8:1.11", "pali": "abbhānassa …pe…", "brahmali-corrected": "What is the beginning, the middle, and the end of rehabilitation?", "bodhi-esque": "Of the rehabilitation …"}, {"key": "pli-tv-pvr8:1.12", "pali": "upasampadā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of an ordination procedure?", "bodhi-esque": "Of the act of ordination, what is the beginning, what is the middle, what is the conclusion?"}, {"key": "pli-tv-pvr8:1.13", "pali": "Tajjanīya·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of the lifting of a legal procedure of condemnation?", "bodhi-esque": "For the calming of the act of censure, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.14", "pali": "Niyassa·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of the lifting of a legal procedure of demotion?", "bodhi-esque": "For the calming of the act of dependence, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.15", "pali": "Pabbājanīya·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of the lifting of a legal procedure of banishment?", "bodhi-esque": "For the calming of the act of banishment, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.16", "pali": "Paṭisā·raṇīya·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of the lifting of a legal procedure of reconciliation?", "bodhi-esque": "For the calming of the act of reconciliation, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.17", "pali": "Ukkhepanīya·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of the lifting of a legal procedure of ejection?", "bodhi-esque": "For the calming of the act of suspension, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.18", "pali": "Sati·vinayassa ko ādi, kiṁ majje, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of resolution through recollection?", "bodhi-esque": "For the verdict of innocence, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.19", "pali": "A·mūḷha·vinayassa ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of resolution because of past insanity?", "bodhi-esque": "For the verdict of past insanity, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.20", "pali": "Tassapāpiyasikāya ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of a further penalty?", "bodhi-esque": "For the further penalty, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.21", "pali": "Tiṇa·vatthārakassa ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of covering over as if with grass?", "bodhi-esque": "For the covering over as with grass, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.22", "pali": "Bhikkhun·ovādaka·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of appointing an instructor of the nuns?", "bodhi-esque": "For the authorization as an adviser of bhikkhunīs, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.23", "pali": "Ticīvarena a·vippa·vāsa·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of the permission to stay apart from one’s three robes?", "bodhi-esque": "For the authorization to be without the triple robe, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.24", "pali": "Santhata·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of a permission to make a blanket?", "bodhi-esque": "For the authorization for a rug, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.25", "pali": "Rūpiya·chaḍḍaka·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of appointing a money discarder?", "bodhi-esque": "For the authorization to dispose of money, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.26", "pali": "Sāṭiya·g·gāhā·paka·sammutiyo ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of appointing a distributor of rainy-season bathing cloths?", "bodhi-esque": "For the authorizations for a robe-receiver, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.27", "pali": "Patta·g·gāhā·paka·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of appointing a distributor of almsbowls?", "bodhi-esque": "For the authorization for a bowl-receiver, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.28", "pali": "Daṇḍa·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of the permission to use a staff?", "bodhi-esque": "Of the agreement on punishment, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.29", "pali": "Sikkā·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of the permission to use a carrying net?", "bodhi-esque": "Of the agreement on training, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:1.30", "pali": "Daṇḍa·sikkā·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "brahmali-corrected": "What is the beginning, the middle, and the end of the permission to use a staff and a carrying net?", "bodhi-esque": "Of the agreement on punishment and training, what is the beginning, what is the middle, what is the end?"}]}, {"id": "pli-tv-pvr8/2", "label": "2 Ādi·majjh·anta·vissajjanā", "rows": [{"key": "pli-tv-pvr8:2.0", "pali": "2 Ādi·majjh·anta·vissajjanā", "brahmali-corrected": "2.\nReplies on the beginning, the middle, and the end", "bodhi-esque": "2.\nExplanation of the beginning, middle, and end"}, {"key": "pli-tv-pvr8:2.1", "pali": "Uposatha·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "brahmali-corrected": "What is the beginning, the middle, and the end of the observance-day procedure?", "bodhi-esque": "Of the uposatha act, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:2.2", "pali": "Uposatha·kammassa sām·aggī ādi, kiriyā majjhe, niṭṭhānaṁ pari·yosānaṁ.", "brahmali-corrected": "A complete assembly is the beginning of an observance-day procedure,\ncarrying it out is the middle, and concluding it is the end.", "bodhi-esque": "Of the uposatha act, unity is the beginning, the performance is the middle, the completion is the end."}]}, {"id": "pli-tv-pvr8/3", "label": "Pavā·raṇā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "rows": [{"key": "pli-tv-pvr8:3.1", "pali": "Pavā·raṇā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "brahmali-corrected": "What is the beginning, the middle, and the end of the invitation procedure?", "bodhi-esque": "Of the pavāraṇā act, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:3.2", "pali": "Pavā·raṇā·kammassa sām·aggī ādi, kiriyā majjhe, niṭṭhānaṁ pari·yosānaṁ.", "brahmali-corrected": "A complete assembly is the beginning of an invitation procedure,\ncarrying it out is the middle, and concluding it is the end.", "bodhi-esque": "Of the pavāraṇā act, unity is the beginning, the performance is the middle, the completion is the end."}]}, {"id": "pli-tv-pvr8/4", "label": "Tajjanīya·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "rows": [{"key": "pli-tv-pvr8:4.1", "pali": "Tajjanīya·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "brahmali-corrected": "What is the beginning, the middle, and the end of a legal procedure of condemnation?", "bodhi-esque": "Of the censure act, what is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:4.2", "pali": "Tajjanīya·kammassa vatthu ca puggalo ca ādi, ñatti majjhe, kamma·vācā pari·yosānaṁ.", "brahmali-corrected": "The action that is the basis for the offense and the person who\nhas done it are the beginning of a procedure of condemnation,\nthe motion is the middle, and the announcement is the end.", "bodhi-esque": "Of the censure act, the basis and the person are the beginning,\nthe motion is the middle, the announcement of the act is the end."}]}, {"id": "pli-tv-pvr8/5", "label": "Niyassa·kammassa …pe…", "rows": [{"key": "pli-tv-pvr8:5.1", "pali": "Niyassa·kammassa …pe…", "brahmali-corrected": "What is the beginning, the middle, and the end of a legal procedure of demotion? …", "bodhi-esque": "Of the act of subordination …"}, {"key": "pli-tv-pvr8:5.2", "pali": "pabbājanīya·kammassa …pe…", "brahmali-corrected": "of a legal procedure of banishment? …", "bodhi-esque": "Of the act of banishment …"}, {"key": "pli-tv-pvr8:5.3", "pali": "paṭisā·raṇīya·kammassa …pe…", "brahmali-corrected": "of a legal procedure of reconciliation? …", "bodhi-esque": "Of the act of reconciliation …"}, {"key": "pli-tv-pvr8:5.4", "pali": "ukkhepanīya·kammassa …pe…", "brahmali-corrected": "of a legal procedure of ejection? …", "bodhi-esque": "Of the act of suspension …"}, {"key": "pli-tv-pvr8:5.5", "pali": "pari·vāsa·dānassa …pe…", "brahmali-corrected": "of giving probation? …", "bodhi-esque": "Of the granting of probation …"}, {"key": "pli-tv-pvr8:5.6", "pali": "mūlāya·paṭi·kassa·nāya …pe…", "brahmali-corrected": "of sending back to the beginning? …", "bodhi-esque": "Of the reinstatement to the root …"}, {"key": "pli-tv-pvr8:5.7", "pali": "mānatta·dānassa …pe…", "brahmali-corrected": "of giving the trial period? …", "bodhi-esque": "Of the giving of mānatta …"}, {"key": "pli-tv-pvr8:5.8", "pali": "abbhānassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "brahmali-corrected": "of rehabilitation?", "bodhi-esque": "Of the rehabilitation:\nwhat is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:5.9", "pali": "Abbhānassa vatthu ca puggalo ca ādi, ñatti majjhe, kamma·vācā pari·yosānaṁ.", "brahmali-corrected": "The action that is the basis for the offense and the person who has done it are the beginning of rehabilitation,\nthe motion is the middle, and the announcement is the end.", "bodhi-esque": "Of the rehabilitation:\nthe basis and the person are the beginning, the motion is the middle, the formal announcement is the end."}]}, {"id": "pli-tv-pvr8/6", "label": "Upasampadā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "rows": [{"key": "pli-tv-pvr8:6.1", "pali": "Upasampadā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "brahmali-corrected": "What is the beginning, the middle, and the end of an ordination procedure?", "bodhi-esque": "Of the act of full ordination:\nwhat is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:6.2", "pali": "Upasampadā·kammassa puggalo ādi, ñatti majjhe, kamma·vācā pari·yosānaṁ.", "brahmali-corrected": "The person is the beginning of the ordination procedure, the motion is the middle, and the announcement is the end.", "bodhi-esque": "Of the act of full ordination:\nthe person is the beginning, the motion is the middle, the formal announcement is the end."}]}, {"id": "pli-tv-pvr8/7", "label": "Tajjanīya·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ majjhe, kiṁ…", "rows": [{"key": "pli-tv-pvr8:7.1", "pali": "Tajjanīya·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "brahmali-corrected": "What is the beginning, the middle, and the end of the lifting of a legal procedure of condemnation?", "bodhi-esque": "Of the rescinding of the act of censure:\nwhat is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:7.2", "pali": "Tajjanīya·kammassa paṭi·p·passaddhiyā sammā·vattanā ādi, ñatti majjhe, kamma·vācā pari·yosānaṁ.", "brahmali-corrected": "Proper conduct is the beginning of the lifting of a legal procedure of condemnation,\nthe motion is the middle, and the announcement is the end.", "bodhi-esque": "Of the rescinding of the act of censure:\nproper conduct is the beginning, the motion is the middle, the formal announcement is the end."}]}, {"id": "pli-tv-pvr8/8", "label": "Niyassa·kammassa …pe…", "rows": [{"key": "pli-tv-pvr8:8.1", "pali": "Niyassa·kammassa …pe…", "brahmali-corrected": "What is the beginning, the middle, and the end of the lifting of a legal procedure of demotion? …", "bodhi-esque": "Of the act of dependence …"}, {"key": "pli-tv-pvr8:8.2", "pali": "pabbājanīya·kammassa …pe…", "brahmali-corrected": "of a legal procedure of banishment? …", "bodhi-esque": "Of the act of banishment …"}, {"key": "pli-tv-pvr8:8.3", "pali": "paṭisā·raṇīya·kammassa …pe…", "brahmali-corrected": "of a legal procedure of reconciliation? …", "bodhi-esque": "Of the act of reconciliation …"}, {"key": "pli-tv-pvr8:8.4", "pali": "ukkhepanīya·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "brahmali-corrected": "of a legal procedure of ejection?", "bodhi-esque": "Of the rescinding of the act of suspension:\nwhat is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:8.5", "pali": "Ukkhepanīya·kammassa paṭi·p·passaddhiyā sammā·vattanā ādi, ñatti majjhe, kamma·vācā pari·yosānaṁ.", "brahmali-corrected": "Proper conduct is the beginning of the lifting of a legal procedure of ejection,\nthe motion is the middle, and the announcement is the end.", "bodhi-esque": "Of the rescinding of the act of suspension:\nproper conduct is the beginning, the motion is the middle, the formal announcement is the end."}]}, {"id": "pli-tv-pvr8/9", "label": "Sati·vinayassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "rows": [{"key": "pli-tv-pvr8:9.1", "pali": "Sati·vinayassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "brahmali-corrected": "What is the beginning, the middle, and the end of resolution through recollection?", "bodhi-esque": "Of the resolution by mindfulness:\nwhat is the beginning, what is the middle, what is the end?"}, {"key": "pli-tv-pvr8:9.2", "pali": "Sati·vinayassa vatthu ca puggalo ca ādi, ñatti majjhe, kamma·vācā pari·yosānaṁ.", "brahmali-corrected": "The action that is the basis for the offense and the person who\nhas done it are the beginning of resolution through recollection,\nthe motion is the middle, and the announcement is the end.", "bodhi-esque": "Of the resolution by mindfulness:\nthe basis and the person are the beginning, the motion is the middle, the formal announcement is the end."}]}, {"id": "pli-tv-pvr8/10", "label": "A·mūḷha·vinayassa …pe…", "rows": [{"key": "pli-tv-pvr8:10.1", "pali": "A·mūḷha·vinayassa …pe…", "brahmali-corrected": "What is the beginning, the middle, and the end of resolution because of past insanity? …", "bodhi-esque": "For the settlement by innocence …"}, {"key": "pli-tv-pvr8:10.2", "pali": "tassapāpiyasikāya …pe…", "brahmali-corrected": "of a further penalty? …", "bodhi-esque": "For the settlement by the penalty of depravity …"}, {"key": "pli-tv-pvr8:10.3", "pali": "tiṇa·vatthārakassa …pe…", "brahmali-corrected": "of covering over as if with grass? …", "bodhi-esque": "For the settlement by covering with grass …"}, {"key": "pli-tv-pvr8:10.4", "pali": "bhikkhun·ovādaka·sammutiyā …pe…", "brahmali-corrected": "of appointing an instructor of the nuns? …", "bodhi-esque": "For the consent to be an instructor of bhikkhunīs …"}, {"key": "pli-tv-pvr8:10.5", "pali": "ticīvarena a·vippa·vāsa·sammutiyā …pe…", "brahmali-corrected": "of the permission to stay apart from one’s three robes? …", "bodhi-esque": "For the consent to be without separation from the triple robe …"}, {"key": "pli-tv-pvr8:10.6", "pali": "santhata·sammutiyā …pe…", "brahmali-corrected": "of a permission to make a blanket? …", "bodhi-esque": "For the consent for a rug …"}, {"key": "pli-tv-pvr8:10.7", "pali": "rūpiya·chaḍḍaka·sammutiyā …pe…", "brahmali-corrected": "of appointing a money discarder? …", "bodhi-esque": "For the consent to be a disposer of money …"}, {"key": "pli-tv-pvr8:10.8", "pali": "sāṭiya·g·gāhā·paka·sammutiyā …pe…", "brahmali-corrected": "of appointing a distributor of rainy-season bathing cloths? …", "bodhi-esque": "For the consent to be a receiver of a robe …"}, {"key": "pli-tv-pvr8:10.9", "pali": "patta·g·gāhā·paka·sammutiyā …pe…", "brahmali-corrected": "of appointing a distributor of almsbowls? …", "bodhi-esque": "For the consent to be a receiver of a bowl …"}, {"key": "pli-tv-pvr8:10.10", "pali": "daṇḍa·sammutiyā …pe…", "brahmali-corrected": "of the permission to use a staff? …", "bodhi-esque": "For the consent for punishment …"}, {"key": "pli-tv-pvr8:10.11", "pali": "sikkā·sammutiyā …pe…", "brahmali-corrected": "of the permission to use a carrying net? …", "bodhi-esque": "For the consent for training …"}, {"key": "pli-tv-pvr8:10.12", "pali": "daṇḍa·sikkā·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "brahmali-corrected": "of the permission to use a staff and a carrying net?", "bodhi-esque": "For the consent for punishment and training, what is the beginning, what the middle, what the end?"}, {"key": "pli-tv-pvr8:10.13", "pali": "Daṇḍa·sikkā·sammutiyā vatthu ca puggalo ca ādi, ñatti majjhe, kamma·vācā pari·yosānaṁ.", "brahmali-corrected": "The topic and the person are the beginning of the permission to use a staff and a carrying net,\nthe motion is the middle, and the announcement is the end.", "bodhi-esque": "Of the consent for punishment and training, the basis and the person are the beginning,\nthe motion is the middle, the announcement of the deed is the end."}]}, {"id": "pli-tv-pvr8/11", "label": "Uposath·ādi·pucchā·vissajjanā niṭṭhitā.", "rows": [{"key": "pli-tv-pvr8:11.1", "pali": "Uposath·ādi·pucchā·vissajjanā niṭṭhitā.", "brahmali-corrected": "The aspects of the legal procedures are finished.", "bodhi-esque": "The questions and answers on the beginning of the Uposatha are finished."}]}];
 
@@ -773,6 +843,11 @@ const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {"brahmali-corrected": {"pli-tv-pvr8:1.24": ["For an explanation of the rendering “blanket” for <i>santhata</i>, see Appendix of Technical Terms. "]}};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

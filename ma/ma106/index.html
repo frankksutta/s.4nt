@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -617,7 +668,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </a>
   <!-- Row 1: breadcrumbs → Pāli title (English tooltip) → collapse/expand → 🦘 jump → 🔝 → ⚙ -->
   <div class="nav-r1">
-    <nav class="crumbs"><span class="sep-c">›</span><a href="../../major/index.html" title="Major">Major</a><span class="sep-c">›</span><a href="../index.html" title="Madhyama Āgama">MA</a><span class="sep-c">›</span><span class="cur">MA 106</span></nav>
+    <nav class="crumbs"><span class="sep-c">›</span><a href="../../major/index.html" title="Major">Major</a><span class="sep-c">›</span><a href="../index.html" title="Madhyama Āgama">MA</a><span class="sep-c">›</span><span class="cur-nav"><button class="cur cur-nav-btn" onclick="toggleCurNav()" title="Previous / next sutta">MA 106</button><div class="cur-nav-pop" id="curNavPop"><a href="../ma105/index.html">◀ MA 105</a><a href="../ma107/index.html">MA 107 ▶</a></div></span></nav>
     <span class="page-title" title="">想經</span>
     <!-- Collapse / Expand all (main content) — round buttons, one shared tooltip -->
     <span class="all-ctl" title="− collapse or + expand all sections of entire document in main pane">
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,17 +819,35 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
-const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma106:1.1", "lzh": "我聞如是：", "deepsk-2026-v4-fla": "Thus have I heard:", "bdk_corrected": "Thus have I heard."}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma106:2.1", "lzh": "一時，佛遊舍衛國，在勝林給孤獨園。", "deepsk-2026-v4-fla": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada's Park.", "bdk_corrected": "At one time the Buddha was staying at Sāvatthī, in Jeta’s Grove, Anāthapiṇḍika’s Park."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「若有沙門、梵志於地有地想，", "rows": [{"key": "ma106:3.1", "lzh": "爾時，世尊告諸比丘：「若有沙門、梵志於地有地想，", "deepsk-2026-v4-fla": "At that time, the Blessed One said to the monks:", "bdk_corrected": "At that time the World-honored One addressed the monks:\nIf in regard to earth,"}, {"key": "ma106:3.2", "lzh": "地即是神，地是神所，神是地所，", "deepsk-2026-v4-fla": "“If there are ascetics or brahmins who have the notion of earth regarding earth, and they think earth is the self,", "bdk_corrected": "a renunciant or brahmin has a perception of earth [in terms of ] “earth is the self,” “earth\nbelongs to the self,” “the self belongs to earth,” speculating that earth is the self—"}, {"key": "ma106:3.3", "lzh": "彼計地即是神已，便不知地。", "deepsk-2026-v4-fla": "earth belongs to the self, the self belongs to earth,", "bdk_corrected": "then he does not know earth."}, {"key": "ma106:3.4", "lzh": "如是水、火、風、神、天、生主、梵天、無煩、無熱。", "deepsk-2026-v4-fla": "and after conceiving earth as the self, they do not understand earth.\nSo too with water, fire, wind, the self, devas, Prajāpati, Brahmā, the devas of No Affliction and No Heat.", "bdk_corrected": "In the same way with regard to water, . . . fire, . . . wind, . . . spirits, . . . deva s, . . .\nPajāpati, . . .\nBrahmā, . . .\n[the deva s of] nonanxiety, . . .\n[and the deva s of ] nonaffliction. . . ."}, {"key": "ma106:3.5", "lzh": "彼於淨有淨想，淨即是神，淨是神所，神是淨所，", "deepsk-2026-v4-fla": "Regarding the pure, they have the notion of purity, thinking purity is the self, purity belongs to the self,", "bdk_corrected": "[If ] in regard to purity he has a perception of purity [in\nterms of ] “purity is the self,” “purity belongs to the self,”"}, {"key": "ma106:3.6", "lzh": "彼計淨即是神已，便不知淨，無量空處、", "deepsk-2026-v4-fla": "the self belongs to purity, and after conceiving purity as the self, they do not understand purity.", "bdk_corrected": "“the self belongs to purity,” speculating that purity is the self—then he does not know purity.\n[In the same way with] the sphere of infinite space, ."}, {"key": "ma106:3.7", "lzh": "無量識處、無所有處、非有想非無想處、一、別、", "deepsk-2026-v4-fla": "So too with the sphere of infinite space, the sphere of infinite consciousness,", "bdk_corrected": ". . the sphere of infinite consciousness, . . . the sphere of nothingness, . . .\nthe sphere of neither-perception-nor-nonperception, . . . unity, . . . diversity, . . . variety, . . ."}, {"key": "ma106:3.8", "lzh": "若干、見、聞、識、知，得觀意所念、意所思。", "deepsk-2026-v4-fla": "the sphere of nothingness, the sphere of neither perception nor non-perception,\noneness, distinction, multiplicity, seeing, hearing, sensing, knowing,", "bdk_corrected": "the seen, . . . the heard, . . . the cognized, . . . the known,\n. . . the ability to contemplate thoughts in the mind, . . .\n[the ability to contemplate] mental intentions, . . . from this world to that world, ."}, {"key": "ma106:3.9", "lzh": "從此世至彼世，從彼世至此世，", "deepsk-2026-v4-fla": "attaining, observing what the mind thinks and what the mind reflects on.", "bdk_corrected": ". . from that world to this world. . . ."}, {"key": "ma106:3.10", "lzh": "彼於一切有一切想，一切即是神，", "deepsk-2026-v4-fla": "From this world to that world, from that world to this world, regarding everything,", "bdk_corrected": "[If ] in regard to the all he has a perception of the all [in terms of] “the all is the self,” “the\nall belongs to the self,” “the self belongs to the all,” speculating that the all is the self,"}, {"key": "ma106:3.11", "lzh": "一切是神所，神是一切所，", "deepsk-2026-v4-fla": "they have the notion of everything, thinking everything is the self,", "bdk_corrected": ""}, {"key": "ma106:3.12", "lzh": "彼計一切即是神已，便不知一切。」", "deepsk-2026-v4-fla": "everything belongs to the self, the self belongs to everything,\nand after conceiving everything as the self, they do not understand everything.”", "bdk_corrected": "then he does not know the all."}]}, {"id": "4", "label": "「若有沙門、梵志於地則知地，地非是神，", "rows": [{"key": "ma106:4.1", "lzh": "「若有沙門、梵志於地則知地，地非是神，", "deepsk-2026-v4-fla": "“If there are ascetics or brahmins who understand earth regarding earth, and they know earth is not the self,", "bdk_corrected": "If, [however,] in regard to earth a renunciant or brahmin knows earth [in\nterms of ] “earth is not the self,” “earth does not belong to the self,”"}, {"key": "ma106:4.2", "lzh": "地非神所，神非地所，彼不計地即是神已，彼便知地。", "deepsk-2026-v4-fla": "earth does not belong to the self, the self does not belong to earth,", "bdk_corrected": "“the self does not belong to earth,” not speculating that earth is the self— then he knows earth."}, {"key": "ma106:4.3", "lzh": "如是水、火、風、神、天、生主、梵天、無煩、無熱。", "deepsk-2026-v4-fla": "and they do not conceive earth as the self, then they understand earth.", "bdk_corrected": "In the same way with regard to water, . . . fire, . . . wind, . . . spirits, . . . deva s, . . .\nPajāpati, . . .\nBrahmā, . . .\n[the deva s of] nonanxiety, . . .\n[the deva s of] nonaffliction. . . ."}, {"key": "ma106:4.4", "lzh": "彼於淨則知淨，淨非是神，淨非神所，神非淨所。", "deepsk-2026-v4-fla": "So too with water, fire, wind, the self, devas, Prajāpati, Brahmā, the devas of No Affliction and No Heat.", "bdk_corrected": "[If ] in regard to purity he knows purity [in terms of ] “purity is not the self,” “purity does not\nbelong to the self,” “the self does not belong to purity,” not speculating that purity is the self—"}, {"key": "ma106:4.5", "lzh": "彼不計淨即是神已，彼便知淨，", "deepsk-2026-v4-fla": "Regarding the pure, they understand purity, knowing purity is not the self,", "bdk_corrected": "then he knows purity.\n[In the same way in regard to] the sphere of infinite space, ."}, {"key": "ma106:4.6", "lzh": "無量空處、無量識處、無所有處、", "deepsk-2026-v4-fla": "purity does not belong to the self, the self does not belong to purity.\nNot conceiving purity as the self, they understand purity.", "bdk_corrected": ". . the sphere of infinite consciousness, . . . the sphere of nothingness,\n. . . the sphere of neither-perception-nor-nonperception, ."}, {"key": "ma106:4.7", "lzh": "非有想非無想處、一、別、若干、見、", "deepsk-2026-v4-fla": "So too with the sphere of infinite space, the sphere of infinite consciousness,", "bdk_corrected": ". . unity, . . . diversity, . . . variety, . . . the seen, ."}, {"key": "ma106:4.8", "lzh": "聞、識、知，得觀意所念、意所思。", "deepsk-2026-v4-fla": "the sphere of nothingness, the sphere of neither perception nor non-perception,", "bdk_corrected": ". . the heard, . . . the cognized, . . . the known, . . . the ability to contemplate thoughts in the mind, . . .\n[the ability to contemplate] mental intentions, ."}, {"key": "ma106:4.9", "lzh": "從此世至彼世，從彼世至此世，", "deepsk-2026-v4-fla": "oneness, distinction, multiplicity, seeing, hearing, sensing, knowing,", "bdk_corrected": ". . from this world to that world, . . . from that world to this world. . . ."}, {"key": "ma106:4.10", "lzh": "彼於一切則知一切，一切非是神，", "deepsk-2026-v4-fla": "attaining, observing what the mind thinks and what the mind reflects on.", "bdk_corrected": "[If] in regard to the all he knows the all [in terms of] “the all is not the self,” “the all does not\nbelong to the self,” “the self does not belong to the all,” not speculating that the all is the self—"}, {"key": "ma106:4.11", "lzh": "一切非神所，神非一切所，", "deepsk-2026-v4-fla": "From this world to that world, from that world to this world, regarding everything, they understand everything,", "bdk_corrected": ""}, {"key": "ma106:4.12", "lzh": "彼不計一切即是神已，彼便知一切。", "deepsk-2026-v4-fla": "knowing everything is not the self, everything does not belong to the self, the self does not belong to everything.\nNot conceiving everything as the self, they understand everything.", "bdk_corrected": "then he knows the all."}]}, {"id": "5", "label": "「我於地則知地，地非是神，地非神所，", "rows": [{"key": "ma106:5.1", "lzh": "「我於地則知地，地非是神，地非神所，", "deepsk-2026-v4-fla": "“I understand earth regarding earth, knowing earth is not the self,", "bdk_corrected": "In regard to earth, I know earth [in terms of] “earth is not the self,”\n“earth does not belong to the self,” “the self does not belong to earth.”"}, {"key": "ma106:5.2", "lzh": "神非地所，我不計地即是神已，我便知地。", "deepsk-2026-v4-fla": "earth does not belong to the self, the self does not belong to earth.", "bdk_corrected": "Not speculating that earth is the self, I know earth."}, {"key": "ma106:5.3", "lzh": "如是水、火、風、神、天、生主、梵天、無煩、無熱。", "deepsk-2026-v4-fla": "Not conceiving earth as the self, I understand earth.", "bdk_corrected": "In the same way in regard to water, . . . fire, . . . wind, . . . spirits, . . . deva s, . . .\nPajāpati, . . .\nBrahmā, . . .\n[the deva s of] nonanxiety, . . .\n[the deva s of] nonaffliction. . . ."}, {"key": "ma106:5.4", "lzh": "我於淨則知淨，淨非是神，淨非神所，神非淨所。", "deepsk-2026-v4-fla": "So too with water, fire, wind, the self, devas, Prajāpati, Brahmā, the devas of No Affliction and No Heat.", "bdk_corrected": "In regard to purity,\nI know purity [in terms of] “purity is not the self,” “purity does\nnot belong to the self,” “the self does not belong to purity.”"}, {"key": "ma106:5.5", "lzh": "我不計淨即是神已，我便知淨，", "deepsk-2026-v4-fla": "I understand purity regarding the pure, knowing purity is not the self,", "bdk_corrected": "Not speculating that purity is the self, I know purity.\n[In the same way in regard to] the sphere of infinite space, ."}, {"key": "ma106:5.6", "lzh": "無量空處、無量識處、無所有處、", "deepsk-2026-v4-fla": "purity does not belong to the self, the self does not belong to purity.\nNot conceiving purity as the self, I understand purity.", "bdk_corrected": ". . the sphere of infinite consciousness, . . . the sphere of nothingness,\n. . . the sphere of neither-perception-nor-nonperception, ."}, {"key": "ma106:5.7", "lzh": "非有想非無想處、一、別、若干、見、", "deepsk-2026-v4-fla": "So too with the sphere of infinite space, the sphere of infinite consciousness,", "bdk_corrected": ". . unity, . . . diversity, . . . variety, . . . the seen, ."}, {"key": "ma106:5.8", "lzh": "聞、識、知，得觀意所念、意所思。", "deepsk-2026-v4-fla": "the sphere of nothingness, the sphere of neither perception nor non-perception,", "bdk_corrected": ". . the heard, . . . the cognized, . . . the known, . . . the ability to contemplate thoughts in the mind, . . .\n[the ability to contemplate] mental intentions, . . . from this world to that world, ."}, {"key": "ma106:5.9", "lzh": "從此世至彼世，從彼世至此世，", "deepsk-2026-v4-fla": "oneness, distinction, multiplicity, seeing, hearing, sensing, knowing,", "bdk_corrected": ". . from that world to this world. . . ."}, {"key": "ma106:5.10", "lzh": "我於一切則知一切，一切非是神，", "deepsk-2026-v4-fla": "attaining, observing what the mind thinks and what the mind reflects on.", "bdk_corrected": "In regard to the all,\nI know the all [in terms of] “the all is not the self,” “the all\ndoes not belong to the self,” “the self does not belong to the all.”"}, {"key": "ma106:5.11", "lzh": "一切非神所，神非一切所，", "deepsk-2026-v4-fla": "From this world to that world, from that world to this world, I understand everything regarding everything,", "bdk_corrected": ""}, {"key": "ma106:5.12", "lzh": "我不計一切即是神已，我便知一切。」", "deepsk-2026-v4-fla": "knowing everything is not the self, everything does not belong to the self, the self does not belong to everything.\nNot conceiving everything as the self, I understand everything.”", "bdk_corrected": "Not speculating that the all is the self, I know the all."}]}, {"id": "6", "label": "佛說如是。", "rows": [{"key": "ma106:6.1", "lzh": "佛說如是。", "deepsk-2026-v4-fla": "Thus spoke the Buddha.", "bdk_corrected": "Thus spoke the Buddha."}, {"key": "ma106:6.2", "lzh": "彼諸比丘聞佛所說，歡喜奉行。", "deepsk-2026-v4-fla": "Those monks, having heard what the Buddha said, rejoiced and practiced it.", "bdk_corrected": "Having heard what the Buddha said, the monks were delighted and received it respectfully."}]}];
+const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma106:1.1", "lzh": "我聞如是：", "deepsk-2026-v4-fla": "Thus have I heard:", "deepsk-2026-line-by-line": "Thus have I heard:", "bdk_corrected": "Thus have I heard."}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma106:2.1", "lzh": "一時，佛遊舍衛國，在勝林給孤獨園。", "deepsk-2026-v4-fla": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada's Park.", "deepsk-2026-line-by-line": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada's Park.", "bdk_corrected": "At one time the Buddha was staying at Sāvatthī, in Jeta’s Grove, Anāthapiṇḍika’s Park."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「若有沙門、梵志於地有地想，", "rows": [{"key": "ma106:3.1", "lzh": "爾時，世尊告諸比丘：「若有沙門、梵志於地有地想，", "deepsk-2026-v4-fla": "At that time, the Blessed One said to the monks:", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n\"If there are ascetics or brahmins who, regarding earth, have the perception of earth,", "bdk_corrected": "At that time the World-honored One addressed the monks:\nIf in regard to earth,"}, {"key": "ma106:3.2", "lzh": "地即是神，地是神所，神是地所，", "deepsk-2026-v4-fla": "“If there are ascetics or brahmins who have the notion of earth regarding earth, and they think earth is the self,", "deepsk-2026-line-by-line": "earth is the self, earth belongs to the self, the self belongs to earth,", "bdk_corrected": "a renunciant or brahmin has a perception of earth [in terms of ] “earth is the self,” “earth\nbelongs to the self,” “the self belongs to earth,” speculating that earth is the self—"}, {"key": "ma106:3.3", "lzh": "彼計地即是神已，便不知地。", "deepsk-2026-v4-fla": "earth belongs to the self, the self belongs to earth,", "deepsk-2026-line-by-line": "having reckoned earth as the self, they then do not understand earth.", "bdk_corrected": "then he does not know earth."}, {"key": "ma106:3.4", "lzh": "如是水、火、風、神、天、生主、梵天、無煩、無熱。", "deepsk-2026-v4-fla": "and after conceiving earth as the self, they do not understand earth.\nSo too with water, fire, wind, the self, devas, Prajāpati, Brahmā, the devas of No Affliction and No Heat.", "deepsk-2026-line-by-line": "Likewise with water, fire, wind, the self, a deity, the lord of creation, Brahmā, the Vehapphala devas, the Aviha devas.", "bdk_corrected": "In the same way with regard to water, . . . fire, . . . wind, . . . spirits, . . . deva s, . . .\nPajāpati, . . .\nBrahmā, . . .\n[the deva s of] nonanxiety, . . .\n[and the deva s of ] nonaffliction. . . ."}, {"key": "ma106:3.5", "lzh": "彼於淨有淨想，淨即是神，淨是神所，神是淨所，", "deepsk-2026-v4-fla": "Regarding the pure, they have the notion of purity, thinking purity is the self, purity belongs to the self,", "deepsk-2026-line-by-line": "Regarding the pure, they have the perception of the pure;\nthe pure is the self, the pure belongs to the self, the self belongs to the pure,", "bdk_corrected": "[If ] in regard to purity he has a perception of purity [in\nterms of ] “purity is the self,” “purity belongs to the self,”"}, {"key": "ma106:3.6", "lzh": "彼計淨即是神已，便不知淨，無量空處、", "deepsk-2026-v4-fla": "the self belongs to purity, and after conceiving purity as the self, they do not understand purity.", "deepsk-2026-line-by-line": "having reckoned the pure as the self, they then do not understand the pure;\nthe sphere of infinite space,", "bdk_corrected": "“the self belongs to purity,” speculating that purity is the self—then he does not know purity.\n[In the same way with] the sphere of infinite space, ."}, {"key": "ma106:3.7", "lzh": "無量識處、無所有處、非有想非無想處、一、別、", "deepsk-2026-v4-fla": "So too with the sphere of infinite space, the sphere of infinite consciousness,", "deepsk-2026-line-by-line": "the sphere of infinite consciousness, the sphere of nothingness, the sphere of neither perception nor non-perception;\nunity, diversity,", "bdk_corrected": ". . the sphere of infinite consciousness, . . . the sphere of nothingness, . . .\nthe sphere of neither-perception-nor-nonperception, . . . unity, . . . diversity, . . . variety, . . ."}, {"key": "ma106:3.8", "lzh": "若干、見、聞、識、知，得觀意所念、意所思。", "deepsk-2026-v4-fla": "the sphere of nothingness, the sphere of neither perception nor non-perception,\noneness, distinction, multiplicity, seeing, hearing, sensing, knowing,", "deepsk-2026-line-by-line": "a few, seeing, hearing, cognizing, knowing;\nattaining observation of what the mind thinks and what the mind reflects on.", "bdk_corrected": "the seen, . . . the heard, . . . the cognized, . . . the known,\n. . . the ability to contemplate thoughts in the mind, . . .\n[the ability to contemplate] mental intentions, . . . from this world to that world, ."}, {"key": "ma106:3.9", "lzh": "從此世至彼世，從彼世至此世，", "deepsk-2026-v4-fla": "attaining, observing what the mind thinks and what the mind reflects on.", "deepsk-2026-line-by-line": "From this world to that world, from that world to this world,", "bdk_corrected": ". . from that world to this world. . . ."}, {"key": "ma106:3.10", "lzh": "彼於一切有一切想，一切即是神，", "deepsk-2026-v4-fla": "From this world to that world, from that world to this world, regarding everything,", "deepsk-2026-line-by-line": "regarding all, they have the perception of all;\nall is the self,", "bdk_corrected": "[If ] in regard to the all he has a perception of the all [in terms of] “the all is the self,” “the\nall belongs to the self,” “the self belongs to the all,” speculating that the all is the self,"}, {"key": "ma106:3.11", "lzh": "一切是神所，神是一切所，", "deepsk-2026-v4-fla": "they have the notion of everything, thinking everything is the self,", "deepsk-2026-line-by-line": "all belongs to the self, the self belongs to all,", "bdk_corrected": ""}, {"key": "ma106:3.12", "lzh": "彼計一切即是神已，便不知一切。」", "deepsk-2026-v4-fla": "everything belongs to the self, the self belongs to everything,\nand after conceiving everything as the self, they do not understand everything.”", "deepsk-2026-line-by-line": "having reckoned all as the self, they then do not understand all.\"", "bdk_corrected": "then he does not know the all."}]}, {"id": "4", "label": "「若有沙門、梵志於地則知地，地非是神，", "rows": [{"key": "ma106:4.1", "lzh": "「若有沙門、梵志於地則知地，地非是神，", "deepsk-2026-v4-fla": "“If there are ascetics or brahmins who understand earth regarding earth, and they know earth is not the self,", "deepsk-2026-line-by-line": "\"If there are ascetics or brahmins who, regarding earth, then understand earth, earth is not the self,", "bdk_corrected": "If, [however,] in regard to earth a renunciant or brahmin knows earth [in\nterms of ] “earth is not the self,” “earth does not belong to the self,”"}, {"key": "ma106:4.2", "lzh": "地非神所，神非地所，彼不計地即是神已，彼便知地。", "deepsk-2026-v4-fla": "earth does not belong to the self, the self does not belong to earth,", "deepsk-2026-line-by-line": "Earth is not the self, the self is not earth;\nnot regarding earth as the self, one then knows earth.", "bdk_corrected": "“the self does not belong to earth,” not speculating that earth is the self— then he knows earth."}, {"key": "ma106:4.3", "lzh": "如是水、火、風、神、天、生主、梵天、無煩、無熱。", "deepsk-2026-v4-fla": "and they do not conceive earth as the self, then they understand earth.", "deepsk-2026-line-by-line": "Likewise water, fire, wind, the self, deva, the creator, Brahmā, the unafflicted, the unheated.", "bdk_corrected": "In the same way with regard to water, . . . fire, . . . wind, . . . spirits, . . . deva s, . . .\nPajāpati, . . .\nBrahmā, . . .\n[the deva s of] nonanxiety, . . .\n[the deva s of] nonaffliction. . . ."}, {"key": "ma106:4.4", "lzh": "彼於淨則知淨，淨非是神，淨非神所，神非淨所。", "deepsk-2026-v4-fla": "So too with water, fire, wind, the self, devas, Prajāpati, Brahmā, the devas of No Affliction and No Heat.", "deepsk-2026-line-by-line": "Regarding the pure, one knows the pure;\nthe pure is not the self, the pure is not what belongs to the self, the self is not what belongs to the pure.", "bdk_corrected": "[If ] in regard to purity he knows purity [in terms of ] “purity is not the self,” “purity does not\nbelong to the self,” “the self does not belong to purity,” not speculating that purity is the self—"}, {"key": "ma106:4.5", "lzh": "彼不計淨即是神已，彼便知淨，", "deepsk-2026-v4-fla": "Regarding the pure, they understand purity, knowing purity is not the self,", "deepsk-2026-line-by-line": "Not regarding the pure as the self, one then knows the pure.", "bdk_corrected": "then he knows purity.\n[In the same way in regard to] the sphere of infinite space, ."}, {"key": "ma106:4.6", "lzh": "無量空處、無量識處、無所有處、", "deepsk-2026-v4-fla": "purity does not belong to the self, the self does not belong to purity.\nNot conceiving purity as the self, they understand purity.", "deepsk-2026-line-by-line": "The sphere of infinite space, the sphere of infinite consciousness, the sphere of nothingness,", "bdk_corrected": ". . the sphere of infinite consciousness, . . . the sphere of nothingness,\n. . . the sphere of neither-perception-nor-nonperception, ."}, {"key": "ma106:4.7", "lzh": "非有想非無想處、一、別、若干、見、", "deepsk-2026-v4-fla": "So too with the sphere of infinite space, the sphere of infinite consciousness,", "deepsk-2026-line-by-line": "The sphere of neither perception nor non-perception, unity, distinction, multiplicity, seeing,", "bdk_corrected": ". . unity, . . . diversity, . . . variety, . . . the seen, ."}, {"key": "ma106:4.8", "lzh": "聞、識、知，得觀意所念、意所思。", "deepsk-2026-v4-fla": "the sphere of nothingness, the sphere of neither perception nor non-perception,", "deepsk-2026-line-by-line": "Hearing, cognizing, knowing, attaining observation of what the mind intends and what the mind thinks.", "bdk_corrected": ". . the heard, . . . the cognized, . . . the known, . . . the ability to contemplate thoughts in the mind, . . .\n[the ability to contemplate] mental intentions, ."}, {"key": "ma106:4.9", "lzh": "從此世至彼世，從彼世至此世，", "deepsk-2026-v4-fla": "oneness, distinction, multiplicity, seeing, hearing, sensing, knowing,", "deepsk-2026-line-by-line": "From this world to that world, from that world to this world,", "bdk_corrected": ". . from this world to that world, . . . from that world to this world. . . ."}, {"key": "ma106:4.10", "lzh": "彼於一切則知一切，一切非是神，", "deepsk-2026-v4-fla": "attaining, observing what the mind thinks and what the mind reflects on.", "deepsk-2026-line-by-line": "Regarding all, one knows all;\nall is not the self,", "bdk_corrected": "[If] in regard to the all he knows the all [in terms of] “the all is not the self,” “the all does not\nbelong to the self,” “the self does not belong to the all,” not speculating that the all is the self—"}, {"key": "ma106:4.11", "lzh": "一切非神所，神非一切所，", "deepsk-2026-v4-fla": "From this world to that world, from that world to this world, regarding everything, they understand everything,", "deepsk-2026-line-by-line": "All is not what belongs to the self, the self is not what belongs to all,", "bdk_corrected": ""}, {"key": "ma106:4.12", "lzh": "彼不計一切即是神已，彼便知一切。", "deepsk-2026-v4-fla": "knowing everything is not the self, everything does not belong to the self, the self does not belong to everything.\nNot conceiving everything as the self, they understand everything.", "deepsk-2026-line-by-line": "Not regarding all as the self, one then knows all.", "bdk_corrected": "then he knows the all."}]}, {"id": "5", "label": "「我於地則知地，地非是神，地非神所，", "rows": [{"key": "ma106:5.1", "lzh": "「我於地則知地，地非是神，地非神所，", "deepsk-2026-v4-fla": "“I understand earth regarding earth, knowing earth is not the self,", "deepsk-2026-line-by-line": "\"Regarding earth, I know earth;\nearth is not the self, earth is not what belongs to the self,", "bdk_corrected": "In regard to earth, I know earth [in terms of] “earth is not the self,”\n“earth does not belong to the self,” “the self does not belong to earth.”"}, {"key": "ma106:5.2", "lzh": "神非地所，我不計地即是神已，我便知地。", "deepsk-2026-v4-fla": "earth does not belong to the self, the self does not belong to earth.", "deepsk-2026-line-by-line": "The self is not what belongs to earth;\nnot regarding earth as the self, I then know earth.", "bdk_corrected": "Not speculating that earth is the self, I know earth."}, {"key": "ma106:5.3", "lzh": "如是水、火、風、神、天、生主、梵天、無煩、無熱。", "deepsk-2026-v4-fla": "Not conceiving earth as the self, I understand earth.", "deepsk-2026-line-by-line": "Likewise water, fire, wind, the self, deva, the creator, Brahmā, the unafflicted, the unheated.", "bdk_corrected": "In the same way in regard to water, . . . fire, . . . wind, . . . spirits, . . . deva s, . . .\nPajāpati, . . .\nBrahmā, . . .\n[the deva s of] nonanxiety, . . .\n[the deva s of] nonaffliction. . . ."}, {"key": "ma106:5.4", "lzh": "我於淨則知淨，淨非是神，淨非神所，神非淨所。", "deepsk-2026-v4-fla": "So too with water, fire, wind, the self, devas, Prajāpati, Brahmā, the devas of No Affliction and No Heat.", "deepsk-2026-line-by-line": "Regarding the pure, I know the pure;\nthe pure is not the self, the pure is not what belongs to the self, the self is not what belongs to the pure.", "bdk_corrected": "In regard to purity,\nI know purity [in terms of] “purity is not the self,” “purity does\nnot belong to the self,” “the self does not belong to purity.”"}, {"key": "ma106:5.5", "lzh": "我不計淨即是神已，我便知淨，", "deepsk-2026-v4-fla": "I understand purity regarding the pure, knowing purity is not the self,", "deepsk-2026-line-by-line": "I do not consider purity to be the self itself;\nthen I know purity.", "bdk_corrected": "Not speculating that purity is the self, I know purity.\n[In the same way in regard to] the sphere of infinite space, ."}, {"key": "ma106:5.6", "lzh": "無量空處、無量識處、無所有處、", "deepsk-2026-v4-fla": "purity does not belong to the self, the self does not belong to purity.\nNot conceiving purity as the self, I understand purity.", "deepsk-2026-line-by-line": "The sphere of infinite space, the sphere of infinite consciousness, the sphere of nothingness,", "bdk_corrected": ". . the sphere of infinite consciousness, . . . the sphere of nothingness,\n. . . the sphere of neither-perception-nor-nonperception, ."}, {"key": "ma106:5.7", "lzh": "非有想非無想處、一、別、若干、見、", "deepsk-2026-v4-fla": "So too with the sphere of infinite space, the sphere of infinite consciousness,", "deepsk-2026-line-by-line": "the sphere of neither perception nor non-perception, unity, distinction, multiplicity, seeing,", "bdk_corrected": ". . unity, . . . diversity, . . . variety, . . . the seen, ."}, {"key": "ma106:5.8", "lzh": "聞、識、知，得觀意所念、意所思。", "deepsk-2026-v4-fla": "the sphere of nothingness, the sphere of neither perception nor non-perception,", "deepsk-2026-line-by-line": "hearing, cognizing, knowing, attaining insight into what the mind intends and thinks.", "bdk_corrected": ". . the heard, . . . the cognized, . . . the known, . . . the ability to contemplate thoughts in the mind, . . .\n[the ability to contemplate] mental intentions, . . . from this world to that world, ."}, {"key": "ma106:5.9", "lzh": "從此世至彼世，從彼世至此世，", "deepsk-2026-v4-fla": "oneness, distinction, multiplicity, seeing, hearing, sensing, knowing,", "deepsk-2026-line-by-line": "From this world to that world, from that world to this world,", "bdk_corrected": ". . from that world to this world. . . ."}, {"key": "ma106:5.10", "lzh": "我於一切則知一切，一切非是神，", "deepsk-2026-v4-fla": "attaining, observing what the mind thinks and what the mind reflects on.", "deepsk-2026-line-by-line": "I then know all things as all things;\nall things are not the self,", "bdk_corrected": "In regard to the all,\nI know the all [in terms of] “the all is not the self,” “the all\ndoes not belong to the self,” “the self does not belong to the all.”"}, {"key": "ma106:5.11", "lzh": "一切非神所，神非一切所，", "deepsk-2026-v4-fla": "From this world to that world, from that world to this world, I understand everything regarding everything,", "deepsk-2026-line-by-line": "all things do not belong to the self, the self is not possessed by all things,", "bdk_corrected": ""}, {"key": "ma106:5.12", "lzh": "我不計一切即是神已，我便知一切。」", "deepsk-2026-v4-fla": "knowing everything is not the self, everything does not belong to the self, the self does not belong to everything.\nNot conceiving everything as the self, I understand everything.”", "deepsk-2026-line-by-line": "I do not consider all things to be the self itself;\nthen I know all things.\"", "bdk_corrected": "Not speculating that the all is the self, I know the all."}]}, {"id": "6", "label": "佛說如是。", "rows": [{"key": "ma106:6.1", "lzh": "佛說如是。", "deepsk-2026-v4-fla": "Thus spoke the Buddha.", "deepsk-2026-line-by-line": "Thus spoke the Buddha.", "bdk_corrected": "Thus spoke the Buddha."}, {"key": "ma106:6.2", "lzh": "彼諸比丘聞佛所說，歡喜奉行。", "deepsk-2026-v4-fla": "Those monks, having heard what the Buddha said, rejoiced and practiced it.", "deepsk-2026-line-by-line": "Those bhikkhus, having heard what the Buddha said, rejoiced and practiced accordingly.", "bdk_corrected": "Having heard what the Buddha said, the monks were delighted and received it respectfully."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "warn": ""}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -780,7 +855,7 @@ const SW_MIN = 150, SW_DEFAULT = 240;   // TOC sidebar width: px floor; max = 50
 const FN_MIN = 120, FN_MAXFRAC = 0.8, FN_STRIP_REM = 2.4;   // footnote region clamp + strip
 const FNFS_MIN = 0.8, FNFS_MAX = 1.8;   // footnote text-size multiplier bounds
 
-let COLS = ["lzh", "deepsk-2026-v4-fla", "bdk_corrected"];   // render.py already caps the default to MAX_COLS; restore path re-caps
+let COLS = ["lzh", "deepsk-2026-v4-fla", "deepsk-2026-line-by-line", "bdk_corrected"];   // render.py already caps the default to MAX_COLS; restore path re-caps
 let sidebarVisible = true;
 let currentTheme = 'light';
 let currentFs = 15;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

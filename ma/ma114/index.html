@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -617,7 +668,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </a>
   <!-- Row 1: breadcrumbs → Pāli title (English tooltip) → collapse/expand → 🦘 jump → 🔝 → ⚙ -->
   <div class="nav-r1">
-    <nav class="crumbs"><span class="sep-c">›</span><a href="../../major/index.html" title="Major">Major</a><span class="sep-c">›</span><a href="../index.html" title="Madhyama Āgama">MA</a><span class="sep-c">›</span><span class="cur">MA 114</span></nav>
+    <nav class="crumbs"><span class="sep-c">›</span><a href="../../major/index.html" title="Major">Major</a><span class="sep-c">›</span><a href="../index.html" title="Madhyama Āgama">MA</a><span class="sep-c">›</span><span class="cur-nav"><button class="cur cur-nav-btn" onclick="toggleCurNav()" title="Previous / next sutta">MA 114</button><div class="cur-nav-pop" id="curNavPop"><a href="../ma113/index.html">◀ MA 113</a><a href="../ma115/index.html">MA 115 ▶</a></div></span></nav>
     <span class="page-title" title="">優陀羅經</span>
     <!-- Collapse / Expand all (main content) — round buttons, one shared tooltip -->
     <span class="all-ctl" title="− collapse or + expand all sections of entire document in main pane">
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,17 +819,35 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
-const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma114:1.1", "lzh": "我聞如是：", "deepsk-2026-v4-fla": "Thus have I heard:", "bdk_corrected": "Thus have I heard."}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma114:2.1", "lzh": "一時，佛遊舍衛國，在勝林給孤獨園。", "deepsk-2026-v4-fla": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, in Anāthapiṇḍada's Park.", "bdk_corrected": "At one time, the Buddha was staying at Sāvatthī, in Jeta’s Grove, Anāthapiṇḍika’s Park."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「優陀羅羅摩子，彼在眾中，", "rows": [{"key": "ma114:3.1", "lzh": "爾時，世尊告諸比丘：「優陀羅羅摩子，彼在眾中，", "deepsk-2026-v4-fla": "", "bdk_corrected": "At that time the World-honored One addressed the monks:"}, {"key": "ma114:3.2", "lzh": "數如是說：『於此生中，觀此覺此，", "deepsk-2026-v4-fla": "", "bdk_corrected": "In assemblies Uddaka Rāmaputta often spoke like this,\n“In this lifetime I have contemplated this and realized this."}, {"key": "ma114:3.3", "lzh": "不知癰本，然後具知癰本。", "deepsk-2026-v4-fla": "", "bdk_corrected": "Not knowing the root of the tumor, I have subsequently come to know fully the root of the tumor.”"}, {"key": "ma114:3.4", "lzh": "』優陀羅羅摩子無一切知自稱一切知，", "deepsk-2026-v4-fla": "", "bdk_corrected": "Uddaka Rāmaputta was not omniscient yet he claimed to be omniscient;"}, {"key": "ma114:3.5", "lzh": "實無所覺自稱有覺。", "deepsk-2026-v4-fla": "", "bdk_corrected": "he had not actually realized but claimed to have realized."}, {"key": "ma114:3.6", "lzh": "優陀羅羅摩子如是見、如是說，", "deepsk-2026-v4-fla": "", "bdk_corrected": "Uddaka Rāmaputta had this view and taught like this,"}, {"key": "ma114:3.7", "lzh": "有者，是病、是癰、是刺；設無想者，", "deepsk-2026-v4-fla": "", "bdk_corrected": "“Existence is an illness, a tumor, a thorn.\nThose who advocate nonperception are foolish."}, {"key": "ma114:3.8", "lzh": "是愚癡也；若有所覺，是止息、", "deepsk-2026-v4-fla": "", "bdk_corrected": "Those who have realized [know]:\nthis is tranquil, this is sublime, namely attaining the sphere of neither-perception-nor-nonperception.”"}, {"key": "ma114:3.9", "lzh": "是最妙，謂乃至非有想非無想處。", "deepsk-2026-v4-fla": "", "bdk_corrected": ""}, {"key": "ma114:3.10", "lzh": "彼自樂身，自受於身，自著身已，", "deepsk-2026-v4-fla": "", "bdk_corrected": "He delighted in his own identity and clung to his own identity."}, {"key": "ma114:3.11", "lzh": "修習乃至非有想非無想處，", "deepsk-2026-v4-fla": "", "bdk_corrected": "Attached to his own identity, he practiced attaining the sphere of neither-perception-nor-nonperception."}, {"key": "ma114:3.12", "lzh": "身壞命終，生非有想非無想天中，", "deepsk-2026-v4-fla": "", "bdk_corrected": "On the breaking up of the body at death, he was reborn among the deva s of neither-perception-nor-nonperception."}, {"key": "ma114:3.13", "lzh": "彼壽盡已，復來此間，生於狸中。", "deepsk-2026-v4-fla": "", "bdk_corrected": "When his life span there is exhausted he will return to this world and be reborn as a lowly person."}, {"key": "ma114:3.14", "lzh": "此比丘正說者，於此生中，", "deepsk-2026-v4-fla": "", "bdk_corrected": "As to this, a monk [in my dispensation] might rightly say,"}, {"key": "ma114:3.15", "lzh": "觀此覺此，不知癰本，然後具知癰本。", "deepsk-2026-v4-fla": "At that time, the Blessed One said to the monks:", "bdk_corrected": "“In this lifetime I have contemplated this and realized this.\nNot knowing the root of the tumor, I have subsequently come to know fully the root of the tumor.”"}]}, {"id": "4", "label": "「云何比丘正觀耶？", "rows": [{"key": "ma114:4.1", "lzh": "「云何比丘正觀耶？", "deepsk-2026-v4-fla": "\"How does a bhikkhu have right view?", "bdk_corrected": "For a monk, what is right contemplation?"}, {"key": "ma114:4.2", "lzh": "比丘者，知六更觸，知習、知滅、知味、", "deepsk-2026-v4-fla": "A bhikkhu knows the six sense contacts, knows their arising, knows their cessation, knows their gratification,\nknows their danger, and knows the escape from them, understanding them with wisdom as they truly are.", "bdk_corrected": "A monk knows the six bases of contact, knows their arising, knows their passing away,\nknows their attraction, knows their peril, and knows the escape from them."}, {"key": "ma114:4.3", "lzh": "知患、知出要，以慧知如真，是謂比丘正觀也。", "deepsk-2026-v4-fla": "This is called a bhikkhu having right view.", "bdk_corrected": "He knows [this] with wisdom, as it really is.\nFor a monk this is called right contemplation."}, {"key": "ma114:4.4", "lzh": "云何比丘覺，比丘者，知三覺，知習、知滅、", "deepsk-2026-v4-fla": "How does a bhikkhu have understanding?\nA bhikkhu knows the three feelings, knows their arising, knows their cessation, knows their gratification,", "bdk_corrected": "For a monk, what is realization?\nA monk knows the three [types of] feeling, knows their arising, knows their passing away,"}, {"key": "ma114:4.5", "lzh": "知味、知患、知出要，以慧知如真，是謂比丘覺。", "deepsk-2026-v4-fla": "knows their danger, and knows the escape from them, understanding them with wisdom as they truly are.", "bdk_corrected": "knows their attraction, knows their peril, and knows the escape from them.\nHe knows this with wisdom, as it really is.\nFor a monk, this is called right realization."}, {"key": "ma114:4.6", "lzh": "云何比丘不知癰本，然後具知癰本？", "deepsk-2026-v4-fla": "This is called a bhikkhu having understanding.\nHow does a bhikkhu not know the root of the boil and then fully know the root of the boil?", "bdk_corrected": "For a monk, what is not knowing the root of the tumor but subsequently coming to know fully the root of the tumor?"}, {"key": "ma114:4.7", "lzh": "比丘者，知有愛滅，拔其根本，至竟不復生，", "deepsk-2026-v4-fla": "A bhikkhu knows the cessation of craving for existence, uproots its root so that it never arises again.", "bdk_corrected": "A monk knows that craving can be brought to cessation and pulls it out by its roots completely,\nso that it does not arise again."}, {"key": "ma114:4.8", "lzh": "是謂比丘不知癰本，然後具知癰本。", "deepsk-2026-v4-fla": "This is called a bhikkhu not knowing the root of the boil and then fully knowing the root of the boil.\nThe boil refers to this body.", "bdk_corrected": "For a monk, this is called not knowing the root of the tumor\nbut subsequently coming to know fully the root of the tumor."}, {"key": "ma114:4.9", "lzh": "癰者，謂此身也。", "deepsk-2026-v4-fla": "It is composed of the coarse four great elements, born from parents,", "bdk_corrected": "As to the tumor, this is the body, with its coarse form made of the four elements,"}, {"key": "ma114:4.10", "lzh": "色麤四大，從父母生，飲食長養，衣被按摩，", "deepsk-2026-v4-fla": "nourished by food and drink, maintained by clothing, massage, bathing, and endurance.\nIt is subject to impermanence, decay, and dissolution.", "bdk_corrected": "born of father and mother, to be nourished by food and drink, to be covered by clothing and blankets,\nto be massaged and bathed, having to endure being mishandled—"}, {"key": "ma114:4.11", "lzh": "澡浴強忍，是無常法、壞法、散法，是謂癰也。", "deepsk-2026-v4-fla": "This is called the boil.", "bdk_corrected": "it is impermanent by nature, of a nature to deteriorate and fall apart.\nThis is called the tumor."}, {"key": "ma114:4.12", "lzh": "癰本者，謂三愛也。", "deepsk-2026-v4-fla": "The root of the boil refers to the three cravings:\ncraving for sensual pleasures, craving for existence in the form realm, and craving for existence in the formless realm.", "bdk_corrected": "As to the root of the tumor, this is the threefold craving."}, {"key": "ma114:4.13", "lzh": "欲愛、色愛、無色愛，是謂癰本。", "deepsk-2026-v4-fla": "This is called the root of the boil.", "bdk_corrected": "Craving for sensual pleasures, craving for form, and craving for the formless:\nthese are called the root of the tumor."}, {"key": "ma114:4.14", "lzh": "癰一切漏者，謂六更觸處也。", "deepsk-2026-v4-fla": "The boil that is all the taints refers to the six sense bases.\nThe eye leaks by seeing forms, the ear leaks by hearing sounds, the nose leaks by smelling odors,", "bdk_corrected": "As to the taints of the tumor, these are the six bases of sense contact."}, {"key": "ma114:4.15", "lzh": "眼漏視色，耳漏聞聲，鼻漏嗅香，舌漏嘗味，", "deepsk-2026-v4-fla": "the tongue leaks by tasting flavors, the body leaks by feeling tactile objects,", "bdk_corrected": "The taint [related to] the eye on seeing forms, the taint [related to] the ear on hearing sounds,\nthe taint [related to] the nose on smelling odors, the taint [related to] the tongue on tasting flavors,"}, {"key": "ma114:4.16", "lzh": "身漏覺觸，意漏知諸法，是謂癰一切漏。", "deepsk-2026-v4-fla": "and the mind leaks by cognizing mental phenomena.\nThis is called the boil that is all the taints.\"", "bdk_corrected": "the taint [related to] the body on experiencing tangibles, the taint [related to] the mind on knowing mental objects:\nthese are called the taints of the tumor."}]}, {"id": "5", "label": "「比丘！", "rows": [{"key": "ma114:5.1", "lzh": "「比丘！", "deepsk-2026-v4-fla": "\"Bhikkhus, I have explained to you the boil and the root of the boil.", "bdk_corrected": "Monks, I have taught you about the tumor, and about the root of the tumor."}, {"key": "ma114:5.2", "lzh": "我已為汝說癰、說癰本，如尊師所為弟子起大慈哀，", "deepsk-2026-v4-fla": "As a compassionate teacher, out of great kindness and sympathy, seeking the welfare and benefit of his disciples,", "bdk_corrected": "What a teacher should do for his disciples out of great compassion, mercy, sympathy, and concern,"}, {"key": "ma114:5.3", "lzh": "憐念愍傷，求義及饒益，求安隱快樂者，我今已作。", "deepsk-2026-v4-fla": "desiring their peace and happiness, I have done what should be done.", "bdk_corrected": "seeking their benefit and welfare, seeking their safety and well-being, that I have now done."}, {"key": "ma114:5.4", "lzh": "汝等亦當復自作，至無事處、山林樹下、空安靜處，", "deepsk-2026-v4-fla": "Now you yourselves should also go to a secluded place, to a forest, to the foot of a tree,", "bdk_corrected": "You too should do your part.\nGo sit in meditation and contemplation in a secluded place, on a mountain,\nin a forest, at the base of a tree, in an empty and quiet place."}, {"key": "ma114:5.5", "lzh": "燕坐思惟，勿得放逸，勤加精進，莫令後悔。", "deepsk-2026-v4-fla": "or to an empty, quiet place, and sit in meditation, reflecting carefully.", "bdk_corrected": "Do not be negligent.\nMake diligent efforts, lest you regret it later."}, {"key": "ma114:5.6", "lzh": "此是我之教勅，是我訓誨。」", "deepsk-2026-v4-fla": "Do not be heedless, but diligently exert effort, so that you will not regret it later.\nThis is my instruction, my teaching.\"", "bdk_corrected": "This is my instruction;\nthis is my teaching."}]}, {"id": "6", "label": "佛說如是。", "rows": [{"key": "ma114:6.1", "lzh": "佛說如是。", "deepsk-2026-v4-fla": "Thus spoke the Buddha.", "bdk_corrected": "Thus spoke the Buddha."}, {"key": "ma114:6.2", "lzh": "彼諸比丘聞佛所說，歡喜奉行。", "deepsk-2026-v4-fla": "Those bhikkhus, having heard what the Buddha said, rejoiced and faithfully put it into practice.", "bdk_corrected": "Having heard what the Buddha said, the monks were delighted and received it respectfully."}]}];
+const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma114:1.1", "lzh": "我聞如是：", "deepsk-2026-v4-fla": "Thus have I heard:", "deepsk-2026-line-by-line": "Thus have I heard:", "bdk_corrected": "Thus have I heard."}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma114:2.1", "lzh": "一時，佛遊舍衛國，在勝林給孤獨園。", "deepsk-2026-v4-fla": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, in Anāthapiṇḍada's Park.", "deepsk-2026-line-by-line": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍika's Park.", "bdk_corrected": "At one time, the Buddha was staying at Sāvatthī, in Jeta’s Grove, Anāthapiṇḍika’s Park."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「優陀羅羅摩子，彼在眾中，", "rows": [{"key": "ma114:3.1", "lzh": "爾時，世尊告諸比丘：「優陀羅羅摩子，彼在眾中，", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "At that time, the Blessed One told the monks:", "bdk_corrected": "At that time the World-honored One addressed the monks:"}, {"key": "ma114:3.2", "lzh": "數如是說：『於此生中，觀此覺此，", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "Udraka Rāmaputra, in the assembly, often spoke thus:\n'In this life, observing this, feeling this,", "bdk_corrected": "In assemblies Uddaka Rāmaputta often spoke like this,\n“In this lifetime I have contemplated this and realized this."}, {"key": "ma114:3.3", "lzh": "不知癰本，然後具知癰本。", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "not knowing the root of the boil, then fully knowing the root of the boil.'", "bdk_corrected": "Not knowing the root of the tumor, I have subsequently come to know fully the root of the tumor.”"}, {"key": "ma114:3.4", "lzh": "』優陀羅羅摩子無一切知自稱一切知，", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "Udraka Rāmaputra, without omniscience, claimed omniscience;", "bdk_corrected": "Uddaka Rāmaputta was not omniscient yet he claimed to be omniscient;"}, {"key": "ma114:3.5", "lzh": "實無所覺自稱有覺。", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "truly without realization, he claimed to have realization.", "bdk_corrected": "he had not actually realized but claimed to have realized."}, {"key": "ma114:3.6", "lzh": "優陀羅羅摩子如是見、如是說，", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "Udraka Rāmaputra, seeing thus and speaking thus,", "bdk_corrected": "Uddaka Rāmaputta had this view and taught like this,"}, {"key": "ma114:3.7", "lzh": "有者，是病、是癰、是刺；設無想者，", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "said:\n'What exists is disease, is a boil, is a thorn;\nthe state of non-perception", "bdk_corrected": "“Existence is an illness, a tumor, a thorn.\nThose who advocate nonperception are foolish."}, {"key": "ma114:3.8", "lzh": "是愚癡也；若有所覺，是止息、", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "is foolishness;\nif there is any feeling, that is calming,", "bdk_corrected": "Those who have realized [know]:\nthis is tranquil, this is sublime, namely attaining the sphere of neither-perception-nor-nonperception.”"}, {"key": "ma114:3.9", "lzh": "是最妙，謂乃至非有想非無想處。", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "that is most excellent, namely up to the sphere of neither perception nor non-perception.'", "bdk_corrected": ""}, {"key": "ma114:3.10", "lzh": "彼自樂身，自受於身，自著身已，", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "He himself delighted in the body, himself experienced the body, himself clung to the body,", "bdk_corrected": "He delighted in his own identity and clung to his own identity."}, {"key": "ma114:3.11", "lzh": "修習乃至非有想非無想處，", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "and cultivated up to the sphere of neither perception nor non-perception.", "bdk_corrected": "Attached to his own identity, he practiced attaining the sphere of neither-perception-nor-nonperception."}, {"key": "ma114:3.12", "lzh": "身壞命終，生非有想非無想天中，", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "When his body broke up and his life ended,\nhe was reborn in the heaven of the sphere of neither perception nor non-perception.", "bdk_corrected": "On the breaking up of the body at death, he was reborn among the deva s of neither-perception-nor-nonperception."}, {"key": "ma114:3.13", "lzh": "彼壽盡已，復來此間，生於狸中。", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "When his lifespan was exhausted, he again came to this world, born among cats.", "bdk_corrected": "When his life span there is exhausted he will return to this world and be reborn as a lowly person."}, {"key": "ma114:3.14", "lzh": "此比丘正說者，於此生中，", "deepsk-2026-v4-fla": "", "deepsk-2026-line-by-line": "This bhikkhu who speaks rightly, in this very life,", "bdk_corrected": "As to this, a monk [in my dispensation] might rightly say,"}, {"key": "ma114:3.15", "lzh": "觀此覺此，不知癰本，然後具知癰本。", "deepsk-2026-v4-fla": "At that time, the Blessed One said to the monks:", "deepsk-2026-line-by-line": "observes this, feels this, not knowing the root of the boil, and then fully knows the root of the boil.", "bdk_corrected": "“In this lifetime I have contemplated this and realized this.\nNot knowing the root of the tumor, I have subsequently come to know fully the root of the tumor.”"}]}, {"id": "4", "label": "「云何比丘正觀耶？", "rows": [{"key": "ma114:4.1", "lzh": "「云何比丘正觀耶？", "deepsk-2026-v4-fla": "\"How does a bhikkhu have right view?", "deepsk-2026-line-by-line": "\"How does a bhikkhu observe rightly?", "bdk_corrected": "For a monk, what is right contemplation?"}, {"key": "ma114:4.2", "lzh": "比丘者，知六更觸，知習、知滅、知味、", "deepsk-2026-v4-fla": "A bhikkhu knows the six sense contacts, knows their arising, knows their cessation, knows their gratification,\nknows their danger, and knows the escape from them, understanding them with wisdom as they truly are.", "deepsk-2026-line-by-line": "A bhikkhu knows the six contacts, knows their arising, their cessation, their gratification,", "bdk_corrected": "A monk knows the six bases of contact, knows their arising, knows their passing away,\nknows their attraction, knows their peril, and knows the escape from them."}, {"key": "ma114:4.3", "lzh": "知患、知出要，以慧知如真，是謂比丘正觀也。", "deepsk-2026-v4-fla": "This is called a bhikkhu having right view.", "deepsk-2026-line-by-line": "their danger, and the escape from them, knowing them as they truly are with wisdom —\nthis is called a bhikkhu's right observation.", "bdk_corrected": "He knows [this] with wisdom, as it really is.\nFor a monk this is called right contemplation."}, {"key": "ma114:4.4", "lzh": "云何比丘覺，比丘者，知三覺，知習、知滅、", "deepsk-2026-v4-fla": "How does a bhikkhu have understanding?\nA bhikkhu knows the three feelings, knows their arising, knows their cessation, knows their gratification,", "deepsk-2026-line-by-line": "How does a bhikkhu feel?\nA bhikkhu knows the three feelings, knows their arising, their cessation,", "bdk_corrected": "For a monk, what is realization?\nA monk knows the three [types of] feeling, knows their arising, knows their passing away,"}, {"key": "ma114:4.5", "lzh": "知味、知患、知出要，以慧知如真，是謂比丘覺。", "deepsk-2026-v4-fla": "knows their danger, and knows the escape from them, understanding them with wisdom as they truly are.", "deepsk-2026-line-by-line": "their gratification, their danger, and the escape from them,\nknowing them as they truly are with wisdom — this is called a bhikkhu's feeling.", "bdk_corrected": "knows their attraction, knows their peril, and knows the escape from them.\nHe knows this with wisdom, as it really is.\nFor a monk, this is called right realization."}, {"key": "ma114:4.6", "lzh": "云何比丘不知癰本，然後具知癰本？", "deepsk-2026-v4-fla": "This is called a bhikkhu having understanding.\nHow does a bhikkhu not know the root of the boil and then fully know the root of the boil?", "deepsk-2026-line-by-line": "How does a bhikkhu not know the root of the boil, and then fully know the root of the boil?", "bdk_corrected": "For a monk, what is not knowing the root of the tumor but subsequently coming to know fully the root of the tumor?"}, {"key": "ma114:4.7", "lzh": "比丘者，知有愛滅，拔其根本，至竟不復生，", "deepsk-2026-v4-fla": "A bhikkhu knows the cessation of craving for existence, uproots its root so that it never arises again.", "deepsk-2026-line-by-line": "A bhikkhu knows the cessation of craving for existence, having pulled out its root, so that it will never arise again,", "bdk_corrected": "A monk knows that craving can be brought to cessation and pulls it out by its roots completely,\nso that it does not arise again."}, {"key": "ma114:4.8", "lzh": "是謂比丘不知癰本，然後具知癰本。", "deepsk-2026-v4-fla": "This is called a bhikkhu not knowing the root of the boil and then fully knowing the root of the boil.\nThe boil refers to this body.", "deepsk-2026-line-by-line": "this is called a bhikkhu not knowing the root of the boil, and then fully knowing the root of the boil.", "bdk_corrected": "For a monk, this is called not knowing the root of the tumor\nbut subsequently coming to know fully the root of the tumor."}, {"key": "ma114:4.9", "lzh": "癰者，謂此身也。", "deepsk-2026-v4-fla": "It is composed of the coarse four great elements, born from parents,", "deepsk-2026-line-by-line": "The 'boil' refers to this body.", "bdk_corrected": "As to the tumor, this is the body, with its coarse form made of the four elements,"}, {"key": "ma114:4.10", "lzh": "色麤四大，從父母生，飲食長養，衣被按摩，", "deepsk-2026-v4-fla": "nourished by food and drink, maintained by clothing, massage, bathing, and endurance.\nIt is subject to impermanence, decay, and dissolution.", "deepsk-2026-line-by-line": "It is gross form, composed of the four great elements, born from mother and father,\nnourished by food and drink, maintained by clothing and massage,", "bdk_corrected": "born of father and mother, to be nourished by food and drink, to be covered by clothing and blankets,\nto be massaged and bathed, having to endure being mishandled—"}, {"key": "ma114:4.11", "lzh": "澡浴強忍，是無常法、壞法、散法，是謂癰也。", "deepsk-2026-v4-fla": "This is called the boil.", "deepsk-2026-line-by-line": "bathed and forcibly endured — it is a thing of impermanence,\nsubject to decay, subject to dissolution — this is called the boil.", "bdk_corrected": "it is impermanent by nature, of a nature to deteriorate and fall apart.\nThis is called the tumor."}, {"key": "ma114:4.12", "lzh": "癰本者，謂三愛也。", "deepsk-2026-v4-fla": "The root of the boil refers to the three cravings:\ncraving for sensual pleasures, craving for existence in the form realm, and craving for existence in the formless realm.", "deepsk-2026-line-by-line": "The 'root of the boil' refers to the three cravings.", "bdk_corrected": "As to the root of the tumor, this is the threefold craving."}, {"key": "ma114:4.13", "lzh": "欲愛、色愛、無色愛，是謂癰本。", "deepsk-2026-v4-fla": "This is called the root of the boil.", "deepsk-2026-line-by-line": "Craving for sensual pleasures, craving for form, craving for formlessness — these are called the root of the boil.", "bdk_corrected": "Craving for sensual pleasures, craving for form, and craving for the formless:\nthese are called the root of the tumor."}, {"key": "ma114:4.14", "lzh": "癰一切漏者，謂六更觸處也。", "deepsk-2026-v4-fla": "The boil that is all the taints refers to the six sense bases.\nThe eye leaks by seeing forms, the ear leaks by hearing sounds, the nose leaks by smelling odors,", "deepsk-2026-line-by-line": "The boil of all taints refers to the six sense spheres of contact.", "bdk_corrected": "As to the taints of the tumor, these are the six bases of sense contact."}, {"key": "ma114:4.15", "lzh": "眼漏視色，耳漏聞聲，鼻漏嗅香，舌漏嘗味，", "deepsk-2026-v4-fla": "the tongue leaks by tasting flavors, the body leaks by feeling tactile objects,", "deepsk-2026-line-by-line": "The eye leaks when seeing forms, the ear leaks when hearing sounds,\nthe nose leaks when smelling odors, the tongue leaks when tasting flavors,", "bdk_corrected": "The taint [related to] the eye on seeing forms, the taint [related to] the ear on hearing sounds,\nthe taint [related to] the nose on smelling odors, the taint [related to] the tongue on tasting flavors,"}, {"key": "ma114:4.16", "lzh": "身漏覺觸，意漏知諸法，是謂癰一切漏。", "deepsk-2026-v4-fla": "and the mind leaks by cognizing mental phenomena.\nThis is called the boil that is all the taints.\"", "deepsk-2026-line-by-line": "the body leaks when feeling touches, the mind leaks when cognizing phenomena—this is called the boil of all taints.", "bdk_corrected": "the taint [related to] the body on experiencing tangibles, the taint [related to] the mind on knowing mental objects:\nthese are called the taints of the tumor."}]}, {"id": "5", "label": "「比丘！", "rows": [{"key": "ma114:5.1", "lzh": "「比丘！", "deepsk-2026-v4-fla": "\"Bhikkhus, I have explained to you the boil and the root of the boil.", "deepsk-2026-line-by-line": "“Monks!", "bdk_corrected": "Monks, I have taught you about the tumor, and about the root of the tumor."}, {"key": "ma114:5.2", "lzh": "我已為汝說癰、說癰本，如尊師所為弟子起大慈哀，", "deepsk-2026-v4-fla": "As a compassionate teacher, out of great kindness and sympathy, seeking the welfare and benefit of his disciples,", "deepsk-2026-line-by-line": "I have explained to you the boil and the root of the boil.\nAs a teacher, out of great compassion for his disciples,", "bdk_corrected": "What a teacher should do for his disciples out of great compassion, mercy, sympathy, and concern,"}, {"key": "ma114:5.3", "lzh": "憐念愍傷，求義及饒益，求安隱快樂者，我今已作。", "deepsk-2026-v4-fla": "desiring their peace and happiness, I have done what should be done.", "deepsk-2026-line-by-line": "with care, sympathy, seeking benefit and welfare, seeking peace and happiness, I have now done so.", "bdk_corrected": "seeking their benefit and welfare, seeking their safety and well-being, that I have now done."}, {"key": "ma114:5.4", "lzh": "汝等亦當復自作，至無事處、山林樹下、空安靜處，", "deepsk-2026-v4-fla": "Now you yourselves should also go to a secluded place, to a forest, to the foot of a tree,", "deepsk-2026-line-by-line": "You yourselves should also practice, going to remote places, under trees in forests, to empty and quiet places,", "bdk_corrected": "You too should do your part.\nGo sit in meditation and contemplation in a secluded place, on a mountain,\nin a forest, at the base of a tree, in an empty and quiet place."}, {"key": "ma114:5.5", "lzh": "燕坐思惟，勿得放逸，勤加精進，莫令後悔。", "deepsk-2026-v4-fla": "or to an empty, quiet place, and sit in meditation, reflecting carefully.", "deepsk-2026-line-by-line": "sitting in meditation and reflecting, without negligence, diligently applying effort, so that you will not regret later.", "bdk_corrected": "Do not be negligent.\nMake diligent efforts, lest you regret it later."}, {"key": "ma114:5.6", "lzh": "此是我之教勅，是我訓誨。」", "deepsk-2026-v4-fla": "Do not be heedless, but diligently exert effort, so that you will not regret it later.\nThis is my instruction, my teaching.\"", "deepsk-2026-line-by-line": "This is my instruction, this is my teaching.”", "bdk_corrected": "This is my instruction;\nthis is my teaching."}]}, {"id": "6", "label": "佛說如是。", "rows": [{"key": "ma114:6.1", "lzh": "佛說如是。", "deepsk-2026-v4-fla": "Thus spoke the Buddha.", "deepsk-2026-line-by-line": "Thus spoke the Buddha.", "bdk_corrected": "Thus spoke the Buddha."}, {"key": "ma114:6.2", "lzh": "彼諸比丘聞佛所說，歡喜奉行。", "deepsk-2026-v4-fla": "Those bhikkhus, having heard what the Buddha said, rejoiced and faithfully put it into practice.", "deepsk-2026-line-by-line": "Those monks, having heard what the Buddha said, rejoiced and practiced accordingly.", "bdk_corrected": "Having heard what the Buddha said, the monks were delighted and received it respectfully."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "warn": ""}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -780,7 +855,7 @@ const SW_MIN = 150, SW_DEFAULT = 240;   // TOC sidebar width: px floor; max = 50
 const FN_MIN = 120, FN_MAXFRAC = 0.8, FN_STRIP_REM = 2.4;   // footnote region clamp + strip
 const FNFS_MIN = 0.8, FNFS_MAX = 1.8;   // footnote text-size multiplier bounds
 
-let COLS = ["lzh", "deepsk-2026-v4-fla", "bdk_corrected"];   // render.py already caps the default to MAX_COLS; restore path re-caps
+let COLS = ["lzh", "deepsk-2026-v4-fla", "deepsk-2026-line-by-line", "bdk_corrected"];   // render.py already caps the default to MAX_COLS; restore path re-caps
 let sidebarVisible = true;
 let currentTheme = 'light';
 let currentFs = 15;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -617,7 +668,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </a>
   <!-- Row 1: breadcrumbs → Pāli title (English tooltip) → collapse/expand → 🦘 jump → 🔝 → ⚙ -->
   <div class="nav-r1">
-    <nav class="crumbs"><span class="sep-c">›</span><a href="../index.html" title="Majjhima Nikāya">MN</a><span class="sep-c">›</span><span class="cur">MN 34</span></nav>
+    <nav class="crumbs"><span class="sep-c">›</span><a href="../index.html" title="Majjhima Nikāya">MN</a><span class="sep-c">›</span><span class="cur-nav"><button class="cur cur-nav-btn" onclick="toggleCurNav()" title="Previous / next sutta">MN 34</button><div class="cur-nav-pop" id="curNavPop"><a href="../mn33/index.html">◀ MN 33</a><a href="../mn35/index.html">MN 35 ▶</a></div></span></nav>
     <span class="page-title" title="The Shorter Discourse on the Cowherd">Cūḷagopālakasutta</span>
     <!-- Collapse / Expand all (main content) — round buttons, one shared tooltip -->
     <span class="all-ctl" title="− collapse or + expand all sections of entire document in main pane">
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,6 +819,19 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
 const TREE=[{"id": "0", "label": "Majjhima Nikāya 34", "rows": [{"key": "mn34:0.1", "pali": "Majjhima Nikāya 34", "sujato-corrected": "Middle Discourses 34", "pts": "", "bodhi-esque": "Majjhima Nikāya 34"}, {"key": "mn34:0.2", "pali": "Cūḷa·gopālaka·sutta", "sujato-corrected": "The Shorter Discourse on the Cowherd", "pts": "", "bodhi-esque": "The Shorter Discourse on the Cowherd"}]}, {"id": "1", "label": "Evaṁ me sutaṁ—", "rows": [{"key": "mn34:1.1", "pali": "Evaṁ me sutaṁ—", "sujato-corrected": "So I have heard.", "pts": "THUS have I heard:", "bodhi-esque": "Thus have I heard—"}, {"key": "mn34:1.2", "pali": "ekaṁ samayaṁ bhagavā vajjīsu viharati\nukka·celāyaṁ gaṅgāya nadiyā tīre.", "sujato-corrected": "At one time the Buddha was staying in the land of the Vajjis near Ukkacelā on the bank of the Ganges river.", "pts": "At one time the Lord was staying among the Vajjis at Ukkācelā on the banks of the river Ganges.", "bodhi-esque": "On one occasion the Blessed One was dwelling among the Vajjis at Ukkacelā on the bank of the river Ganges."}, {"key": "mn34:1.3", "pali": "Tatra kho bhagavā bhikkhū āmantesi:", "sujato-corrected": "There the Buddha addressed the mendicants,", "pts": "While he was there the Lord addressed the monks, saying:", "bodhi-esque": "There the Blessed One addressed the bhikkhus:"}, {"key": "mn34:1.4", "pali": "“bhikkhavo”ti.", "sujato-corrected": "“Mendicants!”", "pts": "\"Monks.\"", "bodhi-esque": "“Bhikkhus!”"}, {"key": "mn34:1.5", "pali": "“Bhadante”ti te bhikkhū\nbhagavato pacc·assosuṁ.", "sujato-corrected": "“Venerable sir,” they replied.", "pts": "\"Revered one,\" these monks answered the Lord in assent.", "bodhi-esque": "“Bhante!” those bhikkhus replied to the Blessed One."}, {"key": "mn34:1.6", "pali": "Bhagavā etadavoca:", "sujato-corrected": "The Buddha said this:", "pts": "The Lord spoke thus:", "bodhi-esque": "The Blessed One said this:"}]}, {"id": "2", "label": "“Bhūta·pubbaṁ, bhikkhave, māgadhako gopālako duppañña·jātiko, vassānaṁ pacchime…", "rows": [{"key": "mn34:2.1", "pali": "“Bhūta·pubbaṁ, bhikkhave, māgadhako gopālako duppañña·jātiko, vassānaṁ pacchime māse sarada·samaye,\na·samavekkhitvā gaṅgāya nadiyā orimaṁ tīraṁ, a·samavekkhitvā pārimaṁ tīraṁ,\nati·t·theneva gāvo patāresi\nuttaraṁ tīraṁ su·videh·ānaṁ.", "sujato-corrected": "“Once upon a time, mendicants, there was an unintelligent Magadhan cowherd.\nIn the last month of the rainy season, in autumn, without inspecting the near shore or the far shore,\nhe drove his cattle across a place with no ford on the Ganges river to the northern shore among the Suvidehans.", "pts": "\"Formerly, monks, an incompetent cowherd of Magadha in the last month of the rains at harvest time,\nwithout considering the hither bank of the river Ganges,\nwithout considering the further bank,\ndrove his cattle across to the further bank in Suvidehā at a place where there was no ford.", "bodhi-esque": "“Once, bhikkhus, a Magadhan cowherd, stupid by nature, in the last month of the rainy season,\nat the time of autumn, without examining the near bank of the river Ganges,\nwithout examining the far bank, ferried the cows across at a non-ford to the northern bank in the land of the Videhans."}]}, {"id": "3", "label": "Atha kho, bhikkhave, gāvo majjhe·gaṅgāya nadiyā sote…", "rows": [{"key": "mn34:3.1", "pali": "Atha kho, bhikkhave, gāvo majjhe·gaṅgāya nadiyā sote āmaṇḍal·iyaṁ karitvā tattheva a·nayaby·a·sanaṁ āpajjiṁsu.", "sujato-corrected": "But the cattle bunched up in mid-stream and came to ruin right there.", "pts": "Then, monks, the cattle huddled together in the middle of the stream of the river Ganges,\ngot into difficulties and misfortune there.", "bodhi-esque": "Then, bhikkhus, the cows, in the middle of the river Ganges,\nmaking a whirlpool in the current, encountered ruin and disaster right there."}, {"key": "mn34:3.2", "pali": "Taṁ kissa hetu?", "sujato-corrected": "Why is that?", "pts": "What was the cause?", "bodhi-esque": "For what reason?"}, {"key": "mn34:3.3", "pali": "Tathā hi so, bhikkhave, māgadhako gopālako duppañña·jātiko, vassānaṁ pacchime māse sarada·samaye,\na·samavekkhitvā gaṅgāya nadiyā orimaṁ tīraṁ, a·samavekkhitvā pārimaṁ tīraṁ,\nati·t·theneva gāvo patāresi\nuttaraṁ tīraṁ su·videh·ānaṁ.", "sujato-corrected": "Because the unintelligent cowherd failed to inspect the shores before driving the cattle across at a place with no ford.", "pts": "It was, monks, that that incompetent cowherd of Magadha in the last month of the rains at harvest time,\nwithout considering the hither bank of the river Ganges,\nwithout considering the further bank,\ndrove the cattle across to the further bank in Suvidehā at a place where there was no ford.", "bodhi-esque": "Because that Magadhan cowherd, stupid by nature, in the last month of the rainy season,\nat the time of autumn, without examining the near bank of the river Ganges,\nwithout examining the far bank, ferried the cows across at a non-ford to the northern bank in the land of the Videhans."}, {"key": "mn34:3.4", "pali": "Evameva kho, bhikkhave, ye\nhi keci samaṇā vā brāhmaṇā vā a·kusalā imassa lokassa a·kusalā parassa lokassa,\na·kusalā māra·dheyyassa a·kusalā a·māra·dheyyassa,\na·kusalā maccu·dheyyassa a·kusalā a·maccu·dheyyassa, tesaṁ ye\nsotabbaṁ saddahā·tabbaṁ maññissanti,\ntesaṁ taṁ bhavissati\ndīgha·rattaṁ a·hitāya dukkhāya.", "sujato-corrected": "In the same way, there are ascetics and brahmins who are unskilled in this world and the other world,\nunskilled in Māra’s dominion and its opposite, and unskilled in Death’s dominion and its opposite.\nIf anyone thinks they are worth listening to and trusting, it will be for their lasting harm and suffering.", "pts": "Even so, monks, any recluses or brahmans who are unskilled about this world, unskilled about the world beyond,\nunskilled about Māra's realm, unskilled about what is not Māra's realm, unskilled about Death's realm,\nunskilled about what is not Death's realm - whoever think they should\nlisten to these (recluses and brahmans) and put their faith in them,\nthat will be for a long time for their woe and anguish.", "bodhi-esque": "So too, bhikkhus, whatever ascetics or brahmins who are unskilled in this world,\nunskilled in the other world, unskilled in Māra's realm, unskilled in what is not Māra's realm,\nunskilled in Death's realm, unskilled in what is not Death's realm —\nthose who think that what should be heard should be believed —\nthat will be for them for a long time for harm and suffering."}]}, {"id": "4", "label": "Bhūta·pubbaṁ, bhikkhave, māgadhako gopālako sappañña·jātiko, vassānaṁ pacchime…", "rows": [{"key": "mn34:4.1", "pali": "Bhūta·pubbaṁ, bhikkhave, māgadhako gopālako sappañña·jātiko, vassānaṁ pacchime māse sarada·samaye,\nsamavekkhitvā gaṅgāya nadiyā orimaṁ tīraṁ, samavekkhitvā pārimaṁ tīraṁ,\ntittheneva gāvo patāresi\nuttaraṁ tīraṁ su·videh·ānaṁ.", "sujato-corrected": "Once upon a time, mendicants, there was an intelligent Magadhan cowherd.\nIn the last month of the rainy season, in autumn, after inspecting the near shore and the far shore,\nhe drove his cattle across a ford on the Ganges river to the northern shore among the Suvidehans.", "pts": "Once upon a time, monks, a competent cowherd of Magadha in the last month of the rains at harvest time,\nhaving considered the hither bank of the river Ganges,\nhaving considered the further bank,\ndrove his cattle across to the further bank in Suvidehā at a place where there was a ford.", "bodhi-esque": "Once, bhikkhus, a Magadhan cowherd, wise by nature, in the last month of the rainy season,\nat the time of autumn, having examined the near bank of the river Ganges,\nhaving examined the far bank, ferried the cows across at a ford to the northern bank in the land of the Videhans."}]}, {"id": "5", "label": "So paṭhamaṁ patāresi ye te usabhā gopitaro…", "rows": [{"key": "mn34:5.1", "pali": "So paṭhamaṁ patāresi\nye te usabhā gopitaro gopariṇāyakā.", "sujato-corrected": "First he drove across the bulls, the fathers and captains of the herd.", "pts": "First of all he drove across those bulls who were the sires and leaders of the herd - these,\nhaving cut across the stream of the Ganges, went safely beyond.", "bodhi-esque": "He first ferried across those bulls that were the leaders of the herd, the guides of the herd."}, {"key": "mn34:5.2", "pali": "Te tiriyaṁ gaṅgāya sotaṁ chetvā sotthinā pāraṁ agamaṁsu.", "sujato-corrected": "They breasted the stream of the Ganges and safely reached the far shore.", "pts": "", "bodhi-esque": "They, having cut across the stream of the Ganges, safely went to the far shore."}, {"key": "mn34:5.3", "pali": "Athā·pare patāresi balava·gāvo damma·gāvo.", "sujato-corrected": "Then he drove across the strong and tractable cattle.", "pts": "Then he drove across the sturdy bullocks and young steers - these,\nalso, having cut across the stream of the Ganges, went safely beyond.", "bodhi-esque": "Then he ferried others:\nthe strong bulls and the trained bulls."}, {"key": "mn34:5.4", "pali": "Tepi tiriyaṁ gaṅgāya sotaṁ chetvā sotthinā pāraṁ agamaṁsu.", "sujato-corrected": "They too breasted the stream of the Ganges and safely reached the far shore.", "pts": "", "bodhi-esque": "They also, having cut across the stream of the Ganges, safely went to the far shore."}, {"key": "mn34:5.5", "pali": "Athā·pare patāresi vaccha·tare vaccha·tariyo.", "sujato-corrected": "Then he drove across the bullocks and heifers.", "pts": "Then he drove across the half-grown bull-calves and heifers - these too,\nhaving cut across the stream of the Ganges, went safely beyond.", "bodhi-esque": "Then he ferried others:\nthe bullocks and the heifers."}, {"key": "mn34:5.6", "pali": "Tepi tiriyaṁ gaṅgāya sotaṁ chetvā sotthinā pāraṁ agamaṁsu.", "sujato-corrected": "They too breasted the stream of the Ganges and safely reached the far shore.", "pts": "", "bodhi-esque": "They also, having cut across the stream of the Ganges, safely went to the far shore."}, {"key": "mn34:5.7", "pali": "Athā·pare patāresi vacchake kisā·balake.", "sujato-corrected": "Then he drove across the calves and weak cattle.", "pts": "Then he drove across the weaker calves - these too, having cut across the stream of the Ganges, went safely beyond.", "bodhi-esque": "Then he ferried others:\nthe calves, the lean and feeble ones."}, {"key": "mn34:5.8", "pali": "Tepi tiriyaṁ gaṅgāya sotaṁ chetvā sotthinā pāraṁ agamaṁsu.", "sujato-corrected": "They too breasted the stream of the Ganges and safely reached the far shore.", "pts": "", "bodhi-esque": "They also, having cut across the stream of the Ganges, safely went to the far shore."}, {"key": "mn34:5.9", "pali": "Bhūta·pubbaṁ, bhikkhave, vacchako taruṇako tāva·deva jātako mātu·goravakena vuyha·māno,\nsopi tiriyaṁ gaṅgāya sotaṁ chetvā sotthinā pāraṁ agamāsi.", "sujato-corrected": "Once it happened that a baby calf had just been born.\nUrged on by its mother’s lowing, even it managed to breast the stream of the Ganges and safely reach the far shore.", "pts": "At that time there was a young new-born calf which, by following the lowing of its mother,\nalso cut across the stream of the Ganges and went safely beyond.", "bodhi-esque": "In the past, bhikkhus, a young calf, just born, being carried along by its mother’s guidance,\neven that one, having cut across the stream of the Ganges, safely went to the far shore."}, {"key": "mn34:5.10", "pali": "Taṁ kissa hetu?", "sujato-corrected": "Why is that?", "pts": "What was the cause of this?", "bodhi-esque": "For what reason?"}, {"key": "mn34:5.11", "pali": "Tathā hi so, bhikkhave, māgadhako gopālako sappañña·jātiko, vassānaṁ pacchime māse sarada·samaye,\nsamavekkhitvā gaṅgāya nadiyā orimaṁ tīraṁ, samavekkhitvā pārimaṁ tīraṁ,\ntittheneva gāvo patāresi\nuttaraṁ tīraṁ su·videh·ānaṁ.", "sujato-corrected": "Because the intelligent cowherd inspected both shores before driving the cattle across at a ford.", "pts": "It was, monks, that that cowherd of Magadha in the last month of the rains at harvest time,\nhaving considered the hither bank of the river Ganges,\nhaving considered the further bank,\ndrove his cattle across to the further bank in Suvidehā at a place where there was a ford.", "bodhi-esque": "For that Magadhan cowherd, bhikkhus, was of wise disposition.\nIn the last month of the rains, at the autumn time, having examined the near shore of the river Ganges,\nhaving examined the far shore, he ferried the cattle across at the very ford to the far shore of the Videhans."}, {"key": "mn34:5.12", "pali": "Evameva kho, bhikkhave, ye\nhi keci samaṇā vā brāhmaṇā vā kusalā imassa lokassa kusalā parassa lokassa,\nkusalā māra·dheyyassa kusalā a·māra·dheyyassa,\nkusalā maccu·dheyyassa kusalā a·maccu·dheyyassa, tesaṁ ye\nsotabbaṁ saddahā·tabbaṁ maññissanti,\ntesaṁ taṁ bhavissati\ndīgha·rattaṁ hitāya sukhāya.", "sujato-corrected": "In the same way, there are ascetics and brahmins who are skilled in this world and the other world,\nskilled in Māra’s dominion and its opposite, and skilled in Death’s dominion and its opposite.\nIf anyone thinks they are worth listening to and trusting, it will be for their lasting welfare and happiness.", "pts": "Even so, monks, any recluses or brahmans who are skilled about this world, skilled about the world beyond,\nskilled about Māra's realm, skilled about what is not Māra's realm, skilled about Death's realm,\nskilled about what is not Death's realm - whoever think they should\nlisten to these (recluses and brahmans) and put their faith in them,\nthat will be for a long time for their welfare and happiness.", "bodhi-esque": "Just so, bhikkhus, whatever ascetics or brahmins are skilled about this world,\nskilled about the other world, skilled about Māra’s domain, skilled about the non-Māra’s domain,\nskilled about death’s domain, skilled about the non-death’s domain—for them,\nwhoever will think that it should be heard and believed, that will be for their long-term welfare and happiness."}]}, {"id": "6", "label": "Seyyathāpi, bhikkhave, ye te usabhā gopitaro gopariṇāyakā…", "rows": [{"key": "mn34:6.1", "pali": "Seyyathāpi, bhikkhave, ye\nte usabhā gopitaro gopariṇāyakā te tiriyaṁ gaṅgāya sotaṁ chetvā sotthinā pāraṁ agamaṁsu;", "sujato-corrected": "Just like the bulls, fathers and captains of the herd, who crossed the Ganges to safety", "pts": "Monks, like unto those bulls who were the sires and leaders of the herd,\nand who, having cut across the stream of the Ganges, went safely beyond,", "bodhi-esque": "Just as, bhikkhus, those bull leaders, herd leaders,\nhaving cut across the stream of the Ganges, safely went to the far shore;"}, {"key": "mn34:6.2", "pali": "evameva kho, bhikkhave,\nye te bhikkhū arahanto khīṇ·āsavā vusitavanto kata·karaṇīyā ohita·bhārā\nanuppatta·sadatthā pari·k·khīṇa·bhava·saṁyojanā sammadaññā·vimuttā,\nte tiriyaṁ mārassa sotaṁ chetvā sotthinā pāraṅgatā.", "sujato-corrected": "are the mendicants who are perfected, who have ended the defilements,\ncompleted the spiritual journey, done what had to be done,\nlaid down the burden, achieved their heart’s goal,\nutterly ended the fetter of continued existence, and are rightly freed through enlightenment.\nHaving breasted Māra’s stream, they have safely crossed over to the far shore.", "pts": "are those monks who are perfected ones, the cankers destroyed,\nwho have lived the life, done what was to be done, laid down the burden,\nattained their own goal, the fetters of becoming being utterly destroyed,\nand who are freed by perfect profound knowledge.\nFor these, having cut across Māra's stream, have gone safely beyond.", "bodhi-esque": "just so, bhikkhus, those bhikkhus who are arahants, with taints destroyed,\nwho have lived the holy life, done what had to be done, laid down the burden, attained their own goal,\nwith the fetters of existence completely destroyed, completely liberated by final knowledge—they,\nhaving cut across the stream of Māra, have safely gone to the far shore."}]}, {"id": "7", "label": "Seyyathāpi te, bhikkhave, balava·gāvo damma·gāvo tiriyaṁ gaṅgāya…", "rows": [{"key": "mn34:7.1", "pali": "Seyyathāpi te, bhikkhave, balava·gāvo damma·gāvo tiriyaṁ gaṅgāya sotaṁ chetvā sotthinā pāraṁ agamaṁsu;", "sujato-corrected": "Just like the strong and tractable cattle who crossed the Ganges to safety", "pts": "Monks, like unto those sturdy bullocks and young steers who,\nhaving cut across the stream of the Ganges, went safely beyond, are those monks who,", "bodhi-esque": "Just as, bhikkhus, those strong bulls and trained bulls,\nhaving cut across the stream of the Ganges, safely went to the far shore;"}, {"key": "mn34:7.2", "pali": "evameva kho, bhikkhave,\nye te bhikkhū pañca·n·naṁ orambhāgiyānaṁ saṁyoj·an·ānaṁ pari·k·khayā\nopa·pātikā tattha pari·ni·b·bāyino an·āvatti·dhammā tasmā lokā,\ntepi tiriyaṁ mārassa sotaṁ chetvā sotthinā pāraṁ gamissanti.", "sujato-corrected": "are the mendicants who, with the ending of the five lower fetters, are reborn spontaneously.\nThey've attained final Nibbāna there, and are not liable to return from that world.\nThey too, having breasted Māra's stream, will safely cross over to the far shore.", "pts": "by destroying the five fetters binding to this lower world, are of spontaneous uprising,\nand being ones who attain nibbāna there, are not liable to return from that world.\nFor these also, having cut across Māra's stream, will go safely beyond.", "bodhi-esque": "just so, bhikkhus, those bhikkhus who,\nwith the complete destruction of the five lower fetters, are of spontaneous birth,\nthere attaining final Nibbāna, not liable to return from that world—they too,\nhaving cut across the stream of Māra, will safely go to the far shore."}]}, {"id": "8", "label": "Seyyathāpi te, bhikkhave, vaccha·tarā vaccha·tariyo tiriyaṁ gaṅgāya…", "rows": [{"key": "mn34:8.1", "pali": "Seyyathāpi te, bhikkhave, vaccha·tarā vaccha·tariyo tiriyaṁ gaṅgāya sotaṁ chetvā sotthinā pāraṁ agamaṁsu;", "sujato-corrected": "Just like the bullocks and heifers who crossed the Ganges to safety", "pts": "Monks, like unto those half-grown bull-calves and heifers who,\nhaving cut across the stream of the Ganges, went safely beyond, are those monks who,", "bodhi-esque": "Just as those young bulls and young cows, bhikkhus,\nhaving cut across the stream of the Ganges, crossed safely to the far shore;"}, {"key": "mn34:8.2", "pali": "evameva kho, bhikkhave,\nye te bhikkhū tiṇṇaṁ saṁyoj·an·ānaṁ pari·k·khayā rāga·dosa·mohānaṁ tanuttā\nsakadāgāmino saki·deva imaṁ lokaṁ āgantvā dukkhassa·ntaṁ karissanti,\ntepi tiriyaṁ mārassa sotaṁ chetvā sotthinā pāraṁ gamissanti.", "sujato-corrected": "are the mendicants who, with the ending of three fetters,\nand the weakening of greed, hate, and delusion, are once-returners.\nThey come back to this world once only, then make an end of suffering.\nThey too, having breasted Māra’s stream, will safely cross over to the far shore.", "pts": "by destroying the three fetters, by reducing attachment, aversion and confusion,\nare once-returners who, having come back again to this world once only, will make an end of anguish.\nFor these also, having cut across Māra's stream, will go safely beyond.", "bodhi-esque": "so too, bhikkhus, those bhikkhus who, with the utter destruction of three fetters and with the attenuation of lust,\nhatred, and delusion, are once-returners, coming back only once to this world, will make an end of suffering;\nthey too, having cut across Māra's stream, will cross safely to the far shore."}]}, {"id": "9", "label": "Seyyathāpi te, bhikkhave, vacchakā kisā·balakā tiriyaṁ gaṅgāya…", "rows": [{"key": "mn34:9.1", "pali": "Seyyathāpi te, bhikkhave, vacchakā kisā·balakā tiriyaṁ gaṅgāya sotaṁ chetvā sotthinā pāraṁ agamaṁsu;", "sujato-corrected": "Just like the calves and weak cattle who crossed the Ganges to safety", "pts": "Monks, like unto those weaker calves who,\nhaving cut across the stream of the Ganges, went safely beyond, are those monks who,", "bodhi-esque": "Just as those calves, weak and dappled, having cut across the stream of the Ganges, crossed safely to the far shore;"}, {"key": "mn34:9.2", "pali": "evameva kho, bhikkhave,\nye te bhikkhū tiṇṇaṁ saṁyoj·an·ānaṁ pari·k·khayā sotāpannā a·vini·pāta·dhammā niyatā sambodhi·parāyanā,\ntepi tiriyaṁ mārassa sotaṁ chetvā sotthinā pāraṁ gamissanti.", "sujato-corrected": "are the mendicants who, with the ending of three fetters are stream-enterers,\nnot liable to be reborn in the underworld, assured, destined for awakening.\nThey too, having breasted Māra’s stream, will safely cross over to the far shore.", "pts": "by destroying the three fetters, are stream-attainers, not liable for the abyss, assured, bound for awakening.\nFor these also, having cut across Māra's stream, will go safely beyond.", "bodhi-esque": "so too, bhikkhus, those bhikkhus who, with the utter destruction of three fetters, are stream-enterers,\nno longer subject to rebirth in the lower realms, fixed in destiny, heading for enlightenment;\nthey too, having cut across Māra's stream, will cross safely to the far shore."}]}, {"id": "10", "label": "Seyyathāpi so, bhikkhave, vacchako taruṇako tāva·deva jātako…", "rows": [{"key": "mn34:10.1", "pali": "Seyyathāpi so, bhikkhave,\nvacchako taruṇako tāva·deva jātako mātu·goravakena vuyha·māno tiriyaṁ gaṅgāya sotaṁ chetvā sotthinā pāraṁ agamāsi;", "sujato-corrected": "Just like the baby calf who had just been born, but,\nurged on by its mother’s lowing, still managed to cross the Ganges to safety", "pts": "Monks, like unto that young new-born calf which, by following the lowing of its mother,\nalso cut across the stream of the Ganges and went safely beyond,", "bodhi-esque": "Just as that newborn calf, just born, being borne along by the mother's solicitude,\nhaving cut across the stream of the Ganges, crossed safely to the far shore;"}, {"key": "mn34:10.2", "pali": "evameva kho, bhikkhave, ye\nte bhikkhū dhammā·nusārino saddhā·nusārino,\ntepi tiriyaṁ mārassa sotaṁ chetvā sotthinā pāraṁ gamissanti.", "sujato-corrected": "are the mendicants who are followers of teachings, followers by faith.\nThey too, having breasted Māra’s stream, will safely cross over to the far shore.", "pts": "are those monks who are striving for Dhamma, striving for faith.\nFor these also, having cut across Māra's stream, will go safely beyond.", "bodhi-esque": "so too, bhikkhus, those bhikkhus who are Dhamma-followers and faith-followers;\nthey too, having cut across Māra's stream, will cross safely to the far shore."}]}, {"id": "11", "label": "Ahaṁ kho pana, bhikkhave, kusalo imassa lokassa…", "rows": [{"key": "mn34:11.1", "pali": "Ahaṁ kho pana, bhikkhave, kusalo imassa lokassa kusalo parassa lokassa,\nkusalo māra·dheyyassa kusalo a·māra·dheyyassa, kusalo maccu·dheyyassa kusalo a·maccu·dheyyassa.\nTassa mayhaṁ, bhikkhave, ye\nsotabbaṁ saddahā·tabbaṁ maññissanti,\ntesaṁ taṁ bhavissati\ndīgha·rattaṁ hitāya su·khāyā”ti.", "sujato-corrected": "Mendicants, I am skilled in this world and the other world,\nskilled in Māra’s dominion and its opposite, and skilled in Death’s dominion and its opposite.\nIf anyone thinks I am worth listening to and trusting, it will be for their lasting welfare and happiness.”", "pts": "Now I, monks, am skilled about this world, skilled about the world beyond, skilled about Māra's realm,\nskilled about what is not Māra's realm, skilled about Death's realm, skilled about what is not Death's realm.\nTo those who think they should listen to me and place faith in me, there will be welfare and happiness for a long time.\"", "bodhi-esque": "Now I, bhikkhus, am skilled in this world, skilled in the other world, skilled in Māra's realm,\nskilled in what is not Māra's realm, skilled in Death's realm, skilled in what is not Death's realm.\nFor me, bhikkhus, those who will think that what should be listened to should be believed,\nthat will be for them for a long time for welfare and happiness."}]}, {"id": "12", "label": "Idam·avoca bhagavā.", "rows": [{"key": "mn34:12.1", "pali": "Idam·avoca bhagavā.", "sujato-corrected": "That is what the Buddha said.", "pts": "Thus spoke the Lord;", "bodhi-esque": "This is what the Blessed One said."}, {"key": "mn34:12.2", "pali": "Idaṁ vatvā sugato athā·paraṁ etadavoca satthā:", "sujato-corrected": "Then the Holy One, the Teacher, went on to say:", "pts": "the Well-farer having said this, the Teacher then spoke thus:", "bodhi-esque": "Having said this, the Fortunate One, the Teacher, further said this:"}, {"key": "mn34:12.3", "pali": "“Ayaṁ loko paro loko,", "sujato-corrected": "“This world and the other world", "pts": "\"This world, the world beyond, are well explained by the one who knows,", "bodhi-esque": "“This world and the other world,”"}, {"key": "mn34:12.4", "pali": "jānatā suppa·kāsito;", "sujato-corrected": "have been clearly explained by one who knows;", "pts": "", "bodhi-esque": "have been well proclaimed by the one who knows;"}, {"key": "mn34:12.5", "pali": "Yañca mārena sampattaṁ,", "sujato-corrected": "as well as Māra’s reach,", "pts": "And what is accessible by Māra and what is not accessible by Death.", "bodhi-esque": "“What is reached by Māra”"}, {"key": "mn34:12.6", "pali": "a·p·pattaṁ yañca maccunā.", "sujato-corrected": "and what’s out of Death’s reach.", "pts": "", "bodhi-esque": "and what is not reached by Death."}, {"key": "mn34:12.7", "pali": "Sabbaṁ lokaṁ abhi·ñ·ñāya,", "sujato-corrected": "Directly knowing the whole world,", "pts": "By the Self-awakened One, comprehending, thoroughly knowing every world,", "bodhi-esque": "“Having directly known the entire world,”"}, {"key": "mn34:12.8", "pali": "sambuddhena pajānatā;", "sujato-corrected": "the Buddha who understands", "pts": "", "bodhi-esque": "by the Enlightened One who understands;"}, {"key": "mn34:12.9", "pali": "Vivaṭaṁ a·mata·dvāraṁ,", "sujato-corrected": "has opened the door to freedom from death,", "pts": "Opened is the door of the Undying for reaching security - nibbāna.", "bodhi-esque": "Open is the door to the Deathless,"}, {"key": "mn34:12.10", "pali": "khemaṁ nibbāna·pattiyā.", "sujato-corrected": "for finding the sanctuary, Nibbāna.", "pts": "", "bodhi-esque": "Secure for the attainment of Nibbāna."}, {"key": "mn34:12.11", "pali": "Chinnaṁ pāpimato sotaṁ,", "sujato-corrected": "The Wicked One’s stream has been cut,", "pts": "Cut across is the stream of the Evil One, shattered, destroyed;", "bodhi-esque": "The stream of the Evil One has been cut,"}, {"key": "mn34:12.12", "pali": "Vi·d·dhastaṁ vi·naḷīkataṁ;", "sujato-corrected": "it’s blown away and mown down.", "pts": "", "bodhi-esque": "Destroyed and uprooted;"}, {"key": "mn34:12.13", "pali": "Pāmojja·bahulā hotha,", "sujato-corrected": "Be full of joy, mendicants,", "pts": "Let there be abundant rapture, monks, let security be reached.\"", "bodhi-esque": "Be abundant in delight,"}, {"key": "mn34:12.14", "pali": "Khemaṁ patta·t·tha bhikkhavo”ti.", "sujato-corrected": "set your heart on sanctuary!”", "pts": "", "bodhi-esque": "You have reached security, O bhikkhus."}, {"key": "mn34:12.15", "pali": "Cūḷa·gopālaka·suttaṁ niṭṭhitaṁ catu·t·thaṁ.", "sujato-corrected": "", "pts": "Lesser Discourse on the Cowherd:\nthe Fourth", "bodhi-esque": "The Lesser Discourse on the Cowherd is finished, the fourth."}]}];
 
@@ -773,6 +843,11 @@ const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {"sujato-corrected": {"mn34:1.2": ["The Buddha also gave a discourse here shortly after the deaths of Sāriputta and Moggallāna (<a class=\"xref\" data-ref=\"sn47.14:1.1\" href=\"https://suttacentral.net/sn47.14/en/sujato#1.1\" target=\"_blank\" rel=\"noopener\">SN 47.14:1.1</a>). "], "mn34:2.1": ["Thus illustrating the need to “know the ford” in the previous sutta (<a class=\"xref\" data-ref=\"mn33:2.3\" href=\"https://suttacentral.net/mn33/en/sujato#2.3\" target=\"_blank\" rel=\"noopener\">MN 33:2.3</a>). | The Suvidehans are not mentioned anywhere else, and the commentary simply treats them as Videhans.\nBut Videha lay to the north-east of Vajjī,\nand since the expansion of Vajjī and contraction of Videha before the Buddha’s time,\nit is unlikely that it bordered the Ganges opposite Magadha.\nPerhaps this story stems from a time when Videha did expand to the river,\nor perhaps there were folks who called themselves “good Videhans” after the eclipse of the kingdom. "], "mn34:5.9": ["Typically <i>bhūtapubbaṁ</i> is used for fables (“once upon a time”), but see also <a class=\"xref\" data-ref=\"mn36:4.3\" href=\"https://suttacentral.net/mn36/en/sujato#4.3\" target=\"_blank\" rel=\"noopener\">MN 36:4.3</a>. "], "mn34:12.2": ["While commonly found elsewhere, this tag line is only used three times in the Majjhima Nikāya (<a class=\"xref\" data-ref=\"mn130:30.2\" href=\"https://suttacentral.net/mn130/en/sujato#30.2\" target=\"_blank\" rel=\"noopener\">MN 130:30.2</a>, <a class=\"xref\" data-ref=\"mn142:14.2\" href=\"https://suttacentral.net/mn142/en/sujato#14.2\" target=\"_blank\" rel=\"noopener\">MN 142:14.2</a>). "], "mn34:12.3": ["This echoes Bṛhadāraṇyaka Upaniṣad 3.7.1 (<i>ayaṁ ca lokaḥ paraśca lokaḥ</i>). "], "mn34:12.9": ["Compare <a class=\"xref\" data-ref=\"mn26:20.12\" href=\"https://suttacentral.net/mn26/en/sujato#20.12\" target=\"_blank\" rel=\"noopener\">MN 26:20.12</a>. "], "mn34:12.14": ["Read <i>patthetha</i> (“set your heart”). "]}, "pts": {"mn34:3.4": ["The triple stage of existence:\nkāma, rūpa, arūpa, MA. ii. 266. | The nine transcendental things, MA. ii. 266. | The triple stage of existence:\nkāma, rūpa, arūpa, MA. ii. 266. | The nine transcendental things, MA. ii. 266."], "mn34:6.2": ["The stream of taṇhā, craving, MA. ii. 267. | Beyond saṇsāra to nibbāna, MA. ii. 267."], "mn34:12.9": ["The ariyan Way, MA. ii. 267."]}};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

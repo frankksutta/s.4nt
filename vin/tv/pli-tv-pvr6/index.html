@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,6 +819,19 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
 const TREE=[{"id": "pli-tv-pvr6/0", "label": "Pari·vāra", "rows": [{"key": "pli-tv-pvr6:0.1", "pali": "Pari·vāra", "brahmali-corrected": "The Compendium", "bodhi-esque": "Parivāra"}, {"key": "pli-tv-pvr6:0.2", "pali": "6.\nKhandhaka·pucchā·vāra", "brahmali-corrected": "The classes of offenses in the Chapters", "bodhi-esque": "6.\nThe Section of Questions on the Khandhakas"}]}, {"id": "pli-tv-pvr6/1", "label": "Upasampadaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:1.1", "pali": "Upasampadaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "“I will ask about the Full Ordination, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about ordination, with its origin and description,"}, {"key": "pli-tv-pvr6:1.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "How many offences in the chief categories?"}, {"key": "pli-tv-pvr6:1.3", "pali": "Upasampadaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Full Ordination, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will answer about ordination, with its origin and description,"}, {"key": "pli-tv-pvr6:1.4", "pali": "Samukkaṭṭha·padānaṁ dve āpattiyo.", "brahmali-corrected": "two kinds of offenses are laid down in its exalted clauses.", "bodhi-esque": "In the chief categories, two offences."}]}, {"id": "pli-tv-pvr6/2", "label": "Uposathaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:2.1", "pali": "Uposathaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about the Observance Day, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about the uposatha, with its origin and description,"}, {"key": "pli-tv-pvr6:2.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "How many offences in the chief categories?"}, {"key": "pli-tv-pvr6:2.3", "pali": "Uposathaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Observance Day, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will answer about the uposatha, with its origin and description,"}, {"key": "pli-tv-pvr6:2.4", "pali": "Samukkaṭṭha·padānaṁ tisso āpattiyo.", "brahmali-corrected": "three kinds of offenses are laid down in its exalted clauses.", "bodhi-esque": "In the chief categories, three offences."}]}, {"id": "pli-tv-pvr6/3", "label": "Vassū·panāyikaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:3.1", "pali": "Vassū·panāyikaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about Entering the Rainy-season Residence, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about the rains retreat, with its origin and description,"}, {"key": "pli-tv-pvr6:3.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "How many offences in the chief categories?"}, {"key": "pli-tv-pvr6:3.3", "pali": "Vassū·panāyikaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about Entering the Rainy-season Residence, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will answer about the rains retreat, with its origin and description,"}, {"key": "pli-tv-pvr6:3.4", "pali": "Samukkaṭṭha·padānaṁ ekā āpatti.", "brahmali-corrected": "one kind of offense is laid down in its exalted clauses.", "bodhi-esque": "In the chief categories, one offence."}]}, {"id": "pli-tv-pvr6/4", "label": "Pavār·aṇaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:4.1", "pali": "Pavār·aṇaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about the Invitation Ceremony, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about the pavāraṇā, with its origin and description,"}, {"key": "pli-tv-pvr6:4.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "How many offenses under the highest designation?"}, {"key": "pli-tv-pvr6:4.3", "pali": "Pavār·aṇaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Invitation Ceremony, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will dispense the invitation with its source and description,"}, {"key": "pli-tv-pvr6:4.4", "pali": "Samukkaṭṭha·padānaṁ tisso āpattiyo.", "brahmali-corrected": "three kinds of offenses are laid down in its exalted clauses.", "bodhi-esque": "Three offenses under the highest designation."}]}, {"id": "pli-tv-pvr6/5", "label": "Camma·saññuttaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:5.1", "pali": "Camma·saññuttaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about that which is connected with Skins, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about what pertains to leather with its source and description,"}, {"key": "pli-tv-pvr6:5.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "How many offenses under the highest designation?"}, {"key": "pli-tv-pvr6:5.3", "pali": "Camma·saññuttaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about that which is connected with Skins, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will dispense what pertains to leather with its source and description,"}, {"key": "pli-tv-pvr6:5.4", "pali": "Samukkaṭṭha·padānaṁ tisso āpattiyo.", "brahmali-corrected": "three kinds of offenses are laid down in its exalted clauses.", "bodhi-esque": "Three offenses under the highest designation."}]}, {"id": "pli-tv-pvr6/6", "label": "Bhesajjaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:6.1", "pali": "Bhesajjaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about Medicines, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about medicine with its source and description,"}, {"key": "pli-tv-pvr6:6.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "How many offenses under the highest designation?"}, {"key": "pli-tv-pvr6:6.3", "pali": "Bhesajjaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about Medicines, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will dispense about medicine with its source and description,"}, {"key": "pli-tv-pvr6:6.4", "pali": "Samukkaṭṭha·padānaṁ tisso āpattiyo.", "brahmali-corrected": "three kinds of offenses are laid down in its exalted clauses.", "bodhi-esque": "Three offenses under the highest designation."}]}, {"id": "pli-tv-pvr6/7", "label": "Kathinakaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:7.1", "pali": "Kathinakaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about the Robe-making Ceremony, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about the kaṭhina robe with its source and description,"}, {"key": "pli-tv-pvr6:7.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "How many offenses under the highest designation?"}, {"key": "pli-tv-pvr6:7.3", "pali": "Kathinakaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Robe-making Ceremony, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will dispense about the kaṭhina robe with its source and description,"}, {"key": "pli-tv-pvr6:7.4", "pali": "Samukkaṭṭha·padānaṁ natthi tattha āpatti.", "brahmali-corrected": "there is no offense laid down in its exalted clauses.", "bodhi-esque": "Under the highest designation, there is no offense there."}]}, {"id": "pli-tv-pvr6/8", "label": "Cīvara·saññuttaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:8.1", "pali": "Cīvara·saññuttaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about that which is connected with Robes, together with its origin stories and its detailed explanations:", "bodhi-esque": "I shall ask about what is connected with robes, together with its origin, together with its description,"}, {"key": "pli-tv-pvr6:8.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "With the elevated phrases, how many offenses?"}, {"key": "pli-tv-pvr6:8.3", "pali": "Cīvara·saññuttaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about that which is connected with Robes, together with its origin stories and its detailed explanations:", "bodhi-esque": "I shall answer about what is connected with robes, together with its origin, together with its description,"}, {"key": "pli-tv-pvr6:8.4", "pali": "Samukkaṭṭha·padānaṁ tisso āpattiyo.", "brahmali-corrected": "three kinds of offenses are laid down in its exalted clauses.", "bodhi-esque": "With the elevated phrases, three offenses."}]}, {"id": "pli-tv-pvr6/9", "label": "Camp·eyyakaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:9.1", "pali": "Camp·eyyakaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about Legal Procedures together with its origin stories and its detailed explanations:", "bodhi-esque": "I shall ask about the Campeyyaka, together with its origin, together with its description,"}, {"key": "pli-tv-pvr6:9.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "With the elevated phrases, how many offenses?"}, {"key": "pli-tv-pvr6:9.3", "pali": "Camp·eyyakaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about Legal Procedures, together with its origin stories and its detailed explanations:", "bodhi-esque": "I shall answer about the Campeyyaka, together with its origin, together with its description,"}, {"key": "pli-tv-pvr6:9.4", "pali": "Samukkaṭṭha·padānaṁ ekā āpatti.", "brahmali-corrected": "one kind of offense is laid down in its exalted clauses.", "bodhi-esque": "With the elevated phrases, one offense."}]}, {"id": "pli-tv-pvr6/10", "label": "Kosamb·akaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:10.1", "pali": "Kosamb·akaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about Division in the Sangha, together with its origin stories and its detailed explanations:", "bodhi-esque": "I shall ask about the Kosambaka, together with its origin, together with its description,"}, {"key": "pli-tv-pvr6:10.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "With the elevated phrases, how many offenses?"}, {"key": "pli-tv-pvr6:10.3", "pali": "Kosamb·akaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about Division in the Sangha, together with its origin stories and its detailed explanations:", "bodhi-esque": "I shall answer about the Kosambaka, together with its origin, together with its description,"}, {"key": "pli-tv-pvr6:10.4", "pali": "Samukkaṭṭha·padānaṁ ekā āpatti.", "brahmali-corrected": "one kind of offense is laid down in its exalted clauses.", "bodhi-esque": "With the elevated phrases, one offense."}]}, {"id": "pli-tv-pvr6/11", "label": "Kamma·k·khandhakaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:11.1", "pali": "Kamma·k·khandhakaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about the Chapter on Penalty Procedures, together with its origin stories and its detailed explanations:", "bodhi-esque": "I shall ask about the Kamma-kkhandhaka, together with its origin, together with its description,"}, {"key": "pli-tv-pvr6:11.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "With the elevated phrases, how many offenses?"}, {"key": "pli-tv-pvr6:11.3", "pali": "Kamma·k·khandhakaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Chapter on Penalty Procedures, together with its origin stories and its detailed explanations:", "bodhi-esque": "I shall answer about the Kamma-kkhandhaka, together with its origin, together with its description,"}, {"key": "pli-tv-pvr6:11.4", "pali": "Samukkaṭṭha·padānaṁ ekā āpatti.", "brahmali-corrected": "one kind of offense is laid down in its exalted clauses.", "bodhi-esque": "In the category of the supreme, there is one offense."}]}, {"id": "pli-tv-pvr6/12", "label": "Pāri·vāsikaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:12.1", "pali": "Pāri·vāsikaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about the Proper Conduct for those who are Suspended,\ntogether with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about the probation-related [matter] with its cause and its description."}, {"key": "pli-tv-pvr6:12.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "How many offenses [are there] in the category of the supreme?"}, {"key": "pli-tv-pvr6:12.3", "pali": "Pāri·vāsikaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Proper Conduct for those who are Suspended,\ntogether with its origin stories and its detailed explanations:", "bodhi-esque": "I will answer about the probation-related [matter] with its cause and its description."}, {"key": "pli-tv-pvr6:12.4", "pali": "Samukkaṭṭha·padānaṁ ekā āpatti.", "brahmali-corrected": "one kind of offense is laid down in its exalted clauses.", "bodhi-esque": "In the category of the supreme, there is one offense."}]}, {"id": "pli-tv-pvr6/13", "label": "Samuccayaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:13.1", "pali": "Samuccayaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about the Legal Procedures in Relation to Suspension,\ntogether with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about the compilation with its cause and its description."}, {"key": "pli-tv-pvr6:13.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "How many offenses [are there] in the category of the supreme?"}, {"key": "pli-tv-pvr6:13.3", "pali": "Samuccayaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Legal Procedures in Relation to Suspension,\ntogether with its origin stories and its detailed explanations:", "bodhi-esque": "I will answer about the compilation with its cause and its description."}, {"key": "pli-tv-pvr6:13.4", "pali": "Samukkaṭṭha·padānaṁ ekā āpatti.", "brahmali-corrected": "one kind of offense is laid down in its exalted clauses.", "bodhi-esque": "In the category of the supreme, there is one offense."}]}, {"id": "pli-tv-pvr6/14", "label": "Sama·thaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:14.1", "pali": "Sama·thaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about the Settling of Legal Issues, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about the settlement with its cause and its description."}, {"key": "pli-tv-pvr6:14.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "How many offenses [are there] in the category of the supreme?"}, {"key": "pli-tv-pvr6:14.3", "pali": "Sama·thaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Settling of Legal Issues, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will answer about the settlement with its cause and its description."}, {"key": "pli-tv-pvr6:14.4", "pali": "Samukkaṭṭha·padānaṁ dve āpattiyo.", "brahmali-corrected": "two kinds of offenses are laid down in its exalted clauses.", "bodhi-esque": "In the category of the supreme, there are two offenses."}]}, {"id": "pli-tv-pvr6/15", "label": "Khuddakavatthukaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:15.1", "pali": "Khuddakavatthukaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about Minor Topics, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about the minor matters with their cause and their description."}, {"key": "pli-tv-pvr6:15.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "How many offenses [are there] in the category of the supreme?"}, {"key": "pli-tv-pvr6:15.3", "pali": "Khuddakavatthukaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Minor Topics, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will explain the minor matters,\nwith their origin and description,"}, {"key": "pli-tv-pvr6:15.4", "pali": "Samukkaṭṭha·padānaṁ tisso āpattiyo.", "brahmali-corrected": "three kinds of offenses are laid down in its exalted clauses.", "bodhi-esque": "By way of a concise statement, three offences."}]}, {"id": "pli-tv-pvr6/16", "label": "Senāsanaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:16.1", "pali": "Senāsanaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about Resting Places, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about lodging,\nwith its origin and description,"}, {"key": "pli-tv-pvr6:16.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "By way of a concise statement, how many offences?"}, {"key": "pli-tv-pvr6:16.3", "pali": "Senāsanaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about Resting Places, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will explain about lodging,\nwith its origin and description,"}, {"key": "pli-tv-pvr6:16.4", "pali": "Samukkaṭṭha·padānaṁ tisso āpattiyo.", "brahmali-corrected": "three kinds of offenses are laid down in its exalted clauses.", "bodhi-esque": "By way of a concise statement, three offences."}]}, {"id": "pli-tv-pvr6/17", "label": "Saṅgha·bhedaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:17.1", "pali": "Saṅgha·bhedaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about Schism in the Sangha, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about schism in the Saṅgha,\nwith its origin and description,"}, {"key": "pli-tv-pvr6:17.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "By way of a concise statement, how many offences?"}, {"key": "pli-tv-pvr6:17.3", "pali": "Saṅgha·bhedaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about Schism in the Sangha, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will explain about schism in the Saṅgha,\nwith its origin and description,"}, {"key": "pli-tv-pvr6:17.4", "pali": "Samukkaṭṭha·padānaṁ dve āpattiyo.", "brahmali-corrected": "two kinds of offenses are laid down in its exalted clauses.", "bodhi-esque": "By way of a concise statement, two offences."}]}, {"id": "pli-tv-pvr6/18", "label": "Samācāraṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:18.1", "pali": "Samācāraṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about Proper Conduct, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about proper conduct,\nwith its origin and description,"}, {"key": "pli-tv-pvr6:18.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "By way of a concise statement, how many offences?"}, {"key": "pli-tv-pvr6:18.3", "pali": "Samācāraṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about Proper Conduct, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will explain about proper conduct,\nwith its origin and description,"}, {"key": "pli-tv-pvr6:18.4", "pali": "Samukkaṭṭha·padānaṁ ekā āpatti.", "brahmali-corrected": "one kind of offense is laid down in its exalted clauses.", "bodhi-esque": "By way of a concise statement, one offence."}]}, {"id": "pli-tv-pvr6/19", "label": "Ṭhap·anaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:19.1", "pali": "Ṭhap·anaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about the Cancellation of the Monastic Code, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about suspension,\nwith its origin and description,"}, {"key": "pli-tv-pvr6:19.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "In the summary statement, how many offenses?"}, {"key": "pli-tv-pvr6:19.3", "pali": "Ṭhap·anaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Cancellation of the Monastic Code,\ntogether with its origin stories and its detailed explanations:", "bodhi-esque": "I will answer the setting aside, with its source and exposition,"}, {"key": "pli-tv-pvr6:19.4", "pali": "Samukkaṭṭha·padānaṁ ekā āpatti.", "brahmali-corrected": "one kind of offense is laid down in its exalted clauses.", "bodhi-esque": "In the summary statement, there is one offense."}]}, {"id": "pli-tv-pvr6/20", "label": "Bhikkhuni·k·khandhakaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:20.1", "pali": "Bhikkhuni·k·khandhakaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about the Chapter on Nuns, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about the chapter on nuns, with its source and exposition,"}, {"key": "pli-tv-pvr6:20.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "In the summary statement, how many offenses?"}, {"key": "pli-tv-pvr6:20.3", "pali": "Bhikkhuni·k·khandhakaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Chapter on Nuns, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will answer the chapter on nuns, with its source and exposition,"}, {"key": "pli-tv-pvr6:20.4", "pali": "Samukkaṭṭha·padānaṁ dve āpattiyo.", "brahmali-corrected": "two kinds of offenses are laid down in its exalted clauses.", "bodhi-esque": "In the summary statement, there are two offenses."}]}, {"id": "pli-tv-pvr6/21", "label": "Pañcasat·ikaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:21.1", "pali": "Pañcasat·ikaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about the First Council, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about the Five Hundred, with its source and exposition,"}, {"key": "pli-tv-pvr6:21.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how kinds of many offenses are laid down in its exalted clauses?", "bodhi-esque": "In the summary statement, how many offenses?"}, {"key": "pli-tv-pvr6:21.3", "pali": "Pañcasat·ikaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the First Council, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will answer the Five Hundred, with its source and exposition,"}, {"key": "pli-tv-pvr6:21.4", "pali": "Samukkaṭṭha·padānaṁ natthi tattha āpatti.", "brahmali-corrected": "there is no offense laid down in its exalted clauses.", "bodhi-esque": "In the summary statement, there is no offense there."}]}, {"id": "pli-tv-pvr6/22", "label": "Sattasat·ikaṁ pucchissaṁ sanidānaṁ saniddesaṁ,", "rows": [{"key": "pli-tv-pvr6:22.1", "pali": "Sattasat·ikaṁ pucchissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will ask about the Second Council, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will ask about the Seven Hundred, with its source and exposition,"}, {"key": "pli-tv-pvr6:22.2", "pali": "Samukkaṭṭha·padānaṁ kati āpattiyo;", "brahmali-corrected": "how many kinds of offenses are laid down in its exalted clauses?", "bodhi-esque": "In the summary statement, how many offenses?"}, {"key": "pli-tv-pvr6:22.3", "pali": "Sattasat·ikaṁ vissajjissaṁ\nsanidānaṁ saniddesaṁ,", "brahmali-corrected": "I will answer about the Second Council, together with its origin stories and its detailed explanations:", "bodhi-esque": "I will answer the Seven Hundred, with its source and exposition,"}, {"key": "pli-tv-pvr6:22.4", "pali": "Samukkaṭṭha·padānaṁ natthi tattha āpattīti.", "brahmali-corrected": "there is no offense laid down in its exalted clauses.”", "bodhi-esque": "In the summary statement, there is no offense there."}]}, {"id": "pli-tv-pvr6/23", "label": "Khandhaka·pucchā·vāro niṭṭhito paṭhamo.", "rows": [{"key": "pli-tv-pvr6:23.1", "pali": "Khandhaka·pucchā·vāro niṭṭhito paṭhamo.", "brahmali-corrected": "The section on the classes of offenses in the Chapters, the first, is finished.", "bodhi-esque": "The first section of questions on the Khandhakas is finished."}]}, {"id": "pli-tv-pvr6/24", "label": "Tass·uddānaṁ", "rows": [{"key": "pli-tv-pvr6:24.1", "pali": "Tass·uddānaṁ", "brahmali-corrected": "This is the summary:", "bodhi-esque": "Its summary:"}]}, {"id": "pli-tv-pvr6/25", "label": "Upasampadū·posatho,", "rows": [{"key": "pli-tv-pvr6:25.1", "pali": "Upasampadū·posatho,", "brahmali-corrected": "“Full ordination, observance day,", "bodhi-esque": "Ordination, uposatha,"}, {"key": "pli-tv-pvr6:25.2", "pali": "Vassū·panāyika·pavā·raṇā;", "brahmali-corrected": "Entering the rainy-season residence, invitation ceremony;", "bodhi-esque": "Entry upon the rains, pavāraṇā,"}, {"key": "pli-tv-pvr6:25.3", "pali": "Camma·bhesajja·kathinā,", "brahmali-corrected": "Skins, medicines, robe-making ceremony,", "bodhi-esque": "Leather, medicine, kathina,"}, {"key": "pli-tv-pvr6:25.4", "pali": "Cīvaraṁ camp·eyya·kena ca.", "brahmali-corrected": "Robes, and with legal procedures,", "bodhi-esque": "The robe, and the Campeyya (Khandhaka),"}]}, {"id": "pli-tv-pvr6/26", "label": "Kosamba·k·khandhakaṁ kammaṁ,", "rows": [{"key": "pli-tv-pvr6:26.1", "pali": "Kosamba·k·khandhakaṁ kammaṁ,", "brahmali-corrected": "The chapter on division in the Sangha, legal procedures,", "bodhi-esque": "The Kosambaka Khandhaka, the (legal) act,"}, {"key": "pli-tv-pvr6:26.2", "pali": "Pāri·vāsi·samuccayā;", "brahmali-corrected": "The proper conduct for those who have committed an offense entailing suspension,\nlegal procedures in relation to offenses entailing suspension;", "bodhi-esque": "Probation, accumulation,"}, {"key": "pli-tv-pvr6:26.3", "pali": "Samatha·khuddakā senā,", "brahmali-corrected": "Settling of legal issues, minor topics, resting places,", "bodhi-esque": "Settling (of disputes), the minor (rules), lodgings,"}, {"key": "pli-tv-pvr6:26.4", "pali": "Saṅgha·bhedaṁ samā·cāro;", "brahmali-corrected": "Schism in the Sangha, proper conduct;", "bodhi-esque": "Schism in the Saṅgha, conduct,"}, {"key": "pli-tv-pvr6:26.5", "pali": "Ṭhap·anaṁ bhikkhuni·k·khandhaṁ,", "brahmali-corrected": "Cancellation of the Monastic code, the chapter on nuns,", "bodhi-esque": "Suspension, the Bhikkhunī Khandhaka,"}, {"key": "pli-tv-pvr6:26.6", "pali": "Pañca·satta·satena cāti.", "brahmali-corrected": "And with the first council and the second council.”", "bodhi-esque": "And (the sections of) five, seven, and a hundred."}]}];
 
@@ -773,6 +843,11 @@ const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {"brahmali-corrected": {"pli-tv-pvr6:1.1": ["It is noteworthy that it is not called the Great Chapter.\n“Full Ordination” is close to what this chapter is called in other schools, that is,\n“going forth”. "], "pli-tv-pvr6:1.2": ["It is noteworthy that although the Pali reads <i>kati āpattiyo</i>,\n“How many offenses?”, the answer makes it clear that this is about the number of classes of offenses.\nI translate accordingly. "], "pli-tv-pvr6:1.4": ["<a href=\"https://suttacentral.net/Sp 4.320/en/brahmali\" target=\"_blank\" rel=\"noopener\">SP 4.320</a>: <i>Dve āpattiyoti ūnavīsativassaṁ upasampādentassa pācittiyaṁ, sesesu sabbapadesu dukkaṭaṁ</i>,\n“Two offenses:\nthere is an offense entailing confession for one ordaining a person less than twenty years old.\nThere is an offense of wrong conduct in regard to all the other clauses.”\nIn the following cases, I will just note the classes of offenses that are mentioned in the commentary. "], "pli-tv-pvr6:2.4": ["The serious offense, the offense entailing confession, and the offense of wrong conduct. "], "pli-tv-pvr6:3.4": ["The offense of wrong conduct. "], "pli-tv-pvr6:4.4": ["The serious offense, the offense entailing confession, and the offense of wrong conduct. "], "pli-tv-pvr6:5.4": ["The offense entailing confession, the serious offense, and the offense of wrong conduct. "], "pli-tv-pvr6:6.4": ["The serious offense, the offense entailing confession, and the offense of wrong conduct. "], "pli-tv-pvr6:7.1": ["For a discussion of the word <i>kathina</i>, see Appendix of Technical Terms. "], "pli-tv-pvr6:8.4": ["The serious offense, the offense entailing relinquishment and confession, and the offense of wrong conduct. "], "pli-tv-pvr6:9.4": ["The offense of wrong conduct. "], "pli-tv-pvr6:10.4": ["The offense of wrong conduct. "], "pli-tv-pvr6:11.4": ["The offense of wrong conduct. "], "pli-tv-pvr6:12.4": ["The offense of wrong conduct. "], "pli-tv-pvr6:13.4": ["The offense of wrong conduct. "], "pli-tv-pvr6:14.4": ["The offense entailing confession, and the offense of wrong conduct. "], "pli-tv-pvr6:15.4": ["The serious offense, the offense entailing confession, and the offense of wrong conduct. "], "pli-tv-pvr6:16.1": ["For an explanation of the rendering “resting places” for <i>senāsana</i>, see Appendix of Technical Terms. "], "pli-tv-pvr6:16.4": ["The serious offense, the offense entailing confession, and the offense of wrong conduct. "], "pli-tv-pvr6:17.4": ["The serious offense, and the offense entailing confession. "], "pli-tv-pvr6:18.4": ["The offense of wrong conduct. "], "pli-tv-pvr6:19.4": ["The offense of wrong conduct. "], "pli-tv-pvr6:20.4": ["The offense entailing confession, and the offense of wrong conduct. "]}};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

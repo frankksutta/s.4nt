@@ -109,6 +109,41 @@ a{color:var(--accent)}
 .ix-filter select{font-family:inherit;font-size:.72rem;padding:.2rem .35rem;border-radius:5px;
   border:1px solid var(--border);background:var(--card);color:var(--text)}
 
+/* "∥ EBT" per-sutta button + its modal (EBT = Early Buddhist Texts parallels,
+   sourced from SuttaCentral — see debabel.parallels). Modal follows the site's
+   existing centered-dialog-with-backdrop-click-to-close convention. */
+.ix-ebt-btn{flex-shrink:0;display:flex;align-items:center;padding:0 .6rem;
+  border:1px solid var(--border);border-radius:6px;background:var(--card);
+  color:var(--accent);font-size:.72rem;font-family:sans-serif;cursor:pointer;
+  white-space:nowrap;transition:background .15s}
+.ix-ebt-btn:hover{background:var(--hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:700}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:701;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border,var(--border));
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg,var(--head));border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg,var(--card))}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 .site-footer{padding:1.4rem 1.8rem;border-top:1px solid var(--border);
   background:var(--head,var(--sec-bg));color:var(--muted);font-family:sans-serif;
   font-size:.74rem;display:flex;align-items:center;justify-content:space-between;gap:1.6rem}
@@ -128,7 +163,7 @@ a{color:var(--accent)}
 <body>
 <nav class="navbar">
   <div class="bar-crumbs"><a href="../index.html" title="Home">🏠</a><span class="sep-c">›</span><span class="cur" title="Saṁyutta Nikāya">SN</span><span class="cur-full">Saṁyutta Nikāya</span></div>
-  <div class="settings-wrap">
+  <div class="settings-wrap" id="siteSettingsWrap">
     <button class="nav-btn" id="siteSettingsBtn" title="Settings" onclick="siteToggleSettings()">⚙</button>
     <div class="settings-pop" id="siteSettingsPop">
       <div class="set-row">
@@ -142,6 +177,11 @@ a{color:var(--accent)}
         <span class="set-lbl">Theme</span>
         <button class="nav-btn" id="siteThemeBtn" title="Toggle dark / light mode" onclick="siteToggleTheme()">☀ Light</button>
       </div>
+    </div>
+  </div>
+  <div class="settings-wrap" id="siteMoreWrap">
+    <button class="nav-btn" id="siteMoreBtn" title="More" onclick="siteToggleMore()">⋮</button>
+    <div class="settings-pop" id="siteMorePop">
       <div class="set-row">
         <span class="set-lbl">Help</span>
         <a class="nav-btn set-help" href="../help.html" title="Open the reading guide">❔ Guide</a>
@@ -246,6 +286,16 @@ a{color:var(--accent)}
 <div class="ix-line" data-has="sujato-corrected bodhi-esque"><a class="ix-row" href="sn56/index.html"><span class="ix-ref">SN 56</span><span class="ix-title">Saccasaṁyutta — Linked Discourses on the Truths</span></a></div>
 </div></div>
 </div>
+
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../index.html" title="s.4nt.org — home"><img src="../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../help.html">Help</a><a href="../help.html#about">About</a><a href="../help.html#legal">Legal</a></nav><p class="ft-copy">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 <script>
 const JUMP_ROOT = '..';
@@ -432,12 +482,27 @@ function siteToggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('siteSettingsPop');
-  if(pop && pop.classList.contains('show') && !e.target.closest('.settings-wrap'))
+  if(pop && pop.classList.contains('show') && !e.target.closest('#siteSettingsWrap'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     const pop = document.getElementById('siteSettingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+// ── ⋮ MORE POPOVER (Help) ──
+function siteToggleMore(){
+  document.getElementById('siteMorePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('siteMorePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#siteMoreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('siteMorePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -457,6 +522,44 @@ function ixToggleAll(expand){
 }
 function ixToggle(h){ var g=h.closest('.ix-grp'); if(g) g.classList.toggle('collapsed'); }
 function ixKey(ev,h){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); ixToggle(h); } }
+
+// ── "∥ EBT" parallels modal ───────────────────────────────────────────────
+// Each button carries its own payload (data-ebt, a small JSON blob built by
+// index_cards._ebt_button) — no page-global data registry needed.
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpen(btn){
+  var data;
+  try{ data = JSON.parse(btn.getAttribute('data-ebt')); }catch(e){ data = null; }
+  if(!data) return;
+  var ref = btn.getAttribute('data-ebt-ref') || '';
+  var html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  var groups = [['full','Parallels'],['resembling','Resembling passages']];
+  var any = false;
+  groups.forEach(function(g){
+    var items = data[g[0]];
+    if(!items || !items.length) return;
+    any = true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(function(it){
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden = false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden = true;
+}
+document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape'){ ebtClose(); } });
 
 (function(){
   function apply(){

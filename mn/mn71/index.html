@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -617,7 +668,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </a>
   <!-- Row 1: breadcrumbs → Pāli title (English tooltip) → collapse/expand → 🦘 jump → 🔝 → ⚙ -->
   <div class="nav-r1">
-    <nav class="crumbs"><span class="sep-c">›</span><a href="../index.html" title="Majjhima Nikāya">MN</a><span class="sep-c">›</span><span class="cur">MN 71</span></nav>
+    <nav class="crumbs"><span class="sep-c">›</span><a href="../index.html" title="Majjhima Nikāya">MN</a><span class="sep-c">›</span><span class="cur-nav"><button class="cur cur-nav-btn" onclick="toggleCurNav()" title="Previous / next sutta">MN 71</button><div class="cur-nav-pop" id="curNavPop"><a href="../mn70/index.html">◀ MN 70</a><a href="../mn72/index.html">MN 72 ▶</a></div></span></nav>
     <span class="page-title" title="To Vacchagotta on the Threefold True Knowledge">Tevijjavacchasutta</span>
     <!-- Collapse / Expand all (main content) — round buttons, one shared tooltip -->
     <span class="all-ctl" title="− collapse or + expand all sections of entire document in main pane">
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,6 +819,19 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
 const TREE=[{"id": "0", "label": "Majjhima Nikāya 71", "rows": [{"key": "mn71:0.1", "pali": "Majjhima Nikāya 71", "sujato-corrected": "Middle Discourses 71", "pts": "", "bodhi-esque": "Majjhima Nikāya 71"}, {"key": "mn71:0.2", "pali": "Tevijja·vaccha·sutta", "sujato-corrected": "To Vacchagotta on the Three Knowledges", "pts": "", "bodhi-esque": "Tevijjavaccha Sutta"}]}, {"id": "1", "label": "Evaṁ me sutaṁ—", "rows": [{"key": "mn71:1.1", "pali": "Evaṁ me sutaṁ—", "sujato-corrected": "So I have heard.", "pts": "THUS have I heard:", "bodhi-esque": "Thus have I heard—"}, {"key": "mn71:1.2", "pali": "ekaṁ samayaṁ bhagavā vesāl·iyaṁ viharati\nmahā·vane kūṭā·gāra·sālāyaṁ.", "sujato-corrected": "At one time the Buddha was staying near Vesālī, at the Great Wood, in the hall with the peaked roof.", "pts": "At one time the Lord was staying near Vesālī in the Great Grove in the hall of the Gabled House.", "bodhi-esque": "On one occasion the Blessed One was dwelling at Vesālī in the Great Wood, in the Hall with the Peaked Roof."}]}, {"id": "2", "label": "Tena kho pana samayena vaccha·gotto pari·b·bājako eka·puṇḍarīke…", "rows": [{"key": "mn71:2.1", "pali": "Tena kho pana samayena vaccha·gotto pari·b·bājako eka·puṇḍarīke pari·b·bājak·ārāme paṭi·vasati.", "sujato-corrected": "Now at that time the wanderer Vacchagotta was residing in the Single Lotus Monastery of the wanderers.", "pts": "Now at that time the wanderer Vacchagotta was living in Ekapuṇḍarīka, the wanderers' park.", "bodhi-esque": "Now on that occasion the wanderer Vacchagotta was residing in the Single Lotus Park, the wanderers' park."}]}, {"id": "3", "label": "Atha kho bhagavā pubbaṇha·samayaṁ ni·vāsetvā pattacīvaramādāya vesāliṁ…", "rows": [{"key": "mn71:3.1", "pali": "Atha kho bhagavā pubbaṇha·samayaṁ ni·vāsetvā pattacīvaramādāya vesāliṁ piṇḍāya pāvisi.", "sujato-corrected": "Then the Buddha robed up in the morning and, taking his bowl and robe, entered Vesālī for alms.", "pts": "Then the Lord, having dressed in the morning, taking his bowl and robe, entered Vesālī for almsfood.", "bodhi-esque": "Then, in the morning, the Blessed One dressed, took his bowl and robe, and entered Vesālī for alms."}, {"key": "mn71:3.2", "pali": "Atha kho bhagavato etad·ahosi:", "sujato-corrected": "Then it occurred to him,", "pts": "But it occurred to the Lord:", "bodhi-esque": "Then it occurred to the Blessed One:"}, {"key": "mn71:3.3", "pali": "“ati·p·pago kho tāva vesāl·iyaṁ piṇḍāya carituṁ;", "sujato-corrected": "“It’s too early to wander for alms in Vesālī.", "pts": "\"It is still too early to walk for almsfood in Vesālī.", "bodhi-esque": "“It is still too early to walk for alms in Vesālī;"}, {"key": "mn71:3.4", "pali": "yannūnāhaṁ yena eka·puṇḍarīko pari·b·bājak·ārāmo yena vaccha·gotto pari·b·bājako tenupasaṅkameyyan”ti.", "sujato-corrected": "Why don’t I visit the wanderer Vacchagotta at the Single Lotus Monastery?”", "pts": "Suppose I were to approach Ekapuṇḍarīka, the wanderers' park, and Vacchagotta the wanderer?\"", "bodhi-esque": "let me approach the Single Lotus Park, the wanderers' park, where the wanderer Vacchagotta is staying.”"}, {"key": "mn71:3.5", "pali": "Atha kho bhagavā yena eka·puṇḍarīko pari·b·bājak·ārāmo yena vaccha·gotto pari·b·bājako tenupasaṅkami.", "sujato-corrected": "So that’s what he did.", "pts": "Then the Lord approached Ekapuṇḍarīka, the wanderers' park, and Vacchagotta the wanderer.", "bodhi-esque": "Then the Blessed One approached the Single Lotus Park, the wanderers' park, to where the wanderer Vacchagotta was."}]}, {"id": "4", "label": "Addasā kho vaccha·gotto pari·b·bājako bhagavantaṁ dūratova āgacchantaṁ.", "rows": [{"key": "mn71:4.1", "pali": "Addasā kho vaccha·gotto pari·b·bājako bhagavantaṁ dūratova āgacchantaṁ.", "sujato-corrected": "Vacchagotta saw the Buddha coming off in the distance,", "pts": "The wanderer Vacchagotta saw the Lord coming in the distance and seeing him, he spoke thus to the Lord:", "bodhi-esque": "The wanderer Vacchagotta saw the Blessed One coming in the distance."}, {"key": "mn71:4.2", "pali": "Disvāna bhagavantaṁ etadavoca:", "sujato-corrected": "and said to him,", "pts": "", "bodhi-esque": "Having seen him, he said to the Blessed One:"}, {"key": "mn71:4.3", "pali": "“Etu kho, bhante, bhagavā.", "sujato-corrected": "“Let the Blessed One come, sir!", "pts": "\"Revered sir, let the Lord come;", "bodhi-esque": "“Come, bhante, Blessed One."}, {"key": "mn71:4.4", "pali": "Svāgataṁ, bhante, bhagavato.", "sujato-corrected": "Welcome to the Blessed One, sir!", "pts": "revered sir, there is a welcome for the Lord;", "bodhi-esque": "Welcome, bhante, Blessed One."}, {"key": "mn71:4.5", "pali": "Cirassaṁ kho, bhante,\nbhagavā imaṁ pari·yāyamakāsi yadidaṁ idhāgamanāya.", "sujato-corrected": "It’s been a long time since you took the opportunity to come here.", "pts": "revered sir, it is long since the Lord made the opportunity to come here;", "bodhi-esque": "It has been a long time, bhante,\nsince the Blessed One made this journey, that is, to come here."}, {"key": "mn71:4.6", "pali": "Nisīdatu, bhante, bhagavā idam·āsanaṁ paññattan”ti.", "sujato-corrected": "Please, sir, sit down, here, a seat is ready.”", "pts": "revered sir, let the Lord sit down, this is the appointed seat.\"", "bodhi-esque": "“Sit down, bhante, the Blessed One’s seat is prepared.”"}, {"key": "mn71:4.7", "pali": "Nisīdi bhagavā paññatte āsane.", "sujato-corrected": "The Buddha sat on the seat spread out,", "pts": "The Lord sat down on the appointed seat, and Vacchagotta the wanderer,", "bodhi-esque": "The Blessed One sat down on the prepared seat."}, {"key": "mn71:4.8", "pali": "Vaccha·gottopi kho pari·b·bājako añña·taraṁ nīcaṁ āsanaṁ gahetvā ekam·antaṁ nisīdi.", "sujato-corrected": "while Vacchagotta took a low seat and sat to one side.", "pts": "having taken a low seat, sat down at a respectful distance.", "bodhi-esque": "Then the wanderer Vacchagotta, having taken a low seat, sat down to one side."}, {"key": "mn71:4.9", "pali": "Ekam·antaṁ nisinno kho vaccha·gotto pari·b·bājako bhagavantaṁ etadavoca:", "sujato-corrected": "Then Vacchagotta said to the Buddha:", "pts": "As he was sitting down at a respectful distance, the wanderer Vacchagotta spoke thus to the Lord:", "bodhi-esque": "Seated to one side, the wanderer Vacchagotta said this to the Blessed One:"}]}, {"id": "5", "label": "“sutaṁ metaṁ, bhante:", "rows": [{"key": "mn71:5.1", "pali": "“sutaṁ metaṁ, bhante:", "sujato-corrected": "“Sir, I have heard this:", "pts": "\"Revered sir, I have heard:", "bodhi-esque": "“It has been heard by me, bhante:"}, {"key": "mn71:5.2", "pali": "‘samaṇo gotamo sabbaññū sabba·dassāvī, aparisesaṁ ñāṇa·dassanaṁ paṭi·jānāti,", "sujato-corrected": "‘The ascetic Gotama claims to be all-knowing and all-seeing, to know and see everything without exception, thus:", "pts": "'The recluse Gotama is all knowing, all seeing;\nhe claims all-embracing knowledge-and-vision, saying:", "bodhi-esque": "‘The ascetic Gotama is omniscient, all-seeing, he claims to have complete knowledge and vision without remainder,\nand whether he is walking or standing or sleeping or awake,\nknowledge and vision is constantly and continuously present to him.’"}, {"key": "mn71:5.3", "pali": "carato ca me tiṭṭhato ca suttassa ca jāgarassa ca satataṁ samitaṁ ñāṇa·dassanaṁ pacc·upaṭṭhitan’ti.", "sujato-corrected": "“Knowledge and vision are constantly and continually present to me, while walking, standing, sleeping, and waking.”’", "pts": "\"Whether I am walking or standing still or asleep or awake,\nknowledge-and-vision is permanently and continuously before me.\"'", "bodhi-esque": "While walking, while standing, while sleeping, while awake,\nknowledge and vision is constantly and continuously present to me."}, {"key": "mn71:5.4", "pali": "Ye te, bhante, evam·āhaṁsu:\n‘samaṇo gotamo sabbaññū sabba·dassāvī, aparisesaṁ ñāṇa·dassanaṁ paṭi·jānāti,\ncarato ca me tiṭṭhato ca suttassa ca jāgarassa ca satataṁ samitaṁ ñāṇa·dassanaṁ pacc·upaṭṭhitan’ti, kacci te,\nbhante, bhagavato vutta·vādino, na ca bhagavantaṁ a·bhūtena abbh·ācikkhanti,\ndhammassa cānudhammaṁ by·ākaronti, na ca koci saha·dhammiko vādā·nuvādo gārayhaṁ ṭhānaṁ āgacchatī”ti?", "sujato-corrected": "I trust that those who say this repeat what the Buddha has said, and do not misrepresent him with an untruth?\nIs their explanation in line with the teaching?\nAre there any legitimate grounds for rebuttal and criticism?”", "pts": "Revered sir, those who speak thus:\n'The recluse Gotama is all knowing, all seeing;\nhe claims all-embracing knowledge-and-vision, saying:\n\"Whether I am walking or standing still or asleep or awake,\nknowledge-and-vision is permanently and continuously before me.\"' - revered sir,\nI hope that these are speaking of the Lord in accordance with what has\nbeen said and are not misrepresenting the Lord with what is not fact,\nbut are explaining in accordance with dhamma, and that no one of his fellow Dhamma-men,\nof this way of speaking, gives grounds for reproach?\"", "bodhi-esque": "Are those, bhante, who speak thus:\n‘The ascetic Gotama is omniscient, all-seeing, he claims to have complete knowledge and vision without remainder,\nand whether he is walking or standing or sleeping or awake,\nknowledge and vision is constantly and continuously present to him’ —\nare they speakers of the Blessed One’s word, and do they not misrepresent the Blessed One with what is false?\nDo they answer in accordance with the Dhamma, and does no reasonable disputation come to a ground for criticism?”"}, {"key": "mn71:5.5", "pali": "“Ye te, vaccha, evam·āhaṁsu:\n‘samaṇo gotamo sabbaññū sabba·dassāvī, aparisesaṁ ñāṇa·dassanaṁ paṭi·jānāti,\ncarato ca me tiṭṭhato ca suttassa ca jāgarassa ca satataṁ samitaṁ ñāṇa·dassanaṁ pacc·upaṭṭhitan’ti,\nna me te vutta·vādino, abbh·ācikkhanti ca pana maṁ a·satā a·bhūtenā”ti.", "sujato-corrected": "“Vaccha, those who say this do not repeat what I have said.\nThey misrepresent me with what is false and untrue.”", "pts": "\"Vaceha, those who speak thus:\n'The recluse Gotama is all knowing, all seeing;\nhe claims all-embracing knowledge-and-vision, saying:\n\"Whether I am walking or standing still or asleep or awake,\nknowledge-and-vision is permanently and continuously before me.\"' -\nthese are not speaking of me in accordance with what has been said,\nbut they are misrepresenting me with what is untrue, not fact.\"", "bodhi-esque": "“Those, Vaccha, who speak thus:\n‘The ascetic Gotama is omniscient, all-seeing, he claims to have complete knowledge and vision without remainder,\nand whether he is walking or standing or sleeping or awake,\nknowledge and vision is constantly and continuously present to him’ —\nthey are not speakers of my word, but they misrepresent me with what is untrue and false.”"}]}, {"id": "6", "label": "“Kathaṁ by·ākara·mānā pana mayaṁ, bhante, vutta·vādino ceva…", "rows": [{"key": "mn71:6.1", "pali": "“Kathaṁ by·ākara·mānā pana mayaṁ, bhante,\nvutta·vādino ceva bhagavato assāma,\nna ca bhagavantaṁ a·bhūtena abbh·ācikkheyyāma,\ndhammassa cānudhammaṁ by·ākareyyāma, na ca koci saha·dhammiko vādā·nuvādo gārayhaṁ ṭhānaṁ āgaccheyyā”ti?", "sujato-corrected": "“So how should we answer so as to repeat what the Buddha has said, and not misrepresent him with an untruth?\nHow should we explain in line with his teaching, with no legitimate grounds for rebuttal and criticism?”", "pts": "\"Expounding in what way, revered sir, would we be speaking in accordance with what has been said,\nand would not be misrepresenting the Lord with what is not fact,\nbut would be explaining in accordance with Dhamma so that no fellow dhamma-man,\nof the same way of speaking, could give grounds for reproach?\"", "bodhi-esque": "“But how, bhante, should we answer so that we would be speakers of the Blessed One’s word,\nand would not misrepresent the Blessed One with what is false,\nbut would answer in accordance with the Dhamma, and no reasonable disputation would come to a ground for criticism?”"}, {"key": "mn71:6.2", "pali": "“‘Tevijjo samaṇo gotamo’ti kho, vaccha, by·ākara·māno vutta·vādī ceva me assa,\nna ca maṁ a·bhūtena abbh·ācikkheyya,\ndhammassa cānudhammaṁ by·ākareyya, na ca koci saha·dhammiko vādā·nuvādo gārayhaṁ ṭhānaṁ āgaccheyya.", "sujato-corrected": "“‘The ascetic Gotama has the three knowledges.’\nAnswering like this you would repeat what I have said, and not misrepresent me with an untruth.\nYou would explain in line with my teaching, and there would be no legitimate grounds for rebuttal and criticism.", "pts": "\"Vaccha, expounding:\n'The recluse Gotama is a threefold-knowledge man,' you would\nbe one who speaks in accordance with what has been said by me,\nyou would not be misrepresenting me with what is not fact,\nyou would be explaining in accordance with Dhamma,\nand no fellow Dhamma-man of this way of speaking could give grounds for reproach.", "bodhi-esque": "“‘The ascetic Gotama is one with the three true knowledges’ —\nif, Vaccha, one answers thus, he would be a speaker of my word,\nand he would not misrepresent me with what is false, but would answer in accordance with the Dhamma,\nand no reasonable disputation would come to a ground for criticism."}]}, {"id": "7", "label": "Ahañhi, vaccha, yāva·deva ākaṅkhāmi a·neka·vihitaṁ pubbe·nivāsaṁ anussarāmi,", "rows": [{"key": "mn71:7.1", "pali": "Ahañhi, vaccha, yāva·deva ākaṅkhāmi\na·neka·vihitaṁ pubbe·nivāsaṁ anussarāmi,", "sujato-corrected": "For, Vaccha, whenever I want, I recollect my many kinds of past lives.", "pts": "For I, Vaccha, whenever I please recollect a variety of former habitations, that is to say:", "bodhi-esque": "For I, Vaccha, whenever I wish, recollect my manifold past abodes, that is, one birth,\ntwo births … thus with details and particulars I recollect my manifold past abodes."}, {"key": "mn71:7.2", "pali": "seyyathidaṁ—ekampi jātiṁ dvepi jātiyo …pe…\niti sākāraṁ sauddesaṁ a·neka·vihitaṁ pubbe·nivāsaṁ anussarāmi.", "sujato-corrected": "That is:\none, two, three, four, five, ten, twenty, thirty, forty, fifty, a hundred, a thousand, a hundred thousand rebirths;\nmany eons of the world contracting, many eons of the world expanding, many eons of the world contracting and expanding.\nI remember:\n‘There, I was named this, my clan was that, I looked like this, and that was my food.\nThis was how I felt pleasure and pain, and that was how my life ended.\nWhen I passed away from that place I was reborn somewhere else.\nThere, too, I was named this, my clan was that, I looked like this, and that was my food.\nThis was how I felt pleasure and pain, and that was how my life ended.\nWhen I passed away from that place I was reborn here.’\nAnd so I recollect my many kinds of past lives, with features and details.", "pts": "One birth, two births, three births, four births, five births, ten births,\ntwenty births, thirty births, forty births, fifty births, a hundred births,\na thousand births, a hundred thousand births,\nand many an eon of integration and many an eon of disintegration and many an eon of integration-disintegration:\n'Such a one was I by name, having such and such a clan, such and such a colour, so I was nourished,\nsuch and such pleasant and painful experiences were mine, so did the span of life end.\nPassing from this, I came to be in another state where I was such a one by name, having such and such a clan,\nsuch and such a colour, so I was nourished,\nsuch and such pleasant and painful experiences were mine, so did the span of life end.\nPassing from this, I arose here.'\nThus I recollect divers former habitations in all their modes and detail. ■", "bodhi-esque": "That is, I recollect manifold past lives, that is, one birth, two births … with their aspects and details."}]}, {"id": "8", "label": "Ahañhi, vaccha, yāva·deva ākaṅkhāmi dibbena cakkhunā visuddhena…", "rows": [{"key": "mn71:8.1", "pali": "Ahañhi, vaccha, yāva·deva ākaṅkhāmi\ndibbena cakkhunā visuddhena ati·k·kanta·mānusakena\nsatte passāmi cava·māne upapajja·māne hīne paṇīte suvaṇṇe dubbaṇṇe sugate duggate …pe…\nyathā·kammū·page satte pajānāmi.", "sujato-corrected": "And whenever I want, with clairvoyance that is purified and superhuman,\nI see sentient beings passing away and being reborn—inferior and superior,\nbeautiful and ugly, in a good place or a bad place.\nI understand how sentient beings pass on according to their deeds.", "pts": "And I, Vaccha, whenever I please, with the purified deva-vision surpassing that of men,\nsee beings as they pass hence or come to be;\nI comprehend that beings are mean, excellent, comely, ugly, well-going,\nill-going, according to the consequences of deeds, and thinks:\n'Indeed these worthy beings who were possessed of wrong conduct in body,\nspeech and thought, scoffers at the ariyans, holding a wrong view,\nincurring deeds consequent on a wrong view - these, at the breaking up of the body after dying,\nhave arisen in a sorrowful state, a bad bourn, the abyss, Niraya Hell.\nBut these worthy beings who were possessed of good conduct in body,\nspeech and thought, who did not scoff at the ariyans, holding a right view,\nincurring deeds consequent on a right view - these at the breaking up of the body after dying,\nhave arisen in a good bourn, a heaven world.'\nThus with the purified deva-vision surpassing that of men I see beings as they pass hence, as they arise;\nI comprehends that beings are mean, excellent, comely, ugly,\nwell-going, ill-going according to the consequences of deeds. ■", "bodhi-esque": "For I, Vaccha, whenever I wish, with the divine eye,\npurified and surpassing the human, see beings passing away and being reborn,\ninferior and superior, beautiful and ugly, fortunate and unfortunate …\nand I understand how beings fare according to their kamma."}]}, {"id": "9", "label": "Ahañhi, vaccha, āsavānaṁ khayā an·āsavaṁ ceto·vimuttiṁ paññā·vimuttiṁ…", "rows": [{"key": "mn71:9.1", "pali": "Ahañhi, vaccha, āsavānaṁ khayā an·āsavaṁ ceto·vimuttiṁ paññā·vimuttiṁ\ndiṭṭheva dhamme sayaṁ\nabhiññā sacchi·katvā upasampajja viharāmi.", "sujato-corrected": "And I have realized the undefiled freedom of heart and freedom by wisdom in this very life.\nI live having realized it with my own insight due to the ending of defilements.", "pts": "And I, Vaccha, by the destruction of the cankers,\nhaving realized here and now by my own super-knowledge the freedom\nof mind and the freedom through wisdom that are cankerless,\nentering thereon, abide therein.", "bodhi-esque": "For I, Vaccha, with the destruction of the taints,\nin this very life enter upon and dwell in the taintless liberation of mind,\nliberation by wisdom, having realized it for myself by direct knowledge.”"}]}, {"id": "10", "label": "‘Tevijjo samaṇo gotamo’ti kho, vaccha, by·ākara·māno vutta·vādī…", "rows": [{"key": "mn71:10.1", "pali": "‘Tevijjo samaṇo gotamo’ti kho, vaccha, by·ākara·māno vutta·vādī ceva me assa,\nna ca maṁ a·bhūtena abbh·ācikkheyya,\ndhammassa cānudhammaṁ by·ākareyya, na ca koci saha·dhammiko vādā·nuvādo gārayhaṁ ṭhānaṁ āgaccheyyā”ti.", "sujato-corrected": "‘The ascetic Gotama has the three knowledges.’\nAnswering like this you would repeat what I have said, and not misrepresent me with an untruth.\nYou would explain in line with my teaching, and there would be no legitimate grounds for rebuttal and criticism.”", "pts": "Vaccha, expounding that the recluse Gotama is a threefold-knowledge man,\nyou would be one who speaks in accordance with what has been said by me,\nyou would not be misrepresenting me with what is not fact, you would be explaining in accordance with dhamma,\nand no fellow Dhamma-man of this way of speaking could give grounds for reproach.\"", "bodhi-esque": "‘The ascetic Gotama is one of the threefold knowledge’ — thus, Vaccha,\nwhen answering I would be one who speaks as I have said, and I would not misrepresent me with what is untrue;\nI would declare in accordance with the Dhamma, and no reasoned rebuke or ground for criticism would come upon me.’"}]}, {"id": "11", "label": "Evaṁ vutte, vaccha·gotto pari·b·bājako bhagavantaṁ etadavoca:", "rows": [{"key": "mn71:11.1", "pali": "Evaṁ vutte, vaccha·gotto pari·b·bājako bhagavantaṁ etadavoca:", "sujato-corrected": "When he said this, the wanderer Vacchagotta said to the Buddha,", "pts": "When this had been said, Vacchagotta the wanderer spoke thus to the Lord:", "bodhi-esque": "When this was said, the wanderer Vacchagotta said to the Blessed One:"}, {"key": "mn71:11.2", "pali": "“atthi nu kho, bho gotama, koci gihī gihi·saṁyoj·anaṁ a·p·pahāya kāyassa bhedā dukkhassa·ntakaro”ti?", "sujato-corrected": "“Worthy Gotama, are there any laypeople who, without giving up the fetter of lay life,\nmake an end of suffering when the body breaks up?”", "pts": "\"Good Gotama, is there any householder who, not getting rid of the householder's fetter(s),\nat the breaking up of the body is an end-maker of ill?\"", "bodhi-esque": "“Is there, good Gotama, any layperson who, without abandoning the fetter of lay life,\nmakes an end of suffering with the breakup of the body?”"}, {"key": "mn71:11.3", "pali": "“Natthi kho, vaccha, koci gihī gihi·saṁyoj·anaṁ a·p·pahāya kāyassa bhedā dukkhassa·ntakaro”ti.", "sujato-corrected": "“No, Vaccha.”", "pts": "\"There is not any householder, Vaccha, who, not getting rid of the householder's fetter(s),\nat the breaking up of the body is an end-maker of ill.\"", "bodhi-esque": "“There is not, Vaccha, any layperson who, without abandoning the fetter of lay life,\nmakes an end of suffering with the breakup of the body.”"}]}, {"id": "12", "label": "“Atthi pana, bho gotama, koci gihī gihi·saṁyoj·anaṁ…", "rows": [{"key": "mn71:12.1", "pali": "“Atthi pana, bho gotama, koci gihī gihi·saṁyoj·anaṁ a·p·pahāya kāyassa bhedā saggū·pago”ti?", "sujato-corrected": "“But are there any laypeople who, without giving up the fetter of lay life, go to heaven when the body breaks up?”", "pts": "\"But is there, good Gotama, any householder who,\nnot getting rid of the householder's fetter(s), at the breaking up of the body attains heaven?\"", "bodhi-esque": "“But is there, good Gotama, any layperson who,\nwithout abandoning the fetter of lay life, goes to heaven with the breakup of the body?”"}, {"key": "mn71:12.2", "pali": "“Na kho, vaccha, ekaṁ·yeva sataṁ na dve satāni na tīṇi satāni na cattāri satāni na pañca satāni,\natha kho bhiyyova ye\ngihī gihi·saṁyoj·anaṁ a·p·pahāya kāyassa bhedā saggū·pagā”ti.", "sujato-corrected": "“There’s not just one hundred laypeople, Vaccha, or two or three or four or five hundred,\nbut many more than that who, without giving up the fetter of lay life, go to heaven when the body breaks up.”", "pts": "\"Not just one hundred, Vaccha, nor two hundred, nor three,\nfour or five hundred, but far more are those householders who,\nnot getting-rid of the householder's fetter(s), at the breaking up of the body attain heaven.\"", "bodhi-esque": "“Not merely one hundred, Vaccha, nor two hundred, nor three hundred,\nnor four hundred, nor five hundred, but even more than that —\nthere are laypersons who, without abandoning the fetter of lay life, go to heaven with the breakup of the body.”"}]}, {"id": "13", "label": "“Atthi nu kho, bho gotama, koci ājīvako…", "rows": [{"key": "mn71:13.1", "pali": "“Atthi nu kho, bho gotama, koci ājīvako kāyassa bhedā dukkhassa·ntakaro”ti?", "sujato-corrected": "“Worthy Gotama, are there any Ājīvaka ascetics who make an end of suffering when the body breaks up?”", "pts": "\"Now, good Gotama, is there any Naked Ascetic who at the breaking up of the body is an end-maker of ill?\"", "bodhi-esque": "“Is there, good Gotama, any Ājīvaka who makes an end of suffering with the breakup of the body?”"}, {"key": "mn71:13.2", "pali": "“Natthi kho, vaccha, koci ājīvako kāyassa bhedā dukkhassa·ntakaro”ti.", "sujato-corrected": "“No, Vaccha.”", "pts": "\"There is not, Vaccha, any Naked Ascetic who at the breaking up of the body is an end-maker of ill.\"", "bodhi-esque": "“There is not, Vaccha, any Ājīvaka who makes an end of suffering with the breakup of the body.”"}]}, {"id": "14", "label": "“Atthi pana, bho gotama, koci ājīvako kāyassa…", "rows": [{"key": "mn71:14.1", "pali": "“Atthi pana, bho gotama, koci ājīvako kāyassa bhedā saggū·pago”ti?", "sujato-corrected": "“But are there any Ājīvaka ascetics who go to heaven when the body breaks up?”", "pts": "\"But is there then, good Gotama, any Naked Ascetic who at the breaking up of the body attained heaven?\"", "bodhi-esque": "“But is there, good Gotama, any Ājīvaka who goes to heaven with the breakup of the body?”"}, {"key": "mn71:14.2", "pali": "“Ito kho so, vaccha, eka·navuto kappo yamahaṁ anussarāmi,\nnābhijānāmi kañci ājīvakaṁ saggū·pagaṁ aññatra ekena;", "sujato-corrected": "“Vaccha, when I recollect the past ninety-one eons,\nI can’t find any Ājīvaka ascetics who have gone to heaven, except one;", "pts": "\"Although I, Vaccha, recollect ninety-one eons, I do not know of any Naked Ascetic who attained heaven, except one;", "bodhi-esque": "“Since, Vaccha, that period of ninety-one eons which I recollect,\nI do not recall any Ājīvaka going to heaven except one;"}, {"key": "mn71:14.3", "pali": "sopāsi kamma·vādī kiriya·vādī”ti.", "sujato-corrected": "and he taught the efficacy of deeds and action.”", "pts": "and he professed kamma, he professed operative kamma.\"", "bodhi-esque": "he was a proponent of kamma, a proponent of action.”"}]}, {"id": "15", "label": "“Evaṁ sante, bho gotama, suññaṁ aduṁ titth·āyatanaṁ…", "rows": [{"key": "mn71:15.1", "pali": "“Evaṁ sante, bho gotama, suññaṁ aduṁ\ntitth·āyatanaṁ antamaso saggū·pagenapī”ti?", "sujato-corrected": "“In that case, worthy Gotama, that sectarian fold is empty even of the chance to go to heaven.”", "pts": "\"This being so, good Gotama, that fold of the sects is empty even in regard to attaining heaven.\"", "bodhi-esque": "“That being so, good Gotama, is that sectarian school empty even of one who goes to heaven?”"}, {"key": "mn71:15.2", "pali": "“Evaṁ, vaccha, suññaṁ aduṁ\ntitth·āyatanaṁ antamaso saggū·pagenapī”ti.", "sujato-corrected": "“Yes, Vaccha, that sectarian fold is empty even of the chance to go to heaven.”", "pts": "\"This being so, Vaccha, that fold of the sects is empty even in regard to attaining heaven.\"", "bodhi-esque": "“So it is, Vaccha, that sectarian school is empty even of one who goes to heaven.”"}, {"key": "mn71:15.3", "pali": "Idam·avoca bhagavā.", "sujato-corrected": "That is what the Buddha said.", "pts": "Thus spoke the Lord.", "bodhi-esque": "This is what the Blessed One said."}, {"key": "mn71:15.4", "pali": "Atta·mano vaccha·gotto pari·b·bājako bhagavato bhāsitaṁ abhi·nandīti.", "sujato-corrected": "Satisfied, the wanderer Vacchagotta approved what the Buddha said.", "pts": "Delighted, the wanderer Vacchagotta rejoiced in what the Lord had said.\nDiscourse to Vaeehagotta on the Threefold Knowledge", "bodhi-esque": "Elated, the wanderer Vacchagotta delighted in the Blessed One's statement."}, {"key": "mn71:15.5", "pali": "Tevijja·vaccha·suttaṁ niṭṭhitaṁ paṭhamaṁ.", "sujato-corrected": "", "pts": "", "bodhi-esque": "The Tevijja Vaccha Sutta is finished, the first."}]}];
 
@@ -773,6 +843,11 @@ const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {"sujato-corrected": {"mn71:1.1": ["This begins the “Vacchagotta trilogy”, a series of three suttas tracing Vacchagotta’s spiritual development.\nThese are supplemented by an entire Saṁyutta of questions (<a class=\"xref\" data-ref=\"sn33\" href=\"https://suttacentral.net/sn33/en/sujato\" target=\"_blank\" rel=\"noopener\">SN 33</a>).\nIn this sutta he shows an attitude of curiosity and respect, and gains a degree of faith in the Buddha.\n| This is not the same person as the lay brahmin Vacchagotta of Venāgapura  at <a class=\"xref\" data-ref=\"an3.63:2.1\" href=\"https://suttacentral.net/an3.63/en/sujato#2.1\" target=\"_blank\" rel=\"noopener\">AN 3.63:2.1</a>. "], "mn71:2.1": ["Vacchagotta is a clan name;\nhis personal name is not recorded.\nThe Vaccha clan stems from the Vedic seer Vatsa, author of Rig Veda 8.6–11.\nSeveral notable figures of this clan are known, including a lineage master in Bṛhadāraṇyaka Upaniṣad 4.5.3,\nbut there is nothing to identify them with the Vacchagotta of the suttas.\nGiven Vacchagotta’s evident interest in the ascetic traditions, it is noteworthy that a certain Śayyambha Vatsagotra,\nfather of Manaka, was said to be a direct disciple of Mahāvīra (Kalpasūtra 10.3). "], "mn71:5.1": ["At <a class=\"xref\" data-ref=\"an3.57\" href=\"https://suttacentral.net/an3.57/en/sujato\" target=\"_blank\" rel=\"noopener\">AN 3.57</a> he similarly asks the Buddha to confirm his teachings on generosity.\nAt <a class=\"xref\" data-ref=\"sn44.9\" href=\"https://suttacentral.net/sn44.9/en/sujato\" target=\"_blank\" rel=\"noopener\">SN 44.9</a>, meanwhile, he asks a somewhat related question about the six\nascetic teachers and their divining of afterlife destinies. "], "mn71:5.2": ["Such extraordinary claims were not unprecedented, as both the Jain leader Mahāvīra (<a class=\"xref\" data-ref=\"mn14:17.2\" href=\"https://suttacentral.net/mn14/en/sujato#17.2\" target=\"_blank\" rel=\"noopener\">MN 14:17.2</a>, <a class=\"xref\" data-ref=\"mn79:6.7\" href=\"https://suttacentral.net/mn79/en/sujato#6.7\" target=\"_blank\" rel=\"noopener\">MN 79:6.7</a>) and Pūraṇa Kassapa (<a class=\"xref\" data-ref=\"an9.38:2.1\" href=\"https://suttacentral.net/an9.38/en/sujato#2.1\" target=\"_blank\" rel=\"noopener\">AN 9.38:2.1</a>) are said to claim omniscience in the Pali canon.\nExtant Jain texts have no shortage of such claims (eg.\nSūyagaḍa1.6, Kalpasūtra 1, Bhagavatisūtra 4.10, etc.), and it seems likely that this was part of Mahāvīra’s teachings.\nSources for Pūraṇa Kassapa are slim, but he was regarded as a great teacher of the Ājīvakas,\nwhose founder the bamboo-staffed ascetic Gosāla was said to be omniscient (Basham, <em>History and Doctrines of the Ājīvikas</em>, 275–6). "], "mn71:5.5": ["At <a class=\"xref\" data-ref=\"an4.24:2.1\" href=\"https://suttacentral.net/an4.24/en/sujato#2.1\" target=\"_blank\" rel=\"noopener\">AN 4.24:2.1</a> the Buddha claims to know whatever is “seen, heard, thought, known, attained, sought,\nand explored by the mind”, which is a complete knowledge of subjective experience.\nIn the curious dialogue at <a class=\"xref\" data-ref=\"mn90:8.5\" href=\"https://suttacentral.net/mn90/en/sujato#8.5\" target=\"_blank\" rel=\"noopener\">MN 90:8.5</a> the Buddha denies that anyone “will know” all things simultaneously.\nThe Milindapañha reversed this to the positive statement that the Buddha could know all things,\njust not simultaneously (<a class=\"xref\" data-ref=\"mil5.1.2:1.2\" href=\"https://suttacentral.net/mil5.1.2/en/sujato#1.2\" target=\"_blank\" rel=\"noopener\">Mil 5.1.2:1.2</a>).\nThe Buddha’s omniscience became the standard view of the later books of the Pali canon (<a class=\"xref\" data-ref=\"cnd10:5.2\" href=\"https://suttacentral.net/cnd10/en/sujato#5.2\" target=\"_blank\" rel=\"noopener\">Cnd 10:5.2</a>, <a class=\"xref\" data-ref=\"bv2:55.3\" href=\"https://suttacentral.net/bv2/en/sujato#55.3\" target=\"_blank\" rel=\"noopener\">Bv 2:55.3</a>, <a class=\"xref\" data-ref=\"pp1.6:2.1\" href=\"https://suttacentral.net/pp1.6/en/sujato#2.1\" target=\"_blank\" rel=\"noopener\">Pp 1.6:2.1</a>, <a class=\"xref\" data-ref=\"kv3.1:5.3\" href=\"https://suttacentral.net/kv3.1/en/sujato#5.3\" target=\"_blank\" rel=\"noopener\">Kv 3.1:5.3</a>, etc.). "], "mn71:6.2": ["The Buddha’s knowledge is specific and functional:\nit serves the purpose of liberation. "], "mn71:11.2": ["Vacchagotta uses the phrase <i>gihisaṁyojana</i> (“fetter of lay life”) for the inner attachment to lay life,\nwhich is not overcome by the mere act of joining a religious order.\nCompare the Buddha’s term <i>gehasita</i>, the thoughts and memories “of the lay life” (<a class=\"xref\" data-ref=\"mn21:6.2\" href=\"https://suttacentral.net/mn21/en/sujato#6.2\" target=\"_blank\" rel=\"noopener\">MN 21:6.2</a>, <a class=\"xref\" data-ref=\"mn119:4.7\" href=\"https://suttacentral.net/mn119/en/sujato#4.7\" target=\"_blank\" rel=\"noopener\">MN 119:4.7</a>, <a class=\"xref\" data-ref=\"mn125:23.5\" href=\"https://suttacentral.net/mn125/en/sujato#23.5\" target=\"_blank\" rel=\"noopener\">MN 125:23.5</a>, <a class=\"xref\" data-ref=\"mn137:9.3\" href=\"https://suttacentral.net/mn137/en/sujato#9.3\" target=\"_blank\" rel=\"noopener\">MN 137:9.3</a>).\nSee also <a class=\"xref\" data-ref=\"mn54\" href=\"https://suttacentral.net/mn54/en/sujato\" target=\"_blank\" rel=\"noopener\">MN 54</a>, where the external “signs” of a householder are connected with the fetters. "], "mn71:14.2": ["This goes back to the time of the Buddha Vipassī (<a class=\"xref\" data-ref=\"dn14:1.4.1\" href=\"https://suttacentral.net/dn14/en/sujato#1.4.1\" target=\"_blank\" rel=\"noopener\">DN 14:1.4.1</a>). "], "mn71:14.3": ["Thus denying the basic doctrines of both Gosāla (<a class=\"xref\" data-ref=\"dn2:20.2\" href=\"https://suttacentral.net/dn2/en/sujato#20.2\" target=\"_blank\" rel=\"noopener\">DN 2:20.2</a>) and Pūraṇa Kassapa (<a class=\"xref\" data-ref=\"dn2:17.2\" href=\"https://suttacentral.net/dn2/en/sujato#17.2\" target=\"_blank\" rel=\"noopener\">DN 2:17.2</a>). "], "mn71:15.1": ["The Buddha is speaking of the Ājīvakas, who denied moral causality, not of non-Buddhist paths generally. "]}, "pts": {"mn71:2.1": ["Cf.\nA. i. 160;\nS. iii. 257 ff. , iv. 391 ff.\nVerses are ascribed to him at Thag. 112.\nHis spiritual evolution is told in this and the two following Discourses, and very briefly at ThagA.\ni. 235. | MA. iii. 195 = DA. ii. 416 says puṇḍarīka is a white mango tree.\nA solitary one (eka) grew in this wanderers' park.\nThis park is not to be confused with the ekapuṇḍarīka uyyāna of M. i. 252."], "mn71:5.2": ["Said of Nātaputta at M. i. 92-93."], "mn71:5.4": ["Cf.\nA. i. 161, ii. 31, iii. 4;\nS. ii. 33, 36, iii. 6."], "mn71:7.2": ["Cf.\nM. i. 22."], "mn71:11.2": ["Probably meaning his wife, children and servants."], "mn71:14.2": ["At D. ii. 2 Gotama is reputed to say that the Buddha Vipassin arose in the world ninety-one eons, kappa, ago.\nThis context mentions six Buddhas preceding Gotama;\nof these Vipassin is the first.\nI suggest that our M. passage may have a hidden reference to the fact that Gotama's recollection of his previous lives,\nor \"habitations,\" goes back to Vipassin's time;\nand that, since from D. ii. 2 and M. i.\n483 it does not appear to go back to the times of the other Buddhas who preceded Vipassin,\nis perhaps contributory evidence that the number of these was of later growth;\nsee e.g. E.J. Thomas, Life of Buddha, p. 27.\nSee Intr. p. xvii."]}};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

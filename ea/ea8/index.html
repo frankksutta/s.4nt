@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,6 +819,19 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
 const TREE=[{"id": "ea8", "label": "", "children": [{"id": "ea8.1", "label": "EA 8.1 — 須偷", "children": [{"id": "ea8.1/1", "label": "聞如是：", "rows": [{"key": "ea8.1:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea8.1/2", "label": "一時，佛在舍衛國祇樹給孤獨園。", "rows": [{"key": "ea8.1:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea8.1/3", "label": "爾時，世尊告諸比丘：「受形大者，莫過阿須 倫王。", "rows": [{"key": "ea8.1:3.1", "lzh": "爾時，世尊告諸比丘：「受形大者，莫過阿須 倫王。", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n\"There is no one with a larger body than the Asura king."}, {"key": "ea8.1:3.2", "lzh": "比丘當知，阿須倫形廣長八萬四千由 延，", "deepsk-2026-line-by-line": "Monks, you should know that the Asura's body is eighty-four thousand yojanas wide and long,"}, {"key": "ea8.1:3.3", "lzh": "口縱廣千由旬。", "deepsk-2026-line-by-line": "and his mouth is a thousand yojanas wide."}, {"key": "ea8.1:3.4", "lzh": "比丘當知，或有是時， 阿須倫王欲觸犯日時，", "deepsk-2026-line-by-line": "Monks, you should know that sometimes, when the Asura king wants to attack the sun,"}, {"key": "ea8.1:3.5", "lzh": "倍復化身十六萬八 千由旬，往日月前。", "deepsk-2026-line-by-line": "he further transforms his body to one hundred sixty-eight thousand yojanas and goes before the sun and moon."}, {"key": "ea8.1:3.6", "lzh": "日月王見已，各懷恐 怖，不寧本處。", "deepsk-2026-line-by-line": "When the sun and moon kings see this, they each become terrified and cannot remain in their places."}, {"key": "ea8.1:3.7", "lzh": "所以然者，阿須倫形甚可畏 故。", "deepsk-2026-line-by-line": "Why is that?\nBecause the Asura's form is very fearsome."}, {"key": "ea8.1:3.8", "lzh": "彼日月王以懷恐懼，不復有光明；", "deepsk-2026-line-by-line": "Because the sun and moon kings are terrified, they no longer shine;"}, {"key": "ea8.1:3.9", "lzh": "然阿 須倫不敢前捉日月。", "deepsk-2026-line-by-line": "yet the Asura does not dare to seize the sun and moon."}, {"key": "ea8.1:3.10", "lzh": "何以故？", "deepsk-2026-line-by-line": "Why is that?"}, {"key": "ea8.1:3.11", "lzh": "日月威德有 大神力，壽命極長，顏色端正，受樂無窮。", "deepsk-2026-line-by-line": "Because the sun and moon have majestic virtue and great spiritual power,\nextremely long life, beautiful appearance, and endless enjoyment."}, {"key": "ea8.1:3.12", "lzh": "欲 知壽命長短者，住壽一劫。", "deepsk-2026-line-by-line": "If you want to know the length of their life, they live for one kalpa."}, {"key": "ea8.1:3.13", "lzh": "復是此間眾生 福祐，令日月王不為阿須倫所見觸惱。", "deepsk-2026-line-by-line": "Moreover, it is due to the blessings of the beings here that the sun and moon kings are not harassed by the Asura."}, {"key": "ea8.1:3.14", "lzh": "爾 時，阿須倫便懷愁憂，即於彼沒。", "deepsk-2026-line-by-line": "At that time, the Asura became sorrowful and immediately disappeared from there."}]}, {"id": "ea8.1/4", "label": "「如是。", "rows": [{"key": "ea8.1:4.1", "lzh": "「如是。", "deepsk-2026-line-by-line": "Thus."}, {"key": "ea8.1:4.2", "lzh": "諸比 丘！", "deepsk-2026-line-by-line": "Monks!"}, {"key": "ea8.1:4.3", "lzh": "弊魔波旬恒在汝後，求其方便，壞敗善 根。", "deepsk-2026-line-by-line": "The evil Māra Pāpīyān always follows behind you, seeking an opportunity to destroy your wholesome roots."}, {"key": "ea8.1:4.4", "lzh": "波旬便化極妙奇異色、聲、香、", "deepsk-2026-line-by-line": "Māra then manifests extremely wonderful and extraordinary forms, sounds, scents,"}, {"key": "ea8.1:4.5", "lzh": "味、細滑之法， 欲迷亂諸比丘意。", "deepsk-2026-line-by-line": "flavors, and tangible objects, in order to confuse the minds of the monks."}, {"key": "ea8.1:4.6", "lzh": "波旬作是念：『我當會遇 得比丘眼便，", "deepsk-2026-line-by-line": "Māra thinks:\n'I will surely find an opportunity with the monks' eyes,"}, {"key": "ea8.1:4.7", "lzh": "亦當得耳、鼻、口、身、意之便。", "deepsk-2026-line-by-line": "and also find opportunities with their ears, nose, mouth, body, and mind.'"}, {"key": "ea8.1:4.8", "lzh": "』爾 時，比丘雖見極妙六情之法，心不染著。", "deepsk-2026-line-by-line": "At that time, although the monks see these extremely wonderful objects of the six senses, their minds are not attached."}, {"key": "ea8.1:4.9", "lzh": "爾 時，弊魔波旬便懷愁憂，即退而去。", "deepsk-2026-line-by-line": "At that time, the evil Māra Pāpīyān becomes sorrowful and immediately retreats and departs."}, {"key": "ea8.1:4.10", "lzh": "所以然 者，多薩阿竭、阿羅呵威力所致。", "deepsk-2026-line-by-line": "Why is this?\nIt is due to the power of the Tathāgata, the Arahant."}, {"key": "ea8.1:4.11", "lzh": "何以故？", "deepsk-2026-line-by-line": "Why?"}, {"key": "ea8.1:4.12", "lzh": "諸比 丘不近色、聲、香、味、細滑法。", "deepsk-2026-line-by-line": "Because the monks do not approach forms, sounds, scents, flavors, or tangible objects."}, {"key": "ea8.1:4.13", "lzh": "爾時，比丘恒作 是學，受人信施，極為甚難，", "deepsk-2026-line-by-line": "At that time, the monks always train thus:\nreceiving alms from the faithful is extremely difficult,"}, {"key": "ea8.1:4.14", "lzh": "不可消化，墮 墜五趣，不得至無上正真之道。", "deepsk-2026-line-by-line": "it cannot be easily digested, and one may fall into the five realms of existence,\nunable to reach the unsurpassed, true and right path."}, {"key": "ea8.1:4.15", "lzh": "要當專意， 未獲者獲，未得者得，", "deepsk-2026-line-by-line": "One should focus intently:\nwhat has not yet been attained, attain;\nwhat has not yet been obtained, obtain;"}, {"key": "ea8.1:4.16", "lzh": "未度者度，未得證者 教令成證。", "deepsk-2026-line-by-line": "what has not yet crossed over, cross over;\nwhat has not yet realized, teach to realize."}, {"key": "ea8.1:4.17", "lzh": "是故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, O monks!"}, {"key": "ea8.1:4.18", "lzh": "未有信施，不起 想念；", "deepsk-2026-line-by-line": "When there is no faithful giving, do not give rise to thoughts;"}, {"key": "ea8.1:4.19", "lzh": "以有信施，便能消化，不起染著。", "deepsk-2026-line-by-line": "When there is faithful giving, one can digest it without giving rise to attachment."}, {"key": "ea8.1:4.20", "lzh": "如 是，諸比丘！", "deepsk-2026-line-by-line": "Thus, O monks!"}, {"key": "ea8.1:4.21", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train yourselves in this way.\""}]}, {"id": "ea8.1/5", "label": "爾時，諸比丘聞佛所 說，歡喜奉行。", "rows": [{"key": "ea8.1:5.1", "lzh": "爾時，諸比丘聞佛所 說，歡喜奉行。", "deepsk-2026-line-by-line": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}]}, {"id": "ea8.2", "label": "EA 8.2 — 益", "children": [{"id": "ea8.2/1", "label": "聞如是：", "rows": [{"key": "ea8.2:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea8.2/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea8.2:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea8.2/3", "label": "爾時，世尊告諸比丘：「若有一人出現於 世，", "rows": [{"key": "ea8.2:3.1", "lzh": "爾時，世尊告諸比丘：「若有一人出現於 世，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'If one person appears in the world,"}, {"key": "ea8.2:3.2", "lzh": "多饒益人，安隱眾生，愍世群萌，", "deepsk-2026-line-by-line": "he greatly benefits people, brings peace to sentient beings, and shows compassion to the world's multitudes,"}, {"key": "ea8.2:3.3", "lzh": "欲使 天、人獲其福祐。", "deepsk-2026-line-by-line": "wishing to enable devas and humans to obtain blessings."}, {"key": "ea8.2:3.4", "lzh": "云何為一人？", "deepsk-2026-line-by-line": "Who is that one person?"}, {"key": "ea8.2:3.5", "lzh": "所謂多薩阿 竭、阿羅呵、三耶三佛。", "deepsk-2026-line-by-line": "He is the Tathāgata, the Arahant, the Perfectly Enlightened One."}, {"key": "ea8.2:3.6", "lzh": "是謂一人出現於世， 多饒益人，安隱眾生，", "deepsk-2026-line-by-line": "This is called one person appearing in the world who greatly benefits people, brings peace to sentient beings,"}, {"key": "ea8.2:3.7", "lzh": "愍世群萌，欲使天、人 獲其福祐。", "deepsk-2026-line-by-line": "shows compassion to the world's multitudes, and wishes to enable devas and humans to obtain blessings."}, {"key": "ea8.2:3.8", "lzh": "是故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea8.2:3.9", "lzh": "常興恭敬於如來 所。", "deepsk-2026-line-by-line": "Always generate reverence towards the Tathāgata."}, {"key": "ea8.2:3.10", "lzh": "是故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea8.2:3.11", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train thus.'"}]}, {"id": "ea8.2/4", "label": "爾時，諸比丘聞 佛所說，歡喜奉行。", "rows": [{"key": "ea8.2:4.1", "lzh": "爾時，諸比丘聞 佛所說，歡喜奉行。", "deepsk-2026-line-by-line": "Then the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea8.3", "label": "EA 8.3 — 一道", "children": [{"id": "ea8.3/1", "label": "聞如是：", "rows": [{"key": "ea8.3:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea8.3/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea8.3:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea8.3/3", "label": "爾時，世尊告諸比丘：「若有一人出現於 世，", "rows": [{"key": "ea8.3:3.1", "lzh": "爾時，世尊告諸比丘：「若有一人出現於 世，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'If one person appears in the world,"}, {"key": "ea8.3:3.2", "lzh": "便有一人入道在於世間，亦有二諦、三 解脫門、", "deepsk-2026-line-by-line": "then one person enters the path in the world, and there are also the two truths, the three doors of liberation,"}, {"key": "ea8.3:3.3", "lzh": "四諦真法、五根、六邪見滅、七覺意、賢 聖八道品、", "deepsk-2026-line-by-line": "the four noble truths, the five faculties, the cessation of the six wrong views,\nthe seven factors of enlightenment, the noble eightfold path,"}, {"key": "ea8.3:3.4", "lzh": "九眾生居、如來十力、十一慈心 解脫，便出現於世。", "deepsk-2026-line-by-line": "the nine abodes of beings, the ten powers of the Tathāgata,\nand the eleven liberations of the loving-kindness mind, all appear in the world."}, {"key": "ea8.3:3.5", "lzh": "云何為一人？", "deepsk-2026-line-by-line": "What is that one person?"}, {"key": "ea8.3:3.6", "lzh": "所謂多薩 阿竭、阿羅呵、三耶三佛。", "deepsk-2026-line-by-line": "It is the Tathāgata, the Arahant, the Perfectly Enlightened One."}, {"key": "ea8.3:3.7", "lzh": "是謂一人出現於 世，便有一人入道在於世間，", "deepsk-2026-line-by-line": "This is called one person appearing in the world, then one person enters the path in the world,"}, {"key": "ea8.3:3.8", "lzh": "亦有二諦、三 解脫門、四諦真法、五根、", "deepsk-2026-line-by-line": "and there are also the two truths, the three doors of liberation, the four noble truths, the five faculties,"}, {"key": "ea8.3:3.9", "lzh": "六邪見滅、七覺意、賢 聖八道品、九眾生居、", "deepsk-2026-line-by-line": "the cessation of the six wrong views, the seven factors of enlightenment,\nthe noble eightfold path, the nine abodes of beings,"}, {"key": "ea8.3:3.10", "lzh": "如來十力、十一慈心 解脫，便出現於世。", "deepsk-2026-line-by-line": "the ten powers of the Tathāgata, and the eleven liberations of the loving-kindness mind, all appear in the world."}, {"key": "ea8.3:3.11", "lzh": "是故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea8.3:3.12", "lzh": "常興恭敬 於如來所，亦當作是學。」", "deepsk-2026-line-by-line": "Always generate reverence towards the Tathāgata, and you should train thus.'"}]}, {"id": "ea8.3/4", "label": "爾時，諸比丘聞佛 所說，歡喜奉行。", "rows": [{"key": "ea8.3:4.1", "lzh": "爾時，諸比丘聞佛 所說，歡喜奉行。", "deepsk-2026-line-by-line": "Then the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea8.4", "label": "EA 8.4 — 光明", "children": [{"id": "ea8.4/1", "label": "聞如是：", "rows": [{"key": "ea8.4:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea8.4/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea8.4:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea8.4/3", "label": "爾時，世尊告諸比丘：「若有一人出現於 世，", "rows": [{"key": "ea8.4:3.1", "lzh": "爾時，世尊告諸比丘：「若有一人出現於 世，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'If one person appears in the world,"}, {"key": "ea8.4:3.2", "lzh": "便有智慧光明出現於世。", "deepsk-2026-line-by-line": "then the light of wisdom appears in the world."}, {"key": "ea8.4:3.3", "lzh": "云何為一人？", "deepsk-2026-line-by-line": "What is that one person?"}, {"key": "ea8.4:3.4", "lzh": "所謂多薩阿竭、阿羅呵、三耶三佛。", "deepsk-2026-line-by-line": "It is the Tathāgata, the Arahant, the Fully Enlightened One."}, {"key": "ea8.4:3.5", "lzh": "是謂一人 出現於世，便有智慧光明出現於世。", "deepsk-2026-line-by-line": "This is the one person who, appearing in the world, brings the light of wisdom to appear in the world."}, {"key": "ea8.4:3.6", "lzh": "是故， 諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks,"}, {"key": "ea8.4:3.7", "lzh": "當信心向佛，無有傾邪。", "deepsk-2026-line-by-line": "you should place your faith in the Buddha without wavering."}, {"key": "ea8.4:3.8", "lzh": "如是，諸比 丘！", "deepsk-2026-line-by-line": "Thus, monks,"}, {"key": "ea8.4:3.9", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "you should train yourselves.'"}]}, {"id": "ea8.4/4", "label": "爾時，諸比丘聞佛所說，歡喜 奉行。", "rows": [{"key": "ea8.4:4.1", "lzh": "爾時，諸比丘聞佛所說，歡喜 奉行。", "deepsk-2026-line-by-line": "Then the monks, hearing what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea8.5", "label": "EA 8.5 — 闇冥", "children": [{"id": "ea8.5/1", "label": "聞如是：", "rows": [{"key": "ea8.5:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea8.5/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea8.5:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea8.5/3", "label": "爾時，世尊告諸比丘：", "rows": [{"key": "ea8.5:3.1", "lzh": "爾時，世尊告諸比丘：", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:"}, {"key": "ea8.5:3.2", "lzh": "「若有一人出現於 世，無明大冥便自消滅。", "deepsk-2026-line-by-line": "“If one person appears in the world, the great darkness of ignorance naturally vanishes."}, {"key": "ea8.5:3.3", "lzh": "爾時，凡愚之士為 此無明所見纏結，", "deepsk-2026-line-by-line": "At that time, foolish worldlings are bound and entangled by this ignorance,"}, {"key": "ea8.5:3.4", "lzh": "生死所趣，如實不知， 周旋往來今世、後世，", "deepsk-2026-line-by-line": "and they do not truly know where birth and death lead, wandering back and forth in this life and the next,"}, {"key": "ea8.5:3.5", "lzh": "從劫至劫，無有解 已；若多薩阿竭、阿羅呵、", "deepsk-2026-line-by-line": "from eon to eon, without any release;\nbut when the Tathāgata, the Arahant,"}, {"key": "ea8.5:3.6", "lzh": "三耶三佛出現世時， 無明大闇便自消滅。", "deepsk-2026-line-by-line": "the Perfectly Enlightened One appears in the world, the great darkness of ignorance naturally vanishes."}, {"key": "ea8.5:3.7", "lzh": "是故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea8.5:3.8", "lzh": "當念承 事諸佛。", "deepsk-2026-line-by-line": "You should always remember to serve the Buddhas."}, {"key": "ea8.5:3.9", "lzh": "如是，諸比丘！", "deepsk-2026-line-by-line": "Thus, monks!"}, {"key": "ea8.5:3.10", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train yourselves in this way.”"}]}, {"id": "ea8.5/4", "label": "爾時，諸比 丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea8.5:4.1", "lzh": "爾時，諸比 丘聞佛所說，歡喜奉行。", "deepsk-2026-line-by-line": "Then the monks, hearing what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea8.6", "label": "EA 8.6 — 道品", "children": [{"id": "ea8.6/1", "label": "聞如是：", "rows": [{"key": "ea8.6:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea8.6/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea8.6:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea8.6/3", "label": "爾時，世尊告諸比丘：「若有一人出現於 世，", "rows": [{"key": "ea8.6:3.1", "lzh": "爾時，世尊告諸比丘：「若有一人出現於 世，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'If one person appears in the world,"}, {"key": "ea8.6:3.2", "lzh": "便有三十七品出現於世。", "deepsk-2026-line-by-line": "then the thirty-seven factors appear in the world."}, {"key": "ea8.6:3.3", "lzh": "云何三十七 品道？", "deepsk-2026-line-by-line": "What are the thirty-seven factors?"}, {"key": "ea8.6:3.4", "lzh": "所謂四意止、四意斷、四神足、五根、", "deepsk-2026-line-by-line": "They are the four establishments of mindfulness, the four right exertions,\nthe four bases of psychic power, the five faculties,"}, {"key": "ea8.6:3.5", "lzh": "五 力、七覺意、八真行，便出現於世。", "deepsk-2026-line-by-line": "the five powers, the seven factors of enlightenment, and the eightfold path — these appear in the world."}, {"key": "ea8.6:3.6", "lzh": "云何為一 人？", "deepsk-2026-line-by-line": "Who is that one person?"}, {"key": "ea8.6:3.7", "lzh": "所謂多薩阿竭、阿羅呵、三耶三佛。", "deepsk-2026-line-by-line": "He is the Tathāgata, the Arahant, the Perfectly Enlightened One."}, {"key": "ea8.6:3.8", "lzh": "是故，諸 比丘！", "deepsk-2026-line-by-line": "Therefore, monks,"}, {"key": "ea8.6:3.9", "lzh": "常當承事於佛，亦當作是學。」", "deepsk-2026-line-by-line": "you should always attend to the Buddha, and you should train thus.'"}]}, {"id": "ea8.6/4", "label": "爾時，諸 比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea8.6:4.1", "lzh": "爾時，諸 比丘聞佛所說，歡喜奉行。", "deepsk-2026-line-by-line": "At that time, the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea8.7", "label": "EA 8.7 — 沒盡", "children": [{"id": "ea8.7/1", "label": "聞如是：", "rows": [{"key": "ea8.7:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea8.7/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea8.7:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea8.7/3", "label": "爾時，世尊告諸比丘：「若有一人沒盡於 世，", "rows": [{"key": "ea8.7:3.1", "lzh": "爾時，世尊告諸比丘：「若有一人沒盡於 世，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'If one person passes away from the world,"}, {"key": "ea8.7:3.2", "lzh": "人民之類多懷愁憂，天及人民普失廕 覆。", "deepsk-2026-line-by-line": "the multitude of people are filled with sorrow, and both devas and people universally lose their shelter."}, {"key": "ea8.7:3.3", "lzh": "云何為一人？", "deepsk-2026-line-by-line": "Who is that one person?"}, {"key": "ea8.7:3.4", "lzh": "所謂多薩阿竭、阿羅呵、三耶 三佛。", "deepsk-2026-line-by-line": "It is the Tathāgata, the Arahant, the Fully Enlightened One."}, {"key": "ea8.7:3.5", "lzh": "是謂一人沒盡於世，", "deepsk-2026-line-by-line": "This is the one person who, having passed away from the world,"}, {"key": "ea8.7:3.6", "lzh": "人民之類多懷 愁憂，天及人民普失廕覆。", "deepsk-2026-line-by-line": "causes the multitude of people to be filled with sorrow, and both devas and people universally lose their shelter."}, {"key": "ea8.7:3.7", "lzh": "所以然者，若多 薩阿竭於世滅盡，三十七品亦復滅盡。", "deepsk-2026-line-by-line": "Why is that?\nBecause when the Tathāgata ceases to exist in the world,\nthe thirty-seven factors [of enlightenment] also cease to exist."}, {"key": "ea8.7:3.8", "lzh": "是故， 諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea8.7:3.9", "lzh": "常當恭敬於佛。", "deepsk-2026-line-by-line": "You should always be respectful toward the Buddha."}, {"key": "ea8.7:3.10", "lzh": "如是，諸比丘！", "deepsk-2026-line-by-line": "Thus, monks!"}, {"key": "ea8.7:3.11", "lzh": "當作 是學。」", "deepsk-2026-line-by-line": "You should train yourselves in this way.'"}]}, {"id": "ea8.7/4", "label": "爾時，諸比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea8.7:4.1", "lzh": "爾時，諸比丘聞佛所說，歡喜奉行。", "deepsk-2026-line-by-line": "Then the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea8.8", "label": "EA 8.8 — 信", "children": [{"id": "ea8.8/1", "label": "聞如是：", "rows": [{"key": "ea8.8:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea8.8/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea8.8:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea8.8/3", "label": "爾時，世尊告諸比丘：「若有一人出現於世，", "rows": [{"key": "ea8.8:3.1", "lzh": "爾時，世尊告諸比丘：「若有一人出現於世，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'If one person appears in the world,"}, {"key": "ea8.8:3.2", "lzh": "爾時天及人民便蒙光澤，", "deepsk-2026-line-by-line": "then the devas and people receive radiance,"}, {"key": "ea8.8:3.3", "lzh": "便有信心於戒、 聞、施、智慧，", "deepsk-2026-line-by-line": "and they gain confidence in virtuous behavior, learning, generosity, and wisdom."}, {"key": "ea8.8:3.4", "lzh": "猶如秋時月光盛滿而無塵穢，普 有所照。", "deepsk-2026-line-by-line": "Just as in autumn the moonlight is full and bright, without dust or stain, shining everywhere."}, {"key": "ea8.8:3.5", "lzh": "此亦如是。", "deepsk-2026-line-by-line": "It is the same here."}, {"key": "ea8.8:3.6", "lzh": "若多薩阿竭、阿羅呵、", "deepsk-2026-line-by-line": "If the Tathāgata, the Arahant,"}, {"key": "ea8.8:3.7", "lzh": "三耶 三佛出現世間，天及人民便蒙光澤，", "deepsk-2026-line-by-line": "the Perfectly Enlightened One appears in the world, the devas and people receive radiance,"}, {"key": "ea8.8:3.8", "lzh": "有信 心於戒、聞、施、智慧，如月盛滿，普照一切。", "deepsk-2026-line-by-line": "and they have confidence in virtuous behavior, learning, generosity, and wisdom, like the full moon shining everywhere."}, {"key": "ea8.8:3.9", "lzh": "是 故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea8.8:3.10", "lzh": "興恭敬心於如來所。", "deepsk-2026-line-by-line": "Cultivate a reverent mind towards the Tathāgata."}, {"key": "ea8.8:3.11", "lzh": "如是，諸比 丘！", "deepsk-2026-line-by-line": "Thus, monks!"}, {"key": "ea8.8:3.12", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train yourselves.'"}]}, {"id": "ea8.8/4", "label": "爾時，諸比丘聞佛所說，歡喜 奉行。", "rows": [{"key": "ea8.8:4.1", "lzh": "爾時，諸比丘聞佛所說，歡喜 奉行。", "deepsk-2026-line-by-line": "At that time, the monks, having heard what the Buddha said, joyfully practiced it."}]}]}, {"id": "ea8.9", "label": "EA 8.9 — 熾盛", "children": [{"id": "ea8.9/1", "label": "聞如是：", "rows": [{"key": "ea8.9:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea8.9/2", "label": "一時，佛在舍衛國祇樹給孤獨園。", "rows": [{"key": "ea8.9:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea8.9/3", "label": "爾時，世尊告諸比丘：「若有一人出現於世，", "rows": [{"key": "ea8.9:3.1", "lzh": "爾時，世尊告諸比丘：「若有一人出現於世，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'If one person appears in the world,"}, {"key": "ea8.9:3.2", "lzh": "爾時天及人民皆悉熾盛，三惡眾生便自減 少。", "deepsk-2026-line-by-line": "then the devas and humans all flourish, and beings in the three evil realms naturally diminish."}, {"key": "ea8.9:3.3", "lzh": "猶如國界聖王治化時，彼城中人民熾盛， 隣國力弱。", "deepsk-2026-line-by-line": "Just as when a noble king rules and transforms a country,\nthe people in that city flourish and neighboring states become weak."}, {"key": "ea8.9:3.4", "lzh": "此亦如是。", "deepsk-2026-line-by-line": "It is the same here."}, {"key": "ea8.9:3.5", "lzh": "若多薩阿竭出現世 時，三惡趣道便自減少。", "deepsk-2026-line-by-line": "When the Tathāgata appears in the world, the three evil realms naturally diminish."}, {"key": "ea8.9:3.6", "lzh": "如是，諸比丘！", "deepsk-2026-line-by-line": "Thus, monks!"}, {"key": "ea8.9:3.7", "lzh": "當信 向佛。", "deepsk-2026-line-by-line": "You should have faith in the Buddha."}, {"key": "ea8.9:3.8", "lzh": "是故，諸比丘！", "deepsk-2026-line-by-line": "Therefore, monks!"}, {"key": "ea8.9:3.9", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train yourselves like this.'"}]}, {"id": "ea8.9/4", "label": "爾時，諸比丘 聞佛所說，歡喜奉行。", "rows": [{"key": "ea8.9:4.1", "lzh": "爾時，諸比丘 聞佛所說，歡喜奉行。", "deepsk-2026-line-by-line": "At that time, the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea8.10", "label": "EA 8.10 — 無與等", "children": [{"id": "ea8.10/1", "label": "聞如是：", "rows": [{"key": "ea8.10:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea8.10/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea8.10:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea8.10/3", "label": "爾時，世尊告諸比丘：「若有一人出現於 世，", "rows": [{"key": "ea8.10:3.1", "lzh": "爾時，世尊告諸比丘：「若有一人出現於 世，", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:\n'If one person appears in the world,"}, {"key": "ea8.10:3.2", "lzh": "無與等者，不可摸則，獨步無侶，", "deepsk-2026-line-by-line": "there is none equal to him, he cannot be measured, he walks alone without a companion,"}, {"key": "ea8.10:3.3", "lzh": "無有 儔匹，諸天、人民無能及者，", "deepsk-2026-line-by-line": "he has no peer, none among the devas or humans can match him,"}, {"key": "ea8.10:3.4", "lzh": "信、戒、聞、施、智慧，無 能及者。", "deepsk-2026-line-by-line": "in faith, virtuous behavior, learning, generosity, and wisdom, none can match him."}, {"key": "ea8.10:3.5", "lzh": "云何為一人？", "deepsk-2026-line-by-line": "Who is that one person?"}, {"key": "ea8.10:3.6", "lzh": "所謂多薩阿竭、阿羅呵、三 耶三佛。", "deepsk-2026-line-by-line": "It is the Tathāgata, the Arahant, the Perfectly Enlightened One."}, {"key": "ea8.10:3.7", "lzh": "是謂一人出現於世，無與等者，", "deepsk-2026-line-by-line": "This is called one person appearing in the world, with none equal to him,"}, {"key": "ea8.10:3.8", "lzh": "不 可摸則，獨步無伴，無有儔匹，", "deepsk-2026-line-by-line": "he cannot be measured, he walks alone without a companion, he has no peer,"}, {"key": "ea8.10:3.9", "lzh": "諸天、人民無 能及者，信、", "deepsk-2026-line-by-line": "none among the devas or humans can match him;\nfaith,"}, {"key": "ea8.10:3.10", "lzh": "戒、聞、施、智慧，皆悉具足。", "deepsk-2026-line-by-line": "virtuous behavior, learning, generosity, and wisdom are all fully complete in him."}, {"key": "ea8.10:3.11", "lzh": "是故，諸比 丘！", "deepsk-2026-line-by-line": "Therefore, O monks!"}, {"key": "ea8.10:3.12", "lzh": "當信敬於佛。", "deepsk-2026-line-by-line": "You should have faith and reverence for the Buddha."}, {"key": "ea8.10:3.13", "lzh": "如是，諸比丘！", "deepsk-2026-line-by-line": "Thus, O monks!'"}, {"key": "ea8.10:3.14", "lzh": "當作是學。」", "deepsk-2026-line-by-line": "You should train thus."}]}, {"id": "ea8.10/4", "label": "爾 時，諸比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea8.10:4.1", "lzh": "爾 時，諸比丘聞佛所說，歡喜奉行。", "deepsk-2026-line-by-line": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}, {"id": "ea8.10/5", "label": "須倫、益一道 光明及闇冥 道品、", "rows": [{"key": "ea8.10:5.1", "lzh": "須倫、益一道　　光明及闇冥 \n道品、", "deepsk-2026-line-by-line": "Sūrya, benefit, one path, light and darkness, factors of the path,"}, {"key": "ea8.10:5.2", "lzh": "沒盡、信　　熾盛、無與等", "deepsk-2026-line-by-line": "cessation, faith, blazing, incomparable"}]}]}]}];
 
@@ -773,6 +843,11 @@ const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {"ea8.2": {"full": [{"uid": "an1.170", "href": "../../an/an1/index.html#an1.170"}]}, "ea8.4": {"full": [{"uid": "an1.175", "href": "../../an/an1/index.html#an1.175"}]}, "ea8.7": {"full": [{"uid": "an1.173", "href": "../../an/an1/index.html#an1.173"}]}, "ea8.10": {"full": [{"uid": "an1.174", "href": "../../an/an1/index.html#an1.174"}]}};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

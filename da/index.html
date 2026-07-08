@@ -109,6 +109,41 @@ a{color:var(--accent)}
 .ix-filter select{font-family:inherit;font-size:.72rem;padding:.2rem .35rem;border-radius:5px;
   border:1px solid var(--border);background:var(--card);color:var(--text)}
 
+/* "∥ EBT" per-sutta button + its modal (EBT = Early Buddhist Texts parallels,
+   sourced from SuttaCentral — see debabel.parallels). Modal follows the site's
+   existing centered-dialog-with-backdrop-click-to-close convention. */
+.ix-ebt-btn{flex-shrink:0;display:flex;align-items:center;padding:0 .6rem;
+  border:1px solid var(--border);border-radius:6px;background:var(--card);
+  color:var(--accent);font-size:.72rem;font-family:sans-serif;cursor:pointer;
+  white-space:nowrap;transition:background .15s}
+.ix-ebt-btn:hover{background:var(--hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:700}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:701;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border,var(--border));
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg,var(--head));border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg,var(--card))}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 .site-footer{padding:1.4rem 1.8rem;border-top:1px solid var(--border);
   background:var(--head,var(--sec-bg));color:var(--muted);font-family:sans-serif;
   font-size:.74rem;display:flex;align-items:center;justify-content:space-between;gap:1.6rem}
@@ -128,7 +163,7 @@ a{color:var(--accent)}
 <body>
 <nav class="navbar">
   <div class="bar-crumbs"><a href="../index.html" title="Home">🏠</a><span class="sep-c">›</span><a href="../major/index.html">Major</a><span class="sep-c">›</span><span class="cur" title="Dīrgha Āgama">DA</span><span class="cur-full">Dīrgha Āgama</span></div>
-  <div class="settings-wrap">
+  <div class="settings-wrap" id="siteSettingsWrap">
     <button class="nav-btn" id="siteSettingsBtn" title="Settings" onclick="siteToggleSettings()">⚙</button>
     <div class="settings-pop" id="siteSettingsPop">
       <div class="set-row">
@@ -142,6 +177,11 @@ a{color:var(--accent)}
         <span class="set-lbl">Theme</span>
         <button class="nav-btn" id="siteThemeBtn" title="Toggle dark / light mode" onclick="siteToggleTheme()">☀ Light</button>
       </div>
+    </div>
+  </div>
+  <div class="settings-wrap" id="siteMoreWrap">
+    <button class="nav-btn" id="siteMoreBtn" title="More" onclick="siteToggleMore()">⋮</button>
+    <div class="settings-pop" id="siteMorePop">
       <div class="set-row">
         <span class="set-lbl">Help</span>
         <a class="nav-btn set-help" href="../help.html" title="Open the reading guide">❔ Guide</a>
@@ -170,43 +210,43 @@ a{color:var(--accent)}
 <div class="ix-grp">
 <div class="ix-gh" role="button" tabindex="0" onclick="ixToggle(this)" onkeydown="ixKey(event,this)"><span class="ix-caret" aria-hidden="true"></span><span class="ix-gl">Chapter 1</span></div>
 <div class="ix-gbody">
-<div class="ix-line"><a class="ix-row" href="da1/index.html"><span class="ix-ref">DA 1</span><span class="ix-title">初大本經 — The Great Legend</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da2/index.html"><span class="ix-ref">DA 2</span><span class="ix-title">遊行經 — The Final Journey</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da3/index.html"><span class="ix-ref">DA 3</span><span class="ix-title">典尊經 — Govinda</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da4/index.html"><span class="ix-ref">DA 4</span><span class="ix-title">闍尼沙經 — Janavṛṣabha</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
+<div class="ix-line"><a class="ix-row" href="da1/index.html"><span class="ix-ref">DA 1</span><span class="ix-title">初大本經 — The Great Legend</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sht-sutta1&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t3&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;ea48.4&quot;,&quot;href&quot;:&quot;../ea/ea48/index.html#ea48.4&quot;},{&quot;uid&quot;:&quot;t4&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn14&quot;,&quot;href&quot;:&quot;../dn/dn14/index.html&quot;},{&quot;uid&quot;:&quot;t2&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;uf10&quot;,&quot;href&quot;:null}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf29&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf36&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sn12.65&quot;,&quot;href&quot;:&quot;../sn/sn12/index.html#sn12.65&quot;},{&quot;uid&quot;:&quot;sf56&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf30&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf296&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf250&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf28&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf31&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf33&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf32&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;san-lo-mvu94&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf34&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 1" onclick="ebtOpen(this)" title="EBT parallel suttas (20)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da2/index.html"><span class="ix-ref">DA 2</span><span class="ix-title">遊行經 — The Final Journey</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sn47.9&quot;,&quot;href&quot;:&quot;../sn/sn47/index.html#sn47.9&quot;},{&quot;uid&quot;:&quot;sf245#wal14.1-#wal14.26&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn16#2.21.1-#2.25.1&quot;,&quot;href&quot;:&quot;../dn/dn16/index.html&quot;}]}" data-ebt-ref="DA 2" onclick="ebtOpen(this)" title="EBT parallel suttas (3)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da3/index.html"><span class="ix-ref">DA 3</span><span class="ix-title">典尊經 — Govinda</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;t8&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;san-lo-mvu85&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sht-sutta38&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn19&quot;,&quot;href&quot;:&quot;../dn/dn19/index.html&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf292&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf39&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf53&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf144&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 3" onclick="ebtOpen(this)" title="EBT parallel suttas (8)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da4/index.html"><span class="ix-ref">DA 4</span><span class="ix-title">闍尼沙經 — Janavṛṣabha</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;t9&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn18&quot;,&quot;href&quot;:&quot;../dn/dn18/index.html&quot;},{&quot;uid&quot;:&quot;sht-sutta37&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 4" onclick="ebtOpen(this)" title="EBT parallel suttas (3)">&Vert; EBT</button></div>
 </div></div>
 <div class="ix-grp">
 <div class="ix-gh" role="button" tabindex="0" onclick="ixToggle(this)" onkeydown="ixKey(event,this)"><span class="ix-caret" aria-hidden="true"></span><span class="ix-gl">Chapter 2</span></div>
 <div class="ix-gbody">
-<div class="ix-line"><a class="ix-row" href="da5/index.html"><span class="ix-ref">DA 5</span><span class="ix-title">初小緣經 — The Smaller Teaching on Origination</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da6/index.html"><span class="ix-ref">DA 6</span><span class="ix-title">轉輪聖王修行經 — The Noble Wheel-Turning King’s Cultivation</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da7/index.html"><span class="ix-ref">DA 7</span><span class="ix-title">弊宿經 — Padāśva</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da8/index.html"><span class="ix-ref">DA 8</span><span class="ix-title">散陀那經 — Sandhāna</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da9/index.html"><span class="ix-ref">DA 9</span><span class="ix-title">眾集經 — The Gathered Saṅgha</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da10/index.html"><span class="ix-ref">DA 10</span><span class="ix-title">十上經 — Going Up to Ten</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da11/index.html"><span class="ix-ref">DA 11</span><span class="ix-title">增一經 — Increasing One by One</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
+<div class="ix-line"><a class="ix-row" href="da5/index.html"><span class="ix-ref">DA 5</span><span class="ix-title">初小緣經 — The Smaller Teaching on Origination</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sht-sutta65&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;ma154&quot;,&quot;href&quot;:&quot;../ma/ma154/index.html&quot;},{&quot;uid&quot;:&quot;san-lo-mvu32&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t10&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;up3.104&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf277&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn27&quot;,&quot;href&quot;:&quot;../dn/dn27/index.html&quot;}]}" data-ebt-ref="DA 5" onclick="ebtOpen(this)" title="EBT parallel suttas (7)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da6/index.html"><span class="ix-ref">DA 6</span><span class="ix-title">轉輪聖王修行經 — The Noble Wheel-Turning King’s Cultivation</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn26&quot;,&quot;href&quot;:&quot;../dn/dn26/index.html&quot;},{&quot;uid&quot;:&quot;sht-sutta62&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;ma70&quot;,&quot;href&quot;:&quot;../ma/ma70/index.html&quot;}]}" data-ebt-ref="DA 6" onclick="ebtOpen(this)" title="EBT parallel suttas (3)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da7/index.html"><span class="ix-ref">DA 7</span><span class="ix-title">弊宿經 — Padāśva</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn23&quot;,&quot;href&quot;:&quot;../dn/dn23/index.html&quot;},{&quot;uid&quot;:&quot;pf10&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t45&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;ma71&quot;,&quot;href&quot;:&quot;../ma/ma71/index.html&quot;}]}" data-ebt-ref="DA 7" onclick="ebtOpen(this)" title="EBT parallel suttas (4)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da8/index.html"><span class="ix-ref">DA 8</span><span class="ix-title">散陀那經 — Sandhāna</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn25&quot;,&quot;href&quot;:&quot;../dn/dn25/index.html&quot;},{&quot;uid&quot;:&quot;ma104&quot;,&quot;href&quot;:&quot;../ma/ma104/index.html&quot;},{&quot;uid&quot;:&quot;t11&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 8" onclick="ebtOpen(this)" title="EBT parallel suttas (3)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da9/index.html"><span class="ix-ref">DA 9</span><span class="ix-title">眾集經 — The Gathered Saṅgha</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;t12&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn33&quot;,&quot;href&quot;:&quot;../dn/dn33/index.html&quot;},{&quot;uid&quot;:&quot;sht-sutta10&quot;,&quot;href&quot;:null}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf176&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn34&quot;,&quot;href&quot;:&quot;../dn/dn34/index.html&quot;},{&quot;uid&quot;:&quot;da10&quot;,&quot;href&quot;:&quot;../da/da10/index.html&quot;},{&quot;uid&quot;:&quot;arv26&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf149&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sht-sutta22&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf62&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf70&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf253&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf291&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 9" onclick="ebtOpen(this)" title="EBT parallel suttas (13)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da10/index.html"><span class="ix-ref">DA 10</span><span class="ix-title">十上經 — Going Up to Ten</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;t13&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sht-sutta22&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn34&quot;,&quot;href&quot;:&quot;../dn/dn34/index.html&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf145&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t12&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sht-sutta10&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf175&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;da9&quot;,&quot;href&quot;:&quot;../da/da9/index.html&quot;},{&quot;uid&quot;:&quot;sf131&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf129&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;da11&quot;,&quot;href&quot;:&quot;../da/da11/index.html&quot;},{&quot;uid&quot;:&quot;sf107&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf290&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn33&quot;,&quot;href&quot;:&quot;../dn/dn33/index.html&quot;},{&quot;uid&quot;:&quot;sf50&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 10" onclick="ebtOpen(this)" title="EBT parallel suttas (15)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da11/index.html"><span class="ix-ref">DA 11</span><span class="ix-title">增一經 — Increasing One by One</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;resembling&quot;:[{&quot;uid&quot;:&quot;t13&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sht-sutta22&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn34&quot;,&quot;href&quot;:&quot;../dn/dn34/index.html&quot;},{&quot;uid&quot;:&quot;da10&quot;,&quot;href&quot;:&quot;../da/da10/index.html&quot;}]}" data-ebt-ref="DA 11" onclick="ebtOpen(this)" title="EBT parallel suttas (4)">&Vert; EBT</button></div>
 <div class="ix-line"><a class="ix-row" href="da12/index.html"><span class="ix-ref">DA 12</span><span class="ix-title">三聚經 — Three Categories</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da13/index.html"><span class="ix-ref">DA 13</span><span class="ix-title">大緣方便經 — The Great Method of Origination</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da14/index.html"><span class="ix-ref">DA 14</span><span class="ix-title">釋提桓因問經 — Questions Asked by Śakra the Lord of Gods</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da15/index.html"><span class="ix-ref">DA 15</span><span class="ix-title">阿 ［少／兔］ 夷經 — Anomiya</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da16/index.html"><span class="ix-ref">DA 16</span><span class="ix-title">善生經 — Sujata</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da17/index.html"><span class="ix-ref">DA 17</span><span class="ix-title">清淨經 — Purification</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da18/index.html"><span class="ix-ref">DA 18</span><span class="ix-title">自歡喜經 — Personal Gladness</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da19/index.html"><span class="ix-ref">DA 19</span><span class="ix-title">大會經 — The Great Congregation</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
+<div class="ix-line"><a class="ix-row" href="da13/index.html"><span class="ix-ref">DA 13</span><span class="ix-title">大緣方便經 — The Great Method of Origination</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;t14&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn15&quot;,&quot;href&quot;:&quot;../dn/dn15/index.html&quot;},{&quot;uid&quot;:&quot;t52&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sht-sutta23&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;ma97&quot;,&quot;href&quot;:&quot;../ma/ma97/index.html&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf138&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf240&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 13" onclick="ebtOpen(this)" title="EBT parallel suttas (7)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da14/index.html"><span class="ix-ref">DA 14</span><span class="ix-title">釋提桓因問經 — Questions Asked by Śakra the Lord of Gods</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sht-sutta54&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t203.73&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t15&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;ma134&quot;,&quot;href&quot;:&quot;../ma/ma134/index.html&quot;},{&quot;uid&quot;:&quot;dn21&quot;,&quot;href&quot;:&quot;../dn/dn21/index.html&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf139&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf241&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 14" onclick="ebtOpen(this)" title="EBT parallel suttas (7)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da15/index.html"><span class="ix-ref">DA 15</span><span class="ix-title">阿 ［少／兔］ 夷經 — Anomiya</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sht-sutta32&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn24&quot;,&quot;href&quot;:&quot;../dn/dn24/index.html&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf46&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf298&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 15" onclick="ebtOpen(this)" title="EBT parallel suttas (4)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da16/index.html"><span class="ix-ref">DA 16</span><span class="ix-title">善生經 — Sujata</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn31&quot;,&quot;href&quot;:&quot;../dn/dn31/index.html&quot;},{&quot;uid&quot;:&quot;sht-sutta43&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;ma135&quot;,&quot;href&quot;:&quot;../ma/ma135/index.html&quot;},{&quot;uid&quot;:&quot;t16&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t17&quot;,&quot;href&quot;:null}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf100&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 16" onclick="ebtOpen(this)" title="EBT parallel suttas (6)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da17/index.html"><span class="ix-ref">DA 17</span><span class="ix-title">清淨經 — Purification</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn29&quot;,&quot;href&quot;:&quot;../dn/dn29/index.html&quot;},{&quot;uid&quot;:&quot;sht-sutta39&quot;,&quot;href&quot;:null}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;an9.8&quot;,&quot;href&quot;:&quot;../an/an9/index.html#an9.8&quot;},{&quot;uid&quot;:&quot;an9.7&quot;,&quot;href&quot;:&quot;../an/an9/index.html#an9.7&quot;},{&quot;uid&quot;:&quot;sf58&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 17" onclick="ebtOpen(this)" title="EBT parallel suttas (5)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da18/index.html"><span class="ix-ref">DA 18</span><span class="ix-title">自歡喜經 — Personal Gladness</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sht-sutta83&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf61&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn28&quot;,&quot;href&quot;:&quot;../dn/dn28/index.html&quot;},{&quot;uid&quot;:&quot;t18&quot;,&quot;href&quot;:null}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sn47.12&quot;,&quot;href&quot;:&quot;../sn/sn47/index.html#sn47.12&quot;},{&quot;uid&quot;:&quot;sa498&quot;,&quot;href&quot;:&quot;../sa/sa401-500/index.html#sa498&quot;}]}" data-ebt-ref="DA 18" onclick="ebtOpen(this)" title="EBT parallel suttas (6)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da19/index.html"><span class="ix-ref">DA 19</span><span class="ix-title">大會經 — The Great Congregation</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sf140&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf242&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;d34&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf55&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn20&quot;,&quot;href&quot;:&quot;../dn/dn20/index.html&quot;},{&quot;uid&quot;:&quot;sf282&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sht-sutta8&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t19&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf108&quot;,&quot;href&quot;:null}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sa1192&quot;,&quot;href&quot;:&quot;../sa/sa1101-1200/index.html#sa1192&quot;},{&quot;uid&quot;:&quot;sa-2.105&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sn1.37&quot;,&quot;href&quot;:&quot;../sn/sn1/index.html#sn1.37&quot;}]}" data-ebt-ref="DA 19" onclick="ebtOpen(this)" title="EBT parallel suttas (12)">&Vert; EBT</button></div>
 </div></div>
 <div class="ix-grp">
 <div class="ix-gh" role="button" tabindex="0" onclick="ixToggle(this)" onkeydown="ixKey(event,this)"><span class="ix-caret" aria-hidden="true"></span><span class="ix-gl">Chapter 3</span></div>
 <div class="ix-gbody">
-<div class="ix-line"><a class="ix-row" href="da20/index.html"><span class="ix-ref">DA 20</span><span class="ix-title">阿摩晝經 — Ambāṣṭha</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da21/index.html"><span class="ix-ref">DA 21</span><span class="ix-title">梵動經 — Brahmā’s Shaking</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da22/index.html"><span class="ix-ref">DA 22</span><span class="ix-title">種德經 — Śroṇatāṇḍya</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da23/index.html"><span class="ix-ref">DA 23</span><span class="ix-title">究羅檀頭經 — Kūṭatāṇḍya</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da24/index.html"><span class="ix-ref">DA 24</span><span class="ix-title">堅固經 — Dhruva</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da25/index.html"><span class="ix-ref">DA 25</span><span class="ix-title">倮形梵志經 — The Naked Wanderer</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da26/index.html"><span class="ix-ref">DA 26</span><span class="ix-title">三明經 — Knowledge of the Three Vedas</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da27/index.html"><span class="ix-ref">DA 27</span><span class="ix-title">沙門果經 — The Fruits of the Ascetics</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da28/index.html"><span class="ix-ref">DA 28</span><span class="ix-title">布吒婆樓經 — [Poṭṭhapāda]</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
-<div class="ix-line"><a class="ix-row" href="da29/index.html"><span class="ix-ref">DA 29</span><span class="ix-title">露遮經 — Lohitya</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
+<div class="ix-line"><a class="ix-row" href="da20/index.html"><span class="ix-ref">DA 20</span><span class="ix-title">阿摩晝經 — Ambāṣṭha</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;d6#da191a&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t20&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sht-sutta26&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;d1#kha63a&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn3&quot;,&quot;href&quot;:&quot;../dn/dn3/index.html&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf43&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;mn36&quot;,&quot;href&quot;:&quot;../mn/mn36/index.html&quot;}]}" data-ebt-ref="DA 20" onclick="ebtOpen(this)" title="EBT parallel suttas (7)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da21/index.html"><span class="ix-ref">DA 21</span><span class="ix-title">梵動經 — Brahmā’s Shaking</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn1&quot;,&quot;href&quot;:&quot;../dn/dn1/index.html&quot;},{&quot;uid&quot;:&quot;up3.050&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t21&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sht-sutta16&quot;,&quot;href&quot;:null}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf41&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t1548.21#t0656b19-#t0661a09&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf48&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 21" onclick="ebtOpen(this)" title="EBT parallel suttas (7)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da22/index.html"><span class="ix-ref">DA 22</span><span class="ix-title">種德經 — Śroṇatāṇḍya</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sht-sutta56&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn4&quot;,&quot;href&quot;:&quot;../dn/dn4/index.html&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf42&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;mn36&quot;,&quot;href&quot;:&quot;../mn/mn36/index.html&quot;}]}" data-ebt-ref="DA 22" onclick="ebtOpen(this)" title="EBT parallel suttas (4)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da23/index.html"><span class="ix-ref">DA 23</span><span class="ix-title">究羅檀頭經 — Kūṭatāṇḍya</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sht-sutta30&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn5&quot;,&quot;href&quot;:&quot;../dn/dn5/index.html&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf52&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 23" onclick="ebtOpen(this)" title="EBT parallel suttas (3)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da24/index.html"><span class="ix-ref">DA 24</span><span class="ix-title">堅固經 — Dhruva</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn11&quot;,&quot;href&quot;:&quot;../dn/dn11/index.html&quot;},{&quot;uid&quot;:&quot;sht-sutta81&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;up7.025&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;up2.027&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 24" onclick="ebtOpen(this)" title="EBT parallel suttas (4)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da25/index.html"><span class="ix-ref">DA 25</span><span class="ix-title">倮形梵志經 — The Naked Wanderer</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn8&quot;,&quot;href&quot;:&quot;../dn/dn8/index.html&quot;},{&quot;uid&quot;:&quot;sht-sutta50&quot;,&quot;href&quot;:null}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf51&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf295&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 25" onclick="ebtOpen(this)" title="EBT parallel suttas (4)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da26/index.html"><span class="ix-ref">DA 26</span><span class="ix-title">三明經 — Knowledge of the Three Vedas</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn13&quot;,&quot;href&quot;:&quot;../dn/dn13/index.html&quot;}]}" data-ebt-ref="DA 26" onclick="ebtOpen(this)" title="EBT parallel suttas (1)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da27/index.html"><span class="ix-ref">DA 27</span><span class="ix-title">沙門果經 — The Fruits of the Ascetics</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sht-sutta58&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;d1#nga258a&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn2&quot;,&quot;href&quot;:&quot;../dn/dn2/index.html&quot;},{&quot;uid&quot;:&quot;san-mu-kd17#sc866-#sc916&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t22&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;ea43.7&quot;,&quot;href&quot;:&quot;../ea/ea43/index.html#ea43.7&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;t1442.13&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t1450.10&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;t1444.1&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf1&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf288&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sa154-163&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 27" onclick="ebtOpen(this)" title="EBT parallel suttas (12)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da28/index.html"><span class="ix-ref">DA 28</span><span class="ix-title">布吒婆樓經 — [Poṭṭhapāda]</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn9&quot;,&quot;href&quot;:&quot;../dn/dn9/index.html&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;sf59&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sf297&quot;,&quot;href&quot;:null}]}" data-ebt-ref="DA 28" onclick="ebtOpen(this)" title="EBT parallel suttas (3)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="da29/index.html"><span class="ix-ref">DA 29</span><span class="ix-title">露遮經 — Lohitya</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sht-sutta20&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;dn12&quot;,&quot;href&quot;:&quot;../dn/dn12/index.html&quot;}]}" data-ebt-ref="DA 29" onclick="ebtOpen(this)" title="EBT parallel suttas (2)">&Vert; EBT</button></div>
 </div></div>
 <div class="ix-grp">
 <div class="ix-gh" role="button" tabindex="0" onclick="ixToggle(this)" onkeydown="ixKey(event,this)"><span class="ix-caret" aria-hidden="true"></span><span class="ix-gl">Chapter 4</span></div>
@@ -214,6 +254,16 @@ a{color:var(--accent)}
 <div class="ix-line"><a class="ix-row" href="da30/index.html"><span class="ix-ref">DA 30</span><span class="ix-title">世記經 — Description of the World</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
 </div></div>
 </div>
+
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../index.html" title="s.4nt.org — home"><img src="../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../help.html">Help</a><a href="../help.html#about">About</a><a href="../help.html#legal">Legal</a></nav><p class="ft-copy">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 <script>
 const JUMP_ROOT = '..';
@@ -400,12 +450,27 @@ function siteToggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('siteSettingsPop');
-  if(pop && pop.classList.contains('show') && !e.target.closest('.settings-wrap'))
+  if(pop && pop.classList.contains('show') && !e.target.closest('#siteSettingsWrap'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     const pop = document.getElementById('siteSettingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+// ── ⋮ MORE POPOVER (Help) ──
+function siteToggleMore(){
+  document.getElementById('siteMorePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('siteMorePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#siteMoreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('siteMorePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -425,6 +490,44 @@ function ixToggleAll(expand){
 }
 function ixToggle(h){ var g=h.closest('.ix-grp'); if(g) g.classList.toggle('collapsed'); }
 function ixKey(ev,h){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); ixToggle(h); } }
+
+// ── "∥ EBT" parallels modal ───────────────────────────────────────────────
+// Each button carries its own payload (data-ebt, a small JSON blob built by
+// index_cards._ebt_button) — no page-global data registry needed.
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpen(btn){
+  var data;
+  try{ data = JSON.parse(btn.getAttribute('data-ebt')); }catch(e){ data = null; }
+  if(!data) return;
+  var ref = btn.getAttribute('data-ebt-ref') || '';
+  var html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  var groups = [['full','Parallels'],['resembling','Resembling passages']];
+  var any = false;
+  groups.forEach(function(g){
+    var items = data[g[0]];
+    if(!items || !items.length) return;
+    any = true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(function(it){
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden = false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden = true;
+}
+document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape'){ ebtClose(); } });
 
 </script>
 </body>

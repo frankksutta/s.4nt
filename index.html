@@ -108,7 +108,7 @@ a.col.major .full{font-style:italic;color:var(--accent)}
 
 <nav class="navbar">
   <div class="bar-crumbs"></div>
-  <div class="settings-wrap">
+  <div class="settings-wrap" id="siteSettingsWrap">
     <button class="nav-btn" id="siteSettingsBtn" title="Settings" onclick="siteToggleSettings()">⚙</button>
     <div class="settings-pop" id="siteSettingsPop">
       <div class="set-row">
@@ -122,6 +122,11 @@ a.col.major .full{font-style:italic;color:var(--accent)}
         <span class="set-lbl">Theme</span>
         <button class="nav-btn" id="siteThemeBtn" title="Toggle dark / light mode" onclick="siteToggleTheme()">☀ Light</button>
       </div>
+    </div>
+  </div>
+  <div class="settings-wrap" id="siteMoreWrap">
+    <button class="nav-btn" id="siteMoreBtn" title="More" onclick="siteToggleMore()">⋮</button>
+    <div class="settings-pop" id="siteMorePop">
       <div class="set-row">
         <span class="set-lbl">Help</span>
         <a class="nav-btn set-help" href="./help.html" title="Open the reading guide">❔ Guide</a>
@@ -353,12 +358,27 @@ function siteToggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('siteSettingsPop');
-  if(pop && pop.classList.contains('show') && !e.target.closest('.settings-wrap'))
+  if(pop && pop.classList.contains('show') && !e.target.closest('#siteSettingsWrap'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     const pop = document.getElementById('siteSettingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+// ── ⋮ MORE POPOVER (Help) ──
+function siteToggleMore(){
+  document.getElementById('siteMorePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('siteMorePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#siteMoreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('siteMorePop');
     if(pop) pop.classList.remove('show');
   }
 });

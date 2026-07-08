@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -617,7 +668,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </a>
   <!-- Row 1: breadcrumbs → Pāli title (English tooltip) → collapse/expand → 🦘 jump → 🔝 → ⚙ -->
   <div class="nav-r1">
-    <nav class="crumbs"><span class="sep-c">›</span><a href="../../major/index.html" title="Major">Major</a><span class="sep-c">›</span><a href="../index.html" title="Madhyama Āgama">MA</a><span class="sep-c">›</span><span class="cur">MA 149</span></nav>
+    <nav class="crumbs"><span class="sep-c">›</span><a href="../../major/index.html" title="Major">Major</a><span class="sep-c">›</span><a href="../index.html" title="Madhyama Āgama">MA</a><span class="sep-c">›</span><span class="cur-nav"><button class="cur cur-nav-btn" onclick="toggleCurNav()" title="Previous / next sutta">MA 149</button><div class="cur-nav-pop" id="curNavPop"><a href="../ma148/index.html">◀ MA 148</a><a href="../ma150/index.html">MA 150 ▶</a></div></span></nav>
     <span class="page-title" title="">何欲經</span>
     <!-- Collapse / Expand all (main content) — round buttons, one shared tooltip -->
     <span class="all-ctl" title="− collapse or + expand all sections of entire document in main pane">
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,17 +819,35 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
-const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma149:1.1", "lzh": "我聞如是：", "deepsk-2026-v4-fla": "Thus have I heard:", "bdk_corrected": "Thus have I heard."}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma149:2.1", "lzh": "一時，佛遊舍衛國，在勝林給孤獨園。", "deepsk-2026-v4-fla": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada’s Park.", "bdk_corrected": "At one time the Buddha was staying at Sāvatthī, in Jeta’s Grove, Anāthapiṇḍika’s Park."}]}, {"id": "3", "label": "爾時，生聞梵志中後彷徉，往詣佛所，", "rows": [{"key": "ma149:3.1", "lzh": "爾時，生聞梵志中後彷徉，往詣佛所，", "deepsk-2026-v4-fla": "At that time, the brahmin Jāṇussoṇī, after wandering about in the middle of the day,", "bdk_corrected": "At that time the brahmin Jāṇussoṇi, while roaming around in the afternoon, approached the Buddha."}, {"key": "ma149:3.2", "lzh": "共相問訊，却坐一面，白曰：「瞿曇！", "deepsk-2026-v4-fla": "went to the Buddha’s presence, exchanged greetings, sat down to one side, and said:", "bdk_corrected": "Having exchanged friendly greetings, he stepped back, sat to one side, and said,"}, {"key": "ma149:3.3", "lzh": "欲有所問，聽乃敢陳。」", "deepsk-2026-v4-fla": "“Gotama, I wish to ask a question.\nIf you permit, I will dare to state it.”", "bdk_corrected": "“Gotama, I have a question I would like to ask.\nWill you listen if I venture to express it?”"}]}, {"id": "4", "label": "世尊告曰：「恣汝所問。」", "rows": [{"key": "ma149:4.1", "lzh": "世尊告曰：「恣汝所問。」", "deepsk-2026-v4-fla": "The Blessed One said:\n“Ask whatever you wish.”", "bdk_corrected": "The World-honored One said,\n“Feel free to ask.”"}]}, {"id": "5", "label": "梵志即便問曰：「瞿曇！", "rows": [{"key": "ma149:5.1", "lzh": "梵志即便問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin then asked:", "bdk_corrected": "Then the brahmin Jāṇussoṇi asked,"}, {"key": "ma149:5.2", "lzh": "剎利何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "“Gotama, what does a khattiya desire, what does he practice,\nwhat does he establish himself upon, what does he rely on, and what is his ultimate goal?”", "bdk_corrected": "“Gotama, what are the desires of warriors?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "6", "label": "世尊答曰：「剎利者，欲得財物，行於智慧，", "rows": [{"key": "ma149:6.1", "lzh": "世尊答曰：「剎利者，欲得財物，行於智慧，", "deepsk-2026-v4-fla": "The Blessed One replied:", "bdk_corrected": "The World-honored One replied,\n“Warriors desire to gain wealth;\nthey engage in wisdom;"}, {"key": "ma149:6.2", "lzh": "所立以刀，依於人民，以自在為訖。」", "deepsk-2026-v4-fla": "“A khattiya desires wealth, practices wisdom, establishes himself with the sword,\nrelies on the people, and has sovereignty as his ultimate goal.”", "bdk_corrected": "their support is the use of the sword;\nthey rely on the people;\nbeing in control is their end.”"}]}, {"id": "7", "label": "生聞梵志問曰：「瞿曇！", "rows": [{"key": "ma149:7.1", "lzh": "生聞梵志問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi asked:", "bdk_corrected": "The brahmin Jāṇussoṇi asked,"}, {"key": "ma149:7.2", "lzh": "居士何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "'Gotama, what does a householder desire, what does he practice,\nwhat does he establish, what does he rely on, and what is his goal?'", "bdk_corrected": "“Gotama, what are the desires of householders?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "8", "label": "世尊答曰：「居士者，欲得財物，行於智慧，", "rows": [{"key": "ma149:8.1", "lzh": "世尊答曰：「居士者，欲得財物，行於智慧，", "deepsk-2026-v4-fla": "The Blessed One replied:", "bdk_corrected": "The World-honored One replied,\n“Householders desire to gain wealth;\nthey engage in wisdom;"}, {"key": "ma149:8.2", "lzh": "立以技術，依於作業，以作業竟為訖。」", "deepsk-2026-v4-fla": "'A householder desires wealth, practices wisdom, establishes a livelihood through skill,\nrelies on work, and his goal is the completion of his work.'", "bdk_corrected": "their support is their abilities and skills;\nthey rely on doing work;\ncompleting the work is their end.”"}]}, {"id": "9", "label": "生聞梵志問曰：「瞿曇！", "rows": [{"key": "ma149:9.1", "lzh": "生聞梵志問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi asked:", "bdk_corrected": "The brahmin Jāṇussoṇi asked,"}, {"key": "ma149:9.2", "lzh": "婦人何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "'Gotama, what does a woman desire, what does she practice,\nwhat does she establish, what does she rely on, and what is her goal?'", "bdk_corrected": "“Gotama, what are the desires of women?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "10", "label": "世尊答曰：「婦人者，欲得男子，行於嚴飾，", "rows": [{"key": "ma149:10.1", "lzh": "世尊答曰：「婦人者，欲得男子，行於嚴飾，", "deepsk-2026-v4-fla": "The Blessed One replied:", "bdk_corrected": "The World-honored One replied,\n“Women desire to get a husband and children;\nthey engage in adornment;"}, {"key": "ma149:10.2", "lzh": "立以兒子，依於無對，以自在為訖。」", "deepsk-2026-v4-fla": "'A woman desires a man, practices adornment, establishes herself through children,\nrelies on being without a rival, and her goal is independence.'", "bdk_corrected": "their support is their sons;\nthey rely on having no rival;\nbeing in control is their end.”"}]}, {"id": "11", "label": "生聞梵志問曰：「瞿曇！", "rows": [{"key": "ma149:11.1", "lzh": "生聞梵志問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi asked:", "bdk_corrected": "The brahmin Jāṇussoṇi asked,"}, {"key": "ma149:11.2", "lzh": "偷劫何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "'Gotama, what does a thief desire, what does he practice,\nwhat does he establish, what does he rely on, and what is his goal?'", "bdk_corrected": "“Gotama, what are the desires of thieves?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "12", "label": "世尊答曰：「偷劫者，欲不與取，行隱藏處，", "rows": [{"key": "ma149:12.1", "lzh": "世尊答曰：「偷劫者，欲不與取，行隱藏處，", "deepsk-2026-v4-fla": "The Blessed One replied:", "bdk_corrected": "The World-honored One replied,\n“Thieves desire to take what is not given;\nthey engage in hiding;"}, {"key": "ma149:12.2", "lzh": "所立以刀，依於闇冥，以不見為訖。」", "deepsk-2026-v4-fla": "'A thief desires to take what is not given, practices concealment,\nestablishes himself with a knife, relies on darkness, and his goal is not being seen.'", "bdk_corrected": "their support is the use of the sword;\nthey rely on darkness;\nnot being seen is their end.”"}]}, {"id": "13", "label": "生聞梵志問曰：「瞿曇！", "rows": [{"key": "ma149:13.1", "lzh": "生聞梵志問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi asked:", "bdk_corrected": "The brahmin Jāṇussoṇi asked,"}, {"key": "ma149:13.2", "lzh": "梵志何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "'Gotama, what does a brahmin desire, what does he practice,\nwhat does he establish, what does he rely on, and what is his final goal?'", "bdk_corrected": "“Gotama, what are the desires of brahmins?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "14", "label": "世尊答曰：「梵志者，欲得財物，行於智慧，", "rows": [{"key": "ma149:14.1", "lzh": "世尊答曰：「梵志者，欲得財物，行於智慧，", "deepsk-2026-v4-fla": "The Blessed One replied:", "bdk_corrected": "The World-honored One replied,\n“Brahmins desire to gain wealth;\nthey engage in wisdom;"}, {"key": "ma149:14.2", "lzh": "立以經書，依於齋戒，以梵天為訖。」", "deepsk-2026-v4-fla": "'A brahmin desires to obtain wealth, practices wisdom, establishes himself in scriptures,\nrelies on observances and fasts, and has Brahmā as his final goal.'", "bdk_corrected": "their support is the sacred texts;\nthey rely on the sacrifice;\nBrahmā is their end.”"}]}, {"id": "15", "label": "生聞梵志問曰：「瞿曇！", "rows": [{"key": "ma149:15.1", "lzh": "生聞梵志問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi asked:", "bdk_corrected": "The brahmin Jāṇussoṇi asked,"}, {"key": "ma149:15.2", "lzh": "沙門何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "'Gotama, what does a ascetic desire, what does he practice,\nwhat does he establish, what does he rely on, and what is his final goal?'", "bdk_corrected": "“Gotama, what are the desires of renunciants?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "16", "label": "世尊答曰：「沙門者，欲得真諦，行於智慧，", "rows": [{"key": "ma149:16.1", "lzh": "世尊答曰：「沙門者，欲得真諦，行於智慧，", "deepsk-2026-v4-fla": "The Blessed One replied:", "bdk_corrected": "The World-honored One replied,\n“Renunciants desire to gain the truth;\nthey engage in wisdom;"}, {"key": "ma149:16.2", "lzh": "所立以戒，依於無處，以涅槃為訖。」", "deepsk-2026-v4-fla": "'An ascetic desires to obtain truth, practices wisdom, establishes himself in virtuous behavior,\nrelies on nothing, and has Nibbāna as his final goal.'", "bdk_corrected": "their support is morality;\nthey rely on secluded places;\nnirvana is their end.”"}]}, {"id": "17", "label": "生聞梵志白曰：「世尊！", "rows": [{"key": "ma149:17.1", "lzh": "生聞梵志白曰：「世尊！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi said:", "bdk_corrected": "The brahmin Jāṇussoṇi said:"}, {"key": "ma149:17.2", "lzh": "我已知。善逝！", "deepsk-2026-v4-fla": "'Venerable Sir, I understand.", "bdk_corrected": "World-honored One, I have understood."}, {"key": "ma149:17.3", "lzh": "我已解。世尊！", "deepsk-2026-v4-fla": "Well-gone One, I have comprehended.", "bdk_corrected": "Well-gone One, I have comprehended."}, {"key": "ma149:17.4", "lzh": "我今自歸於佛、法及比丘眾，唯願世尊受我為優婆塞，", "deepsk-2026-v4-fla": "Venerable Sir, I now go for refuge to the Buddha, the Dhamma, and the community of monks.", "bdk_corrected": "World-honored One, from now on I go for refuge to the Buddha, the Dharma, and the Sangha of monks."}, {"key": "ma149:17.5", "lzh": "從今日始，終身自歸，乃至命盡。」", "deepsk-2026-v4-fla": "May the Blessed One accept me as a lay follower from today onward, for life, until my last breath.'", "bdk_corrected": "May the World-honored One accept me as a lay disciple from this day forth until the end of life,\nas having personally gone for refuge for my whole life."}]}, {"id": "18", "label": "佛說如是。", "rows": [{"key": "ma149:18.1", "lzh": "佛說如是。", "deepsk-2026-v4-fla": "Thus spoke the Buddha.", "bdk_corrected": "Thus said the Buddha."}, {"key": "ma149:18.2", "lzh": "生聞梵志聞佛所說，歡喜奉行。", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi, having heard what the Buddha said, rejoiced and practiced accordingly.", "bdk_corrected": "Having heard what the Buddha said, the brahmin Jāṇussoṇi was delighted and received it respectfully."}]}];
+const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma149:1.1", "lzh": "我聞如是：", "deepsk-2026-v4-fla": "Thus have I heard:", "deepsk-2026-line-by-line": "Thus have I heard:", "bdk_corrected": "Thus have I heard."}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma149:2.1", "lzh": "一時，佛遊舍衛國，在勝林給孤獨園。", "deepsk-2026-v4-fla": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada’s Park.", "deepsk-2026-line-by-line": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada's Park.", "bdk_corrected": "At one time the Buddha was staying at Sāvatthī, in Jeta’s Grove, Anāthapiṇḍika’s Park."}]}, {"id": "3", "label": "爾時，生聞梵志中後彷徉，往詣佛所，", "rows": [{"key": "ma149:3.1", "lzh": "爾時，生聞梵志中後彷徉，往詣佛所，", "deepsk-2026-v4-fla": "At that time, the brahmin Jāṇussoṇī, after wandering about in the middle of the day,", "deepsk-2026-line-by-line": "At that time, the brahmin Jāṇussoṇi, after wandering about in the middle of the day, went to the Buddha's place,", "bdk_corrected": "At that time the brahmin Jāṇussoṇi, while roaming around in the afternoon, approached the Buddha."}, {"key": "ma149:3.2", "lzh": "共相問訊，却坐一面，白曰：「瞿曇！", "deepsk-2026-v4-fla": "went to the Buddha’s presence, exchanged greetings, sat down to one side, and said:", "deepsk-2026-line-by-line": "exchanged greetings, sat down to one side, and said:\n'Gotama!", "bdk_corrected": "Having exchanged friendly greetings, he stepped back, sat to one side, and said,"}, {"key": "ma149:3.3", "lzh": "欲有所問，聽乃敢陳。」", "deepsk-2026-v4-fla": "“Gotama, I wish to ask a question.\nIf you permit, I will dare to state it.”", "deepsk-2026-line-by-line": "I wish to ask something;\nif you permit, I will dare to state it.'", "bdk_corrected": "“Gotama, I have a question I would like to ask.\nWill you listen if I venture to express it?”"}]}, {"id": "4", "label": "世尊告曰：「恣汝所問。」", "rows": [{"key": "ma149:4.1", "lzh": "世尊告曰：「恣汝所問。」", "deepsk-2026-v4-fla": "The Blessed One said:\n“Ask whatever you wish.”", "deepsk-2026-line-by-line": "The Blessed One said:\n'Ask whatever you wish.'", "bdk_corrected": "The World-honored One said,\n“Feel free to ask.”"}]}, {"id": "5", "label": "梵志即便問曰：「瞿曇！", "rows": [{"key": "ma149:5.1", "lzh": "梵志即便問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin then asked:", "deepsk-2026-line-by-line": "The brahmin then asked:\n'Gotama!", "bdk_corrected": "Then the brahmin Jāṇussoṇi asked,"}, {"key": "ma149:5.2", "lzh": "剎利何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "“Gotama, what does a khattiya desire, what does he practice,\nwhat does he establish himself upon, what does he rely on, and what is his ultimate goal?”", "deepsk-2026-line-by-line": "What does a khattiya desire, what does he practice, what does he establish, what does he rely on, and what is his end?'", "bdk_corrected": "“Gotama, what are the desires of warriors?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "6", "label": "世尊答曰：「剎利者，欲得財物，行於智慧，", "rows": [{"key": "ma149:6.1", "lzh": "世尊答曰：「剎利者，欲得財物，行於智慧，", "deepsk-2026-v4-fla": "The Blessed One replied:", "deepsk-2026-line-by-line": "The Blessed One answered:\n'A khattiya desires to obtain wealth, practices wisdom,", "bdk_corrected": "The World-honored One replied,\n“Warriors desire to gain wealth;\nthey engage in wisdom;"}, {"key": "ma149:6.2", "lzh": "所立以刀，依於人民，以自在為訖。」", "deepsk-2026-v4-fla": "“A khattiya desires wealth, practices wisdom, establishes himself with the sword,\nrelies on the people, and has sovereignty as his ultimate goal.”", "deepsk-2026-line-by-line": "establishes himself with the sword, relies on the people, and has sovereignty as his end.'", "bdk_corrected": "their support is the use of the sword;\nthey rely on the people;\nbeing in control is their end.”"}]}, {"id": "7", "label": "生聞梵志問曰：「瞿曇！", "rows": [{"key": "ma149:7.1", "lzh": "生聞梵志問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi asked:", "deepsk-2026-line-by-line": "The brahmin Jāṇussoṇi asked:\n'Gotama!", "bdk_corrected": "The brahmin Jāṇussoṇi asked,"}, {"key": "ma149:7.2", "lzh": "居士何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "'Gotama, what does a householder desire, what does he practice,\nwhat does he establish, what does he rely on, and what is his goal?'", "deepsk-2026-line-by-line": "What does a householder desire, what does he practice,\nwhat does he establish, what does he rely on, and what is his end?'", "bdk_corrected": "“Gotama, what are the desires of householders?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "8", "label": "世尊答曰：「居士者，欲得財物，行於智慧，", "rows": [{"key": "ma149:8.1", "lzh": "世尊答曰：「居士者，欲得財物，行於智慧，", "deepsk-2026-v4-fla": "The Blessed One replied:", "deepsk-2026-line-by-line": "The Blessed One answered:\n'A householder desires to obtain wealth, practices wisdom,", "bdk_corrected": "The World-honored One replied,\n“Householders desire to gain wealth;\nthey engage in wisdom;"}, {"key": "ma149:8.2", "lzh": "立以技術，依於作業，以作業竟為訖。」", "deepsk-2026-v4-fla": "'A householder desires wealth, practices wisdom, establishes a livelihood through skill,\nrelies on work, and his goal is the completion of his work.'", "deepsk-2026-line-by-line": "establishes himself with skill, relies on work, and has the completion of work as his end.'", "bdk_corrected": "their support is their abilities and skills;\nthey rely on doing work;\ncompleting the work is their end.”"}]}, {"id": "9", "label": "生聞梵志問曰：「瞿曇！", "rows": [{"key": "ma149:9.1", "lzh": "生聞梵志問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi asked:", "deepsk-2026-line-by-line": "The brahmin Jāṇussoṇi asked:\n'Gotama!", "bdk_corrected": "The brahmin Jāṇussoṇi asked,"}, {"key": "ma149:9.2", "lzh": "婦人何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "'Gotama, what does a woman desire, what does she practice,\nwhat does she establish, what does she rely on, and what is her goal?'", "deepsk-2026-line-by-line": "What do women desire, what do they practice, what do they establish,\nwhat do they rely on, and what is their ultimate goal?", "bdk_corrected": "“Gotama, what are the desires of women?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "10", "label": "世尊答曰：「婦人者，欲得男子，行於嚴飾，", "rows": [{"key": "ma149:10.1", "lzh": "世尊答曰：「婦人者，欲得男子，行於嚴飾，", "deepsk-2026-v4-fla": "The Blessed One replied:", "deepsk-2026-line-by-line": "The Blessed One replied:\n'Women desire to obtain a man, they practice adornment,", "bdk_corrected": "The World-honored One replied,\n“Women desire to get a husband and children;\nthey engage in adornment;"}, {"key": "ma149:10.2", "lzh": "立以兒子，依於無對，以自在為訖。」", "deepsk-2026-v4-fla": "'A woman desires a man, practices adornment, establishes herself through children,\nrelies on being without a rival, and her goal is independence.'", "deepsk-2026-line-by-line": "they establish themselves with children, they rely on having no rival, and their ultimate goal is independence.'", "bdk_corrected": "their support is their sons;\nthey rely on having no rival;\nbeing in control is their end.”"}]}, {"id": "11", "label": "生聞梵志問曰：「瞿曇！", "rows": [{"key": "ma149:11.1", "lzh": "生聞梵志問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi asked:", "deepsk-2026-line-by-line": "The brahmin Jāṇussoṇi asked:\n'Gotama,", "bdk_corrected": "The brahmin Jāṇussoṇi asked,"}, {"key": "ma149:11.2", "lzh": "偷劫何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "'Gotama, what does a thief desire, what does he practice,\nwhat does he establish, what does he rely on, and what is his goal?'", "deepsk-2026-line-by-line": "what do thieves desire, what do they practice, what do they establish,\nwhat do they rely on, and what is their ultimate goal?'", "bdk_corrected": "“Gotama, what are the desires of thieves?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "12", "label": "世尊答曰：「偷劫者，欲不與取，行隱藏處，", "rows": [{"key": "ma149:12.1", "lzh": "世尊答曰：「偷劫者，欲不與取，行隱藏處，", "deepsk-2026-v4-fla": "The Blessed One replied:", "deepsk-2026-line-by-line": "The Blessed One replied:\n'Thieves desire to take what is not given, they practice concealment,", "bdk_corrected": "The World-honored One replied,\n“Thieves desire to take what is not given;\nthey engage in hiding;"}, {"key": "ma149:12.2", "lzh": "所立以刀，依於闇冥，以不見為訖。」", "deepsk-2026-v4-fla": "'A thief desires to take what is not given, practices concealment,\nestablishes himself with a knife, relies on darkness, and his goal is not being seen.'", "deepsk-2026-line-by-line": "they establish themselves with a knife, they rely on darkness, and their ultimate goal is not being seen.'", "bdk_corrected": "their support is the use of the sword;\nthey rely on darkness;\nnot being seen is their end.”"}]}, {"id": "13", "label": "生聞梵志問曰：「瞿曇！", "rows": [{"key": "ma149:13.1", "lzh": "生聞梵志問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi asked:", "deepsk-2026-line-by-line": "The brahmin Jāṇussoṇi asked:\n'Gotama,", "bdk_corrected": "The brahmin Jāṇussoṇi asked,"}, {"key": "ma149:13.2", "lzh": "梵志何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "'Gotama, what does a brahmin desire, what does he practice,\nwhat does he establish, what does he rely on, and what is his final goal?'", "deepsk-2026-line-by-line": "what do brahmins desire, what do they practice, what do they establish,\nwhat do they rely on, and what is their ultimate goal?'", "bdk_corrected": "“Gotama, what are the desires of brahmins?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "14", "label": "世尊答曰：「梵志者，欲得財物，行於智慧，", "rows": [{"key": "ma149:14.1", "lzh": "世尊答曰：「梵志者，欲得財物，行於智慧，", "deepsk-2026-v4-fla": "The Blessed One replied:", "deepsk-2026-line-by-line": "The Blessed One replied:\n'Brahmins desire to obtain wealth, they practice wisdom,", "bdk_corrected": "The World-honored One replied,\n“Brahmins desire to gain wealth;\nthey engage in wisdom;"}, {"key": "ma149:14.2", "lzh": "立以經書，依於齋戒，以梵天為訖。」", "deepsk-2026-v4-fla": "'A brahmin desires to obtain wealth, practices wisdom, establishes himself in scriptures,\nrelies on observances and fasts, and has Brahmā as his final goal.'", "deepsk-2026-line-by-line": "they establish themselves with scriptures, they rely on observances, and their ultimate goal is Brahmā.'", "bdk_corrected": "their support is the sacred texts;\nthey rely on the sacrifice;\nBrahmā is their end.”"}]}, {"id": "15", "label": "生聞梵志問曰：「瞿曇！", "rows": [{"key": "ma149:15.1", "lzh": "生聞梵志問曰：「瞿曇！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi asked:", "deepsk-2026-line-by-line": "The brahmin Jāṇussoṇi asked:\n'Gotama,", "bdk_corrected": "The brahmin Jāṇussoṇi asked,"}, {"key": "ma149:15.2", "lzh": "沙門何欲、何行、何立、何依、何訖耶？」", "deepsk-2026-v4-fla": "'Gotama, what does a ascetic desire, what does he practice,\nwhat does he establish, what does he rely on, and what is his final goal?'", "deepsk-2026-line-by-line": "what do ascetics desire, what do they practice, what do they establish,\nwhat do they rely on, and what is their ultimate goal?'", "bdk_corrected": "“Gotama, what are the desires of renunciants?\nWhat do they engage in?\nWhat is their support?\nOn what do they depend?\nWhat is their end?”"}]}, {"id": "16", "label": "世尊答曰：「沙門者，欲得真諦，行於智慧，", "rows": [{"key": "ma149:16.1", "lzh": "世尊答曰：「沙門者，欲得真諦，行於智慧，", "deepsk-2026-v4-fla": "The Blessed One replied:", "deepsk-2026-line-by-line": "The Blessed One replied:\n'Ascetics desire to attain truth, they practice wisdom,", "bdk_corrected": "The World-honored One replied,\n“Renunciants desire to gain the truth;\nthey engage in wisdom;"}, {"key": "ma149:16.2", "lzh": "所立以戒，依於無處，以涅槃為訖。」", "deepsk-2026-v4-fla": "'An ascetic desires to obtain truth, practices wisdom, establishes himself in virtuous behavior,\nrelies on nothing, and has Nibbāna as his final goal.'", "deepsk-2026-line-by-line": "they establish themselves with virtue, they rely on nothing, and their ultimate goal is Nibbāna.'", "bdk_corrected": "their support is morality;\nthey rely on secluded places;\nnirvana is their end.”"}]}, {"id": "17", "label": "生聞梵志白曰：「世尊！", "rows": [{"key": "ma149:17.1", "lzh": "生聞梵志白曰：「世尊！", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi said:", "deepsk-2026-line-by-line": "The brahmin Janussoni said:\n\"Blessed One!", "bdk_corrected": "The brahmin Jāṇussoṇi said:"}, {"key": "ma149:17.2", "lzh": "我已知。善逝！", "deepsk-2026-v4-fla": "'Venerable Sir, I understand.", "deepsk-2026-line-by-line": "I have understood.\nWell-Gone One!", "bdk_corrected": "World-honored One, I have understood."}, {"key": "ma149:17.3", "lzh": "我已解。世尊！", "deepsk-2026-v4-fla": "Well-gone One, I have comprehended.", "deepsk-2026-line-by-line": "I have comprehended.\nBlessed One!", "bdk_corrected": "Well-gone One, I have comprehended."}, {"key": "ma149:17.4", "lzh": "我今自歸於佛、法及比丘眾，唯願世尊受我為優婆塞，", "deepsk-2026-v4-fla": "Venerable Sir, I now go for refuge to the Buddha, the Dhamma, and the community of monks.", "deepsk-2026-line-by-line": "I now go for refuge to the Buddha, the Dhamma, and the community of bhikkhus.\nMay the Blessed One please accept me as a lay follower,", "bdk_corrected": "World-honored One, from now on I go for refuge to the Buddha, the Dharma, and the Sangha of monks."}, {"key": "ma149:17.5", "lzh": "從今日始，終身自歸，乃至命盡。」", "deepsk-2026-v4-fla": "May the Blessed One accept me as a lay follower from today onward, for life, until my last breath.'", "deepsk-2026-line-by-line": "from today onward, for life, I go for refuge until the end of my life.\"", "bdk_corrected": "May the World-honored One accept me as a lay disciple from this day forth until the end of life,\nas having personally gone for refuge for my whole life."}]}, {"id": "18", "label": "佛說如是。", "rows": [{"key": "ma149:18.1", "lzh": "佛說如是。", "deepsk-2026-v4-fla": "Thus spoke the Buddha.", "deepsk-2026-line-by-line": "Thus spoke the Buddha.", "bdk_corrected": "Thus said the Buddha."}, {"key": "ma149:18.2", "lzh": "生聞梵志聞佛所說，歡喜奉行。", "deepsk-2026-v4-fla": "The brahmin Jāṇussoṇi, having heard what the Buddha said, rejoiced and practiced accordingly.", "deepsk-2026-line-by-line": "The brahmin Janussoni, having heard what the Buddha said, rejoiced and practiced accordingly.", "bdk_corrected": "Having heard what the Buddha said, the brahmin Jāṇussoṇi was delighted and received it respectfully."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "warn": ""}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -780,7 +855,7 @@ const SW_MIN = 150, SW_DEFAULT = 240;   // TOC sidebar width: px floor; max = 50
 const FN_MIN = 120, FN_MAXFRAC = 0.8, FN_STRIP_REM = 2.4;   // footnote region clamp + strip
 const FNFS_MIN = 0.8, FNFS_MAX = 1.8;   // footnote text-size multiplier bounds
 
-let COLS = ["lzh", "deepsk-2026-v4-fla", "bdk_corrected"];   // render.py already caps the default to MAX_COLS; restore path re-caps
+let COLS = ["lzh", "deepsk-2026-v4-fla", "deepsk-2026-line-by-line", "bdk_corrected"];   // render.py already caps the default to MAX_COLS; restore path re-caps
 let sidebarVisible = true;
 let currentTheme = 'light';
 let currentFs = 15;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,6 +819,19 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
 const TREE=[{"id": "ea6", "label": "", "children": [{"id": "ea6.1", "label": "EA 6.1", "children": [{"id": "ea6.1/1", "label": "「我弟子中，初聞法藥，成賢聖證，三果 商客是。", "rows": [{"key": "ea6.1:1.1", "lzh": "「我弟子中，初聞法藥，成賢聖證，三果 商客是。", "deepsk-2026-line-by-line": "Among my disciples, those who first heard the Dharma medicine and\nattained the realization of the noble ones are the three-fruit merchants."}, {"key": "ea6.1:1.2", "lzh": "第一智慧，質多長者是。", "deepsk-2026-line-by-line": "The foremost in wisdom is the elder Citta."}, {"key": "ea6.1:1.3", "lzh": "神德第一， 所謂犍提阿藍是。", "deepsk-2026-line-by-line": "The foremost in spiritual power is the one called Khaṇḍika-araṇya."}, {"key": "ea6.1:1.4", "lzh": "降伏外道，所謂掘多長 者是。", "deepsk-2026-line-by-line": "The one who subdued the non-Buddhists is the elder Guṭṭha."}, {"key": "ea6.1:1.5", "lzh": "能說深法，所謂優波掘長者是。", "deepsk-2026-line-by-line": "The one who could teach profound Dharma is the elder Upa-guṭṭha."}, {"key": "ea6.1:1.6", "lzh": "恒坐禪 思，呵侈阿羅婆是。", "deepsk-2026-line-by-line": "The one who constantly sat in meditative concentration is Hacī-araṇya."}, {"key": "ea6.1:1.7", "lzh": "降伏魔宮，所謂勇健 長者是。", "deepsk-2026-line-by-line": "The one who subdued Māra's palace is the elder Vīrya."}, {"key": "ea6.1:1.8", "lzh": "福德盛滿，闍利長者是。", "deepsk-2026-line-by-line": "The one whose merit and virtue were abundant is the elder Jāli."}, {"key": "ea6.1:1.9", "lzh": "大檀越主， 所謂須達長者是。", "deepsk-2026-line-by-line": "The great patron is the elder Sudatta."}, {"key": "ea6.1:1.10", "lzh": "門族成就，泯兔長者 是。」", "deepsk-2026-line-by-line": "The one accomplished in family lineage is the elder Muṇḍa."}]}, {"id": "ea6.1/2", "label": "三果、質、乾提 掘、波及羅婆 勇、", "rows": [{"key": "ea6.1:2.1", "lzh": "三果、質、乾提　　掘、波及羅婆 \n勇、", "deepsk-2026-line-by-line": "Three-fruit, Citta, Khaṇḍika, Guṭṭha, Upa, and Araṇya, Vīrya,"}, {"key": "ea6.1:2.2", "lzh": "闍利、須達　　泯兔是謂十", "deepsk-2026-line-by-line": "Jāli, Sudatta, Muṇḍa — these are the ten."}]}]}, {"id": "ea6.2", "label": "EA 6.2", "children": [{"id": "ea6.2/1", "label": "「我弟子中第一優婆塞，", "rows": [{"key": "ea6.2:1.1", "lzh": "「我弟子中第一優婆塞，", "deepsk-2026-line-by-line": "Among my lay disciples, the foremost is"}, {"key": "ea6.2:1.2", "lzh": "好問義趣，所謂 生漏婆羅門是。", "deepsk-2026-line-by-line": "the one who delights in asking about the meaning and purpose, namely the brahmin Sāriputta."}, {"key": "ea6.2:1.3", "lzh": "利根通明，所謂梵摩俞是。", "deepsk-2026-line-by-line": "Sharp faculties and clear understanding, namely the brahmin Brahmāyu."}, {"key": "ea6.2:1.4", "lzh": "諸佛信使，御馬摩納是。", "deepsk-2026-line-by-line": "The messenger of the Buddhas, the horse-trainer Māṇava."}, {"key": "ea6.2:1.5", "lzh": "計身無我，喜聞 笒婆羅門是。", "deepsk-2026-line-by-line": "Considering the body as not-self, delighting in hearing, the brahmin Kaṇḍa."}, {"key": "ea6.2:1.6", "lzh": "論不可勝，毘裘婆羅門是。", "deepsk-2026-line-by-line": "Unconquerable in debate, the brahmin Pukkusa."}, {"key": "ea6.2:1.7", "lzh": "能造誦偈，優婆離長者是。", "deepsk-2026-line-by-line": "Able to compose and recite verses, the elder Upāli."}, {"key": "ea6.2:1.8", "lzh": "言語速疾，亦是 優波離長者。", "deepsk-2026-line-by-line": "Quick in speech, also the elder Upāli."}, {"key": "ea6.2:1.9", "lzh": "喜施好寶，不有悋心，所謂殊 提長者是。", "deepsk-2026-line-by-line": "Delighting in giving and good treasures, without a stingy mind, namely the elder Sūti."}, {"key": "ea6.2:1.10", "lzh": "建立善本，所謂優迦毘舍離是。", "deepsk-2026-line-by-line": "Establishing wholesome roots, namely Ugga of Vesālī."}, {"key": "ea6.2:1.11", "lzh": "能說妙法，所謂最上無畏優婆塞是。", "deepsk-2026-line-by-line": "Able to teach the wonderful Dharma, namely the foremost fearless lay disciple."}, {"key": "ea6.2:1.12", "lzh": "所說無 畏，善察人根，所謂頭摩大將領毘舍離是。」", "deepsk-2026-line-by-line": "Fearless in speech, skilled in examining people's faculties, namely the general Tumbura of Vesālī."}]}, {"id": "ea6.2/2", "label": "生漏、梵摩俞 御馬及聞笒 毘裘、", "rows": [{"key": "ea6.2:2.1", "lzh": "生漏、梵摩俞　　御馬及聞笒 \n毘裘、", "deepsk-2026-line-by-line": "Sāriputta, Brahmāyu, the horse-trainer, and Kaṇḍa, Pukkusa,"}, {"key": "ea6.2:2.2", "lzh": "優波離　　殊提、優、畏、摩", "deepsk-2026-line-by-line": "Upāli, Sūti, Ugga, the fearless, and Tumbura."}]}]}, {"id": "ea6.3", "label": "EA 6.3", "children": [{"id": "ea6.3/1", "label": "「我弟子中第一優婆塞，好喜惠施，所謂 毘沙王是。", "rows": [{"key": "ea6.3:1.1", "lzh": "「我弟子中第一優婆塞，好喜惠施，所謂 毘沙王是。", "deepsk-2026-line-by-line": "Among my laymen disciples, the foremost in delighting in giving is King Vaiśālī."}, {"key": "ea6.3:1.2", "lzh": "所施狹少，光明王是。", "deepsk-2026-line-by-line": "The one who gives little is King Pradyota."}, {"key": "ea6.3:1.3", "lzh": "建立善 本，王波斯匿是。", "deepsk-2026-line-by-line": "The one who establishes wholesome roots is King Prasenajit."}, {"key": "ea6.3:1.4", "lzh": "得無根善信，起歡喜心，所 謂王阿闍世是。", "deepsk-2026-line-by-line": "The one who gains faith without basis and arouses joyful mind is King Ajātaśatru."}, {"key": "ea6.3:1.5", "lzh": "至心向佛，意不變易，所謂優 填王是。", "deepsk-2026-line-by-line": "The one who is wholeheartedly devoted to the Buddha with unwavering mind is King Udayana."}, {"key": "ea6.3:1.6", "lzh": "承事正法，所謂月光王子是。", "deepsk-2026-line-by-line": "The one who serves the true Dharma is Prince Candraprabha."}, {"key": "ea6.3:1.7", "lzh": "供奉 聖眾，意恒平等，所謂造祇洹王子是。", "deepsk-2026-line-by-line": "The one who reveres the noble community with an ever-equanimous mind is the prince who built Jetavana."}, {"key": "ea6.3:1.8", "lzh": "常喜 濟彼，不自為己，師子王子是。", "deepsk-2026-line-by-line": "The one who always delights in rescuing others without thought for himself is Prince Siṃha."}, {"key": "ea6.3:1.9", "lzh": "善恭奉人， 無有高下，無畏王子是。", "deepsk-2026-line-by-line": "The one who skillfully respects others without discrimination is Prince Abhaya."}, {"key": "ea6.3:1.10", "lzh": "顏貌端正，與人 殊勝，所謂雞頭王子是。」", "deepsk-2026-line-by-line": "The one with handsome features, surpassing others, is Prince Kukkuṭa."}]}, {"id": "ea6.3/2", "label": "毘沙王、光明 波斯匿、闍王 月、", "rows": [{"key": "ea6.3:2.1", "lzh": "毘沙王、光明　　波斯匿、闍王 \n月、", "deepsk-2026-line-by-line": "Vaiśālī, Pradyota, Prasenajit, Ajātaśatru, Candraprabha,"}, {"key": "ea6.3:2.2", "lzh": "祇桓、優填　　師子、畏、雞頭", "deepsk-2026-line-by-line": "Jetavana, Udayana, Siṃha, Abhaya, Kukkuṭa."}]}]}, {"id": "ea6.4", "label": "EA 6.4", "children": [{"id": "ea6.4/1", "label": "「我弟子中第一優婆塞，恒行慈心，所謂不 尼長者是。", "rows": [{"key": "ea6.4:1.1", "lzh": "「我弟子中第一優婆塞，恒行慈心，所謂不 尼長者是。", "deepsk-2026-line-by-line": "Among my lay male disciples who constantly practice loving-kindness, the foremost is the elder Bu Ni."}, {"key": "ea6.4:1.2", "lzh": "心恒悲念一切之類，所謂摩訶 納釋種是。", "deepsk-2026-line-by-line": "One whose mind constantly feels compassion for all beings is Mahānāma of the Sakya clan."}, {"key": "ea6.4:1.3", "lzh": "常行喜心，所謂拔陀釋種是。", "deepsk-2026-line-by-line": "One who constantly practices altruistic joy is Bhadra of the Sakya clan."}, {"key": "ea6.4:1.4", "lzh": "恒 行護心，不失善行，所謂毘闍先優婆塞是。", "deepsk-2026-line-by-line": "One who constantly practices equanimity and never loses wholesome conduct is the layman Vijaśa."}, {"key": "ea6.4:1.5", "lzh": "堪任行忍，所謂師子大將是。", "deepsk-2026-line-by-line": "One capable of practicing patience is General Siṃha."}, {"key": "ea6.4:1.6", "lzh": "能雜種論，所 謂毘舍御優婆塞是。", "deepsk-2026-line-by-line": "One skilled in various kinds of discourse is the layman Viśākha."}, {"key": "ea6.4:1.7", "lzh": "賢聖默然，難提婆羅 優婆塞是。", "deepsk-2026-line-by-line": "One who is nobly silent is the layman Nandīvāla."}, {"key": "ea6.4:1.8", "lzh": "懃修善行，無有休息，所謂優多 羅優婆塞是。", "deepsk-2026-line-by-line": "One who diligently cultivates wholesome deeds without rest is the layman Uttara."}, {"key": "ea6.4:1.9", "lzh": "諸根寂靜，所謂天摩優婆塞是。", "deepsk-2026-line-by-line": "One whose faculties are calm is the layman Deva."}, {"key": "ea6.4:1.10", "lzh": "我弟子中最後受證，所謂拘夷那摩羅是。」", "deepsk-2026-line-by-line": "The last among my disciples to attain realization is Koṇḍañña Māra."}]}, {"id": "ea6.4/2", "label": "不尼、摩訶納 拔陀、優多羅 師子、", "rows": [{"key": "ea6.4:2.1", "lzh": "不尼、摩訶納　　拔陀、優多羅 \n師子、", "deepsk-2026-line-by-line": "Bu Ni, Mahānāma, Bhadra, Uttara, Siṃha,"}, {"key": "ea6.4:2.2", "lzh": "毘舍、離　　優多、天、摩羅", "deepsk-2026-line-by-line": "Viśākha, Nandīvāla, Uttara, Deva, Māra."}]}, {"id": "ea6.4/3", "label": "四十優婆塞盡，當廣說如上。", "rows": [{"key": "ea6.4:3.1", "lzh": "四十優婆塞盡，當廣說如上。", "deepsk-2026-line-by-line": "The forty lay male disciples are complete;\nthey should be explained in detail as above."}]}]}]}];
 
@@ -773,6 +843,11 @@ const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

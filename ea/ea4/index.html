@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,6 +819,19 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
 const TREE=[{"id": "ea4", "label": "", "children": [{"id": "ea4.1", "label": "EA 4.1", "children": [{"id": "ea4.1/1", "label": "聞如是：", "rows": [{"key": "ea4.1:1.1", "lzh": "聞如是：", "deepsk-2026-line-by-line": "Thus have I heard:"}]}, {"id": "ea4.1/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea4.1:2.1", "lzh": "一時，佛在舍衛國祇樹給孤獨 園。", "deepsk-2026-line-by-line": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea4.1/3", "label": "爾時，世尊告諸比丘：", "rows": [{"key": "ea4.1:3.1", "lzh": "爾時，世尊告諸比丘：", "deepsk-2026-line-by-line": "At that time, the Blessed One said to the monks:"}, {"key": "ea4.1:3.2", "lzh": "「我聲聞中第一比丘， 寬仁博識，", "deepsk-2026-line-by-line": "Among my disciples, the foremost monk in being broad-minded, benevolent, and widely learned,"}, {"key": "ea4.1:3.3", "lzh": "善能勸化，將養聖眾，不失威儀，", "deepsk-2026-line-by-line": "skillful in exhorting, nurturing the noble community, and never losing proper deportment,"}, {"key": "ea4.1:3.4", "lzh": "所謂阿若拘隣比丘是。", "deepsk-2026-line-by-line": "is the monk Aññāta Koṇḍañña."}, {"key": "ea4.1:3.5", "lzh": "初受法味，思惟四 諦，亦是阿若拘隣比丘。", "deepsk-2026-line-by-line": "The one who first tasted the flavor of the Dharma and contemplated\nthe Four Noble Truths is also the monk Aññāta Koṇḍañña."}, {"key": "ea4.1:3.6", "lzh": "善能勸導，福度人民， 所謂優陀夷比丘是。", "deepsk-2026-line-by-line": "Skillful in guiding and benefiting people through generosity is the monk Udāyin."}, {"key": "ea4.1:3.7", "lzh": "速成神通，中不有誨， 所謂摩訶男比丘是。", "deepsk-2026-line-by-line": "One who quickly attained psychic powers without any hindrance is the monk Mahānāma."}, {"key": "ea4.1:3.8", "lzh": "恒飛虛空，足不蹈地， 善肘比丘是。", "deepsk-2026-line-by-line": "One who always flies through the sky without his feet touching the ground is the monk Suppiya."}, {"key": "ea4.1:3.9", "lzh": "乘虛教化，意無榮冀，所謂婆 破比丘是。", "deepsk-2026-line-by-line": "One who teaches while traveling through space, with a mind free from desire for honor, is the monk Vappa."}, {"key": "ea4.1:3.10", "lzh": "居樂天上，不處人中，所謂牛跡 比丘是。", "deepsk-2026-line-by-line": "One who delights in dwelling among the devas rather than among humans is the monk Nandaka."}, {"key": "ea4.1:3.11", "lzh": "恒觀惡露不淨之想，善勝比丘是。", "deepsk-2026-line-by-line": "One who constantly contemplates the perception of foulness and impurity is the monk Subāhu."}, {"key": "ea4.1:3.12", "lzh": "將養聖眾，四事供養，所謂優留毘迦葉比 丘是。", "deepsk-2026-line-by-line": "One who nurtures the noble community and provides the four supports is the monk Uruvela Kassapa."}, {"key": "ea4.1:3.13", "lzh": "心意寂然，降伏諸結，所謂江迦葉比丘 是。", "deepsk-2026-line-by-line": "One whose mind is calm and has subdued all fetters is the monk Gayā Kassapa."}, {"key": "ea4.1:3.14", "lzh": "觀了諸法，都無所著，所謂象迦葉比丘 是。」", "deepsk-2026-line-by-line": "Having contemplated and understood all phenomena, he is attached to nothing —\nthis refers to the monk Kāśyapa of the elephant lineage."}]}, {"id": "ea4.1/4", "label": "拘隣、陀夷、男 善肘、", "rows": [{"key": "ea4.1:4.1", "lzh": "拘隣、陀夷、男　　善肘、", "deepsk-2026-line-by-line": "Koṇḍañña, Udāyin, the man, and Su-elbow,"}, {"key": "ea4.1:4.2", "lzh": "婆第五 \n牛跡及善勝　　迦葉三兄弟", "deepsk-2026-line-by-line": "Bhaddiya fifth, cow-track and Subhadra, and the three Kāśyapa brothers."}]}]}, {"id": "ea4.2", "label": "EA 4.2", "children": [{"id": "ea4.2/1", "label": "「我聲聞中第一比丘，威容端正，", "rows": [{"key": "ea4.2:1.1", "lzh": "「我聲聞中第一比丘，威容端正，", "deepsk-2026-line-by-line": "Among my disciples, the foremost bhikkhu in dignified appearance and upright demeanor is the bhikkhu Assaji."}, {"key": "ea4.2:1.2", "lzh": "行步庠序， 所謂馬師比丘是。", "deepsk-2026-line-by-line": "Walking with a composed and graceful gait, this is the bhikkhu Assaji."}, {"key": "ea4.2:1.3", "lzh": "智慧無窮，決了諸疑，所謂 舍利弗比丘是。", "deepsk-2026-line-by-line": "With boundless wisdom, resolving all doubts, this is the bhikkhu Śāriputra."}, {"key": "ea4.2:1.4", "lzh": "神足輕舉，飛到十方，所謂 大目揵連比丘是。", "deepsk-2026-line-by-line": "With supernormal powers, lightly leaping and flying to the ten directions, this is the bhikkhu Mahāmaudgalyāyana."}, {"key": "ea4.2:1.5", "lzh": "勇猛精進，堪任苦行，所 謂二十億耳比丘是。", "deepsk-2026-line-by-line": "Vigorous and diligent, capable of enduring ascetic practices, this is the bhikkhu Śroṇa Koṭīviṃśa."}, {"key": "ea4.2:1.6", "lzh": "十二頭陀，難得之行，所 謂大迦葉比丘是。", "deepsk-2026-line-by-line": "Practicing the twelve dhūta practices, difficult to undertake, this is the bhikkhu Mahākāśyapa."}, {"key": "ea4.2:1.7", "lzh": "天眼第一，見十方域，所 謂阿那律比丘是。", "deepsk-2026-line-by-line": "Foremost in the divine eye, seeing the realms of the ten directions, this is the bhikkhu Aniruddha."}, {"key": "ea4.2:1.8", "lzh": "坐禪入定，心不錯亂，所 謂離曰比丘是。", "deepsk-2026-line-by-line": "Sitting in meditation and entering concentration, with mind unconfused, this is the bhikkhu Revata."}, {"key": "ea4.2:1.9", "lzh": "能廣勸率，施立齋講，陀羅 婆摩羅比丘是。", "deepsk-2026-line-by-line": "Able to widely encourage and lead, establishing offerings and lectures, this is the bhikkhu Dravya Mallaputra."}, {"key": "ea4.2:1.10", "lzh": "安造房舍，興招提僧，所 謂小陀羅婆摩羅比丘是。", "deepsk-2026-line-by-line": "Skillfully building dwellings and establishing monasteries for the Saṅgha, this is the bhikkhu Cūḍa Dravya Mallaputra."}, {"key": "ea4.2:1.11", "lzh": "貴豪種族，出家學 道，所謂羅吒婆羅比丘是。", "deepsk-2026-line-by-line": "Of noble and wealthy lineage, leaving home to study the path, this is the bhikkhu Rāṣṭrapāla."}, {"key": "ea4.2:1.12", "lzh": "善分別義，敷演 道教，所謂大迦旃延比丘是。」", "deepsk-2026-line-by-line": "Skillfully discerning meanings, expounding and spreading the teaching, this is the bhikkhu Mahākātyāyana."}]}, {"id": "ea4.2/2", "label": "馬師、舍利弗 拘律、耳、", "rows": [{"key": "ea4.2:2.1", "lzh": "馬師、舍利弗　　拘律、耳、", "deepsk-2026-line-by-line": "Assaji, Śāriputra, Koṭīviṃśa, Revata, Kāśyapa, Aniruddha, Dravya, Rāṣṭrapāla, Kātyāyana."}, {"key": "ea4.2:2.2", "lzh": "迦葉 \n阿那律、離曰　　摩羅、吒、旃延", "deepsk-2026-line-by-line": "Kāśyapa, Aniruddha, Revata, Dravya, Rāṣṭrapāla, Kātyāyana."}]}]}, {"id": "ea4.3", "label": "EA 4.3", "children": [{"id": "ea4.3/1", "label": "「我聲聞中第一比丘，堪任受籌，", "rows": [{"key": "ea4.3:1.1", "lzh": "「我聲聞中第一比丘，堪任受籌，", "deepsk-2026-line-by-line": "Among my disciples, the foremost bhikkhu who is worthy to receive the\ntally-sticks and does not violate the precepts is the bhikkhu Kuntapāna."}, {"key": "ea4.3:1.2", "lzh": "不違禁 法，所謂軍頭 波漢 比丘是。", "deepsk-2026-line-by-line": "He who subdues the heretics and practices the true Dharma is the bhikkhu Piṇḍola."}, {"key": "ea4.3:1.3", "lzh": "降伏外道，履行 正法，所謂賓頭盧比丘是。", "deepsk-2026-line-by-line": "He who attends to the sick and provides medicine is the bhikkhu Śikṣā."}, {"key": "ea4.3:1.4", "lzh": "瞻視疾病，供給 醫藥，所謂識比丘是。", "deepsk-2026-line-by-line": "He who offers the four requisites—robes and food—is also the bhikkhu Śikṣā."}, {"key": "ea4.3:1.5", "lzh": "四事供養衣被、飲食， 亦是識比丘。", "deepsk-2026-line-by-line": "He who can compose verses praising the Tathāgata's virtues is the bhikkhu Vaṅgīsa."}, {"key": "ea4.3:1.6", "lzh": "能造偈頌，嘆如來德，鵬耆 舍比丘是。", "deepsk-2026-line-by-line": "He whose speech is eloquent and without hesitation is also the bhikkhu Vaṅgīsa."}, {"key": "ea4.3:1.7", "lzh": "言論辯了而無疑滯，亦是鵬耆 舍比丘。", "deepsk-2026-line-by-line": "He who has attained the four analytical knowledges and can answer difficult questions is the bhikkhu Mahākoṭṭhita."}, {"key": "ea4.3:1.8", "lzh": "得四辯才，觸難答對，所謂摩訶拘 絺羅比丘是。", "deepsk-2026-line-by-line": "He who dwells in purity and seclusion, not delighting in company, is the bhikkhu Dṛḍha."}, {"key": "ea4.3:1.9", "lzh": "清淨閑居，不樂人中，所謂堅牢 比丘是。", "deepsk-2026-line-by-line": "He who begs for alms, endures humiliation, and does not avoid heat or cold is the bhikkhu Nandika."}, {"key": "ea4.3:1.10", "lzh": "乞食耐辱，不避寒暑，所謂難提比丘 是。", "deepsk-2026-line-by-line": "He who sits alone in quiet meditation, focusing his mind on the path, is the bhikkhu Kimbila."}, {"key": "ea4.3:1.11", "lzh": "獨處靜坐，專意念道，所謂今毘羅比丘 是。", "deepsk-2026-line-by-line": "He who eats only one meal at one sitting and does not move from his place is the bhikkhu Śaila."}, {"key": "ea4.3:1.12", "lzh": "一坐一食，不移乎處，所謂施羅比丘是。", "deepsk-2026-line-by-line": "He who keeps the three robes and does not neglect food and rest is the bhikkhu Pūrṇa."}, {"key": "ea4.3:1.13", "lzh": "守持三衣，不離食、息，所謂浮彌比丘是。」", "deepsk-2026-line-by-line": "He keeps the three robes and never misses a meal or rest — this is the bhikkhu Fumi."}]}, {"id": "ea4.3/2", "label": "軍頭、賓頭盧 識、鵬、", "rows": [{"key": "ea4.3:2.1", "lzh": "軍頭、賓頭盧　　識、鵬、", "deepsk-2026-line-by-line": "Kuntapāna, Piṇḍola, Śikṣā, Vaṅgīsa,"}, {"key": "ea4.3:2.2", "lzh": "拘絺羅 \n善牢及難提　　今毘、施羅、彌", "deepsk-2026-line-by-line": "Koṭṭhita, Dṛḍha, and Nandika, Kimbila, Śaila, Pūrṇa."}]}]}, {"id": "ea4.4", "label": "EA 4.4", "children": [{"id": "ea4.4/1", "label": "「我聲聞中第一比丘，樹下坐禪，", "rows": [{"key": "ea4.4:1.1", "lzh": "「我聲聞中第一比丘，樹下坐禪，", "deepsk-2026-line-by-line": "Among my disciples, the foremost bhikkhu who sits in meditation under a tree,"}, {"key": "ea4.4:1.2", "lzh": "意不移轉， 所謂狐疑離曰比丘是。", "deepsk-2026-line-by-line": "with a mind that does not waver, is the bhikkhu named Huoyi Li."}, {"key": "ea4.4:1.3", "lzh": "苦身露坐，不避風雨， 所謂婆嗟比丘是。", "deepsk-2026-line-by-line": "He who mortifies his body, sits in the open, and does not avoid wind and rain, is the bhikkhu named Bojie."}, {"key": "ea4.4:1.4", "lzh": "獨樂空閑，專意思惟，所 謂陀素比丘是。", "deepsk-2026-line-by-line": "He who delights in solitude and emptiness, focusing his mind on contemplation, is the bhikkhu named Tuosu."}, {"key": "ea4.4:1.5", "lzh": "著五納衣，不著榮飾，所謂 尼婆比丘是。", "deepsk-2026-line-by-line": "He who wears a robe of five patches and does not adorn himself with finery, is the bhikkhu named Nibo."}, {"key": "ea4.4:1.6", "lzh": "常樂塚間，不處人中，所謂優 多羅比丘是。", "deepsk-2026-line-by-line": "He who always delights in charnel grounds and does not stay among people, is the bhikkhu named Youduoluo."}, {"key": "ea4.4:1.7", "lzh": "恒坐草蓐，日福度人，所謂盧 醯甯比丘是。", "deepsk-2026-line-by-line": "He who constantly sits on a grass mat and daily benefits people with his merit, is the bhikkhu named Luxining."}, {"key": "ea4.4:1.8", "lzh": "不與人語，視地而行，所謂優 鉗摩尼江比丘是。", "deepsk-2026-line-by-line": "He who does not speak with others and walks with his eyes on the ground, is the bhikkhu named Youqianmonijiang."}, {"key": "ea4.4:1.9", "lzh": "坐起行步，常入三昧，所 謂刪提比丘是。", "deepsk-2026-line-by-line": "He who, whether sitting, standing, or walking, always enters concentration, is the bhikkhu named Shanti."}, {"key": "ea4.4:1.10", "lzh": "好遊遠國，教授人民，所謂 曇摩留支比丘是。", "deepsk-2026-line-by-line": "He who delights in traveling to distant countries, teaching and guiding people, is the bhikkhu named Tanmoliuzhi."}, {"key": "ea4.4:1.11", "lzh": "喜集聖眾，論說法味，所 謂迦淚比丘是。」", "deepsk-2026-line-by-line": "He who enjoys gathering the noble community and discussing the flavor of the Dharma, is the bhikkhu named Jialei."}]}, {"id": "ea4.4/2", "label": "狐疑、婆蹉離 陀蘇、婆、", "rows": [{"key": "ea4.4:2.1", "lzh": "狐疑、婆蹉離　　陀蘇、婆、", "deepsk-2026-line-by-line": "Huoyi, Bojie Li, Tuosu, Nibo,"}, {"key": "ea4.4:2.2", "lzh": "優多 \n盧醯、優迦摩　　息、曇摩留、淚", "deepsk-2026-line-by-line": "Youduo, Luxi, Youqianmo, Xi, Tanmoliu, Lei"}]}]}, {"id": "ea4.5", "label": "EA 4.5", "children": [{"id": "ea4.5/1", "label": "「我聲聞中第一比丘，壽命極長，", "rows": [{"key": "ea4.5:1.1", "lzh": "「我聲聞中第一比丘，壽命極長，", "deepsk-2026-line-by-line": "Among my disciples, the foremost monk with an extremely long lifespan,"}, {"key": "ea4.5:1.2", "lzh": "終不中夭， 所謂婆拘羅比丘是。", "deepsk-2026-line-by-line": "who never dies prematurely, is the monk Bakkula."}, {"key": "ea4.5:1.3", "lzh": "常樂閑居，不處眾中， 所謂婆拘羅比丘是。", "deepsk-2026-line-by-line": "One who always delights in solitary dwelling and does not stay among the community is the monk Bakkula."}, {"key": "ea4.5:1.4", "lzh": "能廣說法，分別義 理，所謂滿願子比丘是。", "deepsk-2026-line-by-line": "One who can extensively teach the Dharma and analyze its meanings is the monk Puṇṇa."}, {"key": "ea4.5:1.5", "lzh": "奉持戒律，無所觸 犯，優波離比丘是。", "deepsk-2026-line-by-line": "One who upholds the monastic rules and never transgresses them is the monk Upāli."}, {"key": "ea4.5:1.6", "lzh": "得信解脫，意無猶豫，所 謂婆迦利比丘是。", "deepsk-2026-line-by-line": "One who attains liberation through faith, with a mind free of doubt, is the monk Vakkali."}, {"key": "ea4.5:1.7", "lzh": "天體端正，與世殊異， 所謂難陀比丘是。", "deepsk-2026-line-by-line": "One whose body is upright and handsome, extraordinary in the world, is the monk Nanda."}, {"key": "ea4.5:1.8", "lzh": "諸根寂靜，心不變易，亦 是難陀比丘。", "deepsk-2026-line-by-line": "One whose faculties are calm and mind unchanging is also the monk Nanda."}, {"key": "ea4.5:1.9", "lzh": "辯才卒發，解人疑滯，所謂婆 陀比丘是。", "deepsk-2026-line-by-line": "One whose eloquence arises swiftly, resolving people's doubts and hindrances, is the monk Bhadra."}, {"key": "ea4.5:1.10", "lzh": "能廣說義，理不有違，所謂斯尼 比丘是。", "deepsk-2026-line-by-line": "One who can extensively explain the meaning without contradicting the principles is the monk Seni."}, {"key": "ea4.5:1.11", "lzh": "喜著好衣，行本清淨，所謂天須菩提 比丘是。", "deepsk-2026-line-by-line": "One who delights in wearing fine robes and whose conduct is originally pure is the monk Devadatta Subhūti."}, {"key": "ea4.5:1.12", "lzh": "常好教授諸後學者，難陀迦比丘 是。", "deepsk-2026-line-by-line": "One who always delights in instructing later students is the monk Nandaka."}, {"key": "ea4.5:1.13", "lzh": "善誨禁戒比丘尼僧，所謂須摩那比丘是。」", "deepsk-2026-line-by-line": "One who skillfully teaches the nuns regarding the precepts is the monk Sumanā."}]}, {"id": "ea4.5/2", "label": "婆拘、滿、波離 婆迦利、", "rows": [{"key": "ea4.5:2.1", "lzh": "婆拘、滿、波離　　婆迦利、", "deepsk-2026-line-by-line": "Bakkula, Puṇṇa, Upāli, Vakkali,"}, {"key": "ea4.5:2.2", "lzh": "難陀 \n陀、尼、須菩提　　難陀、須摩那", "deepsk-2026-line-by-line": "Nanda, Bhadra, Seni, Subhūti, Nandaka, Sumanā."}]}]}, {"id": "ea4.6", "label": "EA 4.6", "children": [{"id": "ea4.6/1", "label": "「我聲聞中第一比丘，功德盛滿，", "rows": [{"key": "ea4.6:1.1", "lzh": "「我聲聞中第一比丘，功德盛滿，", "deepsk-2026-line-by-line": "Among my disciples, the foremost bhikkhu with abundant merit and virtue, whose virtue is full and complete,"}, {"key": "ea4.6:1.2", "lzh": "所適無短， 所謂尸婆羅比丘是。", "deepsk-2026-line-by-line": "who has no shortcomings in whatever he does, is the bhikkhu Sīvali."}, {"key": "ea4.6:1.3", "lzh": "具足眾行道品之法，所 謂優波先迦蘭陀子比丘是。", "deepsk-2026-line-by-line": "One who fully possesses the practices of the path, is the bhikkhu Upasena, son of Kaḷāra."}, {"key": "ea4.6:1.4", "lzh": "所說和悅，不傷 人意，所謂婆陀先比丘是。", "deepsk-2026-line-by-line": "One whose speech is gentle and does not hurt others' feelings, is the bhikkhu Bhaddaji."}, {"key": "ea4.6:1.5", "lzh": "修行安般，思惟 惡露，所謂摩訶迦延那比丘是。", "deepsk-2026-line-by-line": "One who practices mindfulness of breathing and contemplates the foul, is the bhikkhu Mahākātyāyana."}, {"key": "ea4.6:1.6", "lzh": "計我無常， 心無有想，所謂優頭槃比丘是。", "deepsk-2026-line-by-line": "One who regards the self as impermanent and has no thoughts in mind, is the bhikkhu Uddhaka."}, {"key": "ea4.6:1.7", "lzh": "能雜種論， 暢悅心識，所謂拘摩羅迦葉比丘是。", "deepsk-2026-line-by-line": "One who can engage in various discussions and delight the mind, is the bhikkhu Kumāra Kāśyapa."}, {"key": "ea4.6:1.8", "lzh": "著弊 惡衣，無所羞恥，所謂面王比丘是。", "deepsk-2026-line-by-line": "One who wears worn-out and dirty robes without shame, is the bhikkhu Mukha."}, {"key": "ea4.6:1.9", "lzh": "不毀禁 戒，誦讀不懈，所謂羅雲比丘是。", "deepsk-2026-line-by-line": "One who does not break the precepts and recites without laziness, is the bhikkhu Rāhula."}, {"key": "ea4.6:1.10", "lzh": "以神足 力能自隱曀，所謂般兔比丘是。", "deepsk-2026-line-by-line": "One who can conceal himself with his psychic power, is the bhikkhu Paṇḍita."}, {"key": "ea4.6:1.11", "lzh": "能化形 體，作若干變，所謂周利般兔比丘是。」", "deepsk-2026-line-by-line": "One who can transform his body and make various changes, is the bhikkhu Cūḷapaṇḍita."}]}, {"id": "ea4.6/2", "label": "尸婆、優波先 婆陀、迦延那 優頭、", "rows": [{"key": "ea4.6:2.1", "lzh": "尸婆、優波先　　婆陀、迦延那 \n優頭、", "deepsk-2026-line-by-line": "Sīvali, Upasena, Bhaddaji, Kātyāyana, Uddhaka,"}, {"key": "ea4.6:2.2", "lzh": "王、迦葉　　羅雲、二般兔", "deepsk-2026-line-by-line": "Mukha, Kāśyapa, Rāhula, and the two Paṇḍitas."}]}]}, {"id": "ea4.7", "label": "EA 4.7", "children": [{"id": "ea4.7/1", "label": "「我聲聞中第一比丘，豪族富貴，", "rows": [{"key": "ea4.7:1.1", "lzh": "「我聲聞中第一比丘，豪族富貴，", "deepsk-2026-line-by-line": "Among my disciples, the foremost bhikkhu of noble family and wealth,"}, {"key": "ea4.7:1.2", "lzh": "天性柔 和 ， 所謂釋王比丘是。", "deepsk-2026-line-by-line": "naturally gentle and mild, is the bhikkhu known as King Śākya."}, {"key": "ea4.7:1.3", "lzh": "乞食無厭足，教化無窮， 所謂婆提婆羅比丘是。", "deepsk-2026-line-by-line": "Insatiable in alms-seeking, inexhaustible in teaching, is the bhikkhu known as Bhadra Pāla."}, {"key": "ea4.7:1.4", "lzh": "氣力強盛，無所畏 難，亦是婆提婆羅比丘是。", "deepsk-2026-line-by-line": "Of great physical strength, fearless and undaunted, is also the bhikkhu Bhadra Pāla."}, {"key": "ea4.7:1.5", "lzh": "音響清徹，聲至 梵天，所謂羅婆那婆提比丘是。", "deepsk-2026-line-by-line": "With a clear and penetrating voice reaching the Brahma heaven, is the bhikkhu known as Rāvaṇa Bhadra."}, {"key": "ea4.7:1.6", "lzh": "身體香潔， 熏乎四方，鴦迦闍比丘是。", "deepsk-2026-line-by-line": "With a fragrant and pure body perfuming the four directions, is the bhikkhu Aṅgaja."}, {"key": "ea4.7:1.7", "lzh": "我聲聞中第一 比丘，知時明物，所至無疑，", "deepsk-2026-line-by-line": "Among my disciples, the foremost bhikkhu who knows the time and understands things, reaching everywhere without doubt,"}, {"key": "ea4.7:1.8", "lzh": "所憶不忘，多聞 廣遠，堪任奉上，所謂阿難比丘是。", "deepsk-2026-line-by-line": "who remembers without forgetting, widely learned and far-reaching, worthy of serving, is the bhikkhu known as Ānanda."}, {"key": "ea4.7:1.9", "lzh": "莊嚴服 飾，行步顧影，所謂迦持利比丘是。", "deepsk-2026-line-by-line": "Adorned in attire, walking while glancing at his shadow, is the bhikkhu known as Kakudha."}, {"key": "ea4.7:1.10", "lzh": "諸王敬 待，群臣所宗，所謂月光比丘是。", "deepsk-2026-line-by-line": "Respected by kings, honored by ministers, is the bhikkhu known as Moonlight."}, {"key": "ea4.7:1.11", "lzh": "天人所奉， 恒朝侍省，所謂輸提比丘是。", "deepsk-2026-line-by-line": "Revered by devas and humans, constantly attended upon, is the bhikkhu known as Śuddhi."}, {"key": "ea4.7:1.12", "lzh": "以捨人形，像 天之貌，亦是輸提比丘。", "deepsk-2026-line-by-line": "Having abandoned human form, resembling the appearance of a deva, is also the bhikkhu Śuddhi."}, {"key": "ea4.7:1.13", "lzh": "諸天師導，旨授正 法，所謂天比丘是。", "deepsk-2026-line-by-line": "A guide and teacher of devas, instructing in the true Dharma, is the bhikkhu known as Deva."}, {"key": "ea4.7:1.14", "lzh": "自憶宿命無數劫事，所謂 菓衣比丘是。」", "deepsk-2026-line-by-line": "Who recollects his own past lives through countless kalpas, is the bhikkhu known as Fruit-Robe."}]}, {"id": "ea4.7/2", "label": "釋王、婆提波 羅婆、鴦迦闍 阿難、", "rows": [{"key": "ea4.7:2.1", "lzh": "釋王、婆提波　　羅婆、鴦迦闍 \n阿難、", "deepsk-2026-line-by-line": "King Śākya, Bhadra Pāla, Rāvaṇa, Aṅgaja, Ānanda,"}, {"key": "ea4.7:2.2", "lzh": "迦、月光　　輸提、天、婆醯", "deepsk-2026-line-by-line": "Ka, Moonlight, Shuti, Deva, and Bahi"}]}]}, {"id": "ea4.8", "label": "EA 4.8", "children": [{"id": "ea4.8/1", "label": "「我聲聞中第一比丘，體性利根，", "rows": [{"key": "ea4.8:1.1", "lzh": "「我聲聞中第一比丘，體性利根，", "deepsk-2026-line-by-line": "Among my disciples, the foremost bhikkhu in sharp faculties and profound wisdom is Aṅgulimāla."}, {"key": "ea4.8:1.2", "lzh": "智慧淵 遠，所謂鴦掘魔比丘是。", "deepsk-2026-line-by-line": "He who can subdue Māra and externalist wrong deeds is Saṅgāmajī."}, {"key": "ea4.8:1.3", "lzh": "能降伏魔外道邪 業，所謂僧迦摩比丘是。", "deepsk-2026-line-by-line": "He who enters the water concentration without difficulty is Cittasāriputra."}, {"key": "ea4.8:1.4", "lzh": "入水三昧，不以為 難，所謂質多舍利弗比丘是。", "deepsk-2026-line-by-line": "He who is widely learned and respected by people is also Cittasāriputra."}, {"key": "ea4.8:1.5", "lzh": "廣有所識，人 所敬念，亦是質多舍利弗比丘是。", "deepsk-2026-line-by-line": "He who enters the fire concentration, illuminating the ten directions, is Svāgata."}, {"key": "ea4.8:1.6", "lzh": "入火三昧， 普照十方，所謂善來比丘是。", "deepsk-2026-line-by-line": "He who can subdue dragons and make them revere the Three Jewels is Nārada."}, {"key": "ea4.8:1.7", "lzh": "能降伏龍，使 奉三尊，所謂那羅陀比丘是。", "deepsk-2026-line-by-line": "He who subdues ghosts and spirits, turning them from evil to good, is Guhya."}, {"key": "ea4.8:1.8", "lzh": "降伏鬼神，改 惡修善，所謂鬼陀比丘是。", "deepsk-2026-line-by-line": "He who subdues gandhabbas and diligently practices good deeds is Vairoca."}, {"key": "ea4.8:1.9", "lzh": "降乾沓和，懃 行善行，所謂毘盧遮比丘是。", "deepsk-2026-line-by-line": "He who always delights in the emptiness concentration and discerns the meaning of emptiness is Subhūti."}, {"key": "ea4.8:1.10", "lzh": "恒樂空定，分 別空義，所謂須菩提比丘是。", "deepsk-2026-line-by-line": "He whose mind dwells in emptiness and subtle virtue is also Subhūti."}, {"key": "ea4.8:1.11", "lzh": "志在空寂，微妙 德業，亦是須菩提比丘。", "deepsk-2026-line-by-line": "He who practices the signless concentration, removing all thoughts, is Kilimāna."}, {"key": "ea4.8:1.12", "lzh": "行無想定，除去諸 念，所謂耆利摩難比丘是。", "deepsk-2026-line-by-line": "He who enters the wishless concentration, with mind undisturbed, is Yaśas."}, {"key": "ea4.8:1.13", "lzh": "入無願定，意不 起亂，所謂焰盛比丘是。」", "deepsk-2026-line-by-line": "Aṅgulimāla, Saṅgāmajī, Citta, Sāriputra, Nārada, Yakṣa, Pūrṇa, Vairoca, good deeds, and Kilimāna."}]}, {"id": "ea4.8/2", "label": "鴦掘、僧迦摩 質多、婆、", "rows": [{"key": "ea4.8:2.1", "lzh": "鴦掘、僧迦摩　　質多、婆、", "deepsk-2026-line-by-line": "Aṅgulimāla, Saṅkāma, Citra, Bala,"}, {"key": "ea4.8:2.2", "lzh": "那羅 \n閱叉、浮盧遮　　善業及摩難", "deepsk-2026-line-by-line": "Nāla, Yakṣa, Pūrṇaka, Good Deeds, and Manāpa"}]}]}, {"id": "ea4.9", "label": "EA 4.9", "children": [{"id": "ea4.9/1", "label": "「我聲聞中第一比丘，入慈三昧，", "rows": [{"key": "ea4.9:1.1", "lzh": "「我聲聞中第一比丘，入慈三昧，", "deepsk-2026-line-by-line": "Among my disciples, the foremost bhikkhu who enters the concentration of loving-kindness,"}, {"key": "ea4.9:1.2", "lzh": "心無恚 怒，梵摩達比丘是。", "deepsk-2026-line-by-line": "with a mind free from anger and resentment, is the bhikkhu Brahmadeva."}, {"key": "ea4.9:1.3", "lzh": "入悲三昧，成就本業，所 謂須深比丘是。", "deepsk-2026-line-by-line": "The one who enters the concentration of compassion and accomplishes his original practice is the bhikkhu Susīma."}, {"key": "ea4.9:1.4", "lzh": "得喜行德，無若干想，所謂 娑彌陀比丘是。", "deepsk-2026-line-by-line": "The one who attains the practice of joy and has no various perceptions is the bhikkhu Sāmita."}, {"key": "ea4.9:1.5", "lzh": "常守護心，意不捨離，所謂 躍波迦比丘是。", "deepsk-2026-line-by-line": "The one who constantly guards his mind and never abandons it is the bhikkhu Yavaka."}, {"key": "ea4.9:1.6", "lzh": "行焰盛三昧，終不解脫，所 謂曇彌比丘是。", "deepsk-2026-line-by-line": "The one who practices the blazing concentration and is never liberated from it is the bhikkhu Tāmi."}, {"key": "ea4.9:1.7", "lzh": "言語麁獷，不避尊貴，所謂 比利陀婆遮比丘是。", "deepsk-2026-line-by-line": "The one whose speech is rough and does not avoid the noble is the bhikkhu Pilindavaccha."}, {"key": "ea4.9:1.8", "lzh": "入金光三昧，亦是比利 陀婆遮比丘。", "deepsk-2026-line-by-line": "The one who enters the golden-light concentration is also the bhikkhu Pilindavaccha."}, {"key": "ea4.9:1.9", "lzh": "入金剛三昧，不可沮壞，所謂 無畏比丘是。", "deepsk-2026-line-by-line": "The one who enters the diamond concentration, which cannot be broken, is the bhikkhu Abhaya."}, {"key": "ea4.9:1.10", "lzh": "所說決了，不懷怯弱，所謂須 泥多比丘是。", "deepsk-2026-line-by-line": "The one whose speech is decisive and without timidity is the bhikkhu Sunīta."}, {"key": "ea4.9:1.11", "lzh": "恒樂靜寂，意不處亂，所謂陀 摩比丘是。", "deepsk-2026-line-by-line": "The one who always delights in quietude and whose mind is not in turmoil is the bhikkhu Dhamma."}, {"key": "ea4.9:1.12", "lzh": "義不可勝，終不可伏，所謂須羅 陀比丘是。」", "deepsk-2026-line-by-line": "The one whose meaning cannot be surpassed and who can never be subdued is the bhikkhu Surādha."}]}, {"id": "ea4.9/2", "label": "梵 摩 達、須深 娑彌、躍、", "rows": [{"key": "ea4.9:2.1", "lzh": "梵 摩 達、須深 　　娑彌、躍、", "deepsk-2026-line-by-line": "Brahmadeva, Susīma, Sāmita, Yavaka,"}, {"key": "ea4.9:2.2", "lzh": "曇彌 \n毘利陀、無畏　　須泥陀、須羅", "deepsk-2026-line-by-line": "Tāmi, Pilindavaccha, Abhaya, Sunīta, Surādha."}]}]}, {"id": "ea4.10", "label": "EA 4.10", "children": [{"id": "ea4.10/1", "label": "「我聲聞中第一比丘，曉了星宿，", "rows": [{"key": "ea4.10:1.1", "lzh": "「我聲聞中第一比丘，曉了星宿，", "deepsk-2026-line-by-line": "Among my disciples, the foremost monk who understands the\nconstellations and predicts good and bad fortune is the monk Nāgapāla."}, {"key": "ea4.10:1.2", "lzh": "預知吉 凶，所謂那伽波羅比丘是。", "deepsk-2026-line-by-line": "He who constantly delights in concentration and takes meditative joy as his sustenance is the monk Vāsiṣṭha."}, {"key": "ea4.10:1.3", "lzh": "恒喜三昧，禪悅 為食，所謂婆私吒比丘是。", "deepsk-2026-line-by-line": "He who always takes joy as his sustenance is the monk Śyāmaśa."}, {"key": "ea4.10:1.4", "lzh": "常以喜為食，所 謂須夜奢比丘是。", "deepsk-2026-line-by-line": "He who constantly practices patience and does not become upset when faced with opposition is the monk Pūrṇaśrīprabha."}, {"key": "ea4.10:1.5", "lzh": "恒行忍辱，對至不起，所 謂滿願盛明比丘是。", "deepsk-2026-line-by-line": "He who cultivates the sun-light concentration is the monk Mīkṣa."}, {"key": "ea4.10:1.6", "lzh": "修習日光三昧，所謂彌 奚比丘是。", "deepsk-2026-line-by-line": "He who understands the methods of calculation and arithmetic without error is the monk Nigrodha."}, {"key": "ea4.10:1.7", "lzh": "明算術法，無有差錯，所謂尼拘 留比丘是。", "deepsk-2026-line-by-line": "He who discriminates with equal wisdom and never forgets is the monk Mṛgaśiras."}, {"key": "ea4.10:1.8", "lzh": "分別等智，恒不忘失，所謂鹿頭 比丘是。", "deepsk-2026-line-by-line": "He who attains the thunderbolt concentration and harbors no fear is the monk Pṛthivī."}, {"key": "ea4.10:1.9", "lzh": "得雷電三昧者，不懷恐怖，所謂地 比丘是。", "deepsk-2026-line-by-line": "He who contemplates the origin of the body is the monk Śīrṣa."}, {"key": "ea4.10:1.10", "lzh": "觀了身本，所謂頭那比丘是。", "deepsk-2026-line-by-line": "He who attains realization and gains the destruction of the taints at the very end is the monk Subhadra."}, {"key": "ea4.10:1.11", "lzh": "最後 取證得漏盡通，所謂須拔比丘是。」", "deepsk-2026-line-by-line": "Nāga, Vāsiṣṭha, Śyāmaśa, Mīkṣa, Nigrodha, Mṛgaśiras, Pṛthivī, Śīrṣa, and Subhadra is the last."}]}, {"id": "ea4.10/2", "label": "那迦、吒、舍那 彌奚、", "rows": [{"key": "ea4.10:2.1", "lzh": "那迦、吒、舍那　　彌奚、", "deepsk-2026-line-by-line": "Nāga, Vāsiṣṭha, Śyāmaśa, Mīkṣa, Nigrodha, Mṛgaśiras, Pṛthivī, Śīrṣa, and Subhadra is the last."}, {"key": "ea4.10:2.2", "lzh": "尼拘留 \n鹿頭、地、頭那　　須拔最在後", "deepsk-2026-line-by-line": "Nāga, Vāsiṣṭha, Śyāmaśa, Mīkṣa, Nigrodha, Mṛgaśiras, Pṛthivī, Śīrṣa, and Subhadra is the last."}]}, {"id": "ea4.10/3", "label": "此百賢聖，悉應廣演。", "rows": [{"key": "ea4.10:3.1", "lzh": "此百賢聖，悉應廣演。", "deepsk-2026-line-by-line": "These one hundred noble ones should all be extensively explained."}]}]}]}];
 
@@ -773,6 +843,11 @@ const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);

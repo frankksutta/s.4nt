@@ -142,6 +142,22 @@ header{
   color:var(--text);border-color:var(--sec-border);background:var(--sec-bg)}
 .settings-pop .icon-btn:hover{background:var(--toc-hover)}
 .settings-pop .set-help{text-decoration:none;white-space:nowrap}
+
+/* current-sutta breadcrumb crumb: click reveals prev/next nav (kept subtle — a dotted
+   underline, not a button-styled control — so it doesn't compete with the header's icon
+   buttons for attention) */
+.cur-nav{position:relative}
+.cur-nav-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;
+  cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;opacity:.95}
+.cur-nav-btn:hover{opacity:1}
+.cur-nav-pop{position:absolute;top:160%;left:0;z-index:500;display:none;min-width:9rem;
+  padding:.35rem .5rem;background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.3);font-family:sans-serif}
+.cur-nav-pop.show{display:block}
+.cur-nav-pop a,.cur-nav-pop .cur-nav-off{display:block;padding:.3rem .2rem;font-size:.78rem;
+  text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
+.cur-nav-pop a:hover{background:var(--toc-hover)}
+.cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -443,6 +459,41 @@ tr:hover .seg-link{opacity:.55}
 [data-theme="dark"] .dw{background:rgba(255,200,80,.30)}
 tr[id]{scroll-margin-top:calc(var(--hh) + var(--ch) + 8px)}
 
+/* ── "∥ EBT" parallels button (grouped-nikāya sutta headers) + its modal ──
+   Mirrors index_cards.py's per-row button/popup on the MN/DN/DA/MA collection
+   index pages — same visual language, reusing THIS template's own theme vars. */
+.ix-ebt-btn{flex-shrink:0;display:inline-flex;align-items:center;margin-left:.4rem;
+  padding:0 .55rem;height:20px;border:1px solid var(--sec-border);border-radius:5px;
+  background:var(--bg);color:var(--accent);font-size:.62rem;font-family:sans-serif;
+  cursor:pointer;white-space:nowrap;transition:background .12s}
+.ix-ebt-btn:hover{background:var(--toc-hover)}
+.ebt-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800}
+.ebt-overlay.show{display:block}
+.ebt-pop[hidden]{display:none}
+.ebt-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:801;width:min(30rem,92vw);max-height:80vh;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.ebt-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.7rem .9rem;border-bottom:1px solid var(--border);
+  background:var(--sec-bg);border-radius:8px 8px 0 0}
+.ebt-title{font-size:.85rem;font-weight:700;font-family:sans-serif;color:var(--accent);
+  letter-spacing:.02em}
+.ebt-close{border:none;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
+  line-height:1;padding:.15rem .3rem;border-radius:4px}
+.ebt-close:hover{background:var(--toc-hover);color:var(--text)}
+.ebt-body{padding:.85rem .9rem;overflow-y:auto}
+.ebt-ref{font-size:.72rem;color:var(--muted);font-family:sans-serif;margin-bottom:.6rem}
+.ebt-group + .ebt-group{margin-top:.9rem}
+.ebt-glabel{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;font-family:sans-serif;margin-bottom:.35rem}
+.ebt-items{display:flex;flex-wrap:wrap;gap:.4rem}
+.ebt-item{font-family:monospace;font-size:.78rem;padding:.22rem .5rem;border-radius:5px;
+  border:1px solid var(--border);background:var(--sec-bg)}
+a.ebt-item{color:var(--accent);text-decoration:none}
+a.ebt-item:hover{background:var(--toc-hover);border-color:var(--accent)}
+.ebt-empty{font-size:.8rem;color:var(--muted);font-family:sans-serif}
+
 /* ── FOOTNOTE PANE (Sujato comments; SEG_NOTES) ── */
 /* Footnote marker. The glyph is raised via position:relative+top (NOT
    vertical-align:super) so it does NOT grow the line box — text rows keep their
@@ -643,7 +694,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
             onclick="window.scrollTo({top:0,behavior:'smooth'})">🔝</button>
     <span>&emsp;&emsp;</span>
     <!-- ⚙ Settings (double-space right of 🔝) -->
-    <div class="settings-wrap">
+    <div class="settings-wrap" id="settingsWrap">
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
       <div class="settings-pop" id="settingsPop">
         <div class="set-row">
@@ -679,6 +730,12 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl" title="Save the current column order and visible translators as your default layout.">Default columns</span>
           <button class="icon-btn" id="colDefBtn" aria-haspopup="menu" title="Set the current column order and visible translators as your default" onclick="toggleColDefMenu(event)">Set ▾</button>
         </div>
+      </div>
+    </div>
+    <!-- ⋮ More (overflow) — Help lives here, not under ⚙ Settings -->
+    <div class="settings-wrap" id="moreWrap">
+      <button class="icon-btn" id="moreBtn" title="More" onclick="toggleMore()">⋮</button>
+      <div class="settings-pop" id="morePop">
         <div class="set-row">
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
@@ -762,6 +819,19 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </div>
 </div>
 
+<!-- "∥ EBT" parallels modal — mirrors the collection-index-page popup (index_cards.py)
+     for the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) whose suttas live as TREE
+     nodes on this page rather than on their own index row. Hidden unless EBT_PARALLELS
+     has at least one entry matching a node on this page. -->
+<div class="ebt-overlay" id="ebtOverlay" onclick="ebtClose()"></div>
+<div class="ebt-pop" id="ebtPop" role="dialog" aria-modal="true" aria-labelledby="ebtTitle" hidden>
+  <div class="ebt-head">
+    <span class="ebt-title" id="ebtTitle">EBT Parallel Suttas</span>
+    <button type="button" class="ebt-close" onclick="ebtClose()" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="ebt-body" id="ebtBody"></div>
+</div>
+
 <script>
 const TREE=[{"id": "sn30-supannavagga", "label": "Supaṇṇavagga — The Chapter on Phoenixes", "children": [{"id": "sn30.1", "label": "SN 30.1 · Plain Version", "children": [{"id": "sn30.1/0", "label": "Saṁyutta Nikāya 30.1", "rows": [{"key": "sn30.1:0.1", "pali": "Saṁyutta Nikāya 30.1", "sujato-corrected": "Linked Discourses 30.1", "bodhi-esque": "Saṁyutta Nikāya 30.1"}, {"key": "sn30.1:0.2", "pali": "1.\nSu·paṇṇa·vagga", "sujato-corrected": "1.\nPhoenixes", "bodhi-esque": "1.\nThe Chapter on Supannas"}, {"key": "sn30.1:0.3", "pali": "Suddhika·sutta", "sujato-corrected": "Plain Version", "bodhi-esque": "The Simple Sutta"}]}, {"id": "sn30.1/1", "label": "Sāvatthi·nidānaṁ.", "rows": [{"key": "sn30.1:1.1", "pali": "Sāvatthi·nidānaṁ.", "sujato-corrected": "At Sāvatthī.", "bodhi-esque": "At Sāvatthī."}, {"key": "sn30.1:1.2", "pali": "“Catasso imā, bhikkhave, su·paṇṇa·yoniyo.", "sujato-corrected": "“Mendicants, phoenixes reproduce in these four ways.", "bodhi-esque": "“Bhikkhus, there are these four kinds of birth of supannas."}, {"key": "sn30.1:1.3", "pali": "Katamā catasso?", "sujato-corrected": "What four?", "bodhi-esque": "What four?"}, {"key": "sn30.1:1.4", "pali": "Aṇḍajā su·paṇṇā, jalābujā su·paṇṇā, saṁsedajā su·paṇṇā, opa·pātikā su·paṇṇā—", "sujato-corrected": "Phoenixes are born from eggs, from a womb, from moisture, or spontaneously.", "bodhi-esque": "Supannas born from eggs, supannas born from a womb, supannas born from moisture, supannas of spontaneous birth—"}, {"key": "sn30.1:1.5", "pali": "imā kho, bhikkhave, catasso su·paṇṇa·yoniyo”ti.", "sujato-corrected": "These are the four ways that phoenixes reproduce.”", "bodhi-esque": "These, bhikkhus, are the four kinds of birth of supannas.”"}, {"key": "sn30.1:1.6", "pali": "Paṭhamaṁ.", "sujato-corrected": "", "bodhi-esque": "First."}]}]}, {"id": "sn30.2", "label": "SN 30.2 · They Carry Off", "children": [{"id": "sn30.2/0", "label": "Saṁyutta Nikāya 30.2", "rows": [{"key": "sn30.2:0.1", "pali": "Saṁyutta Nikāya 30.2", "sujato-corrected": "Linked Discourses 30.2", "bodhi-esque": "Connected Discourses 30.2"}, {"key": "sn30.2:0.2", "pali": "1.\nSu·paṇṇa·vagga", "sujato-corrected": "1.\nPhoenixes", "bodhi-esque": "1.\nThe Chapter on Supaṇṇas"}, {"key": "sn30.2:0.3", "pali": "Haranti·sutta", "sujato-corrected": "They Carry Off", "bodhi-esque": "The Sutta on Carrying Off"}]}, {"id": "sn30.2/1", "label": "Sāvatthi·nidānaṁ.", "rows": [{"key": "sn30.2:1.1", "pali": "Sāvatthi·nidānaṁ.", "sujato-corrected": "At Sāvatthī.", "bodhi-esque": "At Sāvatthī."}, {"key": "sn30.2:1.2", "pali": "“Catasso imā, bhikkhave, su·paṇṇa·yoniyo.", "sujato-corrected": "“Mendicants, phoenixes reproduce in these four ways.", "bodhi-esque": "“Bhikkhus, there are these four modes of birth of supaṇṇas."}, {"key": "sn30.2:1.3", "pali": "Katamā catasso?", "sujato-corrected": "What four?", "bodhi-esque": "What four?"}, {"key": "sn30.2:1.4", "pali": "Aṇḍajā …pe…", "sujato-corrected": "Phoenixes are born from eggs, from a womb, from moisture, or spontaneously.", "bodhi-esque": "Egg-born …"}, {"key": "sn30.2:1.5", "pali": "imā kho, bhikkhave, catasso su·paṇṇa·yoniyo.", "sujato-corrected": "These are the four ways that phoenixes reproduce.", "bodhi-esque": "These, bhikkhus, are the four modes of birth of supaṇṇas."}, {"key": "sn30.2:1.6", "pali": "Tatra, bhikkhave, aṇḍajā su·paṇṇā aṇḍa·jeva nāge haranti,\nna jalābuje, na saṁsedaje, na opa·pātike.", "sujato-corrected": "Of these, phoenixes born from an egg can only carry off dragons born from an egg,\nnot those born from a womb, from moisture, or spontaneously.", "bodhi-esque": "There, bhikkhus, egg-born supaṇṇas carry off only egg-born nāgas,\nnot womb-born, not moisture-born, not spontaneously-born."}, {"key": "sn30.2:1.7", "pali": "Tatra, bhikkhave, jalābujā su·paṇṇā aṇḍaje ca jalābuje ca nāge haranti,\nna saṁsedaje, na opa·pātike.", "sujato-corrected": "Phoenixes born from a womb can carry off dragons born from an egg or from a womb,\nbut not those born from moisture or spontaneously.", "bodhi-esque": "There, bhikkhus, womb-born supaṇṇas carry off egg-born and womb-born nāgas, not moisture-born, not spontaneously-born."}, {"key": "sn30.2:1.8", "pali": "Tatra, bhikkhave, saṁsedajā su·paṇṇā aṇḍaje ca jalābuje ca saṁsedaje ca nāge haranti, na opa·pātike.", "sujato-corrected": "Phoenixes born from moisture can carry off dragons born from an egg,\nfrom a womb, or from moisture, but not those born spontaneously.", "bodhi-esque": "There, bhikkhus, moisture-born supaṇṇas carry off egg-born, womb-born, and moisture-born nāgas, not spontaneously-born."}, {"key": "sn30.2:1.9", "pali": "Tatra, bhikkhave, opa·pātikā su·paṇṇā aṇḍaje ca jalābuje ca saṁsedaje ca opa·pātike ca nāge haranti.", "sujato-corrected": "Phoenixes born spontaneously can carry off dragons born from an egg, from a womb, from moisture, or spontaneously.", "bodhi-esque": "There, bhikkhus, spontaneously-born supaṇṇas carry off egg-born, womb-born, moisture-born, and spontaneously-born nāgas."}, {"key": "sn30.2:1.10", "pali": "Imā kho, bhikkhave, catasso su·paṇṇa·yoniyo”ti.", "sujato-corrected": "These are the four ways that phoenixes reproduce.”", "bodhi-esque": "These, bhikkhus, are the four modes of birth of supaṇṇas.”"}, {"key": "sn30.2:1.11", "pali": "Dutiyaṁ.", "sujato-corrected": "", "bodhi-esque": "The second."}]}]}, {"id": "sn30.3", "label": "SN 30.3 · Both Kinds of Deeds", "children": [{"id": "sn30.3/0", "label": "Saṁyutta Nikāya 30.3", "rows": [{"key": "sn30.3:0.1", "pali": "Saṁyutta Nikāya 30.3", "sujato-corrected": "Linked Discourses 30.3", "bodhi-esque": "Connected Discourses 30.3"}, {"key": "sn30.3:0.2", "pali": "1.\nSu·paṇṇa·vagga", "sujato-corrected": "1.\nPhoenixes", "bodhi-esque": "1.\nThe Chapter on Supannas"}, {"key": "sn30.3:0.3", "pali": "Dvaya·kārī·sutta", "sujato-corrected": "Both Kinds of Deeds", "bodhi-esque": "Acting in Two Ways"}]}, {"id": "sn30.3/1", "label": "Sāvatthi·nidānaṁ.", "rows": [{"key": "sn30.3:1.1", "pali": "Sāvatthi·nidānaṁ.", "sujato-corrected": "At Sāvatthī.", "bodhi-esque": "At Sāvatthī."}, {"key": "sn30.3:1.2", "pali": "Añña·taro bhikkhu yena bhagavā tenupasaṅkami;\nupasaṅkamitvā bhagavantaṁ abhi·vādetvā ekam·antaṁ nisīdi.\nEkam·antaṁ nisinno kho so bhikkhu bhagavantaṁ etadavoca:", "sujato-corrected": "Then a mendicant went up to the Buddha, bowed, sat down to one side, and said to him:", "bodhi-esque": "Then a certain bhikkhu approached the Blessed One;\nhaving approached and paid homage to the Blessed One, he sat down to one side.\nSeated to one side, that bhikkhu said to the Blessed One:"}, {"key": "sn30.3:1.3", "pali": "“ko nu kho, bhante, hetu, ko pacc·ayo,\nyena midhekacco kāyassa bhedā paraṁ maraṇā aṇḍa·jānaṁ su·paṇṇānaṁ saha·byataṁ upapajjatī”ti?", "sujato-corrected": "“Sir, what is the cause, what is the reason why someone, when their body breaks up,\nafter death, is reborn in the company of the egg-born phoenixes?”", "bodhi-esque": "“What, bhante, is the cause, what is the condition, by which someone here,\nwith the breakup of the body, after death, is reborn in companionship with the egg-born supannas?”"}, {"key": "sn30.3:1.4", "pali": "“Idha, bhikkhu, ekacco kāyena dvaya·kārī hoti,\nvācāya dvaya·kārī, manasā dvaya·kārī.", "sujato-corrected": "“Mendicant, it’s when someone does both kinds of deeds by body, speech, and mind.", "bodhi-esque": "“Here, bhikkhu, someone is one who acts in two ways by body,\none who acts in two ways by speech, one who acts in two ways by mind."}, {"key": "sn30.3:1.5", "pali": "Tassa sutaṁ hoti:", "sujato-corrected": "And they’ve heard:", "bodhi-esque": "He has heard:"}, {"key": "sn30.3:1.6", "pali": "‘aṇḍajā su·paṇṇā dīgh·āyukā vaṇṇavanto sukha·bahulā’ti.", "sujato-corrected": "‘The egg-born phoenixes are long-lived, beautiful, and very happy.’", "bodhi-esque": "‘The egg-born supannas are long-lived, beautiful, and abound in happiness.’"}, {"key": "sn30.3:1.7", "pali": "Tassa evaṁ hoti:", "sujato-corrected": "They think:", "bodhi-esque": "He thinks:"}, {"key": "sn30.3:1.8", "pali": "‘aho vatāhaṁ kāyassa bhedā paraṁ maraṇā aṇḍa·jānaṁ su·paṇṇānaṁ saha·byataṁ upapajjeyyan’ti.", "sujato-corrected": "‘If only, when my body breaks up, after death, I would be reborn in the company of the egg-born phoenixes!’", "bodhi-esque": "‘Oh, may I, with the breakup of the body, after death, be reborn in companionship with the egg-born supannas!’"}, {"key": "sn30.3:1.9", "pali": "So kāyassa bhedā paraṁ maraṇā aṇḍa·jānaṁ su·paṇṇānaṁ saha·byataṁ upapajjati.", "sujato-corrected": "When their body breaks up, after death, they’re reborn in the company of the egg-born phoenixes.", "bodhi-esque": "He, with the breakup of the body, after death, is reborn in companionship with the egg-born supannas."}, {"key": "sn30.3:1.10", "pali": "Ayaṁ kho, bhikkhu, hetu, ayaṁ pacc·ayo,\nyena midhekacco kāyassa bhedā paraṁ maraṇā aṇḍa·jānaṁ su·paṇṇānaṁ saha·byataṁ upapajjatī”ti.", "sujato-corrected": "This is the cause, this is the reason why someone, when their body breaks up,\nafter death, is reborn in the company of the egg-born phoenixes.”", "bodhi-esque": "This, bhikkhu, is the cause, this is the condition, by which someone here,\nwith the breakup of the body, after death, is reborn in companionship with the egg-born supannas.”"}, {"key": "sn30.3:1.11", "pali": "Tatiyaṁ.", "sujato-corrected": "", "bodhi-esque": "Third."}]}]}, {"id": "sn30.4-6", "label": "SN 30.4–6", "children": [{"id": "sn30.4-6/0", "label": "Saṁyutta Nikāya 30.4–6", "rows": [{"key": "sn30.4-6:0.1", "pali": "Saṁyutta Nikāya 30.4–6", "sujato-corrected": "Linked Discourses 30.4–6", "bodhi-esque": "Saṃyutta Nikāya 30.4–6"}, {"key": "sn30.4-6:0.2", "pali": "1.\nSu·paṇṇa·vagga", "sujato-corrected": "1.\nPhoenixes", "bodhi-esque": "1.\nThe Chapter on Supaṇṇas"}, {"key": "sn30.4-6:0.3", "pali": "Dutiy·ādi·dvaya·kārī·sutta·t·tika", "sujato-corrected": "Both Kinds of Deeds (2nd–4th)", "bodhi-esque": "The Second, Etc., Three Discourses on One Who Does Both"}]}, {"id": "sn30.4-6/1", "label": "Sāvatthi·nidānaṁ.", "rows": [{"key": "sn30.4-6:1.1", "pali": "Sāvatthi·nidānaṁ.", "sujato-corrected": "At Sāvatthī.", "bodhi-esque": "At Sāvatthī."}, {"key": "sn30.4-6:1.2", "pali": "Ekam·antaṁ nisinno kho so bhikkhu bhagavantaṁ etadavoca:", "sujato-corrected": "Seated to one side, that mendicant said to the Buddha:", "bodhi-esque": "Seated to one side, that bhikkhu said to the Blessed One:"}, {"key": "sn30.4-6:1.3", "pali": "“ko nu kho, bhante, hetu, ko pacc·ayo, yena midhekacco kāyassa bhedā paraṁ maraṇā jalābu·jānaṁ su·paṇṇānaṁ …pe…", "sujato-corrected": "“Sir, what is the cause, what is the reason why someone, when their body breaks up,\nafter death, is reborn in the company of the womb-born phoenixes …”", "bodhi-esque": "“Bhante, what is the cause, what is the condition, whereby someone with the breakup of the body,\nafter death, is reborn in the company of womb-born supaṇṇas …"}, {"key": "sn30.4-6:1.4", "pali": "saṁseda·jānaṁ su·paṇṇānaṁ …pe…", "sujato-corrected": "“… moisture-born phoenixes …”", "bodhi-esque": "…moisture-born supaṇṇas …"}, {"key": "sn30.4-6:1.5", "pali": "opa·pātikānaṁ su·paṇṇānaṁ saha·byataṁ upapajjatī”ti?", "sujato-corrected": "“… or spontaneously-born phoenixes?”", "bodhi-esque": "…is reborn in the company of spontaneously born supaṇṇas?”"}, {"key": "sn30.4-6:1.6", "pali": "“Idha, bhikkhu, ekacco kāyena dvaya·kārī hoti,\nvācāya dvaya·kārī, manasā dvaya·kārī.", "sujato-corrected": "“Mendicant, it’s when someone does both kinds of deeds by body, speech, and mind.", "bodhi-esque": "“Here, bhikkhu, someone does both kinds of deeds by body,\ndoes both kinds of deeds by speech, does both kinds of deeds by mind."}, {"key": "sn30.4-6:1.7", "pali": "Tassa sutaṁ hoti:", "sujato-corrected": "And they’ve heard:", "bodhi-esque": "He hears:"}, {"key": "sn30.4-6:1.8", "pali": "‘opa·pātikā su·paṇṇā dīgh·āyukā vaṇṇavanto sukha·bahulā’ti.", "sujato-corrected": "‘The spontaneously-born phoenixes are long-lived, beautiful, and very happy.’", "bodhi-esque": "‘Spontaneously born supaṇṇas are long-lived, beautiful, and abound in happiness.’"}, {"key": "sn30.4-6:1.9", "pali": "Tassa evaṁ hoti:", "sujato-corrected": "They think:", "bodhi-esque": "He thinks:"}, {"key": "sn30.4-6:1.10", "pali": "‘aho vatāhaṁ kāyassa bhedā paraṁ maraṇā opa·pātikānaṁ su·paṇṇānaṁ saha·byataṁ upapajjeyyan’ti.", "sujato-corrected": "‘If only, when my body breaks up, after death, I would be reborn in the company of the spontaneously-born phoenixes!’", "bodhi-esque": "‘Oh, may I, with the breakup of the body, after death, be reborn in the company of spontaneously born supaṇṇas!’"}, {"key": "sn30.4-6:1.11", "pali": "So kāyassa bhedā paraṁ maraṇā opa·pātikānaṁ su·paṇṇānaṁ saha·byataṁ upapajjati.", "sujato-corrected": "When their body breaks up, after death, they’re reborn in the company of the spontaneously-born phoenixes.", "bodhi-esque": "He, with the breakup of the body, after death, is reborn in the company of spontaneously born supaṇṇas."}, {"key": "sn30.4-6:1.12", "pali": "Ayaṁ kho, bhikkhu, hetu, ayaṁ pacc·ayo,\nyena midhekacco kāyassa bhedā paraṁ maraṇā opa·pātikānaṁ su·paṇṇānaṁ saha·byataṁ upapajjatī”ti.", "sujato-corrected": "This is the cause, this is the reason why someone, when their body breaks up,\nafter death, is reborn in the company of the spontaneously-born phoenixes.”", "bodhi-esque": "This, bhikkhu, is the cause, this is the condition, whereby someone with the breakup of the body,\nafter death, is reborn in the company of spontaneously born supaṇṇas.”"}, {"key": "sn30.4-6:1.13", "pali": "Cha·ṭ·ṭhaṁ.", "sujato-corrected": "", "bodhi-esque": "Sixth."}]}]}, {"id": "sn30.7-16", "label": "SN 30.7–16", "children": [{"id": "sn30.7-16/0", "label": "Saṁyutta Nikāya 30.7–16", "rows": [{"key": "sn30.7-16:0.1", "pali": "Saṁyutta Nikāya 30.7–16", "sujato-corrected": "Linked Discourses 30.7–16", "bodhi-esque": "Connected Discourses 30.7–16"}, {"key": "sn30.7-16:0.2", "pali": "1.\nSu·paṇṇa·vagga", "sujato-corrected": "1.\nPhoenixes", "bodhi-esque": "1.\nThe Chapter on Supaṇṇas"}, {"key": "sn30.7-16:0.3", "pali": "Aṇḍaja·dānū·pakāra·sutta·dasaka", "sujato-corrected": "Ten Discourses On How Giving Helps to Become Egg-Born", "bodhi-esque": "The Ten Discourses on Gifts that Assist Egg-born Ones"}]}, {"id": "sn30.7-16/1", "label": "Sāvatthi·nidānaṁ.", "rows": [{"key": "sn30.7-16:1.1", "pali": "Sāvatthi·nidānaṁ.", "sujato-corrected": "At Sāvatthī.", "bodhi-esque": "At Sāvatthī."}, {"key": "sn30.7-16:1.2", "pali": "Ekam·antaṁ nisinno kho so bhikkhu bhagavantaṁ etadavoca:", "sujato-corrected": "Seated to one side, that mendicant said to the Buddha:", "bodhi-esque": "Seated to one side, that bhikkhu said to the Blessed One:"}, {"key": "sn30.7-16:1.3", "pali": "“ko nu kho, bhante, hetu, ko pacc·ayo,\nyena midhekacco kāyassa bhedā paraṁ maraṇā aṇḍa·jānaṁ su·paṇṇānaṁ saha·byataṁ upapajjatī”ti?", "sujato-corrected": "“Sir, what is the cause, what is the reason why someone, when their body breaks up,\nafter death, is reborn in the company of the egg-born phoenixes?”", "bodhi-esque": "“Bhante, what is the cause, what is the condition, because of which someone here,\nwith the breakup of the body, after death, is reborn in the company of the egg-born supaṇṇas?”"}, {"key": "sn30.7-16:1.4", "pali": "“Idha, bhikkhu, ekacco kāyena dvaya·kārī hoti,\nvācāya dvaya·kārī, manasā dvaya·kārī.", "sujato-corrected": "“Mendicant, it’s when someone does both kinds of deeds by body, speech, and mind.", "bodhi-esque": "“Here, bhikkhu, someone behaves in a twofold way by body,\nbehaves in a twofold way by speech,\nbehaves in a twofold way by mind."}, {"key": "sn30.7-16:1.5", "pali": "Tassa sutaṁ hoti:", "sujato-corrected": "And they’ve heard:", "bodhi-esque": "He has heard:"}, {"key": "sn30.7-16:1.6", "pali": "‘aṇḍajā su·paṇṇā dīgh·āyukā vaṇṇavanto sukha·bahulā’ti.", "sujato-corrected": "‘The egg-born phoenixes are long-lived, beautiful, and very happy.’", "bodhi-esque": "‘The egg-born supaṇṇas are long-lived, beautiful, and abound in happiness.’"}, {"key": "sn30.7-16:1.7", "pali": "Tassa evaṁ hoti:", "sujato-corrected": "They think:", "bodhi-esque": "He thinks:"}, {"key": "sn30.7-16:1.8", "pali": "‘aho vatāhaṁ kāyassa bhedā paraṁ maraṇā aṇḍa·jānaṁ su·paṇṇānaṁ saha·byataṁ upapajjeyyan’ti.", "sujato-corrected": "‘If only, when my body breaks up, after death, I would be reborn in the company of the egg-born phoenixes!’", "bodhi-esque": "‘Oh, may I, with the breakup of the body, after death, be reborn in the company of the egg-born supaṇṇas!’"}, {"key": "sn30.7-16:1.9", "pali": "So annaṁ deti …pe…", "sujato-corrected": "They give food …”", "bodhi-esque": "He gives food …"}, {"key": "sn30.7-16:1.10", "pali": "pānaṁ deti …", "sujato-corrected": "“… drink …”", "bodhi-esque": "He gives drink …"}, {"key": "sn30.7-16:1.11", "pali": "vatthaṁ deti …", "sujato-corrected": "“… clothing …”", "bodhi-esque": "He gives clothing …"}, {"key": "sn30.7-16:1.12", "pali": "yānaṁ deti …", "sujato-corrected": "“… a vehicle …”", "bodhi-esque": "He gives a vehicle …"}, {"key": "sn30.7-16:1.13", "pali": "mālaṁ deti …", "sujato-corrected": "“… a garland …”", "bodhi-esque": "He gives a garland …"}, {"key": "sn30.7-16:1.14", "pali": "gandhaṁ deti …", "sujato-corrected": "“… fragrance …”", "bodhi-esque": "He gives a fragrance …"}, {"key": "sn30.7-16:1.15", "pali": "vilep·anaṁ deti …", "sujato-corrected": "“… makeup …”", "bodhi-esque": "He gives an ointment …"}, {"key": "sn30.7-16:1.16", "pali": "seyyaṁ deti …", "sujato-corrected": "“… a bed …”", "bodhi-esque": "He gives a bed …"}, {"key": "sn30.7-16:1.17", "pali": "āvasathaṁ deti …", "sujato-corrected": "“… a house …”", "bodhi-esque": "He gives a dwelling …"}, {"key": "sn30.7-16:1.18", "pali": "padīpeyyaṁ deti.", "sujato-corrected": "“… a lamp.", "bodhi-esque": "He gives a lamp."}, {"key": "sn30.7-16:1.19", "pali": "So kāyassa bhedā paraṁ maraṇā aṇḍa·jānaṁ su·paṇṇānaṁ saha·byataṁ upapajjati.", "sujato-corrected": "When their body breaks up, after death, they’re reborn in the company of the egg-born phoenixes.", "bodhi-esque": "With the breakup of the body, after death, he is reborn in the company of the egg-born supaṇṇas."}, {"key": "sn30.7-16:1.20", "pali": "Ayaṁ kho, bhikkhu, hetu, ayaṁ pacc·ayo,\nyena midhekacco kāyassa bhedā paraṁ maraṇā aṇḍa·jānaṁ su·paṇṇānaṁ saha·byataṁ upapajjatī”ti.", "sujato-corrected": "This is the cause, this is the reason why someone, when their body breaks up,\nafter death, is reborn in the company of the egg-born phoenixes.”", "bodhi-esque": "This, bhikkhu, is the cause, this is the condition, by which someone here,\nwith the breakup of the body, after death, is reborn in the company of the egg-born supaṇṇas.”"}, {"key": "sn30.7-16:1.21", "pali": "Soḷasamaṁ.", "sujato-corrected": "", "bodhi-esque": "The sixteenth."}]}]}, {"id": "sn30.17-46", "label": "SN 30.17–46", "children": [{"id": "sn30.17-46/0", "label": "Saṁyutta Nikāya 30.17–46", "rows": [{"key": "sn30.17-46:0.1", "pali": "Saṁyutta Nikāya 30.17–46", "sujato-corrected": "Linked Discourses 30.17–46", "bodhi-esque": "Connected Discourses 30.17–46"}, {"key": "sn30.17-46:0.2", "pali": "1.\nSu·paṇṇa·vagga", "sujato-corrected": "1.\nPhoenixes", "bodhi-esque": "1.\nThe Chapter on Supaṇṇas"}, {"key": "sn30.17-46:0.3", "pali": "Jalābuja·dānū·pakāra·sutta", "sujato-corrected": "How Giving Helps to Become Womb-Born, Etc.", "bodhi-esque": "The Sutta on Assistance by Giving to Womb-Born Ones"}]}, {"id": "sn30.17-46/1", "label": "Sāvatthi·nidānaṁ.", "rows": [{"key": "sn30.17-46:1.1", "pali": "Sāvatthi·nidānaṁ.", "sujato-corrected": "At Sāvatthī.", "bodhi-esque": "At Sāvatthī."}, {"key": "sn30.17-46:1.2", "pali": "Ekam·antaṁ nisinno kho so bhikkhu bhagavantaṁ etadavoca:", "sujato-corrected": "Seated to one side, that mendicant said to the Buddha:", "bodhi-esque": "Seated to one side, that bhikkhu said to the Blessed One:"}, {"key": "sn30.17-46:1.3", "pali": "“ko nu kho, bhante, hetu, ko pacc·ayo, yena midhekacco kāyassa bhedā paraṁ maraṇā jalābu·jānaṁ su·paṇṇānaṁ …pe…", "sujato-corrected": "“Sir, what is the cause, what is the reason why someone, when their body breaks up,\nafter death, is reborn in the company of the womb-born phoenixes …", "bodhi-esque": "“What, bhante, is the cause, what is the condition, by which someone here,\nwith the breakup of the body, after death, is reborn in the company of womb-born supaṇṇas …"}, {"key": "sn30.17-46:1.4", "pali": "saṁseda·jānaṁ su·paṇṇānaṁ …pe…", "sujato-corrected": "moisture-born phoenixes …", "bodhi-esque": "of moisture-born supaṇṇas …"}, {"key": "sn30.17-46:1.5", "pali": "opa·pātikānaṁ su·paṇṇānaṁ saha·byataṁ upapajjatī”ti?", "sujato-corrected": "or spontaneously-born phoenixes?”", "bodhi-esque": "of spontaneously born supaṇṇas?”"}, {"key": "sn30.17-46:1.6", "pali": "“Idha, bhikkhu, ekacco kāyena dvaya·kārī hoti,\nvācāya dvaya·kārī, manasā dvaya·kārī.", "sujato-corrected": "", "bodhi-esque": "“Here, bhikkhu, someone does both kinds of deeds by body, both kinds of deeds by speech, both kinds of deeds by mind."}, {"key": "sn30.17-46:1.7", "pali": "Tassa sutaṁ hoti:", "sujato-corrected": "", "bodhi-esque": "He has heard:"}, {"key": "sn30.17-46:1.8", "pali": "‘opa·pātikā su·paṇṇā dīgh·āyukā vaṇṇavanto sukha·bahulā’ti.", "sujato-corrected": "", "bodhi-esque": "‘Spontaneously born supaṇṇas are long-lived, beautiful, and abound in happiness.’"}, {"key": "sn30.17-46:1.9", "pali": "Tassa evaṁ hoti:", "sujato-corrected": "", "bodhi-esque": "He thinks:"}, {"key": "sn30.17-46:1.10", "pali": "‘aho vatāhaṁ kāyassa bhedā paraṁ maraṇā opa·pātikānaṁ su·paṇṇānaṁ saha·byataṁ upapajjeyyan’ti.", "sujato-corrected": "", "bodhi-esque": "‘Oh, may I, with the breakup of the body, after death, be reborn in the company of spontaneously born supaṇṇas!’"}, {"key": "sn30.17-46:1.11", "pali": "So annaṁ deti …pe…", "sujato-corrected": "", "bodhi-esque": "He gives food …"}, {"key": "sn30.17-46:1.12", "pali": "pānaṁ deti …pe…", "sujato-corrected": "", "bodhi-esque": "He gives drink …"}, {"key": "sn30.17-46:1.13", "pali": "padīpeyyaṁ deti.", "sujato-corrected": "", "bodhi-esque": "He gives a lamp."}, {"key": "sn30.17-46:1.14", "pali": "So kāyassa bhedā paraṁ maraṇā opa·pātikānaṁ su·paṇṇānaṁ saha·byataṁ upapajjati.", "sujato-corrected": "", "bodhi-esque": "He, with the breakup of the body, after death, is reborn in the companionship of the spontaneously born supannas."}, {"key": "sn30.17-46:1.15", "pali": "Ayaṁ kho, bhikkhu, hetu, ayaṁ pacc·ayo,\nyena midhekacco kāyassa bhedā paraṁ maraṇā opa·pātikānaṁ su·paṇṇānaṁ saha·byataṁ upapajjatī”ti.", "sujato-corrected": "", "bodhi-esque": "This, bhikkhu, is the cause, this is the condition by which some person, with the breakup of the body,\nafter death, is reborn in the companionship of the spontaneously born supannas."}, {"key": "sn30.17-46:1.16", "pali": "Cha·cattālīsamaṁ.", "sujato-corrected": "", "bodhi-esque": "The forty-sixth."}, {"key": "sn30.17-46:1.17", "pali": "(Evaṁ piṇḍa·kena cha·cattālīsaṁ suttantā honti.)", "sujato-corrected": "(Tell all in full.)", "bodhi-esque": "Thus by grouping, there are forty-six discourses."}, {"key": "sn30.17-46:1.18", "pali": "Su·paṇṇa·vaggo paṭhamo.", "sujato-corrected": "", "bodhi-esque": "The first chapter on Supannas."}]}, {"id": "sn30.17-46/2", "label": "Tass·uddānaṁ", "rows": [{"key": "sn30.17-46:2.0", "pali": "Tass·uddānaṁ", "sujato-corrected": "", "bodhi-esque": "Its summary:"}, {"key": "sn30.17-46:2.1", "pali": "Suddhikaṁ haranti ceva,", "sujato-corrected": "", "bodhi-esque": "The pure, and they carry away,"}, {"key": "sn30.17-46:2.2", "pali": "dvaya·kārī ca caturo;", "sujato-corrected": "", "bodhi-esque": "the doer of both and four;"}, {"key": "sn30.17-46:2.3", "pali": "Dānū·pakārā tālīsaṁ,", "sujato-corrected": "", "bodhi-esque": "forty [suttas] on the help of giving,"}, {"key": "sn30.17-46:2.4", "pali": "su·paṇṇe suppakās·itāti.", "sujato-corrected": "", "bodhi-esque": "well proclaimed in the Supanna [chapter]."}, {"key": "sn30.17-46:2.5", "pali": "Su·paṇṇa·saṁyuttaṁ sama·t·taṁ.", "sujato-corrected": "The Linked Discourses on phoenixes are complete.", "bodhi-esque": "The Connected Discourses on Supannas is completed."}]}]}]}];
 
@@ -773,6 +843,11 @@ const DIFF = null;
 // Footnote pane data: {translator: {seg#: [note_html, …]}}. Default {} (note-free
 // pages emit no icons). Sanitized at build time by notes.py (Sujato comments).
 const SEG_NOTES = {"sujato-corrected": {"sn30.1:1.2": ["The <i>supaṇṇa</i> (Sanskrit <i>suparṇa</i>,\n“bright-feathered”), later <i>garuḷa</i> (Sanskrit <i>garuḍa</i>,\n“devourer”), is to the eagle as the <i>nāga</i> is to the cobra.\nHe has been falsely compared with the loathsome harpy;\nbut his golden wings, closeness to the sun (eg.\nRig Veda 5.47.3), and role as bearer of the nectar of immortality (RV 4.26.4,\n8.100.8) show that he is the Indian phoenix, the golden eagle of the sun.\nAs the brother of Aruṇa the Dawn (Matsya Purāṇa 174.47), his golden wings at sunset “devour” the sun.\nHe disappears in darkness only to be born again the next day,\njust as the European phoenix combusts itself and is born anew.\nThus he is both the older and the younger brother of Aruṇa, for which came first, sunrise or sunset? "], "sn30.2:1.6": ["The enmity between snakes and birds is legendary (<a class=\"xref\" data-ref=\"ja518\" href=\"https://suttacentral.net/ja518/en/sujato\" target=\"_blank\" rel=\"noopener\">Ja 518</a>), its origins related in the story of Suparṇa and Kadrū, mother of dragons (Śatapatha Brāhmaṇa 3.6.2).\nIt is rooted as much in the common sight of birds attacking snakes as\nit is in the cosmic opposition between the solar and the chthonic,\nthe forces of light in the sky and darkness beneath the earth.\nOnly the Buddha could reconcile them (<a class=\"xref\" data-ref=\"dn20:11.16\" href=\"https://suttacentral.net/dn20/en/sujato#11.16\" target=\"_blank\" rel=\"noopener\">DN 20:11.16</a>). "]}};
+// EBT (SuttaCentral) cross-tradition parallels, keyed by sutta id: {sid: {full, resembling}}.
+// Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
+// so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
+// sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
+const EBT_PARALLELS = {"sn30.1": {"resembling": [{"uid": "ea27.8", "href": "../../ea/ea27/index.html#ea27.8"}, {"uid": "sn29.1", "href": "../../sn/sn29/index.html#sn29.1"}, {"uid": "sn30.2", "href": "../../sn/sn30/index.html#sn30.2"}]}, "sn30.2": {"resembling": [{"uid": "sn30.1", "href": "../../sn/sn30/index.html#sn30.1"}, {"uid": "ea27.8", "href": "../../ea/ea27/index.html#ea27.8"}, {"uid": "sn29.1", "href": "../../sn/sn29/index.html#sn29.1"}]}};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;
@@ -1034,6 +1109,53 @@ function fillDiffText(ct, base, rev){
   });
 }
 function mk(tag,cls){const el=document.createElement(tag);if(cls)el.className=cls;return el;}
+
+// ── "∥ EBT" parallels button + modal (grouped-nikāya sutta/verse/rule headers) ──
+// Mirrors index_cards.py's identically-named button/modal on the MN/DN/DA/MA
+// collection index pages; this variant renders via mk() (this file's DOM-builder
+// convention) rather than string concatenation, and gets its data straight from
+// the already-parsed EBT_PARALLELS object (no data-attribute round trip needed).
+function ebtButtonFor(ref, data){
+  const btn=mk('button','ix-ebt-btn'); btn.type='button';
+  const count=(data.full?data.full.length:0)+(data.resembling?data.resembling.length:0);
+  btn.textContent='‖ EBT';
+  btn.title='EBT parallel suttas ('+count+')';
+  // stopPropagation: this button sits inside the .gh header, whose own onclick
+  // toggles the section collapsed/open — without this, opening the modal would
+  // also collapse/expand the sutta underneath it.
+  btn.onclick=ev=>{ ev.stopPropagation(); ebtOpenData(ref, data); };
+  return btn;
+}
+function ebtEsc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ebtOpenData(ref, data){
+  let html = ref ? '<div class="ebt-ref">' + ebtEsc(ref) + '</div>' : '';
+  const groups=[['full','Parallels'],['resembling','Resembling passages']];
+  let any=false;
+  groups.forEach(g=>{
+    const items=data[g[0]];
+    if(!items || !items.length) return;
+    any=true;
+    html += '<div class="ebt-group"><div class="ebt-glabel">' + g[1] +
+      ' (' + items.length + ')</div><div class="ebt-items">';
+    items.forEach(it=>{
+      html += it.href
+        ? '<a class="ebt-item" href="' + ebtEsc(it.href) + '">' + ebtEsc(it.uid) + '</a>'
+        : '<span class="ebt-item">' + ebtEsc(it.uid) + '</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('ebtBody').innerHTML =
+    html + (any ? '' : '<div class="ebt-empty">No parallels on record.</div>');
+  document.getElementById('ebtOverlay').classList.add('show');
+  document.getElementById('ebtPop').hidden=false;
+}
+function ebtClose(){
+  document.getElementById('ebtOverlay').classList.remove('show');
+  document.getElementById('ebtPop').hidden=true;
+}
+document.addEventListener('keydown', ev=>{ if(ev.key==='Escape') ebtClose(); });
 function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── FOOTNOTE PANE (Sujato comments) ──
@@ -1225,16 +1347,49 @@ function toggleSettings(){
 }
 document.addEventListener('click', function(e){
   const pop = document.getElementById('settingsPop');
-  // The "default columns" sub-menu floats at body level (outside .settings-wrap); clicks
+  // The "default columns" sub-menu floats at body level (outside #settingsWrap); clicks
   // inside it must NOT count as "outside" and close the gear popover.
   if(pop && pop.classList.contains('show') &&
-     !e.target.closest('.settings-wrap') && !e.target.closest('#colDefMenu'))
+     !e.target.closest('#settingsWrap') && !e.target.closest('#colDefMenu'))
     pop.classList.remove('show');
 });
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){
     closeColDefMenu();
     const pop = document.getElementById('settingsPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── PREV/NEXT SUTTA POPOVER (breadcrumb's current-unit crumb) ──
+function toggleCurNav(){
+  const pop = document.getElementById('curNavPop');
+  if(pop) pop.classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('curNavPop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('.cur-nav'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('curNavPop');
+    if(pop) pop.classList.remove('show');
+  }
+});
+
+// ── ⋮ MORE POPOVER (Help) ──
+function toggleMore(){
+  document.getElementById('morePop').classList.toggle('show');
+}
+document.addEventListener('click', function(e){
+  const pop = document.getElementById('morePop');
+  if(pop && pop.classList.contains('show') && !e.target.closest('#moreWrap'))
+    pop.classList.remove('show');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    const pop = document.getElementById('morePop');
     if(pop) pop.classList.remove('show');
   }
 });
@@ -1787,6 +1942,11 @@ function renderGroupMain(node, parent){
   // this group has collapsible children (sub-groups or leaves) — vaggas AND suttas.
   gh.append(gt,gl);
   if(hasCollapsibleChildren(node)) gh.appendChild(subtControls(node, SO, renderAll, true));
+  // "∥ EBT" button — only the grouped nikāyas (AN/SN/SA/EA/KN/Abhidhamma/Vinaya) ever
+  // populate EBT_PARALLELS with an entry matching a TREE node id (a sutta/verse/rule);
+  // MN/DN/DA/MA leave it {} (their button lives on the collection index page instead).
+  const ebt=EBT_PARALLELS[node.id];
+  if(ebt) gh.appendChild(ebtButtonFor(node.id, ebt));
   gh.append(gc);
   gh.onclick=()=>{SO[node.id]=!SO[node.id];renderAll();};
   g.appendChild(gh);
