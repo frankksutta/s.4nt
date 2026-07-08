@@ -158,6 +158,14 @@ header{
   text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
 .cur-nav-pop a:hover{background:var(--toc-hover)}
 .cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
+/* "∥ EBT" row appended to the prev/next popover (render.py's _cur_nav_html) — a
+   border-top separates it from the nav links above since it's a different kind
+   of action (parallels lookup, not navigation). */
+.cur-nav-ebt{display:block;width:100%;box-sizing:border-box;margin-top:.3rem;
+  padding:.35rem .2rem 0;border:none;border-top:1px solid var(--border);background:none;
+  font:inherit;font-size:.78rem;color:var(--accent);text-align:left;cursor:pointer;
+  white-space:nowrap}
+.cur-nav-ebt:hover{background:var(--toc-hover)}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -668,7 +676,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
   </a>
   <!-- Row 1: breadcrumbs → Pāli title (English tooltip) → collapse/expand → 🦘 jump → 🔝 → ⚙ -->
   <div class="nav-r1">
-    <nav class="crumbs"><span class="sep-c">›</span><a href="../index.html" title="Majjhima Nikāya">MN</a><span class="sep-c">›</span><span class="cur-nav"><button class="cur cur-nav-btn" onclick="toggleCurNav()" title="Previous / next sutta">MN 148</button><div class="cur-nav-pop" id="curNavPop"><a href="../mn147/index.html">◀ MN 147</a><a href="../mn149/index.html">MN 149 ▶</a></div></span></nav>
+    <nav class="crumbs"><span class="sep-c">›</span><a href="../index.html" title="Majjhima Nikāya">MN</a><span class="sep-c">›</span><span class="cur-nav"><button class="cur cur-nav-btn" onclick="toggleCurNav()" title="Previous / next sutta · ∥ EBT parallel suttas">MN 148</button><div class="cur-nav-pop" id="curNavPop"><a href="../mn147/index.html">◀ MN 147</a><a href="../mn149/index.html">MN 149 ▶</a><button type="button" class="cur-nav-ebt" onclick="ebtOpenData(&quot;MN 148&quot;, EBT_PARALLELS[&quot;mn148&quot;]);toggleCurNav();" title="EBT parallel suttas (9)">&Vert; EBT (9)</button></div></span></nav>
     <span class="page-title" title="The Six Sets of Six">Chachakkasutta</span>
     <!-- Collapse / Expand all (main content) — round buttons, one shared tooltip -->
     <span class="all-ctl" title="− collapse or + expand all sections of entire document in main pane">
@@ -740,6 +748,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
         </div>
+        <div class="set-row"><span class="set-lbl">EBT parallels</span><button class="icon-btn" onclick="ebtOpenData(&quot;MN 148&quot;, EBT_PARALLELS[&quot;mn148&quot;])" title="EBT parallel suttas (9)">&Vert; EBT</button></div>
       </div>
     </div>
   </div>
@@ -847,7 +856,7 @@ const SEG_NOTES = {"sujato-corrected": {"mn148:2.1": ["While this description of
 // Default {} on pages with no sutta-level tree nodes (MN/DN: the whole page is one sutta,
 // so no TREE node's id ever matches a key here) — see debabel.parallels/index_cards.py's
 // sibling per-row button on the MN/DN/DA/MA INDEX pages, which this doesn't replace.
-const EBT_PARALLELS = {};
+const EBT_PARALLELS = {"mn148": {"full": [{"uid": "sn35.60", "href": "../../sn/sn35/index.html#sn35.60"}, {"uid": "sht-sutta71", "href": null}, {"uid": "sa304", "href": "../../sa/sa301-400/index.html#sa304"}, {"uid": "up3.059", "href": null}], "resembling": [{"uid": "sa330", "href": "../../sa/sa301-400/index.html#sa330"}, {"uid": "mn38#8.1-#8.8", "href": "../../mn/mn38/index.html"}, {"uid": "sa323-327", "href": null}, {"uid": "mn18#16.1-#18.1", "href": "../../mn/mn18/index.html"}, {"uid": "sf18", "href": null}]}};
 const MAX_COLS = 6;   // single source of truth, injected by render.py
 const FS_MIN = 11, FS_MAX = 22, FS_STEP = 1;
 const TOC_MIN = 0.85, TOC_MAX = 1.6, TOC_STEP = 0.1;

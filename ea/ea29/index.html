@@ -158,6 +158,14 @@ header{
   text-decoration:none;color:var(--text);border-radius:4px;white-space:nowrap}
 .cur-nav-pop a:hover{background:var(--toc-hover)}
 .cur-nav-pop .cur-nav-off{color:var(--muted);opacity:.5;cursor:default}
+/* "∥ EBT" row appended to the prev/next popover (render.py's _cur_nav_html) — a
+   border-top separates it from the nav links above since it's a different kind
+   of action (parallels lookup, not navigation). */
+.cur-nav-ebt{display:block;width:100%;box-sizing:border-box;margin-top:.3rem;
+  padding:.35rem .2rem 0;border:none;border-top:1px solid var(--border);background:none;
+  font:inherit;font-size:.78rem;color:var(--accent);text-align:left;cursor:pointer;
+  white-space:nowrap}
+.cur-nav-ebt:hover{background:var(--toc-hover)}
 /* "Set current columns as default" dropdown (opens from the ⚙ menu, floats over it) */
 .coldef-menu{position:fixed;z-index:600;min-width:12.5rem;padding:.5rem .55rem;
   background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
@@ -740,6 +748,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
           <span class="set-lbl">Help</span>
           <a class="icon-btn set-help" href="../../help.html#the-columns" title="How to use the side-by-side view — opens the reading guide">❔ Guide</a>
         </div>
+        
       </div>
     </div>
   </div>
