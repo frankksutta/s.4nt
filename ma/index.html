@@ -288,7 +288,7 @@ a.ebt-item:hover{background:var(--hover);border-color:var(--accent)}
 <div class="ix-gh" role="button" tabindex="0" onclick="ixToggle(this)" onkeydown="ixKey(event,this)"><span class="ix-caret" aria-hidden="true"></span><span class="ix-gl">Chapter 6. 中阿含王相應品 — On Kings</span></div>
 <div class="ix-gbody">
 <div class="ix-line"><a class="ix-row" href="ma58/index.html"><span class="ix-ref">MA 58</span><span class="ix-title">七寶經 — The Discourse on the Seven Treasures</span><span class="ix-badges"><span class="ix-badge">Chinese</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sn46.42&quot;,&quot;href&quot;:&quot;../sn/sn46/index.html#sn46.42&quot;},{&quot;uid&quot;:&quot;ea39.7&quot;,&quot;href&quot;:&quot;../ea/ea39/index.html#ea39.7&quot;},{&quot;uid&quot;:&quot;t38&quot;,&quot;href&quot;:null},{&quot;uid&quot;:&quot;sa721-722&quot;,&quot;href&quot;:null}]}" data-ebt-ref="MA 58" onclick="ebtOpen(this)" title="EBT parallel suttas (4)">&Vert; EBT</button></div>
-<div class="ix-line"><a class="ix-row" href="ma59/index.html"><span class="ix-ref">MA 59</span><span class="ix-title">三十二相經 — The Discourse on the Thirty-two Marks</span><span class="ix-badges"><span class="ix-badge">Chinese</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn30&quot;,&quot;href&quot;:&quot;../dn/dn30/index.html&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;arv26&quot;,&quot;href&quot;:null}]}" data-ebt-ref="MA 59" onclick="ebtOpen(this)" title="EBT parallel suttas (2)">&Vert; EBT</button></div>
+<div class="ix-line"><a class="ix-row" href="ma59/index.html"><span class="ix-ref">MA 59</span><span class="ix-title">三十二相經 — The Discourse on the Thirty-two Marks</span><span class="ix-badges"><span class="ix-badge">Chinese</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;dn30&quot;,&quot;href&quot;:&quot;../dn/dn30/index.html&quot;}],&quot;resembling&quot;:[{&quot;uid&quot;:&quot;arv26&quot;,&quot;href&quot;:&quot;../arv/index.html#26&quot;}]}" data-ebt-ref="MA 59" onclick="ebtOpen(this)" title="EBT parallel suttas (2)">&Vert; EBT</button></div>
 <div class="ix-line"><a class="ix-row" href="ma60/index.html"><span class="ix-ref">MA 60</span><span class="ix-title">四洲經 — The Discourse on the Four Continents</span><span class="ix-badges"><span class="ix-badge">Chinese</span></span></a></div>
 <div class="ix-line"><a class="ix-row" href="ma61/index.html"><span class="ix-ref">MA 61</span><span class="ix-title">牛糞喻經 — The Discourse with the Cow Dung Parable</span><span class="ix-badges"><span class="ix-badge">Chinese</span></span></a><button type="button" class="ix-ebt-btn" data-ebt="{&quot;full&quot;:[{&quot;uid&quot;:&quot;sn22.96&quot;,&quot;href&quot;:&quot;../sn/sn22/index.html#sn22.96&quot;},{&quot;uid&quot;:&quot;sa264&quot;,&quot;href&quot;:&quot;../sa/sa201-300/index.html#sa264&quot;}]}" data-ebt-ref="MA 61" onclick="ebtOpen(this)" title="EBT parallel suttas (2)">&Vert; EBT</button></div>
 <div class="ix-line"><a class="ix-row" href="ma62/index.html"><span class="ix-ref">MA 62</span><span class="ix-title">頻鞞娑邏王迎佛T 0497b03經 — The Discourse on King Bimbisāra</span><span class="ix-badges"><span class="ix-badge">Chinese</span></span></a></div>
@@ -519,11 +519,12 @@ const JUMP_PREFIX = '';
 // ── 🦘 QUICK-JUMP (shared source: quickjump.py) ──
 const JUMP_KEY = 'debabel.jump.v1';
 const JUMP_MAX = 20;
-const JUMP_LIMITS = {"mn": 152, "dn": 34, "an": 11, "sn": 56, "ma": 222, "da": 30, "sa": 1362, "ea": 52, "kp": 9, "dhp": 423, "ud": 8, "iti": 112, "snp": 5, "vv": 85, "pv": 51, "thag": 21, "thig": 16, "tha-ap": 563, "thi-ap": 40, "bv": 29, "cp": 35, "ja": 547, "mnd": 16, "cnd": 23, "ps": 3, "ne": 37, "pe": 9, "mil": 8, "vb": 18};   // supported collections (single source: quickjump.LIMITS)
+const JUMP_LIMITS = {"mn": 152, "dn": 34, "an": 11, "sn": 56, "ma": 222, "da": 30, "sa": 1362, "ea": 52, "kp": 9, "dhp": 423, "ud": 8, "iti": 112, "snp": 5, "vv": 85, "pv": 51, "thag": 21, "thig": 16, "tha-ap": 563, "thi-ap": 40, "bv": 29, "cp": 35, "ja": 547, "mnd": 16, "cnd": 23, "ps": 3, "ne": 37, "pe": 9, "mil": 8, "vb": 18, "arv": 28};   // supported collections (single source: quickjump.LIMITS)
 const JUMP_GROUPED = {"an": 1, "ea": 1, "sn": 1}; // niks addressed two-level (an3.65) → one page per book
 const JUMP_KN = {"bv": 1, "cnd": 1, "cp": 1, "dhp": 1, "iti": 1, "ja": 1, "kp": 1, "mil": 1, "mnd": 1, "ne": 1, "pe": 1, "ps": 1, "pv": 1, "snp": 1, "tha-ap": 1, "thag": 1, "thi-ap": 1, "thig": 1, "ud": 1, "vv": 1};           // KN books → one page per book at kn/<abbr>/ (full ref = anchor)
 const JUMP_AB = {"vb": 1};           // Abhidhamma books → one page per book at tv_ab/<abbr>/
 const JUMP_RANGE = {"sa": 100};     // flat ref → numeric-range unit page (sa)
+const JUMP_FLAT = {"arv": 1};       // single-file whole-collection books (arv) → <nik>/index.html
 const jumpInputEl = document.getElementById('jumpInput');
 const jumpMsgEl = document.getElementById('jumpMsg');
 const jumpHistEl = document.getElementById('jumpHist');
@@ -565,10 +566,22 @@ function parseJumpRef(raw){
   //                  mil3.1.1         → kn/mil/index.html#mil3.1.1 (deep, multi-level)
   // Abhidhamma:      vb1              → tv_ab/vb/index.html#vb1 (section anchor)
   //                  vb1:24.5         → tv_ab/vb/index.html#tr-vb1:24.5 (segment)
+  // Flat single-file (arv, 0-based):
+  //                  arv12            → arv/index.html#12 (topic anchor — bare, no "arv" prefix)
+  //                  arv12:3          → arv/index.html#tr-arv:12.3 (row — underlying key is
+  //                                     "<nik>:<topic>.<row>", a dot not a colon before the
+  //                                     row, unlike every other category — hence its own hash)
   const m = /^\s*([a-z]+(?:-[a-z]+)*)\s*(\d+)(?:\.(\d+(?:\.\d+)*(?:-\d+)?))?\s*(?::\s*(\d+(?:\.\d+)*)\s*)?$/i.exec(raw||'');
   if(!m) return null;
   const nik = m[1].toLowerCase(), n = parseInt(m[2], 10), sub = m[3] || null, seg = m[4] || null;
   if(!(nik in JUMP_LIMITS)) return {err: nik.toUpperCase()+' is not available yet'};
+  if(JUMP_FLAT[nik]){
+    if(sub) return {err: nik.toUpperCase()+' refs look like '+nik+n+' or '+nik+n+':3'};
+    if(n < 0 || n > JUMP_LIMITS[nik])
+      return {err: nik.toUpperCase()+' goes from 0 to '+JUMP_LIMITS[nik]};
+    const hash = seg ? ('#tr-'+nik+':'+n+'.'+seg) : ('#'+n);
+    return {nik, page: '', suttaId: String(n), seg, ref: nik+n+(seg?':'+seg:''), hash};
+  }
   if(n < 1 || n > JUMP_LIMITS[nik])
     return {err: nik.toUpperCase()+(JUMP_GROUPED[nik]?' book':'')+' goes from 1 to '+JUMP_LIMITS[nik]};
   if(JUMP_KN[nik]){
@@ -607,9 +620,11 @@ function jumpToRef(ref){
   if(!r || r.err){ flashJumpErr((r&&r.err) || 'Type a ref like mn125, dn16, an3.65 or sn22.59'); return; }
   saveJumpHist([r.ref].concat(loadJumpHist().filter(x=>x!==r.ref)));
   let hash = '';
-  if(r.seg) hash = '#tr-' + r.suttaId + ':' + r.seg;          // segment deep link
+  if(r.hash !== undefined) hash = r.hash;                      // pre-built (e.g. JUMP_FLAT's)
+  else if(r.seg) hash = '#tr-' + r.suttaId + ':' + r.seg;      // segment deep link
   else if(r.suttaId && r.suttaId !== r.page) hash = '#' + r.suttaId;  // grouped sutta anchor
-  window.location.href = JUMP_ROOT + '/' + r.nik + '/' + r.page + '/index.html' + hash;
+  const page = r.page ? '/' + r.page : '';                    // '' for a flat single-file book
+  window.location.href = JUMP_ROOT + '/' + r.nik + page + '/index.html' + hash;
 }
 function renderJumpHist(){
   const h = loadJumpHist();

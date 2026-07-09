@@ -204,7 +204,7 @@ a.ebt-item:hover{background:var(--hover);border-color:var(--accent)}
 </nav>
 
 <h1>Major EBT-relevant Texts</h1>
-<p class="sub">Major texts relevant to early-Buddhist study, alongside the canon. 5 so far.</p>
+<p class="sub">Major texts relevant to early-Buddhist study, alongside the canon. 6 so far.</p>
 <div class="ix-filter"><label>Translator filter: <select id="translatorFilter" onchange="translatorFilterApply()"><option value="">All</option><option value="bodhi-esque">Bodhi-esque</option></select></label></div>
 <div class="ix-controls"><button type="button" class="ix-ctrl-btn" id="ixCollapse" title="Collapse all sections" onclick="ixToggleAll(false)">− Collapse all</button><button type="button" class="ix-ctrl-btn on" id="ixExpand" title="Expand all sections" onclick="ixToggleAll(true)">+ Expand all</button></div>
 <div class="ix-list">
@@ -221,6 +221,11 @@ a.ebt-item:hover{background:var(--hover);border-color:var(--accent)}
 <div class="ix-line" data-has=""><a class="ix-row" href="../da/index.html"><span class="ix-ref">DA</span><span class="ix-title">Dīrgha Āgama — Long Discourses (Chinese)</span><span class="ix-badges"><span class="ix-badge">Chinese · Patton</span></span></a></div>
 <div class="ix-line" data-has=""><a class="ix-row" href="../sa/index.html"><span class="ix-ref">SA</span><span class="ix-title">Saṃyukta Āgama — Connected Discourses (Chinese)</span><span class="ix-badges"><span class="ix-badge">Chinese · DeepSeek</span></span></a></div>
 <div class="ix-line" data-has=""><a class="ix-row" href="../ea/index.html"><span class="ix-ref">EA</span><span class="ix-title">Ekottarika Āgama — Numbered Discourses (Chinese)</span><span class="ix-badges"><span class="ix-badge">Chinese · DeepSeek</span></span></a></div>
+</div></div>
+<div class="ix-grp">
+<div class="ix-gh" role="button" tabindex="0" onclick="ixToggle(this)" onkeydown="ixKey(event,this)"><span class="ix-caret" aria-hidden="true"></span><span class="ix-gl">Sanskrit</span></div>
+<div class="ix-gbody">
+<div class="ix-line" data-has=""><a class="ix-row" href="../arv/index.html"><span class="ix-ref">Arv</span><span class="ix-title">Arthaviniścaya-sūtra — the Discourse giving the Analysis of the Topics. Edited by Prof. N.H. Samtani; translated by Ānandajoti Bhikkhu.</span><span class="ix-badges"><span class="ix-badge">Sanskrit · Ānandajoti</span></span></a></div>
 </div></div>
 </div>
 
@@ -240,11 +245,12 @@ const JUMP_PREFIX = '';
 // ── 🦘 QUICK-JUMP (shared source: quickjump.py) ──
 const JUMP_KEY = 'debabel.jump.v1';
 const JUMP_MAX = 20;
-const JUMP_LIMITS = {"mn": 152, "dn": 34, "an": 11, "sn": 56, "ma": 222, "da": 30, "sa": 1362, "ea": 52, "kp": 9, "dhp": 423, "ud": 8, "iti": 112, "snp": 5, "vv": 85, "pv": 51, "thag": 21, "thig": 16, "tha-ap": 563, "thi-ap": 40, "bv": 29, "cp": 35, "ja": 547, "mnd": 16, "cnd": 23, "ps": 3, "ne": 37, "pe": 9, "mil": 8, "vb": 18};   // supported collections (single source: quickjump.LIMITS)
+const JUMP_LIMITS = {"mn": 152, "dn": 34, "an": 11, "sn": 56, "ma": 222, "da": 30, "sa": 1362, "ea": 52, "kp": 9, "dhp": 423, "ud": 8, "iti": 112, "snp": 5, "vv": 85, "pv": 51, "thag": 21, "thig": 16, "tha-ap": 563, "thi-ap": 40, "bv": 29, "cp": 35, "ja": 547, "mnd": 16, "cnd": 23, "ps": 3, "ne": 37, "pe": 9, "mil": 8, "vb": 18, "arv": 28};   // supported collections (single source: quickjump.LIMITS)
 const JUMP_GROUPED = {"an": 1, "ea": 1, "sn": 1}; // niks addressed two-level (an3.65) → one page per book
 const JUMP_KN = {"bv": 1, "cnd": 1, "cp": 1, "dhp": 1, "iti": 1, "ja": 1, "kp": 1, "mil": 1, "mnd": 1, "ne": 1, "pe": 1, "ps": 1, "pv": 1, "snp": 1, "tha-ap": 1, "thag": 1, "thi-ap": 1, "thig": 1, "ud": 1, "vv": 1};           // KN books → one page per book at kn/<abbr>/ (full ref = anchor)
 const JUMP_AB = {"vb": 1};           // Abhidhamma books → one page per book at tv_ab/<abbr>/
 const JUMP_RANGE = {"sa": 100};     // flat ref → numeric-range unit page (sa)
+const JUMP_FLAT = {"arv": 1};       // single-file whole-collection books (arv) → <nik>/index.html
 const jumpInputEl = document.getElementById('jumpInput');
 const jumpMsgEl = document.getElementById('jumpMsg');
 const jumpHistEl = document.getElementById('jumpHist');
@@ -286,10 +292,22 @@ function parseJumpRef(raw){
   //                  mil3.1.1         → kn/mil/index.html#mil3.1.1 (deep, multi-level)
   // Abhidhamma:      vb1              → tv_ab/vb/index.html#vb1 (section anchor)
   //                  vb1:24.5         → tv_ab/vb/index.html#tr-vb1:24.5 (segment)
+  // Flat single-file (arv, 0-based):
+  //                  arv12            → arv/index.html#12 (topic anchor — bare, no "arv" prefix)
+  //                  arv12:3          → arv/index.html#tr-arv:12.3 (row — underlying key is
+  //                                     "<nik>:<topic>.<row>", a dot not a colon before the
+  //                                     row, unlike every other category — hence its own hash)
   const m = /^\s*([a-z]+(?:-[a-z]+)*)\s*(\d+)(?:\.(\d+(?:\.\d+)*(?:-\d+)?))?\s*(?::\s*(\d+(?:\.\d+)*)\s*)?$/i.exec(raw||'');
   if(!m) return null;
   const nik = m[1].toLowerCase(), n = parseInt(m[2], 10), sub = m[3] || null, seg = m[4] || null;
   if(!(nik in JUMP_LIMITS)) return {err: nik.toUpperCase()+' is not available yet'};
+  if(JUMP_FLAT[nik]){
+    if(sub) return {err: nik.toUpperCase()+' refs look like '+nik+n+' or '+nik+n+':3'};
+    if(n < 0 || n > JUMP_LIMITS[nik])
+      return {err: nik.toUpperCase()+' goes from 0 to '+JUMP_LIMITS[nik]};
+    const hash = seg ? ('#tr-'+nik+':'+n+'.'+seg) : ('#'+n);
+    return {nik, page: '', suttaId: String(n), seg, ref: nik+n+(seg?':'+seg:''), hash};
+  }
   if(n < 1 || n > JUMP_LIMITS[nik])
     return {err: nik.toUpperCase()+(JUMP_GROUPED[nik]?' book':'')+' goes from 1 to '+JUMP_LIMITS[nik]};
   if(JUMP_KN[nik]){
@@ -328,9 +346,11 @@ function jumpToRef(ref){
   if(!r || r.err){ flashJumpErr((r&&r.err) || 'Type a ref like mn125, dn16, an3.65 or sn22.59'); return; }
   saveJumpHist([r.ref].concat(loadJumpHist().filter(x=>x!==r.ref)));
   let hash = '';
-  if(r.seg) hash = '#tr-' + r.suttaId + ':' + r.seg;          // segment deep link
+  if(r.hash !== undefined) hash = r.hash;                      // pre-built (e.g. JUMP_FLAT's)
+  else if(r.seg) hash = '#tr-' + r.suttaId + ':' + r.seg;      // segment deep link
   else if(r.suttaId && r.suttaId !== r.page) hash = '#' + r.suttaId;  // grouped sutta anchor
-  window.location.href = JUMP_ROOT + '/' + r.nik + '/' + r.page + '/index.html' + hash;
+  const page = r.page ? '/' + r.page : '';                    // '' for a flat single-file book
+  window.location.href = JUMP_ROOT + '/' + r.nik + page + '/index.html' + hash;
 }
 function renderJumpHist(){
   const h = loadJumpHist();
