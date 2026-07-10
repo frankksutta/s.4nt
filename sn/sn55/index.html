@@ -781,7 +781,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 09, 2026 at 05:43 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -1978,27 +1978,48 @@ const NODE_EL={};
 //
 // Every book defaults every section OPEN (indexTree sets SO[id]=true for all nodes),
 // so on a big book (Vibhaṅga ≈3300 leaves, an AN book ≈1500) nearly all of them sit
-// as placeholders observed at once. A single scrollbar drag can bring HUNDREDS of
-// them within the 2000px margin in one IntersectionObserver callback tick — building
-// them all synchronously in that tick is what froze the page for seconds. lazyQueue +
-// requestAnimationFrame spread that work across frames (LAZY_BATCH per frame) instead
-// of doing it all at once; the escape hatch (ensureRowBuilt/scrollToEl) still builds
-// its one target immediately, bypassing the queue.
+// as placeholders observed at once, and a scrollbar drag sweeps the viewport past
+// hundreds of them. Two rules keep the text under the user's eyes from waiting:
+//   1. A placeholder that is ON SCREEN when the observer fires builds synchronously
+//      in that callback — skeleton in the viewport is the only latency that matters.
+//   2. Lookahead placeholders (within LAZY_MARGIN but off screen) go into lazyQueue,
+//      drained a few per animation frame NEAREST-FIRST — and any queued leaf the
+//      scroll has since moved back out of range is handed back to the observer
+//      unbuilt. (The first version of this queue was FIFO with no eviction: a drag
+//      queued every leaf it passed and built all of them — ~186 tables when the
+//      viewport needed 4 — while the visible ones sat at the back of the line for
+//      seconds. Nearest-first + eviction is the fix; do not regress this to FIFO.)
+// The escape hatch (ensureRowBuilt/scrollToEl) still builds its one target
+// immediately, bypassing the queue.
 const LEAF_BUILD={};    // leafId → build-now fn (entry deleted once built)
 let eagerLeafBudget=0;  // reset by renderMain/rerenderNode before each pass
 let lazyObs=null;
-const LAZY_BATCH=6;
-let lazyQueue=[];
+const LAZY_MARGIN=2000;   // observer lookahead px (rootMargin below uses this)
+const LAZY_BATCH=6;       // max builds per frame while draining the queue
+const LAZY_FRAME_MS=8;    // per-frame build time budget (breaks early on slow leaves)
+let lazyQueue=[];         // pending placeholder .rw ELEMENTS (not ids: we re-read rects)
 let lazyFlushScheduled=false;
+function buildLeafNow(el){ const f=LEAF_BUILD[el.dataset.leaf]; if(f) f(); }
 function flushLazyQueue(){
   lazyFlushScheduled=false;
-  let n=0;
-  while(lazyQueue.length && n<LAZY_BATCH){
-    const id=lazyQueue.shift();
-    const f=LEAF_BUILD[id];
-    if(f) f();
-    n++;
+  // One read pass (rects) BEFORE any DOM writes (builds), so layout is computed once.
+  const vh=window.innerHeight;
+  const keep=[];
+  for(const el of lazyQueue){
+    if(!LEAF_BUILD[el.dataset.leaf] || !el.isConnected) continue;   // built/re-rendered
+    const r=el.getBoundingClientRect();
+    const d=r.bottom<0 ? -r.bottom : (r.top>vh ? r.top-vh : 0);     // px from viewport
+    if(d>LAZY_MARGIN+200){ ensureLazyObs().observe(el); continue; } // dragged past: evict
+    keep.push([d,el]);
   }
+  keep.sort((a,b)=>a[0]-b[0]);
+  const t0=performance.now();
+  let i=0;
+  for(; i<keep.length; i++){
+    if(i && (i>=LAZY_BATCH || performance.now()-t0>LAZY_FRAME_MS)) break;
+    buildLeafNow(keep[i][1]);
+  }
+  lazyQueue=keep.slice(i).map(s=>s[1]);
   if(lazyQueue.length) scheduleLazyFlush();
 }
 function scheduleLazyFlush(){
@@ -2009,15 +2030,17 @@ function scheduleLazyFlush(){
 function ensureLazyObs(){
   if(!lazyObs){
     lazyObs=new IntersectionObserver(entries=>{
+      let queued=false;
       entries.forEach(en=>{
         if(!en.isIntersecting || !en.target.isConnected) return;
-        const id=en.target.dataset.leaf;
-        if(!LEAF_BUILD[id]) return;
-        lazyObs.unobserve(en.target);   // queued now — don't re-fire for this target
-        lazyQueue.push(id);
+        if(!LEAF_BUILD[en.target.dataset.leaf]) return;
+        const r=en.boundingClientRect;
+        if(r && r.bottom>0 && r.top<window.innerHeight){ buildLeafNow(en.target); return; }
+        lazyObs.unobserve(en.target);   // queued now — don't re-fire while it waits
+        lazyQueue.push(en.target); queued=true;
       });
-      if(lazyQueue.length) scheduleLazyFlush();
-    },{rootMargin:'2000px 0px'});
+      if(queued) scheduleLazyFlush();
+    },{rootMargin:LAZY_MARGIN+'px 0px'});
   }
   return lazyObs;
 }
@@ -2200,11 +2223,15 @@ function renderLeafMain(sec, parent){
 
 let activeType=null,activeId=null;
 function setAct(type,id){
+  const sel = type==='s' ? document.querySelector('.ts[data-sid="'+id+'"]')
+            : type==='r' ? document.querySelector('.tr[data-rk="'+id+'"]') : null;
+  // The scroll spy re-fires the CURRENT section on every scroll tick; skip the
+  // class sweep + scrollIntoView (a forced layout) when nothing actually changed.
+  // (After a TOC rebuild the same id's new row won't carry .act yet — re-apply then.)
+  if(type===activeType && id===activeId && sel && sel.classList.contains('act')) return;
   activeType=type; activeId=id;
-  document.querySelectorAll('.ts,.tr').forEach(el=>el.classList.remove('act'));
-  let sel=null;
-  if(type==='s') sel=document.querySelector('.ts[data-sid="'+id+'"]');
-  else if(type==='r') sel=document.querySelector('.tr[data-rk="'+id+'"]');
+  // Only the currently-highlighted rows (≤2), not every TOC row (~1500 on a big book).
+  document.querySelectorAll('.ts.act,.tr.act').forEach(el=>el.classList.remove('act'));
   if(sel){sel.classList.add('act');sel.scrollIntoView({block:'nearest'});}
 }
 
@@ -2214,11 +2241,13 @@ function setupSpy(){
   const hh=document.getElementById('mainHeader').offsetHeight;
   const ch=document.getElementById('colBar').offsetHeight;
   const obs=new IntersectionObserver(entries=>{
+    // Coalesce: during a fast scroll many headers cross the line in one tick —
+    // only the last one matters, so call setAct once, not once per entry.
+    let last=null;
     entries.forEach(en=>{
-      if(!en.isIntersecting)return;
-      const el=en.target;
-      if(el.classList.contains('sh')) setAct('s',el.id.replace('sh-',''));
+      if(en.isIntersecting && en.target.classList.contains('sh')) last=en.target;
     });
+    if(last) setAct('s',last.id.replace('sh-',''));
   },{rootMargin:'-'+(hh+ch)+'px 0px -55% 0px',threshold:0});
   document.querySelectorAll('.sh').forEach(el=>obs.observe(el));
   spyObs=obs;
