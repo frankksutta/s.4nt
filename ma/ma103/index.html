@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma103:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊拘樓瘦，在劒磨瑟曇拘樓都邑。", "rows": [{"key": "ma103:2.1", "p": "一時，佛遊拘樓瘦，在劒磨瑟曇拘樓都邑。…", "s": "At one time, the Buddha was traveling in the country of the Kurus, staying at the Kuru town of Kammāsadhamma."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「此中有第一沙門，第二、第三、", "rows": [{"key": "ma103:3.1", "p": "爾時，世尊告諸比丘：「此中有第一沙門，第二、第三、…"}, {"key": "ma103:3.2", "p": "第四沙門，此外更無沙門、…", "s": "At that time, the Blessed One said to the monks:"}, {"key": "ma103:3.3", "p": "梵志，異道一切空無沙門、梵志。…"}, {"key": "ma103:3.4", "p": "汝等隨在眾中，作如是正師子吼。比丘！…", "s": "'Here there is the first ascetic, the second, third, and fourth ascetics;"}, {"key": "ma103:3.5", "p": "或有異學來問汝等：『諸賢！…"}, {"key": "ma103:3.6", "p": "汝有何行，有何力，有何智，…", "s": "beyond these there is no other ascetic or brahmin, and all other paths are entirely empty of ascetics and brahmins."}, {"key": "ma103:3.7", "p": "令汝等作如是說：「此有第一沙門，第二、…"}, {"key": "ma103:3.8", "p": "第三、第四沙門，此外更無沙門、…", "s": "You, when among the assembly, should make this rightful lion's roar."}, {"key": "ma103:3.9", "p": "梵志，異道一切空無沙門、梵志。…"}, {"key": "ma103:3.10", "p": "汝等隨在眾中，作如是正師子吼。」』…", "s": "Monks, perhaps followers of other paths will come and ask you:"}]}, {"id": "4", "label": "「比丘！", "rows": [{"key": "ma103:4.1", "p": "「比丘！…", "s": "“Monks, you should answer the followers of other paths like this:"}, {"key": "ma103:4.2", "p": "汝等應如是答異學：『諸賢！…", "s": "‘Venerables, our Blessed One, who knows and sees, the Tathāgata,"}, {"key": "ma103:4.3", "p": "我世尊有知有見，如來、無所著、等正覺說四法，…", "s": "the Arahant, the Fully Enlightened One, has taught four qualities.\nBecause of these four qualities, we say:"}, {"key": "ma103:4.4", "p": "因此四法故，令我等作如是說：「此有第一沙門，第二、…", "s": "“There is the first ascetic, the second, the third, and the fourth ascetic."}, {"key": "ma103:4.5", "p": "第三、第四沙門，此外更無沙門、梵志，…", "s": "Beyond these, there is no other ascetic or brahmin."}, {"key": "ma103:4.6", "p": "異道一切空無沙門、梵志，…", "s": "All other paths are entirely empty of ascetics and brahmins.\nWherever we are among the assembly, we make this rightful lion’s roar.”"}, {"key": "ma103:4.7", "p": "我等隨在眾中，作如是正師子吼。…", "s": "What are the four?"}, {"key": "ma103:4.8", "p": "」云何為四？諸賢！…", "s": "Venerables, we have faith in the honored teacher, faith in the Dharma,"}, {"key": "ma103:4.9", "p": "我等信尊師、信法、信戒德具足，愛敬同道，恭恪奉事。諸賢！…", "s": "and we are endowed with virtuous behavior and moral shame and moral dread.\nWe love and respect our fellow practitioners and serve them with reverence."}, {"key": "ma103:4.10", "p": "我世尊有知有見，如來、無所著、等正覺說此四法，…", "s": "Venerables, our Blessed One, who knows and sees, the Tathāgata,"}, {"key": "ma103:4.11", "p": "因此四法故，令我等作如是說：「此有第一沙門，…", "s": "the Arahant, the Fully Enlightened One, has taught these four qualities."}, {"key": "ma103:4.12", "p": "第二、第三、第四沙門，此外更無沙門、梵志，…", "s": "Because of these four qualities, we say:\n“There is the first ascetic, the second, the third, and the fourth ascetic."}, {"key": "ma103:4.13", "p": "異道一切空無沙門、梵志，…", "s": "Beyond these, there is no other ascetic or brahmin."}, {"key": "ma103:4.14", "p": "我等隨在眾中，作如是正師子吼。」』…", "s": "All other paths are entirely empty of ascetics and brahmins.\nWherever we are among the assembly, we make this rightful lion’s roar.”’”"}]}, {"id": "5", "label": "「比丘！", "rows": [{"key": "ma103:5.1", "p": "「比丘！…"}, {"key": "ma103:5.2", "p": "異學或復作是說：『諸賢！…", "s": "“Monks, the followers of other paths might then say:"}, {"key": "ma103:5.3", "p": "我等亦信尊師，謂我尊師也。…", "s": "‘Venerables, we too have faith in an honored teacher, namely our honored teacher."}, {"key": "ma103:5.4", "p": "信法，謂我法也。…", "s": "We have faith in a Dharma, namely our Dharma."}, {"key": "ma103:5.5", "p": "戒德具足，謂我戒也。…", "s": "We are endowed with virtuous behavior, namely our virtuous behavior."}, {"key": "ma103:5.6", "p": "愛敬同道，恭恪奉事，謂我同道出家及在家者也。諸賢！…", "s": "We love and respect our fellow practitioners and serve them with reverence,"}, {"key": "ma103:5.7", "p": "沙門瞿曇及我等此二種說，…"}, {"key": "ma103:5.8", "p": "有何勝，有何意，有何差別耶？…", "s": "namely our fellow practitioners who have gone forth and laypeople."}, {"key": "ma103:5.9", "p": "』比丘！…", "s": "Venerables, between the ascetic Gotama’s teaching and ours,"}, {"key": "ma103:5.10", "p": "汝等應如是問異學：『諸賢！…", "s": "what is the superiority, what is the meaning, what is the difference?’"}, {"key": "ma103:5.11", "p": "為一究竟，為眾多究竟耶？…", "s": "Monks, you should ask the followers of other paths:"}, {"key": "ma103:5.12", "p": "』比丘！…", "s": "‘Venerables, is there one ultimate goal, or many ultimate goals?’"}, {"key": "ma103:5.13", "p": "若異學如是答：『諸賢！…"}, {"key": "ma103:5.14", "p": "有一究竟，無眾多究竟。…", "s": "Monks, if the followers of other paths answer:"}, {"key": "ma103:5.15", "p": "』比丘！…", "s": "‘Venerables, there is one ultimate goal, not many ultimate goals.’"}, {"key": "ma103:5.16", "p": "汝等復問異學：『諸賢！…", "s": "Monks, you should then ask the followers of other paths:"}, {"key": "ma103:5.17", "p": "為有欲者得究竟是耶？…", "s": "‘Venerables, does one who has desire attain the ultimate goal,"}, {"key": "ma103:5.18", "p": "為無欲者得究竟是耶？…", "s": "or does one who is without desire attain the ultimate goal?’"}, {"key": "ma103:5.19", "p": "』比丘！…", "s": "Monks, if the followers of other paths answer:"}, {"key": "ma103:5.20", "p": "若異學如是答：『無欲者得究竟是，非有欲者得究竟是。…"}, {"key": "ma103:5.21", "p": "』比丘！…", "s": "‘One who is without desire attains the ultimate goal, not one who has desire.’"}, {"key": "ma103:5.22", "p": "汝等復問異學：『諸賢！…", "s": "Monks, you should then ask the followers of other paths:"}, {"key": "ma103:5.23", "p": "為有恚者得究竟是耶？…", "s": "‘Venerables, does one who has hatred attain the ultimate goal,"}, {"key": "ma103:5.24", "p": "為無恚者得究竟是耶？…", "s": "or does one who is without hatred attain the ultimate goal?’"}, {"key": "ma103:5.25", "p": "』比丘！…", "s": "Monks, if the followers of other paths answer:"}, {"key": "ma103:5.26", "p": "若異學如是答：『無恚者得究竟是，非有恚者得究竟是。…"}, {"key": "ma103:5.27", "p": "』比丘！…", "s": "‘One who is without hatred attains the ultimate goal, not one who has hatred.’"}, {"key": "ma103:5.28", "p": "汝等復問異學：『諸賢！…", "s": "Monks, you should then ask the followers of other paths:"}, {"key": "ma103:5.29", "p": "為有癡者得究竟是耶？…", "s": "‘Venerables, does one who has delusion attain the ultimate goal,"}, {"key": "ma103:5.30", "p": "為無癡者得究竟是耶？…", "s": "or does one who is without delusion attain the ultimate goal?’"}, {"key": "ma103:5.31", "p": "』比丘，若異學如是答：『諸賢！…", "s": "Monks, if the followers of other paths answer:"}, {"key": "ma103:5.32", "p": "無癡者得究竟是，非有癡者得究竟是。』…", "s": "‘Venerables, one who is without delusion attains the ultimate goal, not one who has delusion.’"}]}, {"id": "6", "label": "「比丘！", "rows": [{"key": "ma103:6.1", "p": "「比丘！…"}, {"key": "ma103:6.2", "p": "汝等復問異學：『諸賢！…", "s": "“Monks, you should then ask the followers of other paths:"}, {"key": "ma103:6.3", "p": "為有愛、有受者得究竟是耶？…", "s": "‘Venerables, does one who has craving and clinging attain the ultimate goal,"}, {"key": "ma103:6.4", "p": "為無愛、無受者得究竟是耶？…", "s": "or does one who is without craving and clinging attain the ultimate goal?’"}, {"key": "ma103:6.5", "p": "』比丘！…", "s": "Monks, if the followers of other paths answer:"}, {"key": "ma103:6.6", "p": "若異學如是答：『諸賢！…"}, {"key": "ma103:6.7", "p": "無愛、無受者得究竟是，非有愛、有受者得究竟是。…", "s": "‘Venerables, one who is without craving and clinging attains the ultimate goal, not one who has craving and clinging.’"}, {"key": "ma103:6.8", "p": "』比丘！…", "s": "Monks, you should then ask the followers of other paths:"}, {"key": "ma103:6.9", "p": "汝等復問異學：『諸賢！…", "s": "‘Venerables, does one who lacks wisdom and does not speak of wisdom attain the ultimate goal,"}, {"key": "ma103:6.10", "p": "為無慧、不說慧者得究竟是耶？…", "s": "or does one who has wisdom and speaks of wisdom attain the ultimate goal?’"}, {"key": "ma103:6.11", "p": "為有慧、說慧者得究竟是耶？…"}, {"key": "ma103:6.12", "p": "』比丘！…", "s": "Monks, if the followers of other paths answer:"}, {"key": "ma103:6.13", "p": "若異學如是答：『諸賢！…", "s": "‘Venerables, one who has wisdom and speaks of wisdom attains the ultimate goal,"}, {"key": "ma103:6.14", "p": "有慧、說慧者得究竟是，非無慧、不說慧者得究竟是。…", "s": "not one who lacks wisdom and does not speak of wisdom.’"}, {"key": "ma103:6.15", "p": "』比丘！…", "s": "Monks, you should then ask the followers of other paths:"}, {"key": "ma103:6.16", "p": "汝等復問異學：『諸賢！…"}, {"key": "ma103:6.17", "p": "為有憎、有諍者得究竟是耶？…", "s": "‘Venerables, does one who has hostility and conflict attain the ultimate goal,"}, {"key": "ma103:6.18", "p": "為無憎、無諍者得究竟是耶？…", "s": "or does one who is without hostility and conflict attain the ultimate goal?’"}, {"key": "ma103:6.19", "p": "』比丘！…", "s": "Monks, if the followers of other paths answer:"}, {"key": "ma103:6.20", "p": "若異學如是答：『諸賢！…", "s": "‘Venerables, one who is without hostility and conflict attains the ultimate goal,"}, {"key": "ma103:6.21", "p": "無憎、無諍者得究竟是，非有憎、有諍者得究竟是。』…", "s": "not one who has hostility and conflict.’"}]}, {"id": "7", "label": "「比丘！", "rows": [{"key": "ma103:7.1", "p": "「比丘！…"}, {"key": "ma103:7.2", "p": "汝等為異學應如是說：『諸賢！…", "s": "“Monks, you should speak to the followers of other paths like this:"}, {"key": "ma103:7.3", "p": "是為如汝等說有一究竟是，非眾多究竟是；…", "s": "‘Venerables, this is as you say:"}, {"key": "ma103:7.4", "p": "無欲者得究竟是，非有欲者得究竟是；…", "s": "there is one ultimate goal, not many;"}, {"key": "ma103:7.5", "p": "無恚者得究竟是，非有恚者得究竟是；…", "s": "those without desire attain the ultimate goal, not those with desire;"}, {"key": "ma103:7.6", "p": "無癡者得究竟是，非有癡者得究竟是；…", "s": "those without hatred attain the ultimate goal, not those with hatred;"}, {"key": "ma103:7.7", "p": "無愛、無受者得究竟是，非有愛、…", "s": "those without delusion attain the ultimate goal, not those with delusion;"}, {"key": "ma103:7.8", "p": "有受者得究竟是；有慧、說慧者得究竟是，…", "s": "those without craving and without clinging attain the ultimate goal, not those with craving and clinging;"}, {"key": "ma103:7.9", "p": "非無慧、不說慧者得究竟是；無憎、…", "s": "those with wisdom and who teach wisdom attain the ultimate goal, not those without wisdom and who do not teach wisdom;"}, {"key": "ma103:7.10", "p": "無諍者得究竟是，非有憎、有諍者得究竟是。…", "s": "those without aversion and without contention attain the ultimate goal, not those with aversion and contention."}, {"key": "ma103:7.11", "p": "若有沙門、梵志依無量見，…", "s": "If there are ascetics or brahmins who rely on countless views, all of them rely on two views:"}, {"key": "ma103:7.12", "p": "彼一切依猗二見，有見及無見也。…", "s": "the view of existence and the view of non-existence."}, {"key": "ma103:7.13", "p": "若依有見者，彼便著有見，…", "s": "Those who rely on the view of existence become attached to it, depend on it,"}, {"key": "ma103:7.14", "p": "依猗有見，猗住有見，憎諍無見。…", "s": "abide in it, and hate and contend with the view of non-existence."}, {"key": "ma103:7.15", "p": "若依無見者，彼便著無見，…", "s": "Those who rely on the view of non-existence become attached to it,"}, {"key": "ma103:7.16", "p": "依猗無見，猗住無見，憎諍有見。…", "s": "depend on it, abide in it, and hate and contend with the view of existence."}]}, {"id": "8", "label": "「『若有沙門、梵志不知因、不知習、不知滅、不知盡、", "rows": [{"key": "ma103:8.1", "p": "「『若有沙門、梵志不知因、不知習、不知滅、不知盡、…", "s": "“ ‘If there are ascetics or brahmins who do not truly know the cause,"}, {"key": "ma103:8.2", "p": "不知味、不知患、不知出要如真者，彼一切有欲、有恚、…", "s": "the origin, the cessation, the end, the taste, the danger, and the escape,"}, {"key": "ma103:8.3", "p": "有癡、有愛、有受、無慧、非說慧、有憎、有諍，…", "s": "then all of them have desire, hatred, delusion, craving, clinging,"}, {"key": "ma103:8.4", "p": "彼則不離生老病死，亦不能脫愁慼啼哭、…", "s": "lack wisdom, do not teach wisdom, have aversion, and have contention.\nThey are not free from birth, aging, sickness, and death,"}, {"key": "ma103:8.5", "p": "憂苦懊惱，不得苦邊。…", "s": "nor can they escape sorrow, lamentation, pain, grief, and despair;"}, {"key": "ma103:8.6", "p": "若有沙門、梵志於此二見知因、知習、知滅、知盡、…", "s": "they do not reach the end of suffering."}, {"key": "ma103:8.7", "p": "知味、知患、知出要如真者，彼一切無欲、無恚、無癡、…", "s": "If there are ascetics or brahmins who truly know the cause, origin, cessation, end,\ntaste, danger, and escape regarding these two views, then all of them are wi…"}, {"key": "ma103:8.8", "p": "無愛、無受、有慧、說慧、…", "s": "without hatred, without delusion, without craving, without clinging,"}, {"key": "ma103:8.9", "p": "無憎、無諍，彼則得離生老病死，…", "s": "have wisdom, teach wisdom, are without aversion, and without contention."}, {"key": "ma103:8.10", "p": "亦能得脫愁慼啼哭、憂苦懊惱，則得苦邊。…", "s": "They are freed from birth, aging, sickness, and death, and can escape sorrow, lamentation, pain, grief, and despair;\nthey reach the end of suffering."}]}, {"id": "9", "label": "「『或有沙門、梵志施設斷受，然不施設斷一切受，", "rows": [{"key": "ma103:9.1", "p": "「『或有沙門、梵志施設斷受，然不施設斷一切受，…", "s": "“ ‘Some ascetics or brahmins advocate cutting off clinging, but they do not advocate cutting off all clinging."}, {"key": "ma103:9.2", "p": "施設斷欲受，不施設斷戒受、見受、我受。…", "s": "They advocate cutting off clinging to sensual pleasures,"}, {"key": "ma103:9.3", "p": "所以者何？…", "s": "but not cutting off clinging to precepts, clinging to views, or clinging to self."}, {"key": "ma103:9.4", "p": "彼沙門、梵志不知三處如真。…", "s": "Why is that?"}, {"key": "ma103:9.5", "p": "是故彼雖施設斷受，然不施設斷一切受。…", "s": "Those ascetics or brahmins do not truly know three things.\nTherefore, although they advocate cutting off clinging, they do not advocate cutting off all clinging…"}, {"key": "ma103:9.6", "p": "復有沙門、梵志施設斷受，然不施設斷一切受，…", "s": "Other ascetics or brahmins advocate cutting off clinging, but they do not advocate cutting off all clinging."}, {"key": "ma103:9.7", "p": "施設斷欲受、戒受，不施設斷見受、我受。…", "s": "They advocate cutting off clinging to sensual pleasures and clinging to precepts,"}, {"key": "ma103:9.8", "p": "所以者何？…", "s": "but not cutting off clinging to views or clinging to self."}, {"key": "ma103:9.9", "p": "彼沙門、梵志不知二處如真，…", "s": "Why is that?\nThose ascetics or brahmins do not truly know two things."}, {"key": "ma103:9.10", "p": "是故彼雖施設斷受，然不施設斷一切受。…", "s": "Therefore, although they advocate cutting off clinging, they do not advocate cutting off all clinging."}, {"key": "ma103:9.11", "p": "復有沙門、梵志施設斷受，然不施設斷一切受，…", "s": "Still other ascetics or brahmins advocate cutting off clinging, but they do not advocate cutting off all clinging."}, {"key": "ma103:9.12", "p": "施設斷欲受、戒受、見受，不施設斷我受，所以者何？…", "s": "They advocate cutting off clinging to sensual pleasures, clinging to precepts,"}, {"key": "ma103:9.13", "p": "彼沙門、梵志不知一處如真，…", "s": "and clinging to views, but not cutting off clinging to self."}, {"key": "ma103:9.14", "p": "是故彼雖施設斷受，然不施設斷一切受。…", "s": "Why is that?\nThose ascetics or brahmins do not truly know one thing."}, {"key": "ma103:9.15", "p": "如是法、律，若信尊師者，彼非正、…", "s": "Therefore, although they advocate cutting off clinging, they do not advocate cutting off all clinging."}, {"key": "ma103:9.16", "p": "非第一，若信法者，亦非正、非第一，…", "s": "In such a teaching and discipline, if one trusts the honored teacher, that is not correct, not supreme;"}, {"key": "ma103:9.17", "p": "若具足戒德者，亦非正、非第一，…", "s": "if one trusts the teaching, that is also not correct, not supreme;"}, {"key": "ma103:9.18", "p": "若愛敬同道、恭恪奉事者，亦非正、非第一。…", "s": "if one is endowed with complete virtuous behavior, that is also not correct, not supreme;\nif one loves and respects fellow practitioners and serves them with re…"}]}, {"id": "10", "label": "「『若有如來出世，無所著、等正覺、明行成為、", "rows": [{"key": "ma103:10.1", "p": "「『若有如來出世，無所著、等正覺、明行成為、…", "s": "“ ‘If a Tathāgata appears in the world, the Worthy One, the Perfectly Enlightened One,"}, {"key": "ma103:10.2", "p": "善逝、世間解、無上士、道法御、天人師，…", "s": "accomplished in knowledge and conduct, the Well-Gone One, knower of the world, unsurpassed,"}, {"key": "ma103:10.3", "p": "號佛、眾祐，彼施設斷受，於現法中施設斷一切受，…", "s": "tamer of those to be tamed, teacher of devas and humans, called the Buddha, the Blessed One,\nhe advocates cutting off clinging, and in the present life he advoc…"}, {"key": "ma103:10.4", "p": "施設斷欲受、戒受、見受、我受。…", "s": "He advocates cutting off clinging to sensual pleasures, clinging to precepts, clinging to views, and clinging to self."}, {"key": "ma103:10.5", "p": "此四受何因、何習，從何而生，以何為本？…", "s": "What is the cause, what is the origin of these four kinds of clinging?\nFrom what are they born, and what is their foundation?"}, {"key": "ma103:10.6", "p": "此四受因無明，習無明，從無明生，以無明為本。…", "s": "These four kinds of clinging have ignorance as their cause, ignorance as their origin,"}, {"key": "ma103:10.7", "p": "若有比丘無明已盡，明已生者，…", "s": "are born from ignorance, and have ignorance as their foundation.\nIf a monk has completely ended ignorance and has given rise to true knowledge,"}, {"key": "ma103:10.8", "p": "彼便從是不復更受欲受、戒受、見受、我受，彼不受已，…", "s": "then from then on he no longer receives clinging to sensual pleasures,"}, {"key": "ma103:10.9", "p": "則不恐怖，不恐怖已，便斷因緣，必般涅槃，…", "s": "clinging to precepts, clinging to views, or clinging to self."}, {"key": "ma103:10.10", "p": "生已盡，梵行已立，所作已辦，不更受有，知如真。…", "s": "Not clinging, he is not afraid.\nNot afraid, he cuts off the conditions and will surely attain final Nibbāna."}, {"key": "ma103:10.11", "p": "如是正法、律，若信尊師者，是正、…", "s": "Birth is ended, the holy life has been established, what had to be done has been done,"}, {"key": "ma103:10.12", "p": "是第一，若信法者，是正、是第一，…", "s": "there is no further state of existence, and he knows it as it really is.\nIn such a true teaching and discipline, if one trusts the honored teacher, that is corr…"}, {"key": "ma103:10.13", "p": "若戒德具足者，是正、是第一，…", "s": "if one trusts the teaching, that is correct, that is supreme;"}, {"key": "ma103:10.14", "p": "若愛敬同道、恭恪奉事者，是正、是第一。』…", "s": "if one is endowed with complete virtuous behavior, that is correct, that is supreme;\nif one loves and respects fellow practitioners and serves them with reveren…"}]}, {"id": "11", "label": "「諸賢！", "rows": [{"key": "ma103:11.1", "p": "「諸賢！…", "s": "“Venerables, we have such conduct, such power, such wisdom."}, {"key": "ma103:11.2", "p": "我等有是行，有是力，有是智，…", "s": "Because of this, we can say:"}, {"key": "ma103:11.3", "p": "因此故令我等作如是說，此有第一沙門，…", "s": "‘There is the first ascetic, the second, the third, and the fourth ascetic."}, {"key": "ma103:11.4", "p": "第二、第三、第四沙門，此外更無沙門、…", "s": "Apart from these, there are no other ascetics or brahmins."}, {"key": "ma103:11.5", "p": "梵志，異道一切空無沙門、梵志。…", "s": "All other paths are completely empty of ascetics or brahmins.’"}, {"key": "ma103:11.6", "p": "以是故，我等隨在眾中，作如是正師子吼。」…", "s": "Therefore, wherever we are among the assembly, we can rightly roar the lion’s roar like this.”"}]}, {"id": "12", "label": "佛說如是。", "rows": [{"key": "ma103:12.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma103:12.2", "p": "彼諸比丘聞佛所說，歡喜奉行。…", "s": "Those monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma15:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma15:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was staying in Sāvatthī, at the Jeta Grove, Anāthapiṇḍika’s Park."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「若有故作業，我說彼必受其報，", "rows": [{"key": "ma15:3.1", "p": "爾時，世尊告諸比丘：「若有故作業，我說彼必受其報，…", "s": "At that time, the Blessed One said to the monks:\n“If someone intentionally does a deed, I say that person will certainly experience its result,"}, {"key": "ma15:3.2", "p": "或現世受，或後世受；若不故作業，我說此不必受報。…", "s": "either in this life or in a future life.\nIf someone does a deed unintentionally, I say that person need not necessarily experience its result."}, {"key": "ma15:3.3", "p": "於中，身故作三業，不善與苦果受於苦報；…", "s": "Among these, the body intentionally does three kinds of deeds that are unwholesome and bring painful results,\nleading to painful retribution;"}, {"key": "ma15:3.4", "p": "口有四業，意有三業，不善與苦果受於苦報。…", "s": "the mouth does four kinds of deeds, and the mind does three kinds of deeds,\nthat are unwholesome and bring painful results, leading to painful retribution."}]}, {"id": "4", "label": "「云何身故作三業，不善與苦果受於苦報？", "rows": [{"key": "ma15:4.1", "p": "「云何身故作三業，不善與苦果受於苦報？…", "s": "“What are the three deeds the body intentionally does that are unwholesome and bring painful results,"}, {"key": "ma15:4.2", "p": "一曰殺生，極惡飲血，其欲傷害，不慈眾生，乃至蜫蟲。…", "s": "leading to painful retribution?\nFirst, killing living beings, extremely evil, drinking blood,"}, {"key": "ma15:4.3", "p": "二曰不與取，著他財物以偷意取。…", "s": "with the intention to harm, without loving-kindness toward beings, even down to insects."}, {"key": "ma15:4.4", "p": "三曰邪婬，彼或有父所護，或母所護，或父母所護，…", "s": "Second, taking what is not given, coveting others’ property with a thieving mind.\nThird, sexual misconduct:"}, {"key": "ma15:4.5", "p": "或姉妹所護，或兄弟所護，或婦父母所護，…", "s": "with a woman who is protected by her father, or protected by her mother, or protected by both parents,"}, {"key": "ma15:4.6", "p": "或親親所護，或同姓所護，或為他婦女，…", "s": "or protected by her sister, or protected by her brother, or protected by her in-laws, or protected by close relatives,\nor protected by her clan, or who is anoth…"}, {"key": "ma15:4.7", "p": "有鞭罰恐怖，及有名假賃至華鬘，親犯如此女。…", "s": "or who is even a woman adorned with garlands under a temporary arrangement—having intimate relations with such a woman."}, {"key": "ma15:4.8", "p": "是謂身故作三業，不善與苦果受於苦報。…", "s": "These are called the three deeds the body intentionally does that are unwholesome and bring painful results,\nleading to painful retribution."}]}, {"id": "5", "label": "「云何口故作四業，不善與苦果受於苦報？", "rows": [{"key": "ma15:5.1", "p": "「云何口故作四業，不善與苦果受於苦報？…", "s": "“What are the four deeds the mouth intentionally does that are unwholesome and bring painful results,"}, {"key": "ma15:5.2", "p": "一曰妄言，彼或在眾，或在眷屬，…", "s": "leading to painful retribution?\nFirst, false speech:"}, {"key": "ma15:5.3", "p": "或在王家，若呼彼問，汝知便說，…", "s": "in an assembly, among relatives, or in the royal court, if called and asked,"}, {"key": "ma15:5.4", "p": "彼不知言知，知言不知，不見言見，…", "s": "‘You know, so tell,’ he says he does not know when he knows,\nsays he knows when he does not know, says he does not see when he sees,"}, {"key": "ma15:5.5", "p": "見言不見，為己為他，或為財物，知已妄言。…", "s": "says he sees when he does not see—for his own sake, for another’s sake,\nor for the sake of material gain, knowingly telling lies."}, {"key": "ma15:5.6", "p": "二曰兩舌，欲離別他，聞此語彼，欲破壞此，聞彼語此，…", "s": "Second, divisive speech:"}, {"key": "ma15:5.7", "p": "欲破壞彼，合者欲離，離者復離，…", "s": "wanting to separate others, he hears something here and tells it there to break up this group,\nhears something there and tells it here to break up that group,"}, {"key": "ma15:5.8", "p": "而作群黨，樂於群黨，稱說群黨。…", "s": "wanting to separate those who are united, and further divide those already separated,\nforming factions, delighting in factions, praising factions."}, {"key": "ma15:5.9", "p": "三曰麤言，彼若有言，辭氣麤獷，惡聲逆耳，…", "s": "Third, harsh speech:"}, {"key": "ma15:5.10", "p": "眾所不喜，眾所不愛，使他苦惱，令不得定，說如是言。…", "s": "words that are rough in tone, harsh to the ear, unpleasant, disliked by many, unloved by many,\ncausing others distress, preventing them from attaining calm, spe…"}, {"key": "ma15:5.11", "p": "四曰綺語，彼非時說，不真實說，無義說，非法說，…", "s": "Fourth, idle chatter:\nspeaking at the wrong time, speaking what is untrue, speaking what is meaningless,"}, {"key": "ma15:5.12", "p": "不止息說，又復稱歎不止息事，…", "s": "speaking what is contrary to the Dhamma, speaking without restraint,"}, {"key": "ma15:5.13", "p": "違背於時而不善教，亦不善訶。…", "s": "and also praising unrestrained matters, going against the proper time,\ngiving neither good instruction nor good admonishment."}, {"key": "ma15:5.14", "p": "是謂口故作四業，不善與苦果受於苦報。…", "s": "These are called the four deeds the mouth intentionally does that are unwholesome and bring painful results,\nleading to painful retribution."}]}, {"id": "6", "label": "「云何意故作三業，不善與苦果受於苦報？", "rows": [{"key": "ma15:6.1", "p": "「云何意故作三業，不善與苦果受於苦報？…", "s": "“What are the three deeds the mind intentionally does that are unwholesome and bring painful results,"}, {"key": "ma15:6.2", "p": "一曰貪伺，見他財物諸生活具，常伺求望，欲令我得。…", "s": "leading to painful retribution?\nFirst, covetousness:"}, {"key": "ma15:6.3", "p": "二曰嫉恚，意懷憎嫉而作是念：『彼眾生者，…", "s": "seeing others’ property and means of livelihood, always coveting and hoping, thinking,\n‘May I obtain them.’"}, {"key": "ma15:6.4", "p": "應殺、應縛、應收、應免、應逐擯出。…", "s": "Second, ill will and hatred:\nharboring hatred and resentment, thinking,"}, {"key": "ma15:6.5", "p": "』其欲令彼受無量苦。…", "s": "‘These beings should be killed, bound, seized, banished, or expelled,’ wanting them to suffer immeasurable pain.\nThird, wrong view:"}, {"key": "ma15:6.6", "p": "三曰邪見，所見顛倒，如是見、如是說：無施、…", "s": "holding distorted views, seeing and saying thus:"}, {"key": "ma15:6.7", "p": "無齋、無有呪說，無善惡業，無善惡業報，…", "s": "‘There is no giving, no offering, no invocation;\nno good or evil deeds, no result of good or evil deeds;"}, {"key": "ma15:6.8", "p": "無此世彼世，無父無母，世無真人往至善處、善去、…", "s": "no this world or next world;\nno father or mother;"}, {"key": "ma15:6.9", "p": "善向，此世彼世，自知、自覺、自作證成就遊。…", "s": "no true persons in the world who go to a good destination, who have gone well,\nwho are heading well, who in this world and the next, know, realize, and attain b…"}, {"key": "ma15:6.10", "p": "是謂意故作三業，不善與苦果受於苦報。…", "s": "These are called the three deeds the mind intentionally does that are unwholesome and bring painful results,\nleading to painful retribution."}]}, {"id": "7", "label": "「多聞聖弟子捨身不善業，修身善業，", "rows": [{"key": "ma15:7.1", "p": "「多聞聖弟子捨身不善業，修身善業，…", "s": "“A learned noble disciple abandons unwholesome bodily deeds and cultivates wholesome bodily deeds;"}, {"key": "ma15:7.2", "p": "捨口、意不善業，修口、意善業。…", "s": "abandons unwholesome verbal and mental deeds and cultivates wholesome verbal and mental deeds."}, {"key": "ma15:7.3", "p": "彼多聞聖弟子如是具足精進戒德，…", "s": "That learned noble disciple, thus fully endowed with diligent virtuous behavior,"}, {"key": "ma15:7.4", "p": "成就身淨業，成就口、意淨業，…", "s": "accomplished in pure bodily deeds, accomplished in pure verbal and mental deeds, free from anger and contention,"}, {"key": "ma15:7.5", "p": "離恚離諍，除去睡眠，無調貢高，…", "s": "having abandoned drowsiness, without arrogance or conceit, having cut off doubt and overcome pride,"}, {"key": "ma15:7.6", "p": "斷疑、度慢，正念正智，無有愚癡，…", "s": "with right mindfulness and right understanding, without ignorance,"}, {"key": "ma15:7.7", "p": "彼心與慈俱，遍滿一方成就遊，…", "s": "dwells with a mind accompanied by loving-kindness, pervading one direction,"}, {"key": "ma15:7.8", "p": "如是二三四方、四維上下，普周一切，…", "s": "and so too the second, third, and fourth directions, above, below, and all around, everywhere,\nwith a mind accompanied by loving-kindness, without hostility, wi…"}, {"key": "ma15:7.9", "p": "心與慈俱，無結無怨，無恚無諍，…", "s": "without contention, extremely vast, great, immeasurable, well cultivated, pervading the entire world."}, {"key": "ma15:7.10", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。…", "s": "He thinks:"}, {"key": "ma15:7.11", "p": "彼作是念：『我本此心少不善修，我今此心無量善修。…", "s": "‘Formerly my mind was not well cultivated;"}, {"key": "ma15:7.12", "p": "』多聞聖弟子其心如是無量善修，若本因惡知識，…", "s": "now my mind is immeasurably well cultivated.’"}, {"key": "ma15:7.13", "p": "為放逸行，作不善業，…", "s": "The mind of a learned noble disciple is thus immeasurably well cultivated."}, {"key": "ma15:7.14", "p": "彼不能將去，不能穢汙，不復相隨。…", "s": "If formerly, because of a bad friend, he acted negligently and did unwholesome deeds,"}, {"key": "ma15:7.15", "p": "若有幼少童男、童女，生便能行慈心解脫者，…", "s": "those deeds cannot lead him away, cannot defile him, and no longer follow him."}, {"key": "ma15:7.16", "p": "而於後時，彼身、口、意寧可復作不善業耶？」…", "s": "If there were a young boy or girl who from birth could practice the liberation of mind through loving-kindness,\ncould they later do unwholesome deeds with body,…"}]}, {"id": "8", "label": "比丘答曰：「不也。世尊！", "rows": [{"key": "ma15:8.1", "p": "比丘答曰：「不也。世尊！…", "s": "The monks replied:"}, {"key": "ma15:8.2", "p": "所以者何？…", "s": "“No, Blessed One."}, {"key": "ma15:8.3", "p": "自不作惡業，惡業何由生？」…", "s": "Why is that?\nBecause if one does not do evil deeds, how could evil deeds arise?”"}]}, {"id": "9", "label": "「是以男女在家、出家，", "rows": [{"key": "ma15:9.1", "p": "「是以男女在家、出家，…", "s": "“Therefore, whether men or women, lay or monastic,"}, {"key": "ma15:9.2", "p": "常當勤修慈心解脫，若彼男女在家、…", "s": "should always diligently cultivate the liberation of mind through loving-kindness."}, {"key": "ma15:9.3", "p": "出家修慈心解脫者，不持此身往至彼世，但隨心去此。…", "s": "If those men or women, lay or monastic, cultivate the liberation of mind through loving-kindness,"}, {"key": "ma15:9.4", "p": "比丘應作是念：『我本放逸，…", "s": "they do not take this body to the next world, but go according to the mind.\nA monk should think:"}, {"key": "ma15:9.5", "p": "作不善業，是一切今可受報，終不後世。…", "s": "‘Formerly I was negligent and did unwholesome deeds;"}, {"key": "ma15:9.6", "p": "』若有如是行慈心解脫無量善修者，…", "s": "all these may be experienced now, but not in a future life.’"}, {"key": "ma15:9.7", "p": "必得阿那含，或復上得。…", "s": "One who thus practices the liberation of mind through loving-kindness,"}, {"key": "ma15:9.8", "p": "如是，悲、喜、心與捨俱，無結無怨，…", "s": "immeasurably well cultivated, will surely attain the state of a non-returner, or even higher.\nSo too with compassion, altruistic joy, and equanimity:"}, {"key": "ma15:9.9", "p": "無恚無諍，極廣甚大，無量善修，…", "s": "dwelling with a mind accompanied by equanimity, without hostility, without aversion, without anger,"}, {"key": "ma15:9.10", "p": "遍滿一切世間成就遊，彼作是念：…", "s": "without contention, extremely vast, great, immeasurable, well cultivated, pervading the entire world."}, {"key": "ma15:9.11", "p": "『我本此心少不善修，我今此心無量善修。…", "s": "He thinks:"}, {"key": "ma15:9.12", "p": "』多聞聖弟子其心如是無量善修，若本因惡知識，…", "s": "‘Formerly my mind was not well cultivated;\nnow my mind is immeasurably well cultivated.’"}, {"key": "ma15:9.13", "p": "為放逸行，作不善業，…", "s": "The mind of a learned noble disciple is thus immeasurably well cultivated."}, {"key": "ma15:9.14", "p": "彼不能將去，不能穢汙，不復相隨。…", "s": "If formerly, because of a bad friend, he acted negligently and did unwholesome deeds,"}, {"key": "ma15:9.15", "p": "若有幼少童男、童女，生便能行捨心解脫者，…", "s": "those deeds cannot lead him away, cannot defile him, and no longer follow him."}, {"key": "ma15:9.16", "p": "而於後時，彼身、口、意寧可復作不善業耶？」…", "s": "If there were a young boy or girl who from birth could practice the liberation of mind through equanimity,\ncould they later do unwholesome deeds with body, spee…"}]}, {"id": "10", "label": "比丘答曰：「不也。世尊！", "rows": [{"key": "ma15:10.1", "p": "比丘答曰：「不也。世尊！…", "s": "The monks replied:"}, {"key": "ma15:10.2", "p": "所以者何？…", "s": "“No, Blessed One."}, {"key": "ma15:10.3", "p": "自不作惡業，惡業何由生？」…", "s": "Why is that?\nBecause if one does not do evil deeds, how could evil deeds arise?”"}]}, {"id": "11", "label": "「是以男女在家、出家，常當勤修捨心解脫。", "rows": [{"key": "ma15:11.1", "p": "「是以男女在家、出家，常當勤修捨心解脫。…", "s": "“Therefore, whether men or women, lay or monastic,"}, {"key": "ma15:11.2", "p": "若彼男女在家、出家修捨心解脫者，…", "s": "should always diligently cultivate the liberation of mind through equanimity."}, {"key": "ma15:11.3", "p": "不持此身往至彼世，但隨心去此。…", "s": "If those men or women, lay or monastic, cultivate the liberation of mind through equanimity,"}, {"key": "ma15:11.4", "p": "比丘應作是念：『我本放逸，…", "s": "they do not take this body to the next world, but go according to the mind.\nA monk should think:"}, {"key": "ma15:11.5", "p": "作不善業，是一切今可受報，終不後世。…", "s": "‘Formerly I was negligent and did unwholesome deeds;"}, {"key": "ma15:11.6", "p": "』若有如是行捨心解脫無量善修者，…", "s": "all these may be experienced now, but not in a future life.’"}, {"key": "ma15:11.7", "p": "必得阿那含，或復上得。」…", "s": "One who thus practices the liberation of mind through equanimity,\nimmeasurably well cultivated, will surely attain the state of a non-returner, or even higher.”"}]}, {"id": "12", "label": "佛說如是。", "rows": [{"key": "ma15:12.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma15:12.2", "p": "彼諸比丘聞佛所說，歡喜奉行。…", "s": "Those monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

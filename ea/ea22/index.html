@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:39 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:40 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -967,7 +1026,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "ea22", "label": "", "children": [{"id": "ea22.1", "label": "EA 22.1 — 供養", "children": [{"id": "ea22.1/1", "label": "聞如是：", "rows": [{"key": "ea22.1:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea22.1/2", "label": "一時，佛在舍衛國祇樹給孤獨園。", "rows": [{"key": "ea22.1:2.1", "p": "一時，佛在舍衛國祇樹給孤獨園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea22.1/3", "label": "爾時，世尊告諸比丘：「有三人，世人所應供 養。", "rows": [{"key": "ea22.1:3.1", "p": "爾時，世尊告諸比丘：「有三人，世人所應供 養。…", "s": "At that time, the Blessed One said to the monks:\n'There are three persons who should be supported by the people of the world."}, {"key": "ea22.1:3.2", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.1:3.3", "p": "如來、至真、等正覺，…", "s": "The Tathāgata, the Worthy One, the Perfectly Enlightened One,"}, {"key": "ea22.1:3.4", "p": "世人所應供 養；如來弟子漏盡阿羅漢，…", "s": "should be supported by the people of the world;\na disciple of the Tathāgata who is an arahant with taints destroyed,"}, {"key": "ea22.1:3.5", "p": "世人所應供養；轉 輪聖王，世人所應供養。…", "s": "should be supported by the people of the world;\na wheel-turning king should be supported by the people of the world."}]}, {"id": "ea22.1/4", "label": "「有何因緣，如來世 人所應供養乎？", "rows": [{"key": "ea22.1:4.1", "p": "「有何因緣，如來世 人所應供養乎？…", "s": "'What is the reason that the Tathāgata should be supported by the people of the world?"}, {"key": "ea22.1:4.2", "p": "夫如來者，不伏者伏，不降 者降，…", "s": "The Tathāgata subdues the unsubdued, tames the untamed,"}, {"key": "ea22.1:4.3", "p": "不度者度，未得解脫者令得解脫，…", "s": "liberates the unliberated, causes those who have not attained liberation to attain liberation,"}, {"key": "ea22.1:4.4", "p": "未般涅槃者使成涅槃，無救護者與作救 護，…", "s": "causes those who have not attained Nibbāna to attain Nibbāna, provides protection for the unprotected,"}, {"key": "ea22.1:4.5", "p": "盲者與作眼目，病者與作救護。…", "s": "provides eyes for the blind, provides aid for the sick."}, {"key": "ea22.1:4.6", "p": "最尊第 一，魔若魔天、天及人民，…", "s": "He is the most honored and foremost, among Māra, Māra's devas, devas, and humans,"}, {"key": "ea22.1:4.7", "p": "於中最尊福田，可敬 可貴，…", "s": "the supreme field of merit among them, worthy of respect and veneration,"}, {"key": "ea22.1:4.8", "p": "與人作導，令知正路，未知道者與 說導教，…", "s": "acting as a guide for people, showing them the right path, teaching and guiding those who do not know the path.'"}, {"key": "ea22.1:4.9", "p": "以此因緣，如來世人所應供養。…", "s": "For this reason, the Tathāgata is worthy of offerings from the people of the world."}]}, {"id": "ea22.1/5", "label": "「復 有何因緣，", "rows": [{"key": "ea22.1:5.1", "p": "「復 有何因緣，…", "s": "Again, what is the reason"}, {"key": "ea22.1:5.2", "p": "如來弟子漏盡阿羅漢世人所應 供養乎？…", "s": "that the Tathāgata's disciple, the arahant who has exhausted the taints,\nis worthy of offerings from the people of the world?"}, {"key": "ea22.1:5.3", "p": "比丘當知，漏盡阿羅漢以度生死 源，更不復受有，…", "s": "Monks, you should know that the arahant who has exhausted the taints has crossed\nover the source of birth and death and will no longer receive existence."}, {"key": "ea22.1:5.4", "p": "以得無上法，淫、怒、癡盡， 永不得全，是世福田。…", "s": "Having attained the supreme Dharma, with lust, anger, and delusion exhausted,\nnever to be fully present again, they are a field of merit for the world."}, {"key": "ea22.1:5.5", "p": "以此因緣本末，使漏 盡阿羅漢世人所應供養。…", "s": "For this reason and from beginning to end,\nthe arahant who has exhausted the taints is worthy of offerings from the people of the world."}]}, {"id": "ea22.1/6", "label": "「復以何因緣，轉 輪聖王世人所應供養？", "rows": [{"key": "ea22.1:6.1", "p": "「復以何因緣，轉 輪聖王世人所應供養？…", "s": "Again, for what reason is a wheel-turning sage king worthy of offerings from the people of the world?"}, {"key": "ea22.1:6.2", "p": "比丘當知，轉輪聖 王以法治化，…", "s": "Monks, you should know that a wheel-turning sage king governs and transforms by the Dharma."}, {"key": "ea22.1:6.3", "p": "終不殺生，復教化人使不 殺生；自不盜竊，…", "s": "He never kills living beings, and moreover teaches others not to kill;\nhe himself does not steal,"}, {"key": "ea22.1:6.4", "p": "亦復教他人使不偷 盜；自不淫泆，…", "s": "and also teaches others not to steal;\nhe himself does not engage in sexual misconduct,"}, {"key": "ea22.1:6.5", "p": "復教他人不行淫泆；自 不妄語，…", "s": "and also teaches others not to engage in sexual misconduct;\nhe himself does not speak falsely,"}, {"key": "ea22.1:6.6", "p": "亦復教人使不妄語；自不兩舌，…", "s": "and also teaches others not to speak falsely;\nhe himself does not speak divisively,"}, {"key": "ea22.1:6.7", "p": "鬪亂彼此，亦復教他人使不兩舌；…", "s": "causing conflict between others, and also teaches others not to speak divisively;"}, {"key": "ea22.1:6.8", "p": "自不 嫉妬、恚、癡，亦復教他人不習此法；…", "s": "he himself is free from envy, anger, and delusion, and also teaches others not to practice these qualities;"}, {"key": "ea22.1:6.9", "p": "自行正 見，復教他人使不邪見。…", "s": "he himself practices right view, and also teaches others not to have wrong view."}, {"key": "ea22.1:6.10", "p": "以此因緣，以此 本末，使轉輪聖王世人所應供養。」…", "s": "Because of this cause and condition, because of this origin and outcome,\nthe wheel-turning sage king is one whom the world should venerate."}]}, {"id": "ea22.1/7", "label": "爾時，諸 比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea22.1:7.1", "p": "爾時，諸 比丘聞佛所說，歡喜奉行。…", "s": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}]}, {"id": "ea22.2", "label": "EA 22.2 — 三善根", "children": [{"id": "ea22.2/1", "label": "聞如是：", "rows": [{"key": "ea22.2:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea22.2/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea22.2:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍada's Park, in Sāvatthī."}]}, {"id": "ea22.2/3", "label": "爾時，世尊告阿難：「有三善根，", "rows": [{"key": "ea22.2:3.1", "p": "爾時，世尊告阿難：「有三善根，…", "s": "At that time, the Blessed One said to Ānanda:\n'There are three wholesome roots"}, {"key": "ea22.2:3.2", "p": "不可窮 盡，漸至涅槃界。…", "s": "that are inexhaustible and gradually lead to the realm of Nibbāna."}, {"key": "ea22.2:3.3", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.2:3.4", "p": "所謂於如來所 而種功德，此善根不可窮盡。…", "s": "They are:\nplanting merit in the Tathāgata—this wholesome root is inexhaustible."}, {"key": "ea22.2:3.5", "p": "於正法而 種功德，此善根不可窮盡。…", "s": "Planting merit in the true Dharma—this wholesome root is inexhaustible."}, {"key": "ea22.2:3.6", "p": "於聖眾而種 功德，此善根不可窮盡。…", "s": "Planting merit in the noble Saṅgha—this wholesome root is inexhaustible."}, {"key": "ea22.2:3.7", "p": "是謂，阿難！…", "s": "This, Ānanda,"}, {"key": "ea22.2:3.8", "p": "此三善 根不可窮盡，得至涅槃界。…", "s": "is what is meant by these three wholesome roots being inexhaustible and reaching the realm of Nibbāna."}, {"key": "ea22.2:3.9", "p": "是故，阿難！…", "s": "Therefore, Ānanda,"}, {"key": "ea22.2:3.10", "p": "當 求方便，獲此不可窮盡之福。…", "s": "you should seek the means to obtain this inexhaustible merit."}, {"key": "ea22.2:3.11", "p": "如是，阿難！…", "s": "Thus, Ānanda,"}, {"key": "ea22.2:3.12", "p": "當作是學。」…", "s": "you should train yourself.'"}]}, {"id": "ea22.2/4", "label": "爾時，阿難聞佛所說，歡喜奉 行。", "rows": [{"key": "ea22.2:4.1", "p": "爾時，阿難聞佛所說，歡喜奉 行。…", "s": "Then Ānanda, having heard what the Buddha said, rejoiced and practiced accordingly."}]}]}, {"id": "ea22.3", "label": "EA 22.3 — 三痛", "children": [{"id": "ea22.3/1", "label": "聞如是：", "rows": [{"key": "ea22.3:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea22.3/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea22.3:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea22.3/3", "label": "爾時，世尊告諸比丘：「有此三痛。", "rows": [{"key": "ea22.3:3.1", "p": "爾時，世尊告諸比丘：「有此三痛。…", "s": "At that time, the Blessed One said to the monks:\n'There are these three feelings."}, {"key": "ea22.3:3.2", "p": "云何為 三？…", "s": "What are the three?"}, {"key": "ea22.3:3.3", "p": "所謂樂痛、苦痛、不苦不樂痛。…", "s": "They are pleasant feeling, painful feeling, and neither-painful-nor-pleasant feeling."}, {"key": "ea22.3:3.4", "p": "諸比丘當知， 彼樂痛者，欲愛使也；彼苦痛者，…", "s": "Monks, you should know that pleasant feeling is the fetter of sensual desire;\npainful feeling is the fetter of aversion;"}, {"key": "ea22.3:3.5", "p": "瞋恚使也；不 苦不樂痛者，是癡使也。…", "s": "neither-painful-nor-pleasant feeling is the fetter of ignorance."}, {"key": "ea22.3:3.6", "p": "是故，諸比丘！…", "s": "Therefore, monks!"}, {"key": "ea22.3:3.7", "p": "當學 方便，求滅此使。…", "s": "You should learn the means to eliminate these fetters."}, {"key": "ea22.3:3.8", "p": "所以然者，當自熾然，當 自修行法，得無比法。…", "s": "Why is that?\nYou should be ardent, you should practice the Dharma, and attain the unsurpassed Dharma."}, {"key": "ea22.3:3.9", "p": "諸比丘當知，我滅度 後，其有比丘念自熾然，…", "s": "Monks, you should know that after my passing, any monk who is mindful and ardent,"}, {"key": "ea22.3:3.10", "p": "修其行法，得無 比法，此則是第一聲聞。…", "s": "practices the Dharma, and attains the unsurpassed Dharma—this is the foremost disciple."}]}, {"id": "ea22.3/4", "label": "「云何，比丘！", "rows": [{"key": "ea22.3:4.1", "p": "「云何，比丘！…", "s": "'How, monks,"}, {"key": "ea22.3:4.2", "p": "當自熾 然，當自修行，得修行法，獲無比法？…", "s": "should one be ardent, practice oneself, attain the practice of the Dharma, and obtain the unsurpassed Dharma?"}, {"key": "ea22.3:4.3", "p": "於是， 比丘！…", "s": "Here, monks!'"}, {"key": "ea22.3:4.4", "p": "內自觀身，外自觀身，內外自觀身而 自遊戲；…", "s": "Internally observe the body, externally observe the body, internally and externally observe the body, and delight in it."}, {"key": "ea22.3:4.5", "p": "內觀痛，外觀痛，內外觀痛；…", "s": "Internally observe feelings, externally observe feelings, internally and externally observe feelings."}, {"key": "ea22.3:4.6", "p": "內觀意， 外觀意，內外觀意；…", "s": "Internally observe the mind, externally observe the mind, internally and externally observe the mind."}, {"key": "ea22.3:4.7", "p": "內觀法，外觀法，內外觀 法而自遊戲。…", "s": "Internally observe phenomena, externally observe phenomena,\ninternally and externally observe phenomena, and delight in it."}, {"key": "ea22.3:4.8", "p": "如是，比丘！…", "s": "Thus, monks,"}, {"key": "ea22.3:4.9", "p": "當自熾然，盛修 行其法，得無比法。…", "s": "you should be ardent, diligently cultivate the Dharma, and attain the unsurpassed Dharma."}, {"key": "ea22.3:4.10", "p": "諸比丘行此法者，於 聲聞中第一弟子。…", "s": "Monks who practice this Dharma are the foremost disciples among the hearers."}, {"key": "ea22.3:4.11", "p": "如是，比丘！…", "s": "Thus, monks,"}, {"key": "ea22.3:4.12", "p": "當作是學。」…", "s": "you should train yourselves like this.”"}]}, {"id": "ea22.3/5", "label": "爾 時，諸比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea22.3:5.1", "p": "爾 時，諸比丘聞佛所說，歡喜奉行。…", "s": "Then the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea22.4", "label": "EA 22.4 — 三覆露", "children": [{"id": "ea22.4/1", "label": "聞如是：", "rows": [{"key": "ea22.4:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea22.4/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea22.4:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍada's Park in Sāvatthī."}]}, {"id": "ea22.4/3", "label": "爾時，世尊告諸比丘：「有三事，覆則妙，露 則不妙。", "rows": [{"key": "ea22.4:3.1", "p": "爾時，世尊告諸比丘：「有三事，覆則妙，露 則不妙。…", "s": "At that time, the Blessed One said to the monks:\n'There are three things that are good when concealed and not good when revealed."}, {"key": "ea22.4:3.2", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.4:3.3", "p": "一者女人，覆則妙，露則 不妙；婆羅門呪術，…", "s": "First, a woman—good when concealed, not good when revealed;\nthe incantations of a brahmin—"}, {"key": "ea22.4:3.4", "p": "覆則妙，露則不妙；邪見之 業，覆則妙，露則不妙。…", "s": "good when concealed, not good when revealed;\nand wrong view deeds—good when concealed, not good when revealed."}, {"key": "ea22.4:3.5", "p": "是謂，比丘！…", "s": "This, monks,"}, {"key": "ea22.4:3.6", "p": "有此三事， 覆則妙，露則不妙。…", "s": "is having these three things that are good when concealed and not good when revealed."}]}, {"id": "ea22.4/4", "label": "「復有三事，露則妙，覆則 不妙。", "rows": [{"key": "ea22.4:4.1", "p": "「復有三事，露則妙，覆則 不妙。…", "s": "'Furthermore, there are three things that are good when revealed and not good when concealed."}, {"key": "ea22.4:4.2", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.4:4.3", "p": "日、月，露則妙，覆則不妙；…", "s": "The sun and the moon—good when revealed, not good when concealed;"}, {"key": "ea22.4:4.4", "p": "如 來法語，露則妙，覆則不妙。…", "s": "the Dharma teachings of the Tathāgata—good when revealed, not good when concealed."}, {"key": "ea22.4:4.5", "p": "是謂，比丘！…", "s": "This, monks,"}, {"key": "ea22.4:4.6", "p": "有此 三事，露則妙，覆則不妙。」…", "s": "is having these three things that are good when revealed and not good when concealed.'"}]}, {"id": "ea22.4/5", "label": "爾時，世尊便說此偈：", "rows": [{"key": "ea22.4:5.1", "p": "爾時，世尊便說此偈：…", "s": "At that time, the Blessed One spoke this verse:"}]}, {"id": "ea22.4/6", "label": "「女人及呪術， 邪見不善行，", "rows": [{"key": "ea22.4:6.1", "p": "「女人及呪術，　　邪見不善行，…", "s": "“Women, spells, wrong views, and unwholesome deeds,"}, {"key": "ea22.4:6.2", "p": "此是世三法，　　覆隱而最妙。…", "s": "These are three things in the world that are hidden and most excellent."}, {"key": "ea22.4:6.3", "p": "日月廣所照，　　如來正法語，…", "s": "What the sun and moon illuminate, the Tathāgata’s true Dharma words,"}, {"key": "ea22.4:6.4", "p": "此是三世法，　　露則第一妙。…", "s": "These are three things across time that, when revealed, are supremely excellent."}]}, {"id": "ea22.4/7", "label": "「是故，諸比丘！", "rows": [{"key": "ea22.4:7.1", "p": "「是故，諸比丘！…", "s": "“Therefore, monks!"}, {"key": "ea22.4:7.2", "p": "當露現如來法，勿使覆隱。…", "s": "You should reveal the Tathāgata’s Dharma, do not let it be hidden."}, {"key": "ea22.4:7.3", "p": "如 是，比丘！…", "s": "Thus, monks!"}, {"key": "ea22.4:7.4", "p": "當作是學。」…", "s": "You should train yourselves in this way.”"}]}, {"id": "ea22.4/8", "label": "爾時，諸比丘聞佛所說， 歡喜奉行。", "rows": [{"key": "ea22.4:8.1", "p": "爾時，諸比丘聞佛所說， 歡喜奉行。…", "s": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}]}, {"id": "ea22.5", "label": "EA 22.5 — 相", "children": [{"id": "ea22.5/1", "label": "聞如是：", "rows": [{"key": "ea22.5:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea22.5/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea22.5:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea22.5/3", "label": "爾時，世尊告諸比丘：「此三有為有為相。", "rows": [{"key": "ea22.5:3.1", "p": "爾時，世尊告諸比丘：「此三有為有為相。…", "s": "At that time, the Blessed One said to the monks:\n'These three conditioned phenomena have conditioned characteristics."}, {"key": "ea22.5:3.2", "p": "云 何為三？…", "s": "What are the three?"}, {"key": "ea22.5:3.3", "p": "知所從起，知當遷變，知當滅盡。…", "s": "Knowing their origin, knowing their change, knowing their cessation."}, {"key": "ea22.5:3.4", "p": "彼云何知所從起？…", "s": "How does one know their origin?"}, {"key": "ea22.5:3.5", "p": "所謂生，長大成五陰形， 得諸持、入，是謂所從起。…", "s": "That is, birth, growing into the form of the five aggregates, obtaining the faculties and bases—this is called origin."}, {"key": "ea22.5:3.6", "p": "彼云何為滅盡？…", "s": "How does one know their cessation?"}, {"key": "ea22.5:3.7", "p": "所謂死，命過不住、無常，諸陰散壞，…", "s": "That is, death, the passing away of life, impermanence, the dissolution of the aggregates,"}, {"key": "ea22.5:3.8", "p": "宗族別離， 命根斷絕，是謂為滅盡。…", "s": "separation from family, the cutting off of the life faculty—this is called cessation."}, {"key": "ea22.5:3.9", "p": "彼云何變易？…", "s": "How does one know change?"}, {"key": "ea22.5:3.10", "p": "齒落、 髮白、氣力竭盡，年遂衰微，…", "s": "Teeth falling out, hair turning white, vitality exhausted, aging and decline,"}, {"key": "ea22.5:3.11", "p": "身體解散，是謂為 變易法。…", "s": "the body disintegrating—this is called the nature of change."}, {"key": "ea22.5:3.12", "p": "是為，比丘！…", "s": "Thus, monks!"}, {"key": "ea22.5:3.13", "p": "三有為有為相，當知此三 有為相，善分別之。…", "s": "These three conditioned phenomena have conditioned characteristics;\nyou should know these three conditioned characteristics and discern them well.'"}, {"key": "ea22.5:3.14", "p": "如是，諸比丘！…", "s": "Thus, monks!"}, {"key": "ea22.5:3.15", "p": "當作是學。」…", "s": "You should train yourselves in this way."}]}, {"id": "ea22.5/4", "label": "爾時，諸比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea22.5:4.1", "p": "爾時，諸比丘聞佛所說，歡喜奉行。…", "s": "Then the monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}]}, {"id": "ea22.6", "label": "EA 22.6 — 法", "children": [{"id": "ea22.6/1", "label": "聞如是：", "rows": [{"key": "ea22.6:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea22.6/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea22.6:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea22.6/3", "label": "爾時，世尊告諸比丘：「愚人有三相三法， 不可恃怙。", "rows": [{"key": "ea22.6:3.1", "p": "爾時，世尊告諸比丘：「愚人有三相三法， 不可恃怙。…", "s": "At that time, the Blessed One said to the monks:\n\"A foolish person has three characteristics and three things that cannot be relied upon."}, {"key": "ea22.6:3.2", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.6:3.3", "p": "於是，愚者不可思惟 而思惟之；…", "s": "Here, a fool thinks about what should not be thought about;"}, {"key": "ea22.6:3.4", "p": "不可論說而論說之；不可行 者而修習之。…", "s": "speaks about what should not be spoken about;\nand practices what should not be practiced."}]}, {"id": "ea22.6/4", "label": "「云何愚者不可思惟而思念 之？", "rows": [{"key": "ea22.6:4.1", "p": "「云何愚者不可思惟而思念 之？…", "s": "\"How does a fool think about what should not be thought about?"}, {"key": "ea22.6:4.2", "p": "於是，愚者意三行便思憶之。…", "s": "Here, a fool recollects the three kinds of mental activity."}, {"key": "ea22.6:4.3", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.6:4.4", "p": "於是，愚者起嫉心，於他財物及於女色，…", "s": "Here, a fool gives rise to envy regarding others' property and women,"}, {"key": "ea22.6:4.5", "p": "心 念惡言悉興嫉心：『彼之所有，願是我許。…", "s": "and with a mind of evil speech, gives rise to envy:\n'Whatever they have, I wish it were mine.'"}, {"key": "ea22.6:4.6", "p": "』如 是，愚者不可思惟而思惟之。…", "s": "Thus, a fool thinks about what should not be thought about."}]}, {"id": "ea22.6/5", "label": "「云何愚者不 可論說而論說之？", "rows": [{"key": "ea22.6:5.1", "p": "「云何愚者不 可論說而論說之？…", "s": "\"How does a fool speak about what should not be spoken about?"}, {"key": "ea22.6:5.2", "p": "於是，愚者造口四過。…", "s": "Here, a fool commits the four verbal transgressions."}, {"key": "ea22.6:5.3", "p": "云 何為四？…", "s": "What are the four?"}, {"key": "ea22.6:5.4", "p": "於是，愚者恒喜妄言、綺語、惡口、鬪亂 彼此。…", "s": "Thus, a fool constantly delights in false speech, frivolous talk, harsh words, and creating discord among others."}, {"key": "ea22.6:5.5", "p": "如是，愚者造口四過。…", "s": "In this way, a fool commits the four verbal transgressions."}]}, {"id": "ea22.6/6", "label": "「云何愚者造於 惡行？", "rows": [{"key": "ea22.6:6.1", "p": "「云何愚者造於 惡行？…", "s": "\"How does a fool commit evil deeds?"}, {"key": "ea22.6:6.2", "p": "於是，愚者造身惡行，常念殺生、竊盜、 淫泆。…", "s": "Here, a fool commits evil bodily deeds, constantly thinking of killing, stealing, and sexual misconduct."}, {"key": "ea22.6:6.3", "p": "如是，愚者造於惡行。…", "s": "Thus, a fool commits evil deeds."}, {"key": "ea22.6:6.4", "p": "如是，比丘！…", "s": "Thus, monks!"}, {"key": "ea22.6:6.5", "p": "愚 者有此三行，愚癡之人習此三事。…", "s": "A fool has these three kinds of conduct;\na foolish person practices these three things."}]}, {"id": "ea22.6/7", "label": "「復次，比 丘！", "rows": [{"key": "ea22.6:7.1", "p": "「復次，比 丘！…", "s": "\"Furthermore, monks!"}, {"key": "ea22.6:7.2", "p": "智者有三事，當念修行。…", "s": "A wise person has three things that should be cultivated."}, {"key": "ea22.6:7.3", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.6:7.4", "p": "於是， 智者應思惟者，便思惟之；…", "s": "Here, what a wise person should contemplate, they contemplate;"}, {"key": "ea22.6:7.5", "p": "應論說者，便 論說之；應行善者，便修行善。…", "s": "what should be discussed, they discuss;\nwhat good deeds should be done, they practice good deeds."}]}, {"id": "ea22.6/8", "label": "「彼云何智 者應思惟事，便思惟之？", "rows": [{"key": "ea22.6:8.1", "p": "「彼云何智 者應思惟事，便思惟之？…", "s": "\"What are the things a wise person should contemplate, and they contemplate them?"}, {"key": "ea22.6:8.2", "p": "於是，智者思惟意 三行。…", "s": "Here, a wise person contemplates the three kinds of mental conduct."}, {"key": "ea22.6:8.3", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.6:8.4", "p": "於是，智者不嫉妬、恚、癡，…", "s": "Thus, the wise person is free from jealousy, anger, and delusion."}, {"key": "ea22.6:8.5", "p": "常行正見，見他財貨，不生想念。…", "s": "They constantly practice right view, and upon seeing others' wealth, they do not give rise to thoughts of desire."}, {"key": "ea22.6:8.6", "p": "如是，智者 應思惟者，便思惟之。…", "s": "Thus, what the wise person should contemplate, they contemplate accordingly."}]}, {"id": "ea22.6/9", "label": "「云何智者應論說 之？", "rows": [{"key": "ea22.6:9.1", "p": "「云何智者應論說 之？…", "s": "\"What should the wise person discuss?"}, {"key": "ea22.6:9.2", "p": "於是，智者成就口四行。…", "s": "Thus, the wise person accomplishes the four practices of speech."}, {"key": "ea22.6:9.3", "p": "云何為四？…", "s": "What are the four?"}, {"key": "ea22.6:9.4", "p": "於是， 智者不行妄語，亦不教人妄語，…", "s": "Thus, the wise person does not speak falsely, nor do they teach others to speak falsely."}, {"key": "ea22.6:9.5", "p": "見人妄語 者意不喜樂，是謂智者而護其口。…", "s": "Seeing someone speak falsely, their mind does not delight in it—this is called the wise person guarding their speech."}, {"key": "ea22.6:9.6", "p": "復次，智 者不行綺語、惡口、鬪亂彼此，…", "s": "Furthermore, the wise person does not engage in frivolous talk, harsh speech, or creating discord between others."}, {"key": "ea22.6:9.7", "p": "亦不教人使 行綺語、惡口、鬪亂。…", "s": "Nor do they teach others to engage in frivolous talk, harsh speech, or creating discord."}, {"key": "ea22.6:9.8", "p": "如是，智者成就口四行。…", "s": "Thus, the wise person accomplishes the four practices of speech."}]}, {"id": "ea22.6/10", "label": "「云何智者成就身三行？", "rows": [{"key": "ea22.6:10.1", "p": "「云何智者成就身三行？…", "s": "\"How does the wise person accomplish the three practices of body?"}, {"key": "ea22.6:10.2", "p": "於是，智者思惟身 行，無所觸犯。…", "s": "Thus, the wise person contemplates bodily actions, committing no transgressions."}, {"key": "ea22.6:10.3", "p": "然復智者自不殺生，…", "s": "Moreover, the wise person themselves does not kill living beings,"}, {"key": "ea22.6:10.4", "p": "亦不教 人殺生，見人殺者心不喜樂。…", "s": "nor do they teach others to kill living beings;\nseeing someone kill, their mind does not delight in it."}, {"key": "ea22.6:10.5", "p": "自不偷竊， 不教人盜，見人盜者心不喜樂。…", "s": "One does not steal oneself, nor teaches others to steal, and seeing someone stealing, one's mind does not rejoice."}, {"key": "ea22.6:10.6", "p": "亦不淫 泆，見他女人色，…", "s": "Also, one does not engage in sexual misconduct, and upon seeing another woman's appearance,"}, {"key": "ea22.6:10.7", "p": "心不起想，亦不教人使 行淫泆。…", "s": "one's mind does not give rise to thoughts, nor does one teach others to engage in sexual misconduct."}, {"key": "ea22.6:10.8", "p": "設見老母，視之如己親，…", "s": "If one sees an elderly woman, one regards her as one's own relative;"}, {"key": "ea22.6:10.9", "p": "中者如 姊，小者如妹，意無高下。…", "s": "one of middle age as a sister, and a younger one as a younger sister, with no distinction of high or low."}, {"key": "ea22.6:10.10", "p": "如是，智者身成就 三行，是謂智者所行。…", "s": "Thus, a wise person accomplishes these three practices in body;\nthis is called the conduct of a wise person."}, {"key": "ea22.6:10.11", "p": "如是，比丘！…", "s": "Thus, monks!"}, {"key": "ea22.6:10.12", "p": "有此三有 為之相。…", "s": "There are these three characteristics of conditioned existence."}, {"key": "ea22.6:10.13", "p": "是故，諸比丘！…", "s": "Therefore, monks!"}, {"key": "ea22.6:10.14", "p": "愚者三相常當捨離，此 三智者所行，不發斯須。…", "s": "The three characteristics of a fool should always be abandoned;\nthese three are practiced by the wise, not even for a moment."}, {"key": "ea22.6:10.15", "p": "如是，諸比丘！…", "s": "Thus, monks!"}, {"key": "ea22.6:10.16", "p": "當作 是學。」…", "s": "You should train yourselves like this."}]}, {"id": "ea22.6/11", "label": "爾時，諸比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea22.6:11.1", "p": "爾時，諸比丘聞佛所說，歡喜奉行。…", "s": "At that time, the monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}]}, {"id": "ea22.7", "label": "EA 22.7 — 三不覺", "children": [{"id": "ea22.7/1", "label": "聞如是：", "rows": [{"key": "ea22.7:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea22.7/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea22.7:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea22.7/3", "label": "爾時，世尊告諸比丘：「有此三法，不可覺 知，不見、", "rows": [{"key": "ea22.7:3.1", "p": "爾時，世尊告諸比丘：「有此三法，不可覺 知，不見、…", "s": "At that time, the Blessed One said to the monks:\n'There are these three things that cannot be known, seen,"}, {"key": "ea22.7:3.2", "p": "不聞，經歷生死，未曾瞻覩，我及 爾等曾不見聞。…", "s": "or heard, passing through birth and death, never having been gazed upon;\nI and you have never seen or heard them."}, {"key": "ea22.7:3.3", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.7:3.4", "p": "所謂賢聖戒，不 可覺知，不見、不聞，…", "s": "They are the noble virtuous behavior, which cannot be known, seen, or heard,"}, {"key": "ea22.7:3.5", "p": "經歷生死，未曾瞻覩， 我及爾等曾不見聞。…", "s": "passing through birth and death, never having been gazed upon;\nI and you have never seen or heard it."}, {"key": "ea22.7:3.6", "p": "賢聖三昧、賢聖智慧， 不可覺知，…", "s": "The noble concentration and noble wisdom cannot be known,"}, {"key": "ea22.7:3.7", "p": "不見、不聞，如今我身并及汝等，…", "s": "seen, or heard;\nnow I myself and you,"}, {"key": "ea22.7:3.8", "p": "皆悉覺知賢聖禁戒、賢聖三昧、賢聖智慧，…", "s": "all fully know and realize the noble precepts, noble concentration, and noble wisdom,"}, {"key": "ea22.7:3.9", "p": "皆悉成就，不復受有，已斷生死根原。…", "s": "all have accomplished them, no longer receive existence, and have cut off the root of birth and death."}, {"key": "ea22.7:3.10", "p": "是故， 諸比丘！…", "s": "Therefore, O monks!"}, {"key": "ea22.7:3.11", "p": "當念修行此三法。…", "s": "You should contemplate and cultivate these three things."}, {"key": "ea22.7:3.12", "p": "如是，諸比丘！…", "s": "Thus, O monks!"}, {"key": "ea22.7:3.13", "p": "當 作是學。」…", "s": "You should train yourselves.'"}]}, {"id": "ea22.7/4", "label": "爾時，諸比丘聞佛所說，歡喜奉 行。", "rows": [{"key": "ea22.7:4.1", "p": "爾時，諸比丘聞佛所說，歡喜奉 行。…", "s": "At that time, the monks heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea22.8", "label": "EA 22.8 — 愛敬", "children": [{"id": "ea22.8/1", "label": "聞如是：", "rows": [{"key": "ea22.8:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea22.8/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea22.8:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea22.8/3", "label": "爾時，世尊告諸比丘：「有三法甚可敬 愛，世人所貪。", "rows": [{"key": "ea22.8:3.1", "p": "爾時，世尊告諸比丘：「有三法甚可敬 愛，世人所貪。…", "s": "At that time, the Blessed One said to the monks:\n'There are three things that are greatly loved and respected, which worldly people crave."}, {"key": "ea22.8:3.2", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.8:3.3", "p": "所謂少壯，甚可愛 敬，世人所貪。…", "s": "They are youth, which is greatly loved and respected, and which worldly people crave."}, {"key": "ea22.8:3.4", "p": "無病，甚可愛敬，世人所貪。…", "s": "Freedom from illness, which is greatly loved and respected, and which worldly people crave."}, {"key": "ea22.8:3.5", "p": "壽 命，甚可愛敬，世人所貪。…", "s": "Long life, which is greatly loved and respected, and which worldly people crave."}, {"key": "ea22.8:3.6", "p": "是謂，比丘！…", "s": "This, monks,"}, {"key": "ea22.8:3.7", "p": "有此三 法，甚可愛敬，世人所貪。…", "s": "is what is meant by these three things that are greatly loved and respected, and which worldly people crave."}]}, {"id": "ea22.8/4", "label": "「復次，比丘！", "rows": [{"key": "ea22.8:4.1", "p": "「復次，比丘！…", "s": "'Furthermore, monks,"}, {"key": "ea22.8:4.2", "p": "雖有此 三法，甚可愛敬，世人所貪，…", "s": "although these three things are greatly loved and respected, and worldly people crave them,"}, {"key": "ea22.8:4.3", "p": "然更有三法，不 可愛敬，世人所不貪。…", "s": "there are three other things that are not loved or respected, and which worldly people do not crave."}, {"key": "ea22.8:4.4", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.8:4.5", "p": "雖有少 壯，然必當老，不可愛敬，世人所不貪。…", "s": "Although there is youth, one must inevitably grow old—this is not loved or respected,\nand worldly people do not crave it."}, {"key": "ea22.8:4.6", "p": "比 丘當知，雖有無病，然必當病，…", "s": "Monks, you should know that although there is freedom from illness, one must inevitably fall ill—"}, {"key": "ea22.8:4.7", "p": "不可愛敬， 世人所不貪。…", "s": "Not lovable or respectable, what people in the world do not crave."}, {"key": "ea22.8:4.8", "p": "比丘當知，雖有壽命，然必 當死，…", "s": "Monks, you should know that although one has a lifespan, one must inevitably die."}, {"key": "ea22.8:4.9", "p": "不可愛敬，世人所不貪。…", "s": "They are not lovable or respectable, and are not desired by people in the world."}, {"key": "ea22.8:4.10", "p": "是故，諸比 丘！…", "s": "Therefore, O bhikkhus!"}, {"key": "ea22.8:4.11", "p": "設有少壯，當求不老，至涅槃界；雖有 無病，…", "s": "If one is young and strong, one should seek the state of no aging, reaching the realm of Nibbāna;\neven if one is free from illness,"}, {"key": "ea22.8:4.12", "p": "當求方便，使不有病；雖有壽命，…", "s": "One should seek skillful means so as not to have illness;\nalthough one has a lifespan,"}, {"key": "ea22.8:4.13", "p": "當 求方便，使不命終。…", "s": "You should seek skillful means so that you do not meet your end."}, {"key": "ea22.8:4.14", "p": "如是，諸比丘！…", "s": "Thus, O monks!"}, {"key": "ea22.8:4.15", "p": "當作是 學。」…", "s": "One should train thus."}]}, {"id": "ea22.8/5", "label": "爾時，諸比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea22.8:5.1", "p": "爾時，諸比丘聞佛所說，歡喜奉行。…", "s": "At that time, the monks heard what the Buddha said, rejoiced and practiced accordingly."}]}]}, {"id": "ea22.9", "label": "EA 22.9 — 春", "children": [{"id": "ea22.9/1", "label": "聞如是：", "rows": [{"key": "ea22.9:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea22.9/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea22.9:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea22.9/3", "label": "爾時，世尊告諸比丘：「猶如春時天雨大 雹，", "rows": [{"key": "ea22.9:3.1", "p": "爾時，世尊告諸比丘：「猶如春時天雨大 雹，…", "s": "At that time, the Blessed One said to the monks:\n\"Just as in springtime a great hailstorm falls from the sky,"}, {"key": "ea22.9:3.2", "p": "設如來不出世，眾生入地獄，亦復如是。…", "s": "if a Tathāgata does not appear in the world, beings fall into hell—it is just the same."}, {"key": "ea22.9:3.3", "p": "是時，女人入地獄多於男子。…", "s": "At that time, women enter hell more often than men."}, {"key": "ea22.9:3.4", "p": "所以然者，比 丘當知，以三事故，…", "s": "Why is that?\nMonks, you should know, because of three things,"}, {"key": "ea22.9:3.5", "p": "眾生之類，身壞命終，入 三惡趣。…", "s": "beings, when their bodies break up and their lives end, are reborn in the three lower realms."}, {"key": "ea22.9:3.6", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.9:3.7", "p": "所謂貪欲、睡眠、調戲，…", "s": "They are:\nsensual desire, sleep, and frivolity."}, {"key": "ea22.9:3.8", "p": "有 此三事纏著心意，身壞命終，入三惡趣。…", "s": "These three things entangle and bind the mind;\nwhen the body breaks up and life ends, one falls into the three lower realms."}]}, {"id": "ea22.9/4", "label": "「女 人竟日習翫三法而自娛樂。", "rows": [{"key": "ea22.9:4.1", "p": "「女 人竟日習翫三法而自娛樂。…", "s": "\"Women spend the whole day practicing and indulging in three things for their own amusement."}, {"key": "ea22.9:4.2", "p": "云何為三？…", "s": "What are the three?"}, {"key": "ea22.9:4.3", "p": "晨 朝以嫉妬心而自纏縛，若至日中，…", "s": "In the morning, they bind themselves with a jealous mind;\nat midday,"}, {"key": "ea22.9:4.4", "p": "復以睡 眠結而自纏裹，向暮以貪欲心而自纏 縛。…", "s": "they again wrap themselves in the knot of sleep;\ntoward evening, they bind themselves with a mind of sensual desire."}, {"key": "ea22.9:4.5", "p": "以此因緣，使彼女人身壞命終，生三惡 趣。…", "s": "Because of these causes and conditions, when those women's bodies break up and their lives end,\nthey are reborn in the three lower realms."}, {"key": "ea22.9:4.6", "p": "是故，諸比丘！…", "s": "Therefore, monks!"}, {"key": "ea22.9:4.7", "p": "當念離此三法。」…", "s": "You should be mindful to abandon these three things."}]}, {"id": "ea22.9/5", "label": "爾時，世尊 便說此偈：", "rows": [{"key": "ea22.9:5.1", "p": "爾時，世尊 便說此偈：…", "s": "At that time, the Blessed One spoke this verse:"}]}, {"id": "ea22.9/6", "label": "「嫉妬睡眠調， 貪欲是惡法，", "rows": [{"key": "ea22.9:6.1", "p": "「嫉妬睡眠調，　　貪欲是惡法，…", "s": "Jealousy, sleepiness, and restlessness, greed is an unwholesome thing."}, {"key": "ea22.9:6.2", "p": "牽人至地獄，　　至竟無解脫。…", "s": "They drag a person to hell, ultimately without liberation."}, {"key": "ea22.9:6.3", "p": "是以當捨離，　　嫉妬及睡調，…", "s": "Therefore one should abandon jealousy, sleepiness, and restlessness,"}, {"key": "ea22.9:6.4", "p": "亦當捨於欲，　　莫造彼惡行。…", "s": "And also should abandon desire;\ndo not create those evil deeds."}]}, {"id": "ea22.9/7", "label": "「是故，諸比丘！", "rows": [{"key": "ea22.9:7.1", "p": "「是故，諸比丘！…", "s": "Therefore, monks!"}, {"key": "ea22.9:7.2", "p": "當念去離嫉妬，無慳悋心，常 行惠施，…", "s": "You should be mindful to abandon jealousy, have no miserly mind, always practice generosity,"}, {"key": "ea22.9:7.3", "p": "不著睡眠，當行不染，不著貪 欲。…", "s": "Not be attached to sleep, should practice non-defilement, not be attached to greed and desire."}, {"key": "ea22.9:7.4", "p": "如是，諸比丘！…", "s": "Thus, monks!"}, {"key": "ea22.9:7.5", "p": "當作是學。」…", "s": "You should train yourselves in this way."}]}, {"id": "ea22.9/8", "label": "爾時，諸比丘聞 佛所說，歡喜奉行。", "rows": [{"key": "ea22.9:8.1", "p": "爾時，諸比丘聞 佛所說，歡喜奉行。…", "s": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}]}, {"id": "ea22.10", "label": "EA 22.10 — 無足", "children": [{"id": "ea22.10/1", "label": "聞如是：", "rows": [{"key": "ea22.10:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea22.10/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea22.10:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea22.10/3", "label": "爾時，世尊告諸比丘：「有此三法，習之、", "rows": [{"key": "ea22.10:3.1", "p": "爾時，世尊告諸比丘：「有此三法，習之、…", "s": "At that time, the Blessed One said to the monks:\n'There are these three things which, if one practices them,"}, {"key": "ea22.10:3.2", "p": "翫 之，不知厭足，亦復不能至休息處。…", "s": "and indulges in them, one never knows satisfaction, nor can one reach the place of rest."}, {"key": "ea22.10:3.3", "p": "云何為 三？…", "s": "What are the three?"}, {"key": "ea22.10:3.4", "p": "所謂貪欲。…", "s": "They are what is called sensual desire."}, {"key": "ea22.10:3.5", "p": "若有人習此法，初無厭足。…", "s": "If someone practices this thing, from the start there is no satisfaction."}, {"key": "ea22.10:3.6", "p": "若 復有人習飲酒者，初無厭足。…", "s": "If someone practices drinking alcohol, from the start there is no satisfaction."}, {"key": "ea22.10:3.7", "p": "若復有人修 習睡眠，初無厭足。…", "s": "If someone practices sleeping, from the start there is no satisfaction."}, {"key": "ea22.10:3.8", "p": "是謂，比丘！…", "s": "This, monks,"}, {"key": "ea22.10:3.9", "p": "若有人習此 三法者，初無厭足，…", "s": "if someone practices these three things, from the start there is no satisfaction,"}, {"key": "ea22.10:3.10", "p": "亦復不能至滅盡之 處。…", "s": "nor can they reach the place of cessation."}, {"key": "ea22.10:3.11", "p": "是故，諸比丘！…", "s": "Therefore, monks!"}, {"key": "ea22.10:3.12", "p": "常當捨離此三法，不親近 之。…", "s": "You should always abandon these three things, not draw near to them."}, {"key": "ea22.10:3.13", "p": "如是，諸比丘！…", "s": "Thus, monks!'"}, {"key": "ea22.10:3.14", "p": "當作是學。」…", "s": "You should train thus."}]}, {"id": "ea22.10/4", "label": "爾時，諸比丘聞 佛所說，歡喜奉行。", "rows": [{"key": "ea22.10:4.1", "p": "爾時，諸比丘聞 佛所說，歡喜奉行。…", "s": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}, {"id": "ea22.10/5", "label": "供養、三善根 三痛、三覆露 相、", "rows": [{"key": "ea22.10:5.1", "p": "供養、三善根　　三痛、三覆露 \n相、…", "s": "Offerings, three wholesome roots, three pains, three coverings, signs,"}, {"key": "ea22.10:5.2", "p": "法、三不覺　　愛敬、春、無足…", "s": "Dharma, three unawarenesses, love and respect, spring, without feet"}]}]}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2064,8 +2123,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2105,30 +2317,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

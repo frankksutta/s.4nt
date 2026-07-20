@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../../help.html">Help</a><a href="../../../help.html#about">About</a><a href="../../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:47 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../../help.html">Help</a><a href="../../../help.html#about">About</a><a href="../../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:43 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -967,7 +1026,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "2", "label": "¶ 107. evaṃ me sutanti amba·laṭṭhika·rāhul·ovāda·suttaṃ.", "rows": [{"key": "mn-a61:2.1", "p": "¶ 107. evaṃ me sutanti\namba·laṭṭhika·rāhul·ovāda·s…", "s": "107.\nThus have I heard:\nthe Advice to Rāhula at the Mango Stone sutta."}, {"key": "mn-a61:2.2", "p": "tattha amba·laṭṭhikāyaṃ vi·hara·tīti veḷu·vana·vih…", "s": "Therein,\n'dwells at the Mango Stone' means:\nhe dwells developing seclusion in a palace named 'Mango Stone,' built at the edge of the Bamboo Grove monastery,\nin …"}, {"key": "mn-a61:2.3", "p": "kaṇṭako nāma jāta·kālato paṭṭhāya tikhiṇova hoti,\n…", "s": "Just as a thorn is sharp from the time of its birth, so too this venerable one,\neven while a seven-year-old novice, dwelt there developing seclusion."}, {"key": "mn-a61:2.4", "p": "paṭi·sallānā vuṭṭhitoti\nphala·samāpattito vuṭṭhāya.…", "s": "'Having emerged from seclusion' means having emerged from the attainment of the fruition."}, {"key": "mn-a61:2.5", "p": "āsananti pakati·paññattamev·ettha āsanaṃ atthi,\nta…", "s": "'Seat' means there was a seat that was already prepared;\nhe shook it out and placed it."}, {"key": "mn-a61:2.6", "p": "udak·ādhāneti udaka·bhājane.…", "s": "'Water vessel' means a water container."}, {"key": "mn-a61:2.7", "p": "``udaka·ṭ·ṭhāne''tipi pāṭho.…", "s": "There is also the reading 'at the water place.'"}]}, {"id": "3", "label": "¶ āyasmantaṃ rāhulaṃ āmante·sīti ovāda·dāna·t·thaṃ āmantesi.", "rows": [{"key": "mn-a61:3.1", "p": "¶ āyasmantaṃ rāhulaṃ āmante·sīti ovāda·dāna·t·thaṃ…", "s": "'He addressed the Venerable Rāhula' means he addressed him for the purpose of giving advice."}, {"key": "mn-a61:3.2", "p": "bhagavatā hi rāhula·t·therassa sambahulā dhamma·de…", "s": "For the Blessed One gave several discourses on the Dhamma to the Elder Rāhula."}, {"key": "mn-a61:3.3", "p": "sāmaṇera·pañhaṃ therasseva vuttaṃ.…", "s": "The Novice's Questions were spoken to the elder himself."}, {"key": "mn-a61:3.4", "p": "tathā rāhula·saṃyuttaṃ mahā·rāhul·ovāda·suttaṃ cūḷ…", "s": "Likewise, the Rāhula Saṃyutta, the Great Advice to Rāhula Sutta,\nthe Lesser Advice to Rāhula Sutta, and this Advice to Rāhula at the Mango Stone Sutta."}]}, {"id": "4", "label": "¶ ayañhi āyasmā satta·vassika·kāle bhagavantaṃ cīvara·kaṇṇe gahetvā…", "rows": [{"key": "mn-a61:4.1", "p": "¶ ayañhi āyasmā satta·vassika·kāle bhagavantaṃ cīv…", "s": "For this venerable one, at the age of seven,\nwhile asking the Blessed One for an inheritance, saying 'Give me the inheritance,\nascetic,' and taking hold of the …"}, {"key": "mn-a61:4.2", "p": "atha bhagavā dahara·kumārā nāma yuttā·yuttaṃ katha…", "s": "Then the Blessed One, thinking 'Young boys speak suitable and unsuitable talk;\nI will give him advice,' addressed the young Rāhula:\n'A novice, Rāhula, should no…"}, {"key": "mn-a61:4.3", "p": "dasa pañhā dasa uddesā dasa veyy·ākaraṇāti.…", "s": "'Ten questions, ten recitals, ten explanations.'"}, {"key": "mn-a61:4.4", "p": "ekaṃ nāma kiṃ?…", "s": "What is one?"}, {"key": "mn-a61:4.5", "p": "sabbe sattā āhāra·ṭ·ṭhitikā...pe0...…", "s": "All beings subsist by nutriment…"}, {"key": "mn-a61:4.6", "p": "dasa nāma kiṃ?…", "s": "What is ten?"}, {"key": "mn-a61:4.7", "p": "dasah·aṅgehi samannāgato arahāti\nvuccatī''ti imaṃ …", "s": "One endowed with ten factors is called an arahant.'\nThus he spoke this novice's question."}, {"key": "mn-a61:4.8", "p": "puna cintesi ``dahara·kumārā nāma piya·musā·vādā h…", "s": "Then he thought:\n'Novices, being young boys, are given to lying;\nthey say,"}, {"key": "mn-a61:4.9", "p": "catūsu pana pacc·a·yesu taṇhā·vivaṭṭanaṃ pañca·su …", "s": "Then, having shown the turning away from craving in the four requisites,\nthe abandoning of desire and lust in the five cords of sensual pleasure,\nand the great …"}, {"key": "mn-a61:4.10", "p": "āgatā·gata·ṭ·ṭhāne bhavesu chanda·rāgo na kattabbo…", "s": "He taught the Rāhula Saṃyutta to show that desire and lust should not be\nengaged in regarding existences in whatever place one comes and goes."}, {"key": "mn-a61:4.11", "p": "``ahaṃ sobhāmi, mama vaṇṇā·yatanaṃ pasanna''nti at…", "s": "He taught the Mahā Rāhulovāda Sutta to show that desire and lust based on the home life,\ndependent on the individual personality, thinking 'I am beautiful,\nmy f…"}]}, {"id": "5", "label": "¶ tattha rāhula·suttaṃ imasmiṃ nāma kāle vuttanti…", "rows": [{"key": "mn-a61:5.1", "p": "¶ tattha rāhula·suttaṃ imasmiṃ nāma kāle vuttanti …", "s": "Therein, it should not be said that the Rāhula Sutta was spoken at such and such a time."}, {"key": "mn-a61:5.2", "p": "tañhi abhiṇho·vāda·vasena vuttaṃ.…", "s": "For that was spoken by way of frequent advice."}, {"key": "mn-a61:5.3", "p": "rāhula·saṃyuttaṃ satta·vassika·kālato paṭṭhāya yāv…", "s": "The Rāhula Saṃyutta was spoken from the time of being seven\nyears old up to the time of being a monk of one rains retreat."}, {"key": "mn-a61:5.4", "p": "mahā·rāhul·ovāda·suttaṃ a·ṭ·ṭhā·rasa vassa·sāmaṇer…", "s": "The Mahā Rāhulovāda Sutta was spoken at the time of being a novice of eighteen years."}, {"key": "mn-a61:5.5", "p": "cūḷa·rāhul·ovāda·suttaṃ a·vassika·bhikkhu·kāle vut…", "s": "The Cūḷa Rāhulovāda Sutta was spoken at the time of being a monk of one rains retreat."}, {"key": "mn-a61:5.6", "p": "kumāraka·pañhañca idañca amba·laṭṭhika·rāhul·ovāda…", "s": "The Questions of a Young Boy and this Amba Laṭṭhika Rāhulovāda\nSutta were spoken at the time of being a novice of seven years."}, {"key": "mn-a61:5.7", "p": "tesu rāhula·suttaṃ abhiṇho·vāda·t·thaṃ, rāhula·saṃ…", "s": "Among these, the Rāhula Sutta was spoken for the purpose of frequent advice;\nthe Rāhula Saṃyutta for the purpose of the elder's entering the womb of insight;\nth…"}, {"key": "mn-a61:5.8", "p": "idañca pana sandhāya rāhula·t·thero bhikkhu·saṅgha…", "s": "And it is with reference to this that the Elder Rāhula,\nspeaking about the Tathāgata's qualities in the midst of the Bhikkhu Saṅgha, said this:"}]}, {"id": "6", "label": "¶ ``kikīva bījaṃ rakkheyya, cāmarī vālam·uttamaṃ.", "rows": [{"key": "mn-a61:6.1", "p": "¶ ``kikīva bījaṃ rakkheyya,\ncāmarī vālam·uttamaṃ.…", "s": "\"Just as a hen guards her eggs, or a yak its excellent tail,"}]}, {"id": "7", "label": "¶ nipako sīla·sampanno, mamaṃ rakkhi tathā·gato''ti..", "rows": [{"key": "mn-a61:7.1", "p": "¶ nipako sīla·sampanno, mamaṃ rakkhi tathā·gato''t…", "s": "the wise one, accomplished in virtuous behavior, the Tathāgata guarded me.\""}, {"key": "mn-a61:7.2", "p": ".…", "s": "."}]}, {"id": "8", "label": "¶ sāmaṇera·pañhaṃ a·yutta·vacana·pahāna·t·thaṃ, idaṃ amba·laṭṭhika·rāhul·ovāda·suttaṃ sampa·jāna·musā·vādassa a·karaṇa·t·thaṃ…", "rows": [{"key": "mn-a61:8.1", "p": "¶ sāmaṇera·pañhaṃ a·yutta·vacana·pahāna·t·thaṃ,\nid…", "s": "The novice's question is for the purpose of abandoning unsuitable speech;\nthis Ambalaṭṭhika Rāhulovāda Sutta was spoken for the purpose of not doing a deliberat…"}]}, {"id": "9", "label": "¶ tattha passasi noti passasi nu.", "rows": [{"key": "mn-a61:9.1", "p": "¶ tattha passasi noti passasi nu.…", "s": "Therein,\n'passasi no' means 'do you see?'"}, {"key": "mn-a61:9.2", "p": "pari·t·tanti thokaṃ.…", "s": "'Paritta' means 'a little'."}, {"key": "mn-a61:9.3", "p": "sāmaññanti samaṇa·dhammo.…", "s": "'Sāmañña' means 'the ascetic's duty'."}, {"key": "mn-a61:9.4", "p": "nikkujjitvāti adho·mukhaṃ katvā.…", "s": "'Nikkujjitvā' means 'having turned face downwards'."}, {"key": "mn-a61:9.5", "p": "ukkujjitvāti uttānaṃ katvā.…", "s": "'Ukkujjitvā' means 'having turned face upwards'."}]}, {"id": "10", "label": "¶ 108. seyyathāpi, rāhula, rañño nāgoti ayaṃ…", "rows": [{"key": "mn-a61:10.1", "p": "¶ 108. seyyathāpi, rāhula, rañño nāgoti\nayaṃ upamā…", "s": "108.\n\"Suppose, Rāhula, a king's elephant\" —\nthis simile is stated for the purpose of showing a simile for one who is devoid of restraint regarding a deliberate …"}, {"key": "mn-a61:10.2", "p": "tattha īsā·dantoti rath·īsā·sadisa·danto .…", "s": "Therein,\n'īsādanto' means 'having tusks like chariot-poles'."}, {"key": "mn-a61:10.3", "p": "uruḷhavāti abhi·vaḍḍhito āroha·sampanno.…", "s": "'Uruḷhavā' means 'well-grown, accomplished in stature'."}, {"key": "mn-a61:10.4", "p": "abhi·jātoti sujāto jāti·sampanno.…", "s": "'Abhijāto' means 'well-born, accomplished in birth'."}, {"key": "mn-a61:10.5", "p": "saṅgāmā·vacaroti saṅgāmaṃ otiṇṇa·pubbo.…", "s": "'Saṅgāmāvacaro' means 'one who has previously entered battle'."}, {"key": "mn-a61:10.6", "p": "kammaṃ karo·tīti āgat·āgate pavaṭṭento ghāteti.…", "s": "He does the action with his trunk:\nstriking down those that come within range, he kills them."}, {"key": "mn-a61:10.7", "p": "puratthimakāy·ādīsu pana puratthima·kāyena tāva pa…", "s": "But with the front part of his body, etc.:\nfirst with the front part of his body he knocks down the opposing side's planks,\ncompartments, domes, ramparts, and s…"}, {"key": "mn-a61:10.8", "p": "sīsena kammaṃ nāma niyametvā etaṃ\npadesaṃ maddi·s·…", "s": "He does the action with his head:\nhaving aimed, he turns back and looks, thinking,\n'I will crush this area,' and by that means even a hundred or a thousand are …"}, {"key": "mn-a61:10.9", "p": "kaṇṇehi kammaṃ nāma āgat·āgate sare\nkaṇṇehi pahari…", "s": "He does the action with his ears:\nstriking with his ears the arrows that come within range, he knocks them down."}, {"key": "mn-a61:10.10", "p": "dantehi kammaṃ nāma paṭi·hatthi·assa·hatth·ārohā·s…", "s": "He does the action with his tusks:\npiercing the elephant-riders, horse-riders, chariot-warriors, foot-soldiers, and so forth."}, {"key": "mn-a61:10.11", "p": "naṅguṭṭhena kammaṃ nāma naṅguṭṭhe bandhāya dīghā·s…", "s": "He does the action with his tail:\nwith a long stick tied to his tail or with an iron club, he cuts and breaks."}, {"key": "mn-a61:10.12", "p": "rakkha·teva soṇḍanti\nsoṇḍaṃ pana mukhe pakkhipitvā…", "s": "'He guards with his trunk':\nhaving placed his trunk in his mouth, he guards."}]}, {"id": "11", "label": "¶ tatthāti tasmiṃ tassa hatthino karaṇe.", "rows": [{"key": "mn-a61:11.1", "p": "¶ tatthāti tasmiṃ tassa hatthino karaṇe.…", "s": "'Therein':\nin that action of that elephant."}, {"key": "mn-a61:11.2", "p": "apariccattanti a·nissaṭṭhaṃ, paresaṃ jayaṃ\namhā·ka…", "s": "'Not relinquished':\nnot abandoned;\nhe thinks,\n'I see victory for us and defeat for the others.'"}, {"key": "mn-a61:11.3", "p": "soṇḍā·yapi kammaṃ karo·tīti aya·muggaraṃ vā khadir…", "s": "'He also does the action with his trunk':\ntaking an iron hammer or an acacia club, he crushes an area of eighteen cubits all around."}, {"key": "mn-a61:11.4", "p": "pari·c·cattanti vissaṭṭhaṃ, idāni hatthi·yodhā·dīs…", "s": "'Relinquished':\nabandoned;\nnow he does not fear anything from the elephant-warriors, etc.;\nhe thinks,\n'I see victory for us and defeat for the others.'"}, {"key": "mn-a61:11.5", "p": "nāhaṃ tassa kiñci pāpanti\ntassa dukkaṭ·ādi·āpatti·…", "s": "'There is no evil for him':\nfor him, whether in the transgression of an offense such as a bad deed,\nor in deeds such as matricide, there is no evil that should …"}, {"key": "mn-a61:11.6", "p": "tasmā tiha teti yasmā sampa·jāna·musā·vādino a·kat…", "s": "'Therefore, indeed, you':\nsince for one who speaks a deliberate lie there is no evil that should not be done, therefore you should train thus:\n'Even for the sak…"}, {"key": "mn-a61:11.7", "p": "pacc·avekkhaṇa·t·thoti olokana·t·tho, yaṃ mukhe va…", "s": "'For the purpose of reviewing':\nfor the purpose of looking;\nit is said to be for the purpose of seeing the fault that is in the mouth."}, {"key": "mn-a61:11.8", "p": "pacc·avekkhitvā pacc·avekkhitvāti oloketvā oloketvā.…", "s": "'Having reviewed again and again':\nhaving looked again and again."}]}, {"id": "12", "label": "¶ 109. sasakkaṃ na karaṇīyanti eka·ṃseneva na…", "rows": [{"key": "mn-a61:12.1", "p": "¶ 109. sasakkaṃ na karaṇīyanti\neka·ṃseneva na kāta…", "s": "109.\n'Sasakkaṃ na karaṇīyaṃ' means it should not be done at all."}, {"key": "mn-a61:12.2", "p": "paṭi·saṃhareyyā·sīti nivatteyyāsi mā kareyyāsi.…", "s": "'Paṭisaṃhareyyāsi' means you should withdraw, you should not do it."}, {"key": "mn-a61:12.3", "p": "anupa·dajj·eyyā·sīti anupadeyyāsi\nupatthambheyyāsi…", "s": "'Anupadajjeyyāsi' means you should give repeatedly, you should support, you should do again and again."}, {"key": "mn-a61:12.4", "p": "aho·rattā·nusikkhīti rattiñca divañca sikkha·māno.…", "s": "'Ahorattānusikkhī' means training both by night and by day."}]}, {"id": "13", "label": "¶ 111. aṭṭīy·itabbanti aṭṭena pīḷitena bhavitabbaṃ.", "rows": [{"key": "mn-a61:13.1", "p": "¶ 111. aṭṭīy·itabbanti aṭṭena pīḷitena bhavitabbaṃ.…", "s": "111.\n'Aṭṭīyitabbaṃ' means one should be oppressed and distressed."}, {"key": "mn-a61:13.2", "p": "harāy·itabbanti lajjitabbaṃ.…", "s": "'Harāyitabbaṃ' means one should be ashamed."}, {"key": "mn-a61:13.3", "p": "jigucch·itabbanti gūthaṃ disvā viya jigucchā uppād…", "s": "'Jigucchitabbaṃ' means one should generate disgust, as if seeing excrement."}, {"key": "mn-a61:13.4", "p": "mano·kammassa pana a·desanā·vatthukattā idha dese·…", "s": "But mental action is not said here to be confessed because it is not a basis for confession."}, {"key": "mn-a61:13.5", "p": "kittake pana ṭhāne kāya·kamma·vacī·kammāni sodhe·t…", "s": "In how many instances, then, are bodily and verbal actions to be purified, and in how many mental action?"}, {"key": "mn-a61:13.6", "p": "kāya·kamma·vacī·kammāni tāva ekasmiṃ pure·bhatte·y…", "s": "Bodily and verbal actions are to be purified even in a single instance before the meal."}, {"key": "mn-a61:13.7", "p": "bhatta·kiccaṃ katvā divā·ṭ·ṭhāne nisinnena hi pacc…", "s": "For having done the meal duty, sitting in the day's resting place, one should review:\n'From the rising of dawn up to this sitting place,\nis there any bodily or …"}, {"key": "mn-a61:13.8", "p": "sace atthīti jānāti,\ndesanā·yuttaṃ dese·tabbaṃ, āv…", "s": "If he knows there is, he should confess what is fit for confession, reveal what is fit for revelation."}, {"key": "mn-a61:13.9", "p": "sace natthi, teneva pīti·pāmojjena vihātabbaṃ.…", "s": "If there is not, he should dwell in that same joy and gladness."}, {"key": "mn-a61:13.10", "p": "mano·kammaṃ pana etasmiṃ piṇḍa·pāta·pari·yesana·ṭ·…", "s": "But mental action is to be purified at this very place of seeking almsfood."}, {"key": "mn-a61:13.11", "p": "kathaṃ?…", "s": "How?"}, {"key": "mn-a61:13.12", "p": "``atthi nu kho me ajja piṇḍa·pāta·pari·yesana·ṭ·ṭh…", "s": "‘Now, is there in me today, at the place of seeking almsfood, desire or lust or aversion towards forms and so on?’"}, {"key": "mn-a61:13.13", "p": "sace atthi, ``puna na evaṃ kari·s·sāmī''ti cittene…", "s": "If there is, one should determine with the mind itself:\n‘I will not do so again.’"}, {"key": "mn-a61:13.14", "p": "sace natthi, teneva pīti·pāmojjena vihātabbaṃ.…", "s": "If there is not, one should dwell with that very joy and gladness."}]}, {"id": "14", "label": "¶ 112. samaṇā vā brāhmaṇā vāti buddhā…", "rows": [{"key": "mn-a61:14.1", "p": "¶ 112. samaṇā vā brāhmaṇā vāti\nbuddhā vā pacc·eka·…", "s": "112.\n‘Ascetics or brahmins’ means Buddhas, Paccekabuddhas, or disciples of the Tathāgata."}, {"key": "mn-a61:14.2", "p": "tasmātihāti yasmā atītepi evaṃ pari·sodhesuṃ, anāg…", "s": "‘Therefore, indeed’ means:\nbecause in the past they purified thus, in the future they will purify thus, and now they purify thus,\ntherefore you too, following t…"}, {"key": "mn-a61:14.3", "p": "sesaṃ sabba·t·tha uttānameva.…", "s": "The rest is clear everywhere."}, {"key": "mn-a61:14.4", "p": "imaṃ pana desanaṃ bhagavā yāva bhavaggā ussitassa …", "s": "But this discourse the Blessed One concluded according to the type of person to be led,\nas if taking the peak of a heap of jewels piled up to the highest existe…"}]}, {"id": "15", "label": "¶ papañca·sūdaniyā majjhima·nikāya·ṭ·ṭhakathāya", "rows": [{"key": "mn-a61:15.1", "p": "¶ papañca·sūdaniyā majjhima·nikāya·ṭ·ṭhakathāya…", "s": "In the Papañcasūdanī, the commentary on the Majjhima Nikāya,"}]}, {"id": "16", "label": "¶ amba·laṭṭhika·rāhul·ovāda·sutta·vaṇṇanā niṭṭhitā.", "rows": [{"key": "mn-a61:16.1", "p": "¶ amba·laṭṭhika·rāhul·ovāda·sutta·vaṇṇanā niṭṭhitā.…", "s": "The explanation of the Ambalaṭṭhikā Rāhulovāda Sutta is finished."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas"}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — AI rendering of a post-canonical commentary (aṭṭhakathā)"}];
+const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas", "group": "Root: Pāli", "tip": "Root Pāli (SuttaCentral / Mahāsaṅgīti edition)"}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — AI rendering of a post-canonical commentary (aṭṭhakathā)", "group": "English", "tip": "AI-generated from the Pāli, in Bhikkhu Bodhi's style"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2064,8 +2123,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2105,30 +2317,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

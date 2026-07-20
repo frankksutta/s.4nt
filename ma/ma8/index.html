@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -970,7 +1029,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "0", "label": "中阿含經 8", "rows": [{"key": "ma8:0.1", "p": "中阿含經 8…", "s": "Medium Discourses 8"}, {"key": "ma8:0.2", "p": "七日經…", "s": "The Seven Suns"}]}, {"id": "1", "label": "我聞如是：", "rows": [{"key": "ma8:1.1", "p": "我聞如是：…", "s": "Thus I have heard:"}, {"key": "ma8:1.2", "p": "一時，佛遊鞞舍離，在㮈氏樹園。…", "s": "One time, the Buddha traveled to Vaiśālī and stayed at the mango grove there."}]}, {"id": "2", "label": "爾時，世尊告諸比丘：", "rows": [{"key": "ma8:2.1", "p": "爾時，世尊告諸比丘：…", "s": "It was then that the Bhagavān addressed the monks,"}, {"key": "ma8:2.2", "p": "「一切行無常。…", "s": "“All things that are conditioned are impermanent."}, {"key": "ma8:2.3", "p": "不久住法速變易法不可猗法。…", "s": "They are things that don’t last, that soon change, and that are unreliable."}, {"key": "ma8:2.4", "p": "如是諸行不當樂著，當患厭之。…", "s": "Such conditioned things must not be objects of attachment, or they will torment a person."}, {"key": "ma8:2.5", "p": "當求捨離，當求解脱。…", "s": "You must seek separation and liberation from them."}, {"key": "ma8:2.6", "p": "所以者何。…", "s": "Why is that?"}]}, {"id": "3", "label": "「有時不雨當不雨時，一切諸樹，百穀，藥，木，皆悉枯槁，摧碎，滅盡。", "rows": [{"key": "ma8:3.1", "p": "「有時不雨當不雨時，一切諸樹，百穀，藥，木，皆悉枯槁，摧碎，滅盡。…", "s": "“During times of drought when there’s no rain, all the trees,\nthe hundred grains, and medicinal plants wither, crumble, and disappear."}, {"key": "ma8:3.2", "p": "不得常住。是故，一切行無常。…", "s": "They can’t always be present;\ntherefore, all conditioned things are impermanent."}, {"key": "ma8:3.3", "p": "不久住法，速變易法，不可猗法。…", "s": "They are things that don’t last, that soon change, and that are unreliable."}, {"key": "ma8:3.4", "p": "如是諸行不當樂著，當患厭之。…", "s": "Such conditioned things must not be objects of attachment, or they will torment a person."}, {"key": "ma8:3.5", "p": "當求捨離，當求解脱。…", "s": "You must seek separation and liberation from them."}]}, {"id": "4", "label": "「復次，有時二日出世。", "rows": [{"key": "ma8:4.1", "p": "「復次，有時二日出世。…", "s": "“Furthermore, there’s a time when two suns arise in the world."}, {"key": "ma8:4.2", "p": "二日出時，諸溝渠，川流皆悉竭盡。…", "s": "When two suns arise, gully streams and rivers all dry up."}, {"key": "ma8:4.3", "p": "不得常住。是故，一切行無常…", "s": "They can’t always be present;\ntherefore, all conditioned things are impermanent."}, {"key": "ma8:4.4", "p": "不久住法，速變易法，不可猗法。…", "s": "They are things that don’t last, that soon change, and that are unreliable."}, {"key": "ma8:4.5", "p": "如是諸行不當樂著，當患厭之。…", "s": "Such conditioned things must not be objects of attachment, or they will torment a person."}, {"key": "ma8:4.6", "p": "當求捨離，當求解脱。…", "s": "You must seek separation and liberation from them."}]}, {"id": "5", "label": "「復次，有時三日出世。", "rows": [{"key": "ma8:5.1", "p": "「復次，有時三日出世。…", "s": "“Furthermore, there’s a time when three suns arise in the world."}, {"key": "ma8:5.2", "p": "三日出時，諸大江河皆悉竭盡。…", "s": "When three suns arise, the large rivers all dry up."}, {"key": "ma8:5.3", "p": "不得常住。是故，一切行無常。…", "s": "They can’t always be present;\ntherefore, all conditioned things are impermanent."}, {"key": "ma8:5.4", "p": "不久住法，速變易法，不可猗法。…", "s": "They are things that don’t last, that soon change, and that are unreliable."}, {"key": "ma8:5.5", "p": "如是諸行不當樂著，當患厭之。…", "s": "Such conditioned things must not be objects of attachment, or they will torment a person."}, {"key": "ma8:5.6", "p": "當求捨離，當求解脱。…", "s": "You must seek separation and liberation from them."}]}, {"id": "6", "label": "「復次，有時四日出世。", "rows": [{"key": "ma8:6.1", "p": "「復次，有時四日出世。…", "s": "“Furthermore, there’s a time when four suns arise in the world."}, {"key": "ma8:6.2", "p": "四日出時，諸大泉源從閻浮洲五河所出：…", "s": "When four suns arise, the great springs of Jambudvīpa from which five rivers flow all dry up:"}, {"key": "ma8:6.3", "p": "一曰恒伽，二曰搖尤那，三曰舍牢浮，四曰阿夷羅婆提，五曰摩企。…", "s": "the 1.\nGaṅgā, 2.\nYamunā, 3.\n[Sarabhū], 4.\nAjiravatī, and 5.\nMahī."}, {"key": "ma8:6.4", "p": "彼大泉源皆悉竭盡。…"}, {"key": "ma8:6.5", "p": "不得常住。是故，一切行無常。…", "s": "They can’t always be present;\ntherefore, all conditioned things are impermanent."}, {"key": "ma8:6.6", "p": "不久住法，速變易法，不可猗法。…", "s": "They are things that don’t last, that soon change, and that are unreliable."}, {"key": "ma8:6.7", "p": "如是諸行不當樂著，當患厭之。…", "s": "Such conditioned things must not be objects of attachment, or they will torment a person."}, {"key": "ma8:6.8", "p": "當求捨離，當求解脱。…", "s": "You must seek separation and liberation from them."}]}, {"id": "7", "label": "「復次，有時五日出世。", "rows": [{"key": "ma8:7.1", "p": "「復次，有時五日出世。…", "s": "“Furthermore, there’s a time when five suns arise in the world."}, {"key": "ma8:7.2", "p": "五日出時，大海水減一百由延，轉減乃至七百由延。…", "s": "When five suns arise, the ocean’s water is reduced by a hundred leagues and in turn is reduced by … 700 leagues."}, {"key": "ma8:7.3", "p": "五日出時，海水餘有七百由延，轉減乃至一百由延。…", "s": "When five suns arise, the remaining 700 leagues of water in the ocean is in turn reduced by … a hundred leagues."}, {"key": "ma8:7.4", "p": "五日出時，大海水減一多羅樹，轉減乃至七多羅樹。…", "s": "When five suns arise,\nthe ocean’s water is reduced by one palm tree[’s height] and in turn is reduced by … seven palm trees."}, {"key": "ma8:7.5", "p": "五日出時，海水餘有七多羅樹，轉減乃至一多羅樹。…", "s": "When five suns arise, the remaining seven palm trees of water in the ocean is in turn reduced to … one palm tree."}, {"key": "ma8:7.6", "p": "五日出時，海水減一人，轉減乃至七人。…", "s": "When five suns arise, the ocean’s water is reduced by one fathom and in turn is reduced by … seven fathoms."}, {"key": "ma8:7.7", "p": "五日出時，海水餘有七人，轉減乃至一人。…", "s": "When five suns arise, the remaining seven fathoms of water is in turn reduced to … one fathom."}, {"key": "ma8:7.8", "p": "五日出時，海水減至頸，至肩，至腰，至䐀，至膝，至踝。…", "s": "When five suns arise, the ocean’s water is reduced to neck deep,\nshoulder deep, waist deep, thigh deep, knee deep, and ankle deep."}, {"key": "ma8:7.9", "p": "有時海水消盡不足沒指。是故，一切行無常。…", "s": "There’s a time when the ocean’s water is completely gone, and there’s not enough to wet a finger;\ntherefore, all conditioned things are impermanent."}, {"key": "ma8:7.10", "p": "不久住法，速變易法，不可猗法。…", "s": "They are things that don’t last, that soon change, and that are unreliable."}, {"key": "ma8:7.11", "p": "如是諸行不當樂著，當患厭之。…", "s": "Such conditioned things must not be objects of attachment, or they will torment a person."}, {"key": "ma8:7.12", "p": "當求捨離，當求解脱。…", "s": "You must seek separation and liberation from them."}]}, {"id": "8", "label": "「復次，有時六日出世。", "rows": [{"key": "ma8:8.1", "p": "「復次，有時六日出世。…", "s": "“Furthermore, there’s a time when six suns arise in the world."}, {"key": "ma8:8.2", "p": "六日出時，一切大地，須彌山王皆悉烟起，…", "s": "When six suns arise, smoke rises from the whole earth and Sumeru the king of mountains."}, {"key": "ma8:8.3", "p": "合爲一烟。譬如陶師始爨窖時，…", "s": "It combines into a single cloud of smoke like when a potter first lights his kiln."}, {"key": "ma8:8.4", "p": "皆悉烟起合爲一烟。…", "s": "Smoke rises from everything [inside it] and combines into a single cloud of smoke."}, {"key": "ma8:8.5", "p": "如是，六日出時，一切大地須彌山王皆悉烟起，合爲一烟。…", "s": "Thus, when six suns rise, smoke rises from the whole world and Sumeru the king of mountains,\nand it combines into a single cloud of smoke."}, {"key": "ma8:8.6", "p": "是故，一切行無常。…", "s": "Therefore, all conditioned things are impermanent."}, {"key": "ma8:8.7", "p": "不久住法，速變易法，不可猗法。…", "s": "They are things that don’t last, that soon change, and that are unreliable."}, {"key": "ma8:8.8", "p": "如是諸行不當樂著，當患厭之。…", "s": "Such conditioned things must not be objects of attachment, or they will torment a person."}, {"key": "ma8:8.9", "p": "當求捨離，當求解脱。…", "s": "You must seek separation and liberation from them."}]}, {"id": "9", "label": "「復次，有時七日出世。", "rows": [{"key": "ma8:9.1", "p": "「復次，有時七日出世。…", "s": "“Furthermore, there’s a time when seven suns arise in the world."}, {"key": "ma8:9.2", "p": "七日出時，一切大地須彌山王洞燃倶熾，合爲一㷿。…", "s": "When seven suns arise, the whole world and Sumeru the king of mountains are engulfed in flames,\nand it combines into a single conflagration."}, {"key": "ma8:9.3", "p": "如是，七日出時，一切大地須彌山王洞燃倶熾，合爲一㷿，風吹火㷿乃至梵天。…", "s": "Thus, when seven suns arise,\nthe whole world and Sumeru the king of mountains are engulfed in flames and it combines into a single conflagration,\na wind blows t…"}, {"key": "ma8:9.4", "p": "是時晃𦸸諸天始生天者不諳世間成敗，不見世間成敗，不知世間成敗。…", "s": "The Ābhāsvara gods who are first born in that heaven haven’t heard of the world’s formation and demise,\nhaven’t seen its formation and demise, and don’t know ab…"}, {"key": "ma8:9.5", "p": "見大火已，皆恐怖毛竪而作是念：…", "s": "When they see that great fire, their hair stands on end in terror, and they think,"}, {"key": "ma8:9.6", "p": "『火不來至此耶。…", "s": "‘That fire won’t reach us, will it?"}, {"key": "ma8:9.7", "p": "火不來至此耶。』…", "s": "That fire won’t reach us, will it?’"}]}, {"id": "10", "label": "「前生諸天諳世間成敗，見世間成敗，知世間成敗。", "rows": [{"key": "ma8:10.1", "p": "「前生諸天諳世間成敗，見世間成敗，知世間成敗。…", "s": "“The gods who had been born there previously had heard about the world’s formation and demise,\nhad seen its formation and demise, and knew about its formation a…"}, {"key": "ma8:10.2", "p": "見大火已，慰勞諸天曰：…", "s": "When they see that great fire, they reassure those gods,"}, {"key": "ma8:10.3", "p": "『莫得恐怖。…", "s": "‘Don’t be afraid!"}, {"key": "ma8:10.4", "p": "火法齊彼，終不至此。』…", "s": "Fire as a rule is limited to [the desire realm];\nit never reaches us here.’"}]}, {"id": "11", "label": "「七日出時，須彌山王百由延崩，散壞，滅盡。", "rows": [{"key": "ma8:11.1", "p": "「七日出時，須彌山王百由延崩，散壞，滅盡。…", "s": "“When seven suns arise, a hundred leagues of Mount Sumeru crumbles and disintegrates completely."}, {"key": "ma8:11.2", "p": "二百由延，三百由延，乃至七百由延崩，散壞，滅盡。…", "s": "Two hundred, three hundred … seven hundred leagues of it crumbles and disintegrates completely."}, {"key": "ma8:11.3", "p": "七日出時，須彌山王及此大地燒壞，消滅，無餘栽燼，如燃酥油煎熬，消盡，無餘烟墨。…", "s": "When seven suns arise,\nMount Sumeru and this earth are engulfed in flames and burn up without remainder like burning ghee down to nothing,\nwith neither smoke no…"}, {"key": "ma8:11.4", "p": "如是，七日出時，須彌山王及此大地無餘烖燼。是故，一切行無常。…", "s": "Thus, when seven suns arise, Mount Sumeru and this earth burn up without remainder;\ntherefore, all conditioned things are impermanent."}, {"key": "ma8:11.5", "p": "不久住法，速變易法，不可猗法。…", "s": "They are things that don’t last, that soon change, and that are unreliable."}, {"key": "ma8:11.6", "p": "如是諸行不當樂著，當患厭之。…", "s": "Such conditioned things must not be objects of attachment, or they will torment a person."}, {"key": "ma8:11.7", "p": "當求捨離，當求解脱。…", "s": "You must seek separation and liberation from them."}]}, {"id": "12", "label": "「我今爲汝説須彌山王當崩壞盡。誰有能信。", "rows": [{"key": "ma8:12.1", "p": "「我今爲汝説須彌山王當崩壞盡。誰有能信。…", "s": "“Now, I’ve described for you how Mount Sumeru will crumble and disintegrate, but who is there who’d believe it?"}, {"key": "ma8:12.2", "p": "唯見諦者耳。…", "s": "Only those who see truly."}, {"key": "ma8:12.3", "p": "我今爲汝説大海水當竭消盡。誰有能信。…", "s": "Now, I’ve described for you how the ocean water will dry up completely, but who is there who’d believe it?"}, {"key": "ma8:12.4", "p": "唯見諦者耳。…", "s": "Only those who see truly."}, {"key": "ma8:12.5", "p": "我今爲汝説一切大地當燒燃盡。誰有能信。…", "s": "Now, I’ve described for you how the whole earth will be burned up, but who is there who’d believe it?"}, {"key": "ma8:12.6", "p": "唯見諦者耳。…", "s": "Only those who see truly."}, {"key": "ma8:12.7", "p": "所以者何。…", "s": "“Why is that?"}]}, {"id": "13", "label": "「比丘。昔有大師名曰善眼，爲外道仙人之所師宗。", "rows": [{"key": "ma8:13.1", "p": "「比丘。昔有大師名曰善眼，爲外道仙人之所師宗。…", "s": "Monks, there once was a great teacher named Sunetra who taught in a tradition of sages from another religion."}, {"key": "ma8:13.2", "p": "捨離欲愛，得如意足。…", "s": "He abandoned craving and attained the miraculous abilities."}, {"key": "ma8:13.3", "p": "善眼大師有無量百千弟子。…", "s": "That great teacher Sunetra had measureless hundreds of thousands of disciples."}, {"key": "ma8:13.4", "p": "善眼大師爲諸弟子説梵世法。若善眼大師爲説梵世法時，諸弟子等有不具足奉行法者，彼命終已，或生四王天，或…", "s": "When he taught them the way of the Brahma world, if his disciples didn’t completely approve of his teaching,\nthen they were sometimes born in the Heaven of the …"}, {"key": "ma8:13.5", "p": "若善眼大師爲説梵世法時，諸弟子等設有具足奉行法者，彼修四梵室，捨離於欲。彼命終已，得生梵天。…", "s": "If his disciples did completely approve of his teaching of the way of the Brahma world,\nthey cultivated the four abodes of Brahmā, abandoned their desires,\nand …"}]}, {"id": "14", "label": "「彼時，善眼大師而作是念：", "rows": [{"key": "ma8:14.1", "p": "「彼時，善眼大師而作是念：…", "s": "“At the time, that teacher Sunetra thought,"}, {"key": "ma8:14.2", "p": "『我不應與弟子等同倶至後世共生一處。…", "s": "‘Shouldn’t I and my disciples be born in the same place in a later life?"}, {"key": "ma8:14.3", "p": "我今寧可更修増上慈。…", "s": "Now, I’d better cultivate increasing kindness."}, {"key": "ma8:14.4", "p": "修増上慈已，命終，得生晃𦸸天中。』…", "s": "After cultivating increasing kindness, I’ll be born among the Ābhāsvara gods.’"}, {"key": "ma8:14.5", "p": "彼時，善眼大師則於後時更修増上慈。…", "s": "Sunetra then cultivated increasing kindness."}, {"key": "ma8:14.6", "p": "修増上慈已，命終，得生晃𦸸天中。…", "s": "After cultivating it, he was born among the Ābhāsvara gods when his life ended."}, {"key": "ma8:14.7", "p": "善眼大師及諸弟子學道不虚，…", "s": "That path of training of Sunetra and his disciples wasn’t in vain."}, {"key": "ma8:14.8", "p": "得大果報。…", "s": "They did attain a great result from it."}]}, {"id": "15", "label": "「諸比丘，於意云何。", "rows": [{"key": "ma8:15.1", "p": "「諸比丘，於意云何。…", "s": "“Monks, what you do think?"}, {"key": "ma8:15.2", "p": "昔善眼大師爲外道仙人之所師宗捨離欲愛，得如意足者，汝謂異人耶。…", "s": "Would you say that great teacher Sunetra was someone else who\nwas a teacher in a tradition of sages from another religion,\nwho abandoned craving and attained mi…"}, {"key": "ma8:15.3", "p": "莫作斯念；當知即是我也。…", "s": "Don’t think that, for you should know that he was me."}]}, {"id": "16", "label": "「我於爾時名善眼大師爲外道仙人之所師宗，捨離欲愛，得如意足。", "rows": [{"key": "ma8:16.1", "p": "「我於爾時名善眼大師爲外道仙人之所師宗，捨離欲愛，得如意足。…", "s": "“At the time, I was that great teacher named Sunetra,\na teacher from a tradition of sages from another religion who abandoned craving and attained miraculous ab…"}, {"key": "ma8:16.2", "p": "我於爾時有無量百千弟子。…", "s": "At the time, I had measureless hundreds of thousands of disciples."}, {"key": "ma8:16.3", "p": "我於爾時爲諸弟子説梵世法。我説梵世法時，諸弟子等有不具足奉行法者，彼命終已，或生四王天，或生三十三天…", "s": "When I taught them the way of the Brahma world, if my disciples didn’t completely approve of my teaching,\nthen they were sometimes born in the Heaven of the Fou…"}, {"key": "ma8:16.4", "p": "我説梵世法時，諸弟子等設有具足奉行法者，修四梵室，捨離於欲。彼命終已，得生梵天。…", "s": "If my disciples did completely approve of my teaching of the way of the Brahma world,\nthey cultivated the four abodes of Brahma, abandoned their desires,\nand we…"}]}, {"id": "17", "label": "「我於爾時而作是念：", "rows": [{"key": "ma8:17.1", "p": "「我於爾時而作是念：…", "s": "“At the time, I thought,"}, {"key": "ma8:17.2", "p": "『我不應與弟子等同倶至後世共生一處。…", "s": "‘Shouldn’t I and my disciples be born in the same place in a later life?"}, {"key": "ma8:17.3", "p": "我今寧可更修増上慈。…", "s": "Now, I’d better cultivate increasing kindness."}, {"key": "ma8:17.4", "p": "修増上慈已，命終，得生晃𦸸天中。…", "s": "After cultivating increasing kindness, I’ll be born among the Ābhāsvara gods.’"}, {"key": "ma8:17.5", "p": "我於後時更修増上慈。…", "s": "I then cultivated increasing kindness."}, {"key": "ma8:17.6", "p": "修増上慈已，命終，得生晃𦸸天中。』…", "s": "After cultivating it, I was born among the Ābhāsvara gods when my life ended."}, {"key": "ma8:17.7", "p": "我於爾時及諸弟子學道不虚，…", "s": "That path of training of mine and my disciples wasn’t in vain."}, {"key": "ma8:17.8", "p": "得大果報。…", "s": "We did attain a great result from it."}]}, {"id": "18", "label": "「我於爾時親行斯道爲自饒益，亦饒益他，饒益多人，愍傷世間，爲天爲人求義及饒益，求安隱快樂。", "rows": [{"key": "ma8:18.1", "p": "「我於爾時親行斯道爲自饒益，亦饒益他，饒益多人，愍傷世間，爲天爲人求義及饒益，求安隱快樂。…", "s": "“At the time, I and my friends practiced this path by which we benefited ourselves,\nbenefited others, benefited many people,\npitied the world, sought both meani…"}, {"key": "ma8:18.2", "p": "爾時，説法不至究竟，不究竟白淨，不究竟梵行，不究竟梵行訖。…", "s": "At the time, I explained a teaching that didn’t reach the ultimate, wasn’t ultimately clean,\nwasn’t ultimately the religious practice, and wasn’t ultimately the…"}, {"key": "ma8:18.3", "p": "爾時，不離生，老，病，死，啼哭，憂慼，亦未能得脱一切苦。…", "s": "At the time, I didn’t part with birth, old age, illness, death,\nlamentation, and sorrow, nor was I freed from all suffering yet."}]}, {"id": "19", "label": "「比丘，我今出世如來，無所著，等正覺，明行成，爲善逝，世間解，無上士，道法御，天人師，號佛，衆祐。", "rows": [{"key": "ma8:19.1", "p": "「比丘，我今出世如來，無所著，等正覺，明行成，爲善逝，世間解，無上士，道法御，天人師，號佛，衆祐。…", "s": "“Monks, now I have arisen in the world as a Tathāgata, Arhat,\nand Completely Awakened One, Accomplished in Knowledge and Conduct,\nWell Gone, Understander of the…"}, {"key": "ma8:19.2", "p": "我今自饒益，亦饒益他，饒益多人，愍傷世間，爲天爲人求義及饒益，求安隱快樂。…", "s": "Now, I benefit myself, benefit others, benefit many people, pity the world,\nseek both meaning and benefit for gods and humans, and seek peace and happiness."}, {"key": "ma8:19.3", "p": "我今説法得至究竟，究竟白淨，究竟梵行，究竟梵行訖。…", "s": "Now, I explain a teaching that reaches the ultimate, that’s ultimately clean,\nthat’s ultimately the religious practice, and that’s ultimately the completion of …"}, {"key": "ma8:19.4", "p": "我今已離生，老，病，死，啼哭，憂慼。我今已得脱一切苦。」…", "s": "Now, I’ve parted with birth, old age, illness, death, lamentation, and sorrow, and I’ve been freed from all suffering.”"}]}, {"id": "20", "label": "佛説如是。", "rows": [{"key": "ma8:20.1", "p": "佛説如是。…", "s": "20.\nThus did Buddha speak."}, {"key": "ma8:20.2", "p": "彼諸比丘聞佛所説，歡喜，奉行。…", "s": "Those monks who heard what the Buddha had taught rejoiced and approved."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "patton", "label": "Patton", "dot": "#5d8ac8", "light": {"bg": "#eef2f8", "text": "#0d1a2b"}, "dark": {"bg": "#121820", "text": "#a8c0d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "patton", "label": "Patton", "dot": "#5d8ac8", "light": {"bg": "#eef2f8", "text": "#0d1a2b"}, "dark": {"bg": "#121820", "text": "#a8c0d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Charles Patton's English translation from the Chinese"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2067,8 +2126,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2108,30 +2320,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma221:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma221:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, in Anāthapiṇḍada’s Park."}]}, {"id": "3", "label": "爾時，尊者鬘童子獨安靖處，燕坐思惟，心作是念：", "rows": [{"key": "ma221:3.1", "p": "爾時，尊者鬘童子獨安靖處，燕坐思惟，心作是念：…", "s": "At that time, the venerable Māluṅkyaputta, while alone in a quiet place, sitting in meditation, had this thought:"}, {"key": "ma221:3.2", "p": "「所謂此見，世尊捨置除却，不盡通說，謂世有常，…", "s": "'As for these views that the Blessed One has set aside, rejected, and not fully explained—"}, {"key": "ma221:3.3", "p": "世無有常，世有底，世無底，命即是身，為命異身異，…", "s": "namely, whether the world is eternal, whether the world is not eternal,"}, {"key": "ma221:3.4", "p": "如來終，如來不終，如來終不終，…", "s": "whether the world is finite, whether the world is infinite,\nwhether the soul is the same as the body, whether the soul is different from the body,"}, {"key": "ma221:3.5", "p": "如來亦非終亦非不終耶？…", "s": "whether the Tathāgata exists after death, whether the Tathāgata does not exist after death,"}, {"key": "ma221:3.6", "p": "我不欲此，我不忍此，我不可此。…", "s": "whether the Tathāgata both exists and does not exist after death,"}, {"key": "ma221:3.7", "p": "若世尊為我一向說世有常者，我從彼學梵行。…", "s": "or whether the Tathāgata neither exists nor does not exist after death—\nI do not want this, I do not accept this, I do not agree with this."}, {"key": "ma221:3.8", "p": "若世尊不為我一向說世有常者，我當難詰彼，捨之而去。…", "s": "If the Blessed One would definitively tell me that the world is eternal, then I would practice the holy life under him."}, {"key": "ma221:3.9", "p": "如是世無有常，世有底，…", "s": "If the Blessed One would not definitively tell me that the world is eternal,"}, {"key": "ma221:3.10", "p": "世無底，命即是身，為命異身異，…", "s": "then I would challenge him, abandon him, and leave.\nLikewise, regarding whether the world is not eternal, whether the world is finite, whether the world is infi…"}, {"key": "ma221:3.11", "p": "如來終，如來不終，如來終不終，…", "s": "whether the soul is the same as the body, whether the soul is different from the body,"}, {"key": "ma221:3.12", "p": "如來亦非終亦非不終耶？…", "s": "whether the Tathāgata exists after death, whether the Tathāgata does not exist after death,"}, {"key": "ma221:3.13", "p": "若世尊為我一向說此是真諦，…", "s": "whether the Tathāgata both exists and does not exist after death,\nor whether the Tathāgata neither exists nor does not exist after death:"}, {"key": "ma221:3.14", "p": "餘皆虛妄言者，我從彼學梵行，…", "s": "if the Blessed One would definitively tell me that this is the true truth and all else is false speech,"}, {"key": "ma221:3.15", "p": "若世尊不為我一向說此是真諦，…", "s": "then I would practice the holy life under him."}, {"key": "ma221:3.16", "p": "餘皆虛妄言者，我當難詰彼，捨之而去。」…", "s": "If the Blessed One would not definitively tell me that this is the true truth and all else is false speech,\nthen I would challenge him, abandon him, and leave.'"}]}, {"id": "4", "label": "於是，尊者鬘童子則於晡時，從燕坐起，", "rows": [{"key": "ma221:4.1", "p": "於是，尊者鬘童子則於晡時，從燕坐起，…", "s": "Then, the venerable Māluṅkyaputta, in the afternoon, rose from his meditation,"}, {"key": "ma221:4.2", "p": "往詣佛所，稽首作禮，却坐一面，白曰：「世尊！…", "s": "went to the Buddha’s presence, prostrated himself at the Buddha’s feet, and sat to one side."}, {"key": "ma221:4.3", "p": "我今獨安靖處，燕坐思惟，心作是念：『所謂此見，…", "s": "He said:\n'World-Honored One, just now, while alone in a quiet place, sitting in meditation, I had this thought:"}, {"key": "ma221:4.4", "p": "世尊捨置除却，不盡通說，謂世有常，世無有常，…", "s": "“As for these views that the Blessed One has set aside, rejected, and not fully explained—"}, {"key": "ma221:4.5", "p": "世有底，世無底，命即是身，為命異身異，如來終，…", "s": "namely, whether the world is eternal, whether the world is not eternal,"}, {"key": "ma221:4.6", "p": "如來不終，如來終不終，如來亦非終亦非不終耶？…", "s": "whether the world is finite, whether the world is infinite,\nwhether the soul is the same as the body, whether the soul is different from the body,"}, {"key": "ma221:4.7", "p": "我不欲此，我不忍此，我不可此。…", "s": "whether the Tathāgata exists after death, whether the Tathāgata does not exist after death,"}, {"key": "ma221:4.8", "p": "若世尊一向知世有常者，世尊！…", "s": "whether the Tathāgata both exists and does not exist after death,\nor whether the Tathāgata neither exists nor does not exist after death—"}, {"key": "ma221:4.9", "p": "當為我說。…", "s": "I do not want this, I do not accept this, I do not agree with this."}, {"key": "ma221:4.10", "p": "若世尊不一向知世有常者，當直言不知也。…", "s": "If the Blessed One definitely knows that the world is eternal, then, World-Honored One, you should tell me."}, {"key": "ma221:4.11", "p": "如是世無有常，世有底，…", "s": "If the Blessed One does not definitely know that the world is eternal, then you should straightforwardly say,\n‘I do not know.’"}, {"key": "ma221:4.12", "p": "世無底，命即是身，為命異身異，…", "s": "Likewise, regarding whether the world is not eternal, whether the world is finite, whether the world is infinite,"}, {"key": "ma221:4.13", "p": "如來終，如來不終，如來終不終，…", "s": "whether the soul is the same as the body, whether the soul is different from the body,\nwhether the Tathāgata exists after death, whether the Tathāgata does not …"}, {"key": "ma221:4.14", "p": "如來亦非終亦非不終耶？…", "s": "whether the Tathāgata both exists and does not exist after death,"}, {"key": "ma221:4.15", "p": "若世尊一向知此是真諦，餘皆虛妄言者，世尊！…", "s": "or whether the Tathāgata neither exists nor does not exist after death:"}, {"key": "ma221:4.16", "p": "當為我說。…", "s": "if the Blessed One definitely knows that this is the true truth and all else is false speech,\nthen, World-Honored One, you should tell me."}, {"key": "ma221:4.17", "p": "若世尊不一向知此是真諦，…", "s": "If the Blessed One does not definitely know that this is the true truth and all else is false speech,"}, {"key": "ma221:4.18", "p": "餘皆虛妄言者，當直言不知也。』」…", "s": "then you should straightforwardly say,\n‘I do not know.’”'"}]}, {"id": "5", "label": "世尊問曰：「鬘童子！", "rows": [{"key": "ma221:5.1", "p": "世尊問曰：「鬘童子！…", "s": "The Blessed One asked:\n'Māluṅkyaputta, did I ever previously tell you,"}, {"key": "ma221:5.2", "p": "我本頗為汝如是說世有常，汝來從我學梵行耶？」…", "s": "“The world is eternal;\ncome and practice the holy life under me”?'"}]}, {"id": "6", "label": "鬘童子答曰：「不也。世尊！」", "rows": [{"key": "ma221:6.1", "p": "鬘童子答曰：「不也。世尊！」…", "s": "Māluṅkyaputta replied:\n'No, World-Honored One.'"}]}, {"id": "7", "label": "「如是，世無有常，世有底，", "rows": [{"key": "ma221:7.1", "p": "「如是，世無有常，世有底，…", "s": "\"In the same way, is the world eternal, the world not eternal, the world finite,"}, {"key": "ma221:7.2", "p": "世無底，命即是身，為命異身異，…", "s": "the world infinite, the soul the same as the body, the soul different from the body,"}, {"key": "ma221:7.3", "p": "如來終，如來不終，如來終不終，…", "s": "does the Tathāgata exist after death, does the Tathāgata not exist after death,"}, {"key": "ma221:7.4", "p": "如來亦非終亦非不終耶？…", "s": "does the Tathāgata both exist and not exist after death, does the Tathāgata neither exist nor not exist after death?"}, {"key": "ma221:7.5", "p": "我本頗為汝如是說此是真諦，…", "s": "Did I ever tell you that this is the ultimate truth and everything else is false,"}, {"key": "ma221:7.6", "p": "餘皆虛妄言，汝來從我學梵行耶？」…", "s": "and that you should come and follow me in the holy life?\""}]}, {"id": "8", "label": "鬘童子答曰：「不也。世尊！」", "rows": [{"key": "ma221:8.1", "p": "鬘童子答曰：「不也。世尊！」…", "s": "Mālunkyaputta replied:\n\"No, Blessed One.\""}]}, {"id": "9", "label": "「鬘童子！", "rows": [{"key": "ma221:9.1", "p": "「鬘童子！…", "s": "\"Mālunkyaputta!"}, {"key": "ma221:9.2", "p": "汝本頗向我說，若世尊為我一向說世有常者，…", "s": "Did you ever say to me,"}, {"key": "ma221:9.3", "p": "我當從世尊學梵行耶？」…", "s": "'If the Blessed One would definitively explain to me whether the world is eternal,\nthen I will follow the Blessed One in the holy life'?\""}]}, {"id": "10", "label": "鬘童子答曰：「不也。世尊！」", "rows": [{"key": "ma221:10.1", "p": "鬘童子答曰：「不也。世尊！」…", "s": "Mālunkyaputta replied:\n\"No, Blessed One.\""}]}, {"id": "11", "label": "「如是，世無有常，世有底，", "rows": [{"key": "ma221:11.1", "p": "「如是，世無有常，世有底，…", "s": "\"In the same way, is the world not eternal, the world finite, the world infinite,"}, {"key": "ma221:11.2", "p": "世無底，命即是身，為命異身異，…", "s": "the soul the same as the body, the soul different from the body, does the Tathāgata exist after death,"}, {"key": "ma221:11.3", "p": "如來終，如來不終，如來終不終，…", "s": "does the Tathāgata not exist after death, does the Tathāgata both exist and not exist after death,"}, {"key": "ma221:11.4", "p": "如來亦非終亦非不終耶？…", "s": "does the Tathāgata neither exist nor not exist after death?"}, {"key": "ma221:11.5", "p": "鬘童子！…", "s": "Mālunkyaputta!"}, {"key": "ma221:11.6", "p": "汝本頗向我說，若世尊為我一向說此是真諦，…", "s": "Did you ever say to me,"}, {"key": "ma221:11.7", "p": "餘皆虛妄言者，我當從世尊學梵行耶？」…", "s": "'If the Blessed One would definitively explain to me that this is the ultimate truth and everything else is false,\nthen I will follow the Blessed One in the hol…"}]}, {"id": "12", "label": "鬘童子答曰：「不也。世尊！」", "rows": [{"key": "ma221:12.1", "p": "鬘童子答曰：「不也。世尊！」…", "s": "Mālunkyaputta replied:\n\"No, Blessed One.\""}]}, {"id": "13", "label": "世尊告曰：「鬘童子，我本不向汝有所說，", "rows": [{"key": "ma221:13.1", "p": "世尊告曰：「鬘童子，我本不向汝有所說，…", "s": "The Blessed One said:"}, {"key": "ma221:13.2", "p": "汝本亦不向我有所說，汝愚癡人！…", "s": "\"Mālunkyāputta, I never made any such statement to you, nor did you ever make any such statement to me."}, {"key": "ma221:13.3", "p": "何故虛妄誣謗我耶？」…", "s": "You foolish man!\nWhy do you falsely and groundlessly slander me?\""}]}, {"id": "14", "label": "於是，尊者鬘童子為世尊面訶責數，", "rows": [{"key": "ma221:14.1", "p": "於是，尊者鬘童子為世尊面訶責數，…", "s": "Then the venerable Mālunkyāputta, having been personally rebuked and criticized by the Blessed One,"}, {"key": "ma221:14.2", "p": "內懷憂慼，低頭默然，失辯無言，如有所伺。…", "s": "became inwardly sorrowful, hung his head in silence, lost his eloquence, and sat as if waiting for something."}]}, {"id": "15", "label": "於是，世尊面訶鬘童子已，", "rows": [{"key": "ma221:15.1", "p": "於是，世尊面訶鬘童子已，…", "s": "Then, after personally rebuking Mālunkyāputta, the Blessed One addressed the monks:"}, {"key": "ma221:15.2", "p": "告諸比丘：「若有愚癡人作如是念：…", "s": "\"If a foolish person thinks:"}, {"key": "ma221:15.3", "p": "『若世尊不為我一向說世有常者，我不從世尊學梵行。…", "s": "'If the Blessed One does not definitively declare to me that the world is eternal,"}, {"key": "ma221:15.4", "p": "』彼愚癡人竟不得知，於其中間而命終也。…", "s": "I will not lead the holy life under the Blessed One,' that foolish person will never come to know it,"}, {"key": "ma221:15.5", "p": "如是，世無有常，世有底，…", "s": "and in the meantime he will die."}, {"key": "ma221:15.6", "p": "世無底，命即是身，為命異身異，…", "s": "Likewise, regarding:\nthe world is not eternal, the world is finite, the world is infinite,"}, {"key": "ma221:15.7", "p": "如來終，如來不終，如來終不終，…", "s": "the soul is the same as the body, the soul is different from the body, the Tathāgata exists after death,"}, {"key": "ma221:15.8", "p": "如來亦非終亦非不終耶？…", "s": "the Tathāgata does not exist after death, the Tathāgata both exists and does not exist after death,"}, {"key": "ma221:15.9", "p": "若有愚癡人作如是念：『若世尊不為我一向說此是真諦，…", "s": "the Tathāgata neither exists nor does not exist after death—if a foolish person thinks:"}, {"key": "ma221:15.10", "p": "餘皆虛妄言者，我不從世尊學梵行。…", "s": "'If the Blessed One does not definitively declare to me that this is the truth and all else is false,"}, {"key": "ma221:15.11", "p": "』彼愚癡人竟不得知，於其中間而命終也。…", "s": "I will not lead the holy life under the Blessed One,' that foolish person will never come to know it,\nand in the meantime he will die."}]}, {"id": "16", "label": "「猶如有人身被毒箭，因毒箭故，受極重苦。", "rows": [{"key": "ma221:16.1", "p": "「猶如有人身被毒箭，因毒箭故，受極重苦。…", "s": "\"It is like a person who is struck by a poisoned arrow, and because of that poisoned arrow, he experiences extreme pain."}, {"key": "ma221:16.2", "p": "彼見親族憐念愍傷，為求利義饒益安隱，便求箭醫。…", "s": "His relatives, out of compassion and concern, seek a doctor to remove the arrow for his benefit, welfare, and peace."}, {"key": "ma221:16.3", "p": "然彼人者方作是念：『未可拔箭，…", "s": "But that person thinks:"}, {"key": "ma221:16.4", "p": "我應先知彼人如是姓、如是名、如是生，為長、短、麤、…", "s": "'Do not pull out the arrow yet;"}, {"key": "ma221:16.5", "p": "細，為黑、白、不黑不白，為剎利族，梵志、…", "s": "I must first know whether the person who shot me is of such a clan,\nsuch a name, such a family, whether he is tall, short, stout, or thin,"}, {"key": "ma221:16.6", "p": "居士、工師族，為東方、南方、西方、比方耶？…", "s": "whether he is dark, fair, or neither, whether he is of the warrior, brahmin,"}, {"key": "ma221:16.7", "p": "未可拔箭，我應先知彼弓為柘、為桑、為槻、為角耶？…", "s": "merchant, or worker caste, whether he is from the east, south, west, or north."}, {"key": "ma221:16.8", "p": "未可拔箭，我應先知弓扎，…", "s": "Do not pull out the arrow yet;"}, {"key": "ma221:16.9", "p": "彼為是牛筋、為麞鹿筋、為是絲耶？…", "s": "I must first know whether the bow is made of mulberry, silk-cotton, elm, or horn."}, {"key": "ma221:16.10", "p": "未可拔箭，我應先知弓色為黑、為白、為赤、為黃耶？…", "s": "Do not pull out the arrow yet;\nI must first know whether the bowstring is made of cow sinew, deer sinew, or silk."}, {"key": "ma221:16.11", "p": "未可拔箭，我應先知弓弦為筋、為絲、為紵、為麻耶？…", "s": "Do not pull out the arrow yet;"}, {"key": "ma221:16.12", "p": "未可拔箭，我應先知箭簳為木、為竹耶？…", "s": "I must first know whether the bow is black, white, red, or yellow."}, {"key": "ma221:16.13", "p": "未可拔箭，我應先知箭纏為是牛筋、…", "s": "Do not pull out the arrow yet;"}, {"key": "ma221:16.14", "p": "為麞鹿筋、為是絲耶？…", "s": "I must first know whether the bowstring is made of sinew, silk, hemp, or flax.\nDo not pull out the arrow yet;"}, {"key": "ma221:16.15", "p": "未可拔箭，我應先知箭羽為飄鶭毛、…", "s": "I must first know whether the arrow shaft is made of wood or bamboo."}, {"key": "ma221:16.16", "p": "為鵰鷲毛、為鵾鷄毛、為鶴毛耶？…", "s": "Do not pull out the arrow yet;"}, {"key": "ma221:16.17", "p": "未可拔箭，我應先知箭［金＊適］為錍、…", "s": "I must first know whether the arrow binding is made of cow sinew, deer sinew, or silk."}, {"key": "ma221:16.18", "p": "為矛、為鈹刀耶？…", "s": "Do not pull out the arrow yet;"}, {"key": "ma221:16.19", "p": "未可拔箭，我應先知作箭［金＊適］師如是姓、…", "s": "I must first know whether the arrow feathers are from a vulture, an eagle, a crane, or a heron.\nDo not pull out the arrow yet;"}, {"key": "ma221:16.20", "p": "如是名、如是生，為長、…", "s": "I must first know whether the arrowhead is a barb, a spear, or a knife."}, {"key": "ma221:16.21", "p": "短、麤、細，為黑、白、不黑不白，…", "s": "Do not pull out the arrow yet;"}, {"key": "ma221:16.22", "p": "為東方、西方、南方、北方耶？…", "s": "I must first know the arrow-maker's clan, name, family, whether he is tall, short, stout,"}, {"key": "ma221:16.23", "p": "』彼人竟不得知，於其中間而命終也。…", "s": "or thin, whether he is dark, fair, or neither, whether he is from the east, west, south, or north.'\nThat person will never come to know it, and in the meantime …"}]}, {"id": "17", "label": "「若有愚癡人作如是念：", "rows": [{"key": "ma221:17.1", "p": "「若有愚癡人作如是念：…", "s": "\"If a foolish person thinks:"}, {"key": "ma221:17.2", "p": "『若世尊不為我一向說世有常者，我不從世尊學梵行。…", "s": "'If the Blessed One does not definitively declare to me that the world is eternal,"}, {"key": "ma221:17.3", "p": "』彼愚癡人竟不得知，於其中間而命終也。…", "s": "I will not lead the holy life under the Blessed One,' that foolish person will never come to know it,"}, {"key": "ma221:17.4", "p": "如是，世無有常，世有底，…", "s": "and in the meantime he will die."}, {"key": "ma221:17.5", "p": "世無底，命即是身，為命異身異，…", "s": "Likewise, regarding:\nthe world is not eternal, the world is finite, the world is infinite,"}, {"key": "ma221:17.6", "p": "如來終，如來不終，如來終不終，…", "s": "the soul is the same as the body, the soul is different from the body, the Tathāgata exists after death,"}, {"key": "ma221:17.7", "p": "如來亦非終亦非不終耶？…", "s": "the Tathāgata does not exist after death, the Tathāgata both exists and does not exist after death,"}, {"key": "ma221:17.8", "p": "若有愚癡人作如是念：『若世尊不為我一向說此是真諦，…", "s": "the Tathāgata neither exists nor does not exist after death—if a foolish person thinks:"}, {"key": "ma221:17.9", "p": "餘皆虛妄言者，我不從世尊學梵行。…", "s": "'If the Blessed One does not definitively declare to me that this is the truth and all else is false,"}, {"key": "ma221:17.10", "p": "』彼愚癡人竟不得知，於其中間而命終也。…", "s": "I will not lead the holy life under the Blessed One,' that foolish person will never come to know it,\nand in the meantime he will die."}]}, {"id": "18", "label": "「世有常，因此見故，從我學梵行者，此事不然。", "rows": [{"key": "ma221:18.1", "p": "「世有常，因此見故，從我學梵行者，此事不然。…", "s": "\"That one would lead the holy life under me because of the view that the world is eternal—this is not the case."}, {"key": "ma221:18.2", "p": "如是，世無有常，世有底，…", "s": "Likewise, regarding:"}, {"key": "ma221:18.3", "p": "世無底，命即是身，為命異身異，…", "s": "the world is not eternal, the world is finite, the world is infinite, the soul is the same as the body,"}, {"key": "ma221:18.4", "p": "如來終，如來不終，如來終不終，…", "s": "the soul is different from the body, the Tathāgata exists after death, the Tathāgata does not exist after death,"}, {"key": "ma221:18.5", "p": "如來亦非終亦非不終耶？…", "s": "the Tathāgata both exists and does not exist after death, the Tathāgata neither exists nor does not exist after death—"}, {"key": "ma221:18.6", "p": "因此見故，從我學梵行者，此事不然。…", "s": "that one would lead the holy life under me because of such a view—this is not the case."}, {"key": "ma221:18.7", "p": "世有常，有此見故，不從我學梵行者，此事不然。…", "s": "That one would not lead the holy life under me because of the view that the world is eternal—this is not the case."}, {"key": "ma221:18.8", "p": "如是，世無有常，世有底，…", "s": "Likewise, regarding:"}, {"key": "ma221:18.9", "p": "世無底，命即是身，為命異身異，…", "s": "the world is not eternal, the world is finite, the world is infinite, the soul is the same as the body,"}, {"key": "ma221:18.10", "p": "如來終，如來不終，如來終不終，…", "s": "the soul is different from the body, the Tathāgata exists after death, the Tathāgata does not exist after death,"}, {"key": "ma221:18.11", "p": "如來亦非終亦非不終耶？…", "s": "the Tathāgata both exists and does not exist after death, the Tathāgata neither exists nor does not exist after death—"}, {"key": "ma221:18.12", "p": "有此見故，不從我學梵行者，此事不然。…", "s": "that one would not lead the holy life under me because of such a view—this is not the case.\""}]}, {"id": "19", "label": "「世有常，無此見故，從我學梵行者，此事不然。", "rows": [{"key": "ma221:19.1", "p": "「世有常，無此見故，從我學梵行者，此事不然。…", "s": "\"The world is eternal—because there is no such view, for one who lives the holy life under me, this is not the case."}, {"key": "ma221:19.2", "p": "如是，世無有常，世有底，…", "s": "So too, the world is not eternal, the world has an end, the world has no end,"}, {"key": "ma221:19.3", "p": "世無底，命即是身，為命異身異，…", "s": "the soul is the same as the body, the soul is different from the body, the Tathāgata exists after death,"}, {"key": "ma221:19.4", "p": "如來終，如來不終，如來終不終，…", "s": "the Tathāgata does not exist after death, the Tathāgata both exists and does not exist after death,"}, {"key": "ma221:19.5", "p": "如來亦非終亦非不終耶？…", "s": "the Tathāgata neither exists nor does not exist after death?"}, {"key": "ma221:19.6", "p": "無此見故，從我學梵行者，此事不然。…", "s": "Because there is no such view, for one who lives the holy life under me, this is not the case."}, {"key": "ma221:19.7", "p": "世有常，無此見故，從我學梵行者，此事不然。…", "s": "The world is eternal—because there is no such view, for one who lives the holy life under me, this is not the case."}, {"key": "ma221:19.8", "p": "如是，世無有常，世有底，…", "s": "So too, the world is not eternal, the world has an end, the world has no end,"}, {"key": "ma221:19.9", "p": "世無底，命即是身，為命異身異，…", "s": "the soul is the same as the body, the soul is different from the body, the Tathāgata exists after death,"}, {"key": "ma221:19.10", "p": "如來終，如來不終，如來終不終，…", "s": "the Tathāgata does not exist after death, the Tathāgata both exists and does not exist after death,"}, {"key": "ma221:19.11", "p": "如來亦非終亦非不終耶？…", "s": "the Tathāgata neither exists nor does not exist after death?"}, {"key": "ma221:19.12", "p": "無此見故，不從我學梵行者，此事不然。…", "s": "Because there is no such view, for one who does not live the holy life under me, this is not the case."}]}, {"id": "20", "label": "「世有常者，有生、有老、有病、有死，", "rows": [{"key": "ma221:20.1", "p": "「世有常者，有生、有老、有病、有死，…", "s": "\"If the world is eternal, there is birth, aging, sickness, death, sorrow,"}, {"key": "ma221:20.2", "p": "愁慼、啼哭、憂苦、懊惱，如是此淳大苦陰生。…", "s": "lamentation, pain, grief, and despair—thus this entire great mass of suffering arises."}, {"key": "ma221:20.3", "p": "如是，世無常，世有底，世無底，命即是身，…", "s": "So too, if the world is not eternal, the world has an end, the world has no end, the soul is the same as the body,"}, {"key": "ma221:20.4", "p": "為命異身異，如來終，如來不終，如來終不終，…", "s": "the soul is different from the body, the Tathāgata exists after death, the Tathāgata does not exist after death,"}, {"key": "ma221:20.5", "p": "如來亦非終亦非不終者，有生、有老、有病、有死，…", "s": "the Tathāgata both exists and does not exist after death, the Tathāgata neither exists nor does not exist after death,"}, {"key": "ma221:20.6", "p": "愁慼、啼哭、憂苦、懊惱，如是此淳大苦陰生。…", "s": "there is birth, aging, sickness, death, sorrow, lamentation, pain,\ngrief, and despair—thus this entire great mass of suffering arises."}]}, {"id": "21", "label": "「世有常，我不一向說此。", "rows": [{"key": "ma221:21.1", "p": "「世有常，我不一向說此。…", "s": "\"I do not assert that the world is eternal."}, {"key": "ma221:21.2", "p": "以何等故，我不一向說此？…", "s": "Why do I not assert that?"}, {"key": "ma221:21.3", "p": "此非義相應，非法相應，非梵行本，不趣智、…", "s": "It is not connected with the goal, not connected with the teaching, not the basis of the holy life;"}, {"key": "ma221:21.4", "p": "不趣覺、不趣涅槃，是故我不一向說此。…", "s": "it does not lead to wisdom, does not lead to awakening, does not lead to Nibbāna."}, {"key": "ma221:21.5", "p": "如是，世無常，世有底，世無底，…", "s": "Therefore I do not assert that.\nSo too, the world is not eternal, the world has an end, the world has no end,"}, {"key": "ma221:21.6", "p": "命即是身，為命異身異，如來終，…", "s": "the soul is the same as the body, the soul is different from the body, the Tathāgata exists after death,"}, {"key": "ma221:21.7", "p": "如來不終，如來終不終，…", "s": "the Tathāgata does not exist after death, the Tathāgata both exists and does not exist after death,"}, {"key": "ma221:21.8", "p": "如來亦非終亦非不終，我不一向說此。…", "s": "the Tathāgata neither exists nor does not exist after death—I do not assert that."}, {"key": "ma221:21.9", "p": "以何等故，我不一向說此？…", "s": "Why do I not assert that?\nIt is not connected with the goal, not connected with the teaching, not the basis of the holy life;"}, {"key": "ma221:21.10", "p": "此非義相應，非法相應，非梵行本，不趣智、…", "s": "it does not lead to wisdom, does not lead to awakening, does not lead to Nibbāna."}, {"key": "ma221:21.11", "p": "不趣覺、不趣涅槃，是故我不一向說此也。…", "s": "Therefore I do not assert that."}, {"key": "ma221:21.12", "p": "何等法我一向說耶？…", "s": "What do I always assert?"}, {"key": "ma221:21.13", "p": "此義我一向說，苦、苦習、苦滅、苦滅道跡，我一向說。…", "s": "I always assert this:"}, {"key": "ma221:21.14", "p": "以何等故，我一向說此？…", "s": "suffering, the origin of suffering, the cessation of suffering, and the path leading to the cessation of suffering.\nWhy do I always assert that?"}, {"key": "ma221:21.15", "p": "此是義相應，是法相應，是梵行本，…", "s": "It is connected with the goal, connected with the teaching, the basis of the holy life;"}, {"key": "ma221:21.16", "p": "趣智、趣覺、趣於涅槃，是故我一向說此。…", "s": "it leads to wisdom, leads to awakening, leads to Nibbāna."}, {"key": "ma221:21.17", "p": "是為不可說者則不說，…", "s": "Therefore I always assert that."}, {"key": "ma221:21.18", "p": "可說者則說，當如是持，當如是學。」…", "s": "Thus what should not be spoken is not spoken, and what should be spoken is spoken.\nYou should hold this and learn this.\""}]}, {"id": "22", "label": "佛說如是。", "rows": [{"key": "ma221:22.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma221:22.2", "p": "彼諸比丘聞佛所說，歡喜奉行。…", "s": "Those monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

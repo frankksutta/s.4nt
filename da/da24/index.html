@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:37 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "如是我聞：", "rows": [{"key": "da24:1.1", "p": "如是我聞：…", "s": "Thus I have heard:"}]}, {"id": "2", "label": "一時，佛在那難陀城波婆利掩 次林中，", "rows": [{"key": "da24:2.1", "p": "一時，佛在那難陀城波婆利掩 次林中，…", "s": "One time, the Buddha was staying at the city of Nālanda in Prāvārika’s mango grove."}, {"key": "da24:2.2", "p": "與大比丘眾千二百五十人俱。…", "s": "He was accompanied by a large assembly of 1,250 monks."}]}, {"id": "3", "label": "爾時， 有長者子，名曰堅固，", "rows": [{"key": "da24:3.1", "p": "爾時， 有長者子，名曰堅固，…", "s": "At the time, there was a prominent man’s son named Dhruva who came to the Buddha,"}, {"key": "da24:3.2", "p": "來詣佛所，頭面禮足， 在一面坐。…", "s": "bowed his head at his feet, and sat down to one side."}, {"key": "da24:3.3", "p": "時，堅固長者子白佛言：「善哉！世尊！…", "s": "That prominent man’s son said to the Buddha,\n“It would be excellent, Bhagavān, if you could please tell the monks,"}, {"key": "da24:3.4", "p": "唯願今者勑諸比丘：『若有婆羅門、…", "s": "‘If a priest, a prominent man’s son, or a householder comes,"}, {"key": "da24:3.5", "p": "長者子、居 士來，當為現神足顯上人法。』」…", "s": "show them the superhuman state with a display of miraculous abilities.’”"}]}, {"id": "4", "label": "佛告堅固： 「我終不教諸比丘為婆羅門、", "rows": [{"key": "da24:4.1", "p": "佛告堅固： 「我終不教諸比丘為婆羅門、…", "s": "The Buddha told Dhruva,\n“I never instruct the monks to show the"}, {"key": "da24:4.2", "p": "長者、居士而 現神足上人法也。…", "s": "superhuman state with a display of miraculous abilities."}, {"key": "da24:4.3", "p": "我但教弟子於空閑處 靜默思道，若有功德，…", "s": "I simply teach my disciples to peacefully contemplate the path in an empty and quiet place.\nIf they have virtues, they should keep them to themselves."}, {"key": "da24:4.4", "p": "當自覆藏，若有過 失，當自發露。」…", "s": "If they have defects, they should disclose them.”"}]}, {"id": "5", "label": "時，堅固長者子復白佛言：「唯願 世尊勑諸比丘：", "rows": [{"key": "da24:5.1", "p": "時，堅固長者子復白佛言：「唯願 世尊勑諸比丘：…", "s": "The prominent man’s son Dhruva again said to the Buddha,\n“Please, Bhagavān, tell the monks:"}, {"key": "da24:5.2", "p": "『若有婆羅門、長者、居士來，…", "s": "‘If a priest, a prominent man’s son, or a householder comes,"}, {"key": "da24:5.3", "p": "當為現神足，顯上人法。』」…", "s": "show them the superhuman state with a display of miraculous abilities.’”"}]}, {"id": "6", "label": "佛復告堅固：「我 終不教諸比丘為婆羅門、", "rows": [{"key": "da24:6.1", "p": "佛復告堅固：「我 終不教諸比丘為婆羅門、…", "s": "The Buddha again told Dhruva,\n“I never instruct the monks to show the superhuman state with a display of miraculous abilities."}, {"key": "da24:6.2", "p": "長者、居士而現 神足上人法也。…"}, {"key": "da24:6.3", "p": "我但教弟子於空閑處靜 默思道，若有功德，…", "s": "I simply teach my disciples to peacefully contemplate the path in an empty and quiet place.\nIf they have virtues, they should keep them to themselves."}, {"key": "da24:6.4", "p": "當自覆藏，若有過失，當 自發露。」…", "s": "If they have defects, they should disclose them.”"}]}, {"id": "7", "label": "時，堅固長者子白佛言：「我於上人 法無有疑也。", "rows": [{"key": "da24:7.1", "p": "時，堅固長者子白佛言：「我於上人 法無有疑也。…", "s": "The prominent man’s son Dhruva said to the Buddha,\n“I don’t have doubts about the superhuman state."}, {"key": "da24:7.2", "p": "但此那難陀城國土豐樂，人 民熾盛，…", "s": "It’s only that the region of Nālanda is bountiful, and the population is thriving."}, {"key": "da24:7.3", "p": "若於中現神足者，多所饒益，佛及 大眾善弘道化。」…", "s": "If someone were to display miraculous abilities, they would profit greatly by it,\nand the Buddha and his large assembly are skilled at converting others and spr…"}]}, {"id": "8", "label": "佛復告堅固：「我終不教比 丘為婆羅門、", "rows": [{"key": "da24:8.1", "p": "佛復告堅固：「我終不教比 丘為婆羅門、…", "s": "The Buddha once again told Dhruva,\n“I never instruct the monks to show the superhuman state with a display of miraculous abilities."}, {"key": "da24:8.2", "p": "長者子、居士而現神足上人 法也。…"}, {"key": "da24:8.3", "p": "我但教弟子於空閑處靜默思道，若 有功德，…", "s": "I simply teach my disciples to peacefully contemplate the path in an empty and quiet place.\nIf they have virtues, they should keep them to themselves."}, {"key": "da24:8.4", "p": "當自覆藏，若有過失，當自發露。…", "s": "If they have defects, they should disclose them."}, {"key": "da24:8.5", "p": "所 以者何？…", "s": "“Why is that?"}, {"key": "da24:8.6", "p": "有三神足。…", "s": "There are three miraculous abilities."}, {"key": "da24:8.7", "p": "云何為三？…", "s": "What are three?"}, {"key": "da24:8.8", "p": "一曰神足，二 曰觀察他心，三曰教誡。…", "s": "One is miraculous abilities, the second is observing other minds, and third is instruction."}, {"key": "da24:8.9", "p": "云何為神足？…", "s": "“What are the miraculous abilities?"}, {"key": "da24:8.10", "p": "長者 子！…", "s": "Prominent man’s son, a monk learns measureless miraculous abilities."}, {"key": "da24:8.11", "p": "比丘習無量神足，能以一身變成無數，…", "s": "They’re able to form countless [bodies] from a single body and recombine those countless bodies into one [body]."}, {"key": "da24:8.12", "p": "以無數身還合為一，…"}, {"key": "da24:8.13", "p": "若遠若近，山河石壁，自 在無礙，猶如行空；…", "s": "Whether near or far, [they can move through] mountains, rivers,\nand stone walls freely and without obstruction like walking through air."}, {"key": "da24:8.14", "p": "於虛空中結加趺坐，猶 如飛鳥；…", "s": "They fly in the air like birds while sitting cross-legged."}, {"key": "da24:8.15", "p": "出入大地，猶如在水；若行水上；…", "s": "They go in and out of the earth as though it were water.\nThey walk on water as though it were dry land."}, {"key": "da24:8.16", "p": "猶如履地；身出烟火，…", "s": "Their bodies smoke and burn like a large fire."}, {"key": "da24:8.17", "p": "如大火聚，手捫日 月，立至梵天。…", "s": "They touch the sun and moon with their hands and stand as high as the Brahma Heaven."}, {"key": "da24:8.18", "p": "若有得信長者、居士見此比 丘現無量神足，…", "s": "“If a faithful prominent man or householder were to see monks displaying these measureless miraculous abilities …\nstanding as high as the Brahma heaven,"}, {"key": "da24:8.19", "p": "立至梵天，當復詣餘未得 信長者、…", "s": "he would visit other prominent men and householders who haven’t become believers and tell them,"}, {"key": "da24:8.20", "p": "居士所，而告之言：…"}, {"key": "da24:8.21", "p": "『我見比丘現無 量神足，立至梵天。…", "s": "‘I saw a monk display measureless miraculous abilities … standing as high as the Brahma Heaven.’"}, {"key": "da24:8.22", "p": "』彼長者、居士未得信者，語 得信者言：…", "s": "Those prominent men and householders who aren’t believers yet will say to that believer,"}, {"key": "da24:8.23", "p": "『我聞有瞿羅呪，能現如是無量 神變，乃至立至梵天。』」…", "s": "‘I’ve heard that there’s the spell of Gola that can display such measureless miraculous abilities …\nstanding as high as the Brahma Heaven.’”"}]}, {"id": "9", "label": "佛復告長者子堅固： 「彼不信者，", "rows": [{"key": "da24:9.1", "p": "佛復告長者子堅固： 「彼不信者，…", "s": "The Buddha again told Dhruva,\n“Those non-believers would have this to say."}, {"key": "da24:9.2", "p": "有如此言，豈非毀謗言耶？」…", "s": "Wouldn’t this be an insult?”"}]}, {"id": "10", "label": "堅固 白佛言：「此實是毀謗言也。」", "rows": [{"key": "da24:10.1", "p": "堅固 白佛言：「此實是毀謗言也。」…", "s": "Dhruva said to the Buddha,\n“It really would be insulting.”"}]}, {"id": "11", "label": "佛言：「我以是故， 不勑諸比丘現神變化，", "rows": [{"key": "da24:11.1", "p": "佛言：「我以是故， 不勑諸比丘現神變化，…", "s": "The Buddha said,\n“This is why I don’t tell the monks to display miracles to convert people."}, {"key": "da24:11.2", "p": "但教弟子於空閑 處靜默思道，…", "s": "I simply teach my disciples to peacefully contemplate the path in an empty and quiet place."}, {"key": "da24:11.3", "p": "若有功德，當自覆藏，若有過 失，當自發露。…", "s": "If they have virtues, they should keep them to themselves.\nIf they have defects, they should make them known."}, {"key": "da24:11.4", "p": "如是，長者！…", "s": "Thus, prominent man’s son, this is the miraculous ability displayed by my monks."}, {"key": "da24:11.5", "p": "此即是我諸比丘 所現神足。…"}]}, {"id": "12", "label": "「云何名觀察他心神足？", "rows": [{"key": "da24:12.1", "p": "「云何名觀察他心神足？…", "s": "“What’s called the miraculous ability of observing other minds?"}, {"key": "da24:12.2", "p": "於是，比 丘現無量觀察神足，…", "s": "Here, a monk displays measureless miraculous abilities of observation,"}, {"key": "da24:12.3", "p": "觀諸眾生心所念法， 隈屏所為皆能識知。…", "s": "observing the thoughts in the minds of sentient beings and becoming aware of what they’ve done in private."}, {"key": "da24:12.4", "p": "若有得信長者、居士， 見比丘現無量觀察神足，…", "s": "“Suppose a faithful prominent man or householder sees monks displaying measureless miraculous abilities of observation,"}, {"key": "da24:12.5", "p": "觀他眾生心所念 法，…", "s": "observing the thoughts in the minds of sentient beings and becoming aware of what they’ve done in private."}, {"key": "da24:12.6", "p": "隈屏所為皆悉識知，便詣餘未得信長 者、…", "s": "He would visit some other prominent men or householders who haven’t become believers and tell them,"}, {"key": "da24:12.7", "p": "居士所，而告之曰：『我見比丘現無量觀察 神足，…", "s": "‘I saw a monk display measureless miraculous abilities of observation,\nobserving the thoughts in the minds of sentient beings and knowing what they had done in …"}, {"key": "da24:12.8", "p": "觀他眾生心所念法，隈屏所為皆悉能 知。…"}, {"key": "da24:12.9", "p": "』彼不信長者、居士，聞此語已，生毀謗言：…", "s": "Those prominent men or householders who aren’t believers yet would produce this insult upon hearing that:"}, {"key": "da24:12.10", "p": "『有乾陀羅呪能觀察他心，隈屏所為皆悉能 知。…", "s": "‘There’s the spell of Gandhārī that can observe other minds … and knowing what they’ve done in private.’"}, {"key": "da24:12.11", "p": "』云何？…", "s": "“How is it, prominent man’s son?"}, {"key": "da24:12.12", "p": "長者子！…"}, {"key": "da24:12.13", "p": "此豈非毀謗言耶？」…", "s": "Wouldn’t this be an insult?”"}]}, {"id": "13", "label": "堅固白 佛言：「此實是毀謗言也。」", "rows": [{"key": "da24:13.1", "p": "堅固白 佛言：「此實是毀謗言也。」…", "s": "Dhruva said to the Buddha,\n“It really would be insulting.”"}]}, {"id": "14", "label": "佛言：「我以是故，不 勅諸比丘現神變化，", "rows": [{"key": "da24:14.1", "p": "佛言：「我以是故，不 勅諸比丘現神變化，…", "s": "The Buddha said,\n“This is why I don’t tell the monks to display miracles to convert people."}, {"key": "da24:14.2", "p": "但教弟子於空閑處 靜默思道，…", "s": "I simply teach my disciples to peacefully contemplate the path in an empty and quiet place."}, {"key": "da24:14.3", "p": "若有功德，當自覆藏，若有過失， 當自發露。…", "s": "If they have virtues, they should keep them to themselves.\nIf they have defects, they should disclose them."}, {"key": "da24:14.4", "p": "如是，長者子！…", "s": "Thus, prominent man’s son, this is the miraculous ability of observation displayed by my monks."}, {"key": "da24:14.5", "p": "此即是我比丘現 觀察神足。…"}]}, {"id": "15", "label": "「云何為教誡神足？", "rows": [{"key": "da24:15.1", "p": "「云何為教誡神足？…", "s": "“What is the miraculous ability of instruction?"}, {"key": "da24:15.2", "p": "長者子！…", "s": "Prominent man’s son, suppose a Tathāgata, Arhat,"}, {"key": "da24:15.3", "p": "若如 來、至真、等正覺出現於世，十號具足，…", "s": "and Completely Awakened One arises in the world, and he perfects the ten epithets."}, {"key": "da24:15.4", "p": "於諸 天、世人、魔、若魔天、沙門、…", "s": "Among gods, worldly men, and demons, whether they’re in the assemblies of Māra, gods,\nascetics, or priests, he realizes the Dharma for himself and teaches it fo…"}, {"key": "da24:15.5", "p": "婆羅門中，自身作證， 為他說法，…"}, {"key": "da24:15.6", "p": "上中下言，皆悉真正，義味清淨，梵 行具足。…", "s": "His words are all genuine in the beginning, middle, and end.\nTheir content and expression are pure, and they perfect the religious life."}, {"key": "da24:15.7", "p": "若長者、居士聞已，於中得信，…", "s": "“After hearing it, a prominent man or a householder believes it."}, {"key": "da24:15.8", "p": "得信 已，於中觀察自念：…", "s": "They investigate it and think:"}, {"key": "da24:15.9", "p": "『我不宜在家，若在家者，…", "s": "‘It’s not fitting for me to remain at home.\nIf I remain at home, it’ll be like being bound in chains, unable to purely cultivate the religious life."}, {"key": "da24:15.10", "p": "鈎鎖相連，不得清淨修於梵行。…"}, {"key": "da24:15.11", "p": "我今寧可 剃除鬚髮，服三法衣，出家修道，…", "s": "Now, I’d better shave my hair, put on the three Dharma robes, leave home, and cultivate the path."}, {"key": "da24:15.12", "p": "具諸功德， 乃至成就三明，滅諸闇冥，生大智明。…", "s": "Equipped with virtues …\nI’ll accomplish the three insights that produce the great radiance of knowledge that dispels darkness."}, {"key": "da24:15.13", "p": "所以者 何？…", "s": "Why is that?"}, {"key": "da24:15.14", "p": "斯由精勤，樂獨閑居，專念不忘之所得 也。…", "s": "These things are a result of diligence, enjoyment of a solitary and quiet dwelling,\nand focused attention that’s not lost.’"}, {"key": "da24:15.15", "p": "』長者子！…", "s": "Prominent man’s son, this is the miraculous ability of instruction displayed by my monks.”"}, {"key": "da24:15.16", "p": "此是我比丘現教誡神足。」…"}]}, {"id": "16", "label": "爾時， 堅固長者子白佛言：", "rows": [{"key": "da24:16.1", "p": "爾時， 堅固長者子白佛言：…", "s": "The prominent man’s son Dhruva then asked the Buddha,"}, {"key": "da24:16.2", "p": "「頗有比丘成就此三 神足耶？」…", "s": "“Are there any monks who’ve accomplished these three miraculous abilities?”"}]}, {"id": "17", "label": "佛告長者子：「我不說有數，多有比 丘成此三神足者。", "rows": [{"key": "da24:17.1", "p": "佛告長者子：「我不說有數，多有比 丘成此三神足者。…", "s": "The Buddha told the prominent man’s son,\n“I wouldn’t say they are numerous, but there are several monks who’ve achieved these three miraculous abilities."}, {"key": "da24:17.2", "p": "長者子！…", "s": "Prominent man’s son, there was a monk in this assembly who thought to himself,"}, {"key": "da24:17.3", "p": "我有比丘在此 眾中自思念：…", "s": "‘How are the four elements of this body made to cease forever,"}, {"key": "da24:17.4", "p": "『此身四大，地、水、火、風，何由永滅？…", "s": "which are earth, water, fire, and air?’"}, {"key": "da24:17.5", "p": "』 彼比丘倐趣天道，往至四天王所，問四天王 言：…", "s": "That monk instantly headed for the heavenly road.\nHe went to the Heaven of the Four God Kings and asked the four god kings,\n‘How are the four elements of this b…"}, {"key": "da24:17.6", "p": "『此身四大，地、水、火、風，由何永滅？』…", "s": "which are earth, water, fire, and air?’"}]}, {"id": "18", "label": "「長者子！", "rows": [{"key": "da24:18.1", "p": "「長者子！…", "s": "“Prominent man’s son, those four god kings replied to that monk,"}, {"key": "da24:18.2", "p": "彼 四天王報比丘言：『我不知四大由何永滅？…", "s": "‘We don’t know.\nHow are the four elements made to cease forever?"}, {"key": "da24:18.3", "p": "我上有天，名曰忉利，微妙第一，…", "s": "There’s a heaven above us called the Trāyastriṃśa, which is sublime and supreme.\nThe gods there have great wisdom."}, {"key": "da24:18.4", "p": "有大智慧， 彼天能知四大由何而滅。…", "s": "Perhaps they know how to make the four elements cease?’"}, {"key": "da24:18.5", "p": "』彼比丘聞已，即倐 趣天道，往詣忉利天上，…", "s": "“Hearing this, the monk then instantly headed for the heavenly road.\nHe went up to the Trāyastriṃśa Heaven and asked those gods,"}, {"key": "da24:18.6", "p": "問諸天言：『此身四 大，地、水、火、風，何由永滅？…", "s": "‘How are the four elements of this body made to cease forever, which are earth, water, fire, and air?’"}, {"key": "da24:18.7", "p": "』彼忉利天報比丘言： 『我不知四大何由滅，…", "s": "Those Trāyastriṃśa gods replied to the monk,\n‘We don’t know.\nHow are the four elements made to cease forever?"}, {"key": "da24:18.8", "p": "上更有天，名焰摩， 微妙第一，有大智慧，彼天能知。…", "s": "There’s a heaven above us called Yama which is sublime and supreme.\nHaving great wisdom, the gods there may know.’"}, {"key": "da24:18.9", "p": "』即往就問，又 言不知。…", "s": "He went there and asked, but they said they didn’t know."}]}, {"id": "19", "label": "「如是展轉，至兜率天、化自在天、", "rows": [{"key": "da24:19.1", "p": "「如是展轉，至兜率天、化自在天、…", "s": "“Thus, he went to the Tuṣita Heaven … the Nirmāṇarati Heaven … the Paranirmitavaśavartin Heaven."}, {"key": "da24:19.2", "p": "他化自在天，皆言：『我不知四大何由而滅？…", "s": "They said,\n‘We don’t know.\nHow are the four elements made to cease forever?"}, {"key": "da24:19.3", "p": "上 更有天，微妙第一，有大智慧，…", "s": "There’s yet another heaven above us that’s sublime and supreme, and they have great wisdom.\nIt’s called the Brahmakāyika."}, {"key": "da24:19.4", "p": "名梵迦夷，彼 天能知四大何由永滅。…", "s": "Those gods may know how the four elements are ceased forever.’"}, {"key": "da24:19.5", "p": "』彼比丘即倐趣梵道， 詣梵天上問言：…", "s": "“That monk then instantly headed for the Brahma road.\nHe went to that Brahma Heaven above and asked,\n‘How are the four elements of this body made to cease forev…"}, {"key": "da24:19.6", "p": "『此身四大，地、水、火、風，何由永 滅？…"}, {"key": "da24:19.7", "p": "』彼梵天報比丘言：『我不知四大何由永 滅，…", "s": "“Those Brahma gods replied to the monk,\n‘We don’t know.\nHow are the four elements made to cease forever?"}, {"key": "da24:19.8", "p": "今有大梵天王，無能勝者，…", "s": "Now, there’s the heaven of King Great Brahmā the Undefeatable, Ruler of a Thousand Worlds,"}, {"key": "da24:19.9", "p": "統千世界，富 貴尊豪，最得自在，能造化物，…", "s": "the Noble Lord, Highest Attainer of Sovereignty, Creator of Everything, and Parent to Sentient Beings."}, {"key": "da24:19.10", "p": "是眾生父母， 彼能知四大由何永滅。…", "s": "He may know how the four elements are ceased forever.’"}, {"key": "da24:19.11", "p": "』長者子！…", "s": "“Prominent man’s son, that monk immediately asked,"}, {"key": "da24:19.12", "p": "彼比丘尋 問：『彼大梵王今為所在？…", "s": "‘Now, where would King Great Brahmā be?’"}, {"key": "da24:19.13", "p": "』彼天報言：『不知大 梵今為所在，…", "s": "“Those gods replied,\n‘We don’t know where Great Brahmā is, but judging by what we see, he’ll appear soon.’"}, {"key": "da24:19.14", "p": "以我意觀，出現不久。…"}, {"key": "da24:19.15", "p": "』未久， 梵王忽然出現。長者！…", "s": "Soon after, the Brahma King suddenly appeared."}, {"key": "da24:19.16", "p": "彼比丘詣梵王所問 言：『此身四大，…", "s": "“Prominent man’s son, that monk went to the Brahma King and asked him,\n‘How are the four elements of this body made to cease forever, which are earth, water, fi…"}, {"key": "da24:19.17", "p": "地、水、火、風，何由永滅？…"}, {"key": "da24:19.18", "p": "』彼大梵王 告比丘言：『我梵天王無能勝者，…", "s": "“That King Great Brahmā told the monk,\n‘I am the king of Brahmas, the Undefeatable, Ruler of a Thousand Worlds, the Noble Lord,"}, {"key": "da24:19.19", "p": "統千世界， 富貴尊豪，…", "s": "Highest Attainer of Sovereignty, Creator of Everything,"}, {"key": "da24:19.20", "p": "最得自在，能造萬物，眾生父母。…", "s": "and Parent to Sentient Beings.’"}, {"key": "da24:19.21", "p": "』 時，彼比丘告梵王曰：『我不問此事，…", "s": "“That monk then told the Brahma King,\n‘I didn’t ask about that."}, {"key": "da24:19.22", "p": "自問 四大，地、水、火、風，何由永滅？』…", "s": "My question is:\nHow are the four elements made to cease forever, which are earth, water, fire, and air?’"}]}, {"id": "20", "label": "「長者子！", "rows": [{"key": "da24:20.1", "p": "「長者子！…", "s": "“Prominent man’s son, that Brahma King again answered the monk,\n‘I am the king of Brahmas, the Undefeatable, Ruler of a Thousand Worlds, the Noble Lord,\nHighest…"}, {"key": "da24:20.2", "p": "彼梵王猶 報比丘言：『我是大梵天王，…"}, {"key": "da24:20.3", "p": "無能勝者，乃至 造作萬物，眾生父母。…"}, {"key": "da24:20.4", "p": "』比丘又復告言：『我不 問此，我自問四大何由永滅？…", "s": "“The monk again told him,\n‘I didn’t ask about that.\nMy question is:\nHow are the four elements made to cease forever?’"}, {"key": "da24:20.5", "p": "』長者子！…", "s": "“Prominent man’s son, that Brahma King said the same thing for a third time."}, {"key": "da24:20.6", "p": "彼梵 天王如是至三，不能報彼比丘四大何由 永滅。…", "s": "He wasn’t able to answer that monk’s question about how the four elements are made to cease forever."}, {"key": "da24:20.7", "p": "時，大梵王即執比丘右手，將詣屏處， 語言：『比丘！…", "s": "King Great Brahmā then took the monk aside with his right hand and led him to private place.\nHe said to him,\n‘Now, monk, I’m the wisest of the Brahma kings;"}, {"key": "da24:20.8", "p": "今諸梵王皆謂我為智慧第一， 無不知見，…", "s": "there’s nothing I don’t know and see, which is why I didn’t answer you [honestly]:"}, {"key": "da24:20.9", "p": "是故我不得報汝言：「不知不 見此四大何由永滅。…", "s": "“I don’t know or see how these four elements are made to cease forever.”’"}, {"key": "da24:20.10", "p": "」』又語比丘：『汝為大愚！…", "s": "“He also told the monk,\n‘You are quite a fool!"}, {"key": "da24:20.11", "p": "乃捨如來於諸天中推問此事。…", "s": "You set aside the Tathāgata and put your question about this to us in the heavens."}, {"key": "da24:20.12", "p": "汝當於世 尊所問如此事，如佛所說，善受持之。…", "s": "You should ask the Bhagavān about this and remember well what he tells you about it.’"}, {"key": "da24:20.13", "p": "』又 告比丘：『今佛在舍衛國給孤獨園，汝可往 問。』…", "s": "“He also told the monk,\n‘The Buddha is in Anāthapiṇḍada’s Park of Śrāvastī.\nYou can go and ask him there.’"}]}, {"id": "21", "label": "「長者子！", "rows": [{"key": "da24:21.1", "p": "「長者子！…", "s": "“Prominent man’s son, the monk then suddenly disappeared from the Brahma Heaven."}, {"key": "da24:21.2", "p": "時，比丘於梵天上忽然不現。…", "s": "In the time it takes a strong man to flex his arm, he arrived in Anāthapiṇḍada’s Park of Śrāvastī."}, {"key": "da24:21.3", "p": "譬如壯士屈申臂頃，至舍衛國祇樹給孤 獨園，…"}, {"key": "da24:21.4", "p": "來至我所，頭面禮足，一面坐，白我言： 『世尊！…", "s": "He came to me, bowed his head at my feet, and sat to one side.\nHe said,\n‘Bhagavān, how are the four elements of this body made to cease forever, which are earth…"}, {"key": "da24:21.5", "p": "今此四大，地、水、火、風，何由而滅？…"}, {"key": "da24:21.6", "p": "』時，我告 言：『比丘！…", "s": "“I then told him,\n‘Monk, it’s like a merchant who takes a hawk with him when he goes out to sea."}, {"key": "da24:21.7", "p": "猶如商人臂鷹入海，於海中放 彼鷹飛空東西南北，…", "s": "The bird flies to the east, west, south, and north.\nWhen it finds dry land, it stops there [and circles]."}, {"key": "da24:21.8", "p": "若得陸地則便停止， 若無陸地更還歸船。比丘！…", "s": "If there’s no land, then it returns to the ship."}, {"key": "da24:21.9", "p": "汝亦如是，乃至 梵天問如是義，竟不成就，還來歸我。…", "s": "Monk, you’re likewise.\nYou went up to the Brahma heavens asking about this.\nNot achieving anything, you’ve returned to me."}, {"key": "da24:21.10", "p": "今當 使汝成就此義。…", "s": "Now, I will help you accomplish this goal.’\n“I then spoke in verse:"}, {"key": "da24:21.11", "p": "』即說偈言：…"}]}, {"id": "22", "label": "「『何由無四大， 地水火風滅？", "rows": [{"key": "da24:22.1", "p": "「『何由無四大，　　地水火風滅？…", "s": "“‘What causes the four elements to not exist, Ceasing earth, water, fire, and air?"}, {"key": "da24:22.2", "p": "何由無麤細，　　及長短好醜？…", "s": "What causes what’s coarse and fine to not exist, What’s long, short, beautiful, and ugly?"}, {"key": "da24:22.3", "p": "何由無名色，　　永滅無有餘？…", "s": "What causes name and form to not exist, To be forever ceased without remainder?"}, {"key": "da24:22.4", "p": "應答識無形，　　無量自有光。…", "s": "The answer is that consciousness is formless, Measureless, and has its own radiance."}, {"key": "da24:22.5", "p": "此滅四大滅，　　麤細好醜滅，…", "s": "When it ceases, the four elements cease;\nWhat’s coarse, fine, beautiful, and ugly ceases."}, {"key": "da24:22.6", "p": "於此名色滅，　　識滅餘亦滅。』」…", "s": "When these names and forms cease, Consciousness ceases, and the rest ceases, too.’”"}]}, {"id": "23", "label": "時，堅固長者子白佛言：「世尊！", "rows": [{"key": "da24:23.1", "p": "時，堅固長者子白佛言：「世尊！…", "s": "The prominent man’s son Dhruva said to the Buddha,"}, {"key": "da24:23.2", "p": "此比丘名何 等？…", "s": "“Bhagavān, what was this monk’s name?"}, {"key": "da24:23.3", "p": "云何持之？」…", "s": "How is he remembered?”"}]}, {"id": "24", "label": "佛告長者子：「此比丘名阿室 已，當奉持之。」", "rows": [{"key": "da24:24.1", "p": "佛告長者子：「此比丘名阿室 已，當奉持之。」…", "s": "The Buddha told the prominent man’s son,\n“This monk’s name was Aśvajit.\nThat’s how he should be remembered.”"}]}, {"id": "25", "label": "爾時，堅固長者子聞佛所說， 歡喜奉行。", "rows": [{"key": "da24:25.1", "p": "爾時，堅固長者子聞佛所說， 歡喜奉行。…", "s": "When the prominent man’s son Dhruva heard what the Buddha taught, he rejoiced and approved."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "patton", "label": "Patton", "dot": "#5d8ac8", "light": {"bg": "#eef2f8", "text": "#0d1a2b"}, "dark": {"bg": "#121820", "text": "#a8c0d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": null}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "patton", "label": "Patton", "dot": "#5d8ac8", "light": {"bg": "#eef2f8", "text": "#0d1a2b"}, "dark": {"bg": "#121820", "text": "#a8c0d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": null, "group": "English", "tip": "Charles Patton's English translation from the Chinese"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

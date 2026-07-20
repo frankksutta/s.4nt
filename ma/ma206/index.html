@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma206:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma206:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada’s Park."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「若比丘、比丘尼不拔心中五穢，", "rows": [{"key": "ma206:3.1", "p": "爾時，世尊告諸比丘：「若比丘、比丘尼不拔心中五穢，…", "s": "At that time, the Blessed One addressed the monks:"}, {"key": "ma206:3.2", "p": "不解心中五縛者，是為比丘、比丘尼說必退法。…", "s": "“If a monk or nun does not remove the five impurities in the mind and does not untie the five bonds in the mind,"}, {"key": "ma206:3.3", "p": "云何不拔心中五穢？…", "s": "then for that monk or nun it is said to be a teaching that leads to decline."}, {"key": "ma206:3.4", "p": "或有一疑世尊，猶豫、不開意、不解意、意不靖。…", "s": "What are the five impurities in the mind that are not removed?\nThere is one who doubts the Blessed One, is indecisive,"}, {"key": "ma206:3.5", "p": "若有一疑世尊，猶豫、不開意、不解意、意不靖者，…", "s": "does not open the mind, does not understand the mind, and the mind is not calm."}, {"key": "ma206:3.6", "p": "是謂不拔第一心穢，謂於世尊也，如是法、戒、教。…", "s": "If there is one who doubts the Blessed One, is indecisive, does not open the mind, does not understand the mind,"}, {"key": "ma206:3.7", "p": "若有諸梵行，世尊所稱譽，…", "s": "and the mind is not calm, this is called the first impurity in the mind not removed, namely regarding the Blessed One.\nLikewise regarding the Dharma, the traini…"}, {"key": "ma206:3.8", "p": "彼便責數、輕易、觸嬈、侵害，…", "s": "If there are any spiritual practitioners whom the Blessed One praises,"}, {"key": "ma206:3.9", "p": "不開意、不解意、意不靖，…", "s": "and one criticizes, belittles, disturbs, harms them, does not open the mind,"}, {"key": "ma206:3.10", "p": "是謂第五不拔心中穢，謂於梵行也。…", "s": "does not understand the mind, and the mind is not calm,\nthis is called the fifth impurity in the mind not removed, namely regarding spiritual practitioners."}]}, {"id": "4", "label": "「云何不解心中五縛？", "rows": [{"key": "ma206:4.1", "p": "「云何不解心中五縛？…", "s": "“What are the five bonds in the mind that are not untied?"}, {"key": "ma206:4.2", "p": "或有一身不離染、不離欲、不離愛、不離渴。…", "s": "There is one who is not free from attachment to the body,\nnot free from desire, not free from love, not free from thirst."}, {"key": "ma206:4.3", "p": "若有身不離染、不離欲、不離愛、不離渴者，…", "s": "If one is not free from attachment to the body, not free from desire, not free from love, not free from thirst,"}, {"key": "ma206:4.4", "p": "彼心不趣向，不靖、不住、不解，自方便斷燕坐。…", "s": "that person’s mind does not incline, is not calm, does not abide,\nis not released, and one does not by one’s own effort stop secluded sitting."}, {"key": "ma206:4.5", "p": "若有此心不趣向，不靖、不住、不解，…", "s": "If there is this mind that does not incline, is not calm, does not abide, is not released,"}, {"key": "ma206:4.6", "p": "自方便斷燕坐者，是謂第一不解心縛，謂身也。…", "s": "and one does not by one’s own effort stop secluded sitting,\nthis is called the first bond in the mind not untied, namely regarding the body."}, {"key": "ma206:4.7", "p": "復次，於欲不離染、不離欲、不離愛、不離渴。…", "s": "Furthermore, regarding sensual desires, one is not free from attachment,"}, {"key": "ma206:4.8", "p": "若有於欲不離染、不離欲、不離愛、不離渴者，…", "s": "not free from desire, not free from love, not free from thirst.\nIf one is not free from attachment to sensual desires, not free from desire, not free from love,…"}, {"key": "ma206:4.9", "p": "彼心不趣向，不靖、不住、不解，自方便斷燕坐。…", "s": "that person’s mind does not incline, is not calm, does not abide,"}, {"key": "ma206:4.10", "p": "若有此心不趣向，不靖、不住、不解，…", "s": "is not released, and one does not by one’s own effort stop secluded sitting.\nIf there is this mind that does not incline, is not calm, does not abide, is not re…"}, {"key": "ma206:4.11", "p": "自方便斷燕坐者，是謂第二不解心縛，謂欲也。…", "s": "and one does not by one’s own effort stop secluded sitting,\nthis is called the second bond in the mind not untied, namely regarding sensual desires."}]}, {"id": "5", "label": "「復次，有一所說聖義相應，", "rows": [{"key": "ma206:5.1", "p": "「復次，有一所說聖義相應，…", "s": "“Furthermore, there is a teaching that accords with the noble meaning, is gentle,"}, {"key": "ma206:5.2", "p": "柔軟無疑蓋，謂說戒、說定、…", "s": "without the hindrance of doubt, namely teaching about virtuous behavior,"}, {"key": "ma206:5.3", "p": "說慧、說解脫、說解脫知見、說損、說不聚會、說少欲、…", "s": "teaching about concentration, teaching about wisdom, teaching about liberation,\nteaching about the knowledge and vision of liberation,"}, {"key": "ma206:5.4", "p": "說知足、說斷、說無欲、說滅、…", "s": "teaching about diminishment, teaching about non-association,"}, {"key": "ma206:5.5", "p": "說燕坐、說緣起，如是比丘，…", "s": "teaching about few desires, teaching about contentment, teaching about cessation,\nteaching about desirelessness, teaching about extinction,"}, {"key": "ma206:5.6", "p": "沙門所說者，彼心不趣向，不靖、…", "s": "teaching about secluded sitting, teaching about dependent origination."}, {"key": "ma206:5.7", "p": "不住、不解，自方便斷燕坐。…", "s": "For such a monk, regarding what is taught by ascetics, that person’s mind does not incline, is not calm,\ndoes not abide, is not released, and one does not by on…"}, {"key": "ma206:5.8", "p": "若有此心不趣向，不靖、不住、不解，…", "s": "If there is this mind that does not incline, is not calm, does not abide, is not released,"}, {"key": "ma206:5.9", "p": "自方便斷燕坐者，是謂第三不解心縛，謂說也。…", "s": "and one does not by one’s own effort stop secluded sitting,"}, {"key": "ma206:5.10", "p": "復次，數道俗共會，調亂、憍慠、不學問。…", "s": "this is called the third bond in the mind not untied, namely regarding teaching.\nFurthermore, one frequently associates with laypeople, is frivolous, arrogant, …"}, {"key": "ma206:5.11", "p": "若有數道俗共會，調亂、憍慠、不學問者，…", "s": "If one frequently associates with laypeople, is frivolous,"}, {"key": "ma206:5.12", "p": "彼心不趣向、不靖、不住、不解，自方便斷燕坐。…", "s": "arrogant, and does not study, that person’s mind does not incline, is not calm,\ndoes not abide, is not released, and one does not by one’s own effort stop seclu…"}, {"key": "ma206:5.13", "p": "若此心不趣向，不靖、不住、不解，…", "s": "If this mind does not incline, is not calm, does not abide,"}, {"key": "ma206:5.14", "p": "自方便斷燕坐者，是謂第四不解心縛，謂聚會也。…", "s": "is not released, and one does not by one’s own effort stop secluded sitting,\nthis is called the fourth bond in the mind not untied, namely regarding social gath…"}]}, {"id": "6", "label": "「復次，少有所得故，於其中間住，不復求昇進。", "rows": [{"key": "ma206:6.1", "p": "「復次，少有所得故，於其中間住，不復求昇進。…", "s": "“Furthermore, because of having attained a little, one stops midway and no longer seeks further progress."}, {"key": "ma206:6.2", "p": "若有少所得故，於其中間住，不復求昇進者，…", "s": "If because of having attained a little,"}, {"key": "ma206:6.3", "p": "彼心不趣向，不靖、不住、不解，自方便斷燕坐。…", "s": "one stops midway and no longer seeks further progress, that person’s mind does not incline,"}, {"key": "ma206:6.4", "p": "若此心不趣向，不靖、不住、不解，…", "s": "is not calm, does not abide, is not released, and one does not by one’s own effort stop secluded sitting."}, {"key": "ma206:6.5", "p": "自方便斷燕坐者，是謂第五不解心縛，謂昇進也。…", "s": "If this mind does not incline, is not calm, does not abide, is not released,\nand one does not by one’s own effort stop secluded sitting,"}, {"key": "ma206:6.6", "p": "若有比丘、比丘尼不拔此心中五穢，…", "s": "this is called the fifth bond in the mind not untied, namely regarding progress."}, {"key": "ma206:6.7", "p": "及不解此心中五縛者，是謂比丘、比丘尼必退法也。…", "s": "If a monk or nun does not remove these five impurities in the mind and does not untie these five bonds in the mind,"}, {"key": "ma206:6.8", "p": "若有比丘、比丘尼善拔心中五穢，…", "s": "this is called the teaching that leads to decline for a monk or nun."}, {"key": "ma206:6.9", "p": "善解心中五縛者，是謂比丘、比丘尼清淨法。…", "s": "If a monk or nun skillfully removes the five impurities in the mind and skillfully unties the five bonds in the mind,\nthis is called the pure teaching for a mon…"}]}, {"id": "7", "label": "「云何善拔心中五穢？", "rows": [{"key": "ma206:7.1", "p": "「云何善拔心中五穢？…", "s": "\"What are the five impurities in the mind that are well removed?"}, {"key": "ma206:7.2", "p": "或有一不疑世尊，不猶豫、開意、意解、意靖。…", "s": "There is one who does not doubt the World-Honored One, is not hesitant,"}, {"key": "ma206:7.3", "p": "若有不疑世尊，不猶豫、開意、意解、意靖者，…", "s": "has an open mind, an understanding mind, and a calm mind.\nIf one does not doubt the World-Honored One, is not hesitant, has an open mind, an understanding mind,…"}, {"key": "ma206:7.4", "p": "是謂第一善拔心中穢，謂於世尊也，如是法、戒、教。…", "s": "this is called the first impurity in the mind that is well removed, namely, regarding the World-Honored One."}, {"key": "ma206:7.5", "p": "若有梵行，世尊所稱譽，彼不責數、…", "s": "Likewise regarding the Dharma, the precepts, and the teachings.\nIf there is a holy life praised by the World-Honored One,"}, {"key": "ma206:7.6", "p": "不輕易、不觸嬈、不侵害，…", "s": "and one does not criticize, belittle, disturb, or harm it, but has an open mind,"}, {"key": "ma206:7.7", "p": "開意、意解、意靖，是謂第五善拔心中穢，謂於梵行也。…", "s": "an understanding mind, and a calm mind,\nthis is called the fifth impurity in the mind that is well removed, namely, regarding the holy life.\""}]}, {"id": "8", "label": "「云何解心中五縛？", "rows": [{"key": "ma206:8.1", "p": "「云何解心中五縛？…", "s": "\"What are the five bonds of the mind that are untied?"}, {"key": "ma206:8.2", "p": "或有一身離染、離欲、離愛、離渴。…", "s": "There is one who is detached from the body, free from desire, free from craving, free from thirst."}, {"key": "ma206:8.3", "p": "若有身離染、離欲、離愛、離渴者，…", "s": "If one is detached from the body, free from desire, free from craving,\nfree from thirst, that person's mind inclines towards calmness,"}, {"key": "ma206:8.4", "p": "彼心趣向，靖、住、解，自方便斷燕坐。…", "s": "abiding, and release, and by their own effort they cut off [the need for] seated meditation."}, {"key": "ma206:8.5", "p": "若有此心趣向，靖、住、解，…", "s": "If there is this mind inclining towards calmness, abiding, and release,"}, {"key": "ma206:8.6", "p": "自方便斷燕坐者，是謂第一解心中縛，謂身也。…", "s": "and by their own effort they cut off [the need for] seated meditation,\nthis is called the first bond of the mind that is untied, namely, regarding the body."}, {"key": "ma206:8.7", "p": "復次，於欲離染、離欲、離愛、離渴。…", "s": "Furthermore, regarding sensual desires, one is detached, free from desire, free from craving, free from thirst."}, {"key": "ma206:8.8", "p": "若有於欲離染、離欲、離愛、離渴者，…", "s": "If one is detached from sensual desires, free from desire, free from craving, free from thirst,"}, {"key": "ma206:8.9", "p": "彼心趣向，靖、住、解，自方便斷燕坐。…", "s": "that person's mind inclines towards calmness, abiding, and release,\nand by their own effort they cut off [the need for] seated meditation."}, {"key": "ma206:8.10", "p": "若有此心趣向，靖、住、解，…", "s": "If there is this mind inclining towards calmness, abiding, and release,"}, {"key": "ma206:8.11", "p": "自方便斷燕坐者，是謂第二解心中縛，謂欲也。…", "s": "and by their own effort they cut off [the need for] seated meditation,\nthis is called the second bond of the mind that is untied, namely, regarding sensual desi…"}]}, {"id": "9", "label": "「復次，有一所說，聖義相應，", "rows": [{"key": "ma206:9.1", "p": "「復次，有一所說，聖義相應，…", "s": "\"Furthermore, there is a teaching that is in accordance with the noble meaning,"}, {"key": "ma206:9.2", "p": "柔軟無疑葢，謂說戒、說定、…", "s": "gentle, without the hindrance of doubt, namely, teaching about virtuous behavior,\nteaching about concentration, teaching about wisdom, teaching about liberation…"}, {"key": "ma206:9.3", "p": "說慧、說解脫、說解脫知見、說損、說不聚會、說少欲、…", "s": "teaching about the knowledge and vision of liberation,"}, {"key": "ma206:9.4", "p": "說知足、說斷、說無欲、說滅、…", "s": "teaching about relinquishment, teaching about non-association,\nteaching about few desires, teaching about contentment, teaching about cutting off,"}, {"key": "ma206:9.5", "p": "說燕坐、說緣起，如是比丘，…", "s": "teaching about desirelessness, teaching about cessation,\nteaching about seated meditation, teaching about dependent origination."}, {"key": "ma206:9.6", "p": "沙門所說者，彼心趣向，靖、住、解，自方便斷燕坐。…", "s": "For such a monk, regarding what is taught by ascetics, that person's mind inclines towards calmness,"}, {"key": "ma206:9.7", "p": "若有此心趣向，靖、住、解，…", "s": "abiding, and release, and by their own effort they cut off [the need for] seated meditation.\nIf there is this mind inclining towards calmness, abiding, and rele…"}, {"key": "ma206:9.8", "p": "自方便斷燕坐者，是謂第三解心中縛，謂說也。…", "s": "and by their own effort they cut off [the need for] seated meditation,"}, {"key": "ma206:9.9", "p": "復次，不數道俗共會，不調亂、不憍慠學問。…", "s": "this is called the third bond of the mind that is untied, namely, regarding teachings.\nFurthermore, one does not frequently associate with laypeople and monasti…"}, {"key": "ma206:9.10", "p": "若有不數道俗共會，不調亂、不憍慠學問者，…", "s": "is not restless, and is not arrogant in learning.\nIf one does not frequently associate with laypeople and monastics, is not restless, and is not arrogant in lea…"}, {"key": "ma206:9.11", "p": "彼心趣向，靖、住、解，自方便斷燕坐。…", "s": "that person's mind inclines towards calmness, abiding, and release,"}, {"key": "ma206:9.12", "p": "若有此心趣向，靖、住、解，自方便斷燕坐者，…", "s": "and by their own effort they cut off [the need for] seated meditation.\nIf there is this mind inclining towards calmness, abiding, and release,"}, {"key": "ma206:9.13", "p": "是謂第四解心中縛，謂不聚會也。…", "s": "and by their own effort they cut off [the need for] seated meditation,\nthis is called the fourth bond of the mind that is untied, namely, regarding non-associat…"}]}, {"id": "10", "label": "「復次，少有所得故，於其中間不住，復求昇進。", "rows": [{"key": "ma206:10.1", "p": "「復次，少有所得故，於其中間不住，復求昇進。…", "s": "\"Furthermore, because of having attained a little, one does not stop in the middle but seeks further progress."}, {"key": "ma206:10.2", "p": "若有少所得故，於其中間不住，復求昇進者，…", "s": "If, because of having attained a little, one does not stop in the middle but seeks further progress,"}, {"key": "ma206:10.3", "p": "彼心趣向，靖、住、解，自方便斷燕坐。…", "s": "that person's mind inclines towards calmness, abiding, and release,"}, {"key": "ma206:10.4", "p": "若此心趣向，靖、住、解，自方便斷燕坐者，…", "s": "and by their own effort they cut off [the need for] seated meditation.\nIf this mind inclines towards calmness, abiding, and release,"}, {"key": "ma206:10.5", "p": "是謂第五解心中縛，謂昇進也。…", "s": "and by their own effort they cut off [the need for] seated meditation,"}, {"key": "ma206:10.6", "p": "若有比丘、比丘尼善拔此心中五穢，…", "s": "this is called the fifth bond of the mind that is untied, namely, regarding progress."}, {"key": "ma206:10.7", "p": "及善解此心中五縛者，是謂比丘、比丘尼清淨法。…", "s": "If a monk or nun has well removed these five impurities in the mind and well untied these five bonds of the mind,"}, {"key": "ma206:10.8", "p": "彼住此十支已，復修習五法。…", "s": "this is called the pure Dharma for monks and nuns.\nAbiding in these ten factors, they further cultivate five things.\""}]}, {"id": "11", "label": "「云何為五？", "rows": [{"key": "ma206:11.1", "p": "「云何為五？…", "s": "\"What are the five?"}, {"key": "ma206:11.2", "p": "修欲定心成就斷如意足，依離、依無欲、…", "s": "They cultivate the base of psychic power consisting of concentration due to desire,\naccompanied by the effort of volitional activity,"}, {"key": "ma206:11.3", "p": "依滅、依捨，趣向非品，修精進定、心定、…", "s": "dependent on detachment, dependent on desirelessness, dependent on cessation,"}, {"key": "ma206:11.4", "p": "思惟定成就斷如意足，依離、依無欲、依滅、依捨，…", "s": "dependent on relinquishment, tending towards the state of non-becoming.\nThey cultivate the base of psychic power consisting of concentration due to energy, conc…"}, {"key": "ma206:11.5", "p": "趣向非品，堪任第五，彼成就此堪任等十五法。…", "s": "concentration due to investigation, accompanied by the effort of volitional activity,\ndependent on detachment, dependent on desirelessness, dependent on cessati…"}, {"key": "ma206:11.6", "p": "成就自受者，必知必見，必正盡覺，…", "s": "dependent on relinquishment, tending towards the state of non-becoming."}, {"key": "ma206:11.7", "p": "至甘露門，近住涅槃，我說無不至涅槃。…", "s": "They are capable of the fifth.\nThey accomplish these fifteen factors of capability."}, {"key": "ma206:11.8", "p": "猶如雞生十卵，或十二，隨時覆蓋，…", "s": "One who accomplishes and personally attains this will surely know, surely see,"}, {"key": "ma206:11.9", "p": "隨時溫暖，隨時看視，雞設有放逸者，…", "s": "surely fully realize, reach the door of the deathless, dwell near Nibbāna.\nI say that none fail to reach Nibbāna."}, {"key": "ma206:11.10", "p": "彼中或雞子以［此／束］以足，…", "s": "Just as a hen lays ten or twelve eggs, covering them, warming them, and watching over them from time to time.\nEven if the hen is negligent, among those eggs, on…"}, {"key": "ma206:11.11", "p": "啄破其卵，自安隱出者，彼為第一。…", "s": "using its beak and feet, pecks open the eggshell and emerges safely."}, {"key": "ma206:11.12", "p": "如是比丘成就此堪任等十五法自受者，必知必見，…", "s": "That one is the foremost.\nSo too, a monk who accomplishes and personally attains these fifteen factors of capability will surely know,"}, {"key": "ma206:11.13", "p": "必正盡覺，必至甘露門，近住涅槃，我說無不得涅槃。」…", "s": "surely see, surely fully realize, surely reach the door of the deathless, dwell near Nibbāna.\nI say that none fail to attain Nibbāna.\""}]}, {"id": "12", "label": "佛說如是。", "rows": [{"key": "ma206:12.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma206:12.2", "p": "彼諸比丘聞佛所說，歡喜奉行。…", "s": "Those monks, hearing what the Buddha said, rejoiced and practiced it."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

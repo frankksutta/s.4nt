@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma89:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊王舍城，在竹林迦蘭哆園，", "rows": [{"key": "ma89:2.1", "p": "一時，佛遊王舍城，在竹林迦蘭哆園，…", "s": "At one time, the Buddha was traveling in the country of Rājagaha, staying in the Bamboo Grove,"}, {"key": "ma89:2.2", "p": "與大比丘眾俱，受夏坐。…", "s": "the Kalandaka Park, together with a great community of bhikkhus, observing the rains retreat."}]}, {"id": "3", "label": "爾時，尊者大目揵連告諸比丘：「諸賢！", "rows": [{"key": "ma89:3.1", "p": "爾時，尊者大目揵連告諸比丘：「諸賢！…", "s": "At that time, the venerable Mahāmoggallāna addressed the bhikkhus:"}, {"key": "ma89:3.2", "p": "若有比丘請諸比丘，諸尊，…", "s": "“Venerable friends, if a bhikkhu invites other bhikkhus, saying,"}, {"key": "ma89:3.3", "p": "語我、教我、訶我，莫難於我。…", "s": "‘Venerable ones, speak to me, instruct me, admonish me, do not be difficult with me.’"}, {"key": "ma89:3.4", "p": "所以者何？諸賢！…", "s": "Why is that?"}, {"key": "ma89:3.5", "p": "或有一人戾語，成就戾語法，成就戾語法故，…", "s": "Venerable friends, there may be a person who is harsh in speech, who has perfected the quality of harsh speech;"}, {"key": "ma89:3.6", "p": "令諸梵行者不語彼，不教、不訶而難彼人。諸賢！…", "s": "because of perfecting the quality of harsh speech, the fellow practitioners do not speak to that person,"}, {"key": "ma89:3.7", "p": "何者戾語法？…", "s": "do not instruct, do not admonish, but are difficult with that person.\nVenerable friends, what is the quality of harsh speech?"}, {"key": "ma89:3.8", "p": "若有成就戾語法者，諸梵行者不語彼，…", "s": "If one has perfected the quality of harsh speech, the fellow practitioners do not speak to that person,"}, {"key": "ma89:3.9", "p": "不教、不訶而難彼人。諸賢！…", "s": "do not instruct, do not admonish, but are difficult with that person."}, {"key": "ma89:3.10", "p": "或有一人惡欲、念欲。諸賢！…", "s": "Venerable friends, there may be a person who has evil desires, who thinks of desires."}, {"key": "ma89:3.11", "p": "若有人惡欲、念欲者，是謂戾語法。…", "s": "Venerable friends, if a person has evil desires and thinks of desires, this is called the quality of harsh speech."}, {"key": "ma89:3.12", "p": "如是染行染、不語結住，欺誑諛諂，慳貪嫉妬，…", "s": "So too, being stained by stains, dwelling in silent stubbornness, deceitful, flattering, miserly, envious, shameless,"}, {"key": "ma89:3.13", "p": "無慙無愧，瞋弊惡意，瞋恚語言，訶比丘訶，…", "s": "without moral dread, angry with a corrupt mind, speaking angry words,"}, {"key": "ma89:3.14", "p": "訶比丘輕慢，訶比丘發露，更互相避而說外事，不語、…", "s": "criticizing bhikkhus, criticizing bhikkhus with contempt, criticizing bhikkhus by exposing faults,\navoiding each other and talking about external matters, silen…"}, {"key": "ma89:3.15", "p": "瞋恚、憎嫉熾盛，惡朋友、惡伴侶，無恩、不知恩。諸賢！…", "s": "with anger, hatred, and jealousy blazing, having bad friends, bad companions, ungrateful, not recognizing kindness."}, {"key": "ma89:3.16", "p": "若有人無恩、不知恩者，是謂戾語法。諸賢！…", "s": "Venerable friends, if a person is ungrateful and does not recognize kindness,"}, {"key": "ma89:3.17", "p": "是謂諸戾語法。…", "s": "this is called the quality of harsh speech."}, {"key": "ma89:3.18", "p": "若有成就戾語法者，諸梵行者不語彼，…", "s": "Venerable friends, these are the qualities of harsh speech."}, {"key": "ma89:3.19", "p": "不教、不訶而難彼人，諸賢！…", "s": "If one has perfected the qualities of harsh speech, the fellow practitioners do not speak to that person,"}, {"key": "ma89:3.20", "p": "比丘者，當自思量。…", "s": "do not instruct, do not admonish, but are difficult with that person.\nVenerable friends, a bhikkhu should reflect on this."}]}, {"id": "4", "label": "「諸賢！", "rows": [{"key": "ma89:4.1", "p": "「諸賢！…", "s": "“Venerable friends, if a person has evil desires and thinks of desires, I do not love that person;"}, {"key": "ma89:4.2", "p": "若有人惡欲、念欲者，我不愛彼；…", "s": "if I have evil desires and think of desires, that person also does not love me."}, {"key": "ma89:4.3", "p": "若我惡欲、念欲者，彼亦不愛我。…", "s": "A bhikkhu, contemplating thus, should train himself not to practice evil desires, not to think of desires."}, {"key": "ma89:4.4", "p": "比丘如是觀，不行惡欲、不念欲者，當學如是。…", "s": "So too, being stained by stains, dwelling in silent stubbornness, deceitful, flattering, miserly, envious, shameless,"}, {"key": "ma89:4.5", "p": "如是染行染、不語結住，欺誑諛諂，慳貪嫉妬，…", "s": "without moral dread, angry with a corrupt mind, speaking angry words,"}, {"key": "ma89:4.6", "p": "無慙無愧，瞋弊惡意，瞋瞋語言，訶比丘，訶比丘輕慢，…", "s": "criticizing bhikkhus, criticizing bhikkhus with contempt,"}, {"key": "ma89:4.7", "p": "訶比丘發露，更互相避而說外事，不語、瞋恚、…", "s": "criticizing bhikkhus by exposing faults, avoiding each other and talking about external matters, silent,"}, {"key": "ma89:4.8", "p": "憎嫉熾盛，惡朋友、惡伴侶，無恩、不知恩。諸賢！…", "s": "with anger, hatred, and jealousy blazing, having bad friends, bad companions, ungrateful, not recognizing kindness."}, {"key": "ma89:4.9", "p": "若有人無恩、不知恩者，我不愛彼；…", "s": "Venerable friends, if a person is ungrateful and does not recognize kindness, I do not love that person;"}, {"key": "ma89:4.10", "p": "若我無恩、不知恩者，彼亦不愛我。…", "s": "if I am ungrateful and do not recognize kindness, that person also does not love me."}, {"key": "ma89:4.11", "p": "比丘如是觀，不行無恩、不知恩者，當學如是。…", "s": "A bhikkhu, contemplating thus, should train himself not to practice ingratitude and not to fail to recognize kindness."}]}, {"id": "5", "label": "「諸賢！", "rows": [{"key": "ma89:5.1", "p": "「諸賢！…", "s": "“Venerable friends, if a bhikkhu does not invite other bhikkhus, saying,"}, {"key": "ma89:5.2", "p": "若比丘不請諸比丘，諸尊！…", "s": "‘Venerable ones, speak to me, instruct me, admonish me, do not be difficult with me.’"}, {"key": "ma89:5.3", "p": "語我、教我、訶我，莫難於我。…", "s": "Why is that?"}, {"key": "ma89:5.4", "p": "所以者何？諸賢！…", "s": "Venerable friends, there may be a person who is gentle in speech, who has perfected the quality of gentle speech;"}, {"key": "ma89:5.5", "p": "或有一人善語，成就善語法，成就善語法故，…", "s": "because of perfecting the quality of gentle speech, the fellow practitioners speak gently to that person,\ninstruct well, admonish well, and are not difficult wi…"}, {"key": "ma89:5.6", "p": "諸梵行者善語彼，善教、善訶，不難彼人。諸賢！…", "s": "Venerable friends, what is the quality of gentle speech?"}, {"key": "ma89:5.7", "p": "何者善語法？…", "s": "If one has perfected the quality of gentle speech, the fellow practitioners speak gently to that person,"}, {"key": "ma89:5.8", "p": "若有成就善語法者，諸梵行者善語彼，…", "s": "instruct well, admonish well, and are not difficult with that person."}, {"key": "ma89:5.9", "p": "善教、善訶，不難彼人。諸賢！…", "s": "Venerable friends, there may be a person who does not have evil desires, who does not think of desires.\nVenerable friends, if a person does not have evil desire…"}, {"key": "ma89:5.10", "p": "或有一人不惡欲、不念欲。諸賢！…", "s": "this is called the quality of gentle speech."}, {"key": "ma89:5.11", "p": "若有人不惡欲、不念欲者，是謂善語法。…", "s": "So too, not being stained by stains, not dwelling in silent stubbornness,"}, {"key": "ma89:5.12", "p": "如是不染行染、不語結住，不欺誑諛諂，不慳貪嫉妬，…", "s": "not deceitful, not flattering, not miserly, not envious, not shameless,"}, {"key": "ma89:5.13", "p": "不無慙無愧，不瞋弊惡意，不瞋瞋語言，不訶比丘訶，…", "s": "not without moral dread, not angry with a corrupt mind, not speaking angry words,\nnot criticizing bhikkhus, not criticizing bhikkhus with contempt,"}, {"key": "ma89:5.14", "p": "不訶比丘輕慢，不訶比丘發露，…", "s": "not criticizing bhikkhus by exposing faults,"}, {"key": "ma89:5.15", "p": "不更互相避而說外事，不不語、…", "s": "not avoiding each other and talking about external matters, not silent, not with anger,"}, {"key": "ma89:5.16", "p": "瞋恚、憎嫉熾盛，不惡朋友、惡伴侶，不無恩、不知恩。諸賢！…", "s": "hatred, and jealousy blazing, not having bad friends,"}, {"key": "ma89:5.17", "p": "若有人不無恩、不知恩者，是謂善語法。諸賢！…", "s": "not having bad companions, not ungrateful, not failing to recognize kindness.\nVenerable friends, if a person is not ungrateful and does not fail to recognize ki…"}, {"key": "ma89:5.18", "p": "是謂諸善語法。…", "s": "this is called the quality of gentle speech."}, {"key": "ma89:5.19", "p": "若有成就善語法者，諸梵行者善語彼，…", "s": "Venerable friends, these are the qualities of gentle speech."}, {"key": "ma89:5.20", "p": "善教、善訶，不難彼人。諸賢！…", "s": "If one has perfected the qualities of gentle speech, the fellow practitioners speak gently to that person,"}, {"key": "ma89:5.21", "p": "比丘者當自思量。…", "s": "instruct well, admonish well, and are not difficult with that person.\nVenerable friends, a bhikkhu should reflect on this."}]}, {"id": "6", "label": "「諸賢！", "rows": [{"key": "ma89:6.1", "p": "「諸賢！…", "s": "“Venerable friends, if a person does not have evil desires and does not think of desires, I love that person;"}, {"key": "ma89:6.2", "p": "若有人不惡欲、不念欲者，我愛彼人；…", "s": "if I do not have evil desires and do not think of desires, that person also loves me."}, {"key": "ma89:6.3", "p": "若我不惡欲、不念欲者，彼亦愛我。…", "s": "A bhikkhu, contemplating thus, should train himself not to practice evil desires, not to think of desires."}, {"key": "ma89:6.4", "p": "比丘如是觀，不行惡欲、不念欲者，當學如是。…", "s": "So too, not being stained by stains, not dwelling in silent stubbornness,"}, {"key": "ma89:6.5", "p": "如是不染行染、不不語結住，不欺誑諛諂，不慳貪嫉妬，…", "s": "not deceitful, not flattering, not miserly, not envious, not shameless,"}, {"key": "ma89:6.6", "p": "不無慙無愧，不瞋弊惡意，不瞋瞋語言，不訶比丘訶，…", "s": "not without moral dread, not angry with a corrupt mind, not speaking angry words,\nnot criticizing bhikkhus, not criticizing bhikkhus with contempt,"}, {"key": "ma89:6.7", "p": "不訶比丘輕慢，不訶比丘發露，…", "s": "not criticizing bhikkhus by exposing faults,"}, {"key": "ma89:6.8", "p": "不更互相避而說外事，不不語、…", "s": "not avoiding each other and talking about external matters, not silent, not with anger,"}, {"key": "ma89:6.9", "p": "瞋恚、憎嫉熾盛，不惡朋友、惡伴侶，不無恩、不知恩。諸賢！…", "s": "hatred, and jealousy blazing, not having bad friends,"}, {"key": "ma89:6.10", "p": "若有人不無恩、不知恩者，我愛彼人；…", "s": "not having bad companions, not ungrateful, not failing to recognize kindness."}, {"key": "ma89:6.11", "p": "若我不無恩、不知恩者，彼亦愛我。…", "s": "Venerable friends, if a person is not ungrateful and does not fail to recognize kindness, I love that person;"}, {"key": "ma89:6.12", "p": "比丘如是觀，不無恩、不知恩者，當學如是。…", "s": "if I am not ungrateful and do not fail to recognize kindness, that person also loves me.\nA bhikkhu, contemplating thus, should train himself not to be ungratefu…"}]}, {"id": "7", "label": "「諸賢！", "rows": [{"key": "ma89:7.1", "p": "「諸賢！…", "s": "\"Good sirs, if a monk contemplates in this way, it will surely bring great benefit:"}, {"key": "ma89:7.2", "p": "若比丘如是觀者，必多所饒益，…", "s": "'Do I have evil desires and thoughts of desire, or do I not have evil desires and thoughts of desire?'"}, {"key": "ma89:7.3", "p": "我為惡欲、念欲，為不惡欲、念欲耶？諸賢！…", "s": "Good sirs, when a monk contemplates and knows that he has evil desires and thoughts of desire,"}, {"key": "ma89:7.4", "p": "若比丘觀時，則知我是惡欲、…", "s": "he is not pleased and seeks to cut them off."}, {"key": "ma89:7.5", "p": "念欲者，則不歡悅，便求欲斷。諸賢！…", "s": "Good sirs, when a monk contemplates and knows that he has no evil desires or thoughts of desire,"}, {"key": "ma89:7.6", "p": "若比丘觀時，則知我無惡欲、不念欲者，…", "s": "he is immediately pleased, thinking,"}, {"key": "ma89:7.7", "p": "即便歡悅，我自清淨，求學尊法，是故歡悅。諸賢！…", "s": "'I am pure myself, and I study the noble Dharma,' therefore he is pleased."}, {"key": "ma89:7.8", "p": "猶有目人以鏡自照，則見其面淨及不淨。諸賢！…", "s": "Good sirs, it is like a person with eyes looking at himself in a mirror, seeing whether his face is clean or dirty."}, {"key": "ma89:7.9", "p": "若有目人見面有垢者，則不歡悅，便求欲洗。諸賢！…", "s": "Good sirs, if a person with eyes sees dirt on his face, he is not pleased and seeks to wash it off."}, {"key": "ma89:7.10", "p": "若有目人見面無垢者，即便歡悅我面清淨，是故歡悅。…", "s": "Good sirs, if a person with eyes sees no dirt on his face, he is immediately pleased, thinking,\n'My face is clean,' therefore he is pleased."}]}, {"id": "8", "label": "「諸賢！", "rows": [{"key": "ma89:8.1", "p": "「諸賢！…", "s": "\"Good sirs, when a monk contemplates and knows that he acts on evil desires and thoughts of desire,"}, {"key": "ma89:8.2", "p": "若比丘觀時，則知我行惡欲、…", "s": "he is not pleased and seeks to cut them off."}, {"key": "ma89:8.3", "p": "念欲者，則不歡悅，便求欲斷。諸賢！…", "s": "Good sirs, when a monk contemplates and knows that he does not act on evil desires or thoughts of desire,"}, {"key": "ma89:8.4", "p": "若比丘觀時，則知我不行惡欲、不念欲者，…", "s": "he is immediately pleased, thinking,"}, {"key": "ma89:8.5", "p": "即便歡悅，我自清淨，求學尊法，是故歡悅。…", "s": "'I am pure myself, and I study the noble Dharma,' therefore he is pleased."}, {"key": "ma89:8.6", "p": "如是我為染行染，為不染行染；…", "s": "In the same way:"}, {"key": "ma89:8.7", "p": "為不語結住，為不不語結住；…", "s": "'Do I engage in defiled conduct, or do I not engage in defiled conduct?"}, {"key": "ma89:8.8", "p": "為欺誑諛諂，為不欺誑諛諂；…", "s": "Do I dwell with the knot of silence, or do I not dwell with the knot of silence?"}, {"key": "ma89:8.9", "p": "為慳貪嫉妬，為不慳貪嫉妬；…", "s": "Am I deceitful and flattering, or am I not deceitful and flattering?\nAm I miserly and envious, or am I not miserly and envious?"}, {"key": "ma89:8.10", "p": "為無慙無愧，為不無慙無愧；…", "s": "Am I without moral shame and moral dread, or am I not without moral shame and moral dread?"}, {"key": "ma89:8.11", "p": "為瞋弊惡意，為不瞋弊惡意；為瞋瞋語言，…", "s": "Am I angry with a wicked mind, or am I not angry with a wicked mind?"}, {"key": "ma89:8.12", "p": "為不瞋瞋語言；為訶比丘訶，…", "s": "Do I speak angry words, or do I not speak angry words?"}, {"key": "ma89:8.13", "p": "為不訶比丘訶；為訶比丘輕慢，…", "s": "Do I rebuke monks, or do I not rebuke monks?"}, {"key": "ma89:8.14", "p": "為不訶比丘輕慢；為訶比丘發露，…", "s": "Do I rebuke monks with contempt, or do I not rebuke monks with contempt?"}, {"key": "ma89:8.15", "p": "為不訶比丘發露；為更互相避，…", "s": "Do I expose monks' faults, or do I not expose monks' faults?"}, {"key": "ma89:8.16", "p": "為不更互相避；為說外事，為不說外事；為不語、瞋恚、…", "s": "Do I avoid each other, or do I not avoid each other?"}, {"key": "ma89:8.17", "p": "憎嫉熾盛，為不不語、瞋恚、…", "s": "Do I talk about external matters, or do I not talk about external matters?"}, {"key": "ma89:8.18", "p": "憎嫉熾盛；為惡朋友、惡伴侶，…", "s": "Are silence, anger, and resentment blazing within me, or are silence, anger, and resentment not blazing within me?\nDo I have bad friends and bad companions, or …"}, {"key": "ma89:8.19", "p": "為不惡朋友、惡伴侶；為無恩、…", "s": "Am I ungrateful and unaware of kindness, or am I not ungrateful and unaware of kindness?'"}, {"key": "ma89:8.20", "p": "不知恩，為不無恩，不知恩耶？諸賢！…", "s": "Good sirs, when a monk contemplates and knows that he is ungrateful and unaware of kindness,"}, {"key": "ma89:8.21", "p": "若比丘觀時，則知我無恩、…", "s": "he is not pleased and seeks to cut that off."}, {"key": "ma89:8.22", "p": "不知恩者，則不歡悅，便求欲斷。諸賢！…", "s": "Good sirs, when a monk contemplates and knows that he is not ungrateful and unaware of kindness,"}, {"key": "ma89:8.23", "p": "若比丘觀時，則知我不無恩、不知恩者，…", "s": "he is immediately pleased, thinking,"}, {"key": "ma89:8.24", "p": "即便歡悅，我自清淨，求學尊法，是故歡悅。諸賢！…", "s": "'I am pure myself, and I study the noble Dharma,' therefore he is pleased."}, {"key": "ma89:8.25", "p": "猶有目人以鏡自照，則見其面淨及不淨。諸賢！…", "s": "Good sirs, it is like a person with eyes looking at himself in a mirror, seeing whether his face is clean or dirty."}, {"key": "ma89:8.26", "p": "若有目人見面有垢者，則不歡悅，便求欲洗。諸賢！…", "s": "Good sirs, if a person with eyes sees dirt on his face, he is not pleased and seeks to wash it off."}, {"key": "ma89:8.27", "p": "若有目人見面無垢者，即便歡悅我面清淨，是故歡悅。…", "s": "Good sirs, if a person with eyes sees no dirt on his face, he is immediately pleased, thinking,\n'My face is clean,' therefore he is pleased."}]}, {"id": "9", "label": "「諸賢！", "rows": [{"key": "ma89:9.1", "p": "「諸賢！…", "s": "\"Good sirs, in this way, when a monk contemplates and knows that he is ungrateful and unaware of kindness,"}, {"key": "ma89:9.2", "p": "如是若比丘觀時，則知我無恩、…", "s": "he is not pleased and seeks to cut that off."}, {"key": "ma89:9.3", "p": "不知恩者，則不歡悅，便求欲斷。諸賢！…", "s": "Good sirs, when a monk contemplates and knows that he is not ungrateful and unaware of kindness,"}, {"key": "ma89:9.4", "p": "若比丘觀時，則知我不無恩、不知恩者，…", "s": "he is immediately pleased, thinking,"}, {"key": "ma89:9.5", "p": "即便歡悅，我自清淨，求學尊法，是故歡悅。…", "s": "'I am pure myself, and I study the noble Dharma,' therefore he is pleased."}, {"key": "ma89:9.6", "p": "因歡悅故，便得歡喜。…", "s": "Because of that pleasure, he gains joy."}, {"key": "ma89:9.7", "p": "因歡喜故，便得止身。…", "s": "Because of joy, his body becomes calm."}, {"key": "ma89:9.8", "p": "因止身故，便得覺樂。…", "s": "Because of bodily calm, he feels happiness.\nBecause of happiness, his mind becomes concentrated."}, {"key": "ma89:9.9", "p": "因覺樂故，便得定心。諸賢！…", "s": "Good sirs, a learned noble disciple, because of a concentrated mind,"}, {"key": "ma89:9.10", "p": "多聞聖弟子因定心故，便見如實、知如真。…", "s": "sees things as they really are and knows them as they truly are."}, {"key": "ma89:9.11", "p": "因見如實、知如真故，便得厭。…", "s": "Because he sees things as they really are and knows them as they truly are, he gains disenchantment."}, {"key": "ma89:9.12", "p": "因厭故，便得無欲。…", "s": "Because of disenchantment, he gains dispassion."}, {"key": "ma89:9.13", "p": "因無欲故，便得解脫。…", "s": "Because of dispassion, he gains liberation."}, {"key": "ma89:9.14", "p": "因解脫故，便得知解脫，生已盡，…", "s": "Because of liberation, he knows that he is liberated:"}, {"key": "ma89:9.15", "p": "梵行已立，所作已辦，不更受有，知如真。」…", "s": "'Birth is exhausted, the holy life has been established, what had to be done has been done,\nthere is no more coming into any state of existence,' and he knows t…"}]}, {"id": "10", "label": "尊者大目揵連所說如是。", "rows": [{"key": "ma89:10.1", "p": "尊者大目揵連所說如是。…", "s": "Thus spoke the venerable Mahāmoggallāna."}, {"key": "ma89:10.2", "p": "彼諸比丘聞尊者大目揵連所說，歡喜奉行。…", "s": "Those monks, having heard what the venerable Mahāmoggallāna said, were delighted and put it into practice."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

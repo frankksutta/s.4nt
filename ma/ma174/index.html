@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma174:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma174:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada's Park."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「世間真實有四種受法。", "rows": [{"key": "ma174:3.1", "p": "爾時，世尊告諸比丘：「世間真實有四種受法。…", "s": "At that time, the Blessed One said to the monks:"}, {"key": "ma174:3.2", "p": "云何為四？…", "s": "'In the world, there are truly four kinds of ways of experiencing feelings."}, {"key": "ma174:3.3", "p": "或有受法現樂、當來受苦報，…", "s": "What are the four?"}, {"key": "ma174:3.4", "p": "或有受法現苦、當來受樂報，…", "s": "There is a way of experiencing feelings that is pleasant in the present but brings painful results in the future;"}, {"key": "ma174:3.5", "p": "或有受法現苦、當來亦受苦報，…", "s": "there is a way of experiencing feelings that is painful in the present but brings pleasant results in the future;"}, {"key": "ma174:3.6", "p": "或有受法現樂、當來亦受樂報。…", "s": "there is a way of experiencing feelings that is painful in the present and also brings painful results in the future;\nand there is a way of experiencing feeling…"}]}, {"id": "4", "label": "「云何受法現樂、當來受苦報？", "rows": [{"key": "ma174:4.1", "p": "「云何受法現樂、當來受苦報？…"}, {"key": "ma174:4.2", "p": "或有沙門、梵志，快莊嚴女共相娛樂，…"}, {"key": "ma174:4.3", "p": "作如是說：『此沙門、…"}, {"key": "ma174:4.4", "p": "梵志於欲見當來有何恐怖，…", "s": "'What is the way of experiencing feelings that is pleasant in the present but brings painful results in the future?"}, {"key": "ma174:4.5", "p": "有何災患，而斷於欲，施設斷欲？…"}, {"key": "ma174:4.6", "p": "此快莊嚴於女身體樂更樂觸。…"}, {"key": "ma174:4.7", "p": "』彼與此女共相娛樂，於中遊戲，彼受此法，…"}, {"key": "ma174:4.8", "p": "成具足已，身壞命終，趣至惡處，生地獄中，…", "s": "There are some ascetics or brahmins who enjoy themselves with a beautifully adorned woman,"}, {"key": "ma174:4.9", "p": "方作是念：『彼沙門、梵志於欲見此當來恐怖，…"}, {"key": "ma174:4.10", "p": "見此災患故，斷於欲，施設斷欲。…"}, {"key": "ma174:4.11", "p": "我等因欲、諍欲、緣欲故，受如是極苦、甚重苦也。』…", "s": "engaging in pleasure together, and they say:"}]}, {"id": "5", "label": "「猶春後月，日中極熱，有葛藤子，", "rows": [{"key": "ma174:5.1", "p": "「猶春後月，日中極熱，有葛藤子，…"}, {"key": "ma174:5.2", "p": "曰炙圯迸，墮一娑羅樹下。…"}, {"key": "ma174:5.3", "p": "彼時，娑羅樹神因此故而生恐怖，於是，…", "s": "'Just as in the last month of spring, at the hottest time of day,"}, {"key": "ma174:5.4", "p": "彼樹神若邊傍種子村神、村百穀藥木有親親朋友樹神，…"}, {"key": "ma174:5.5", "p": "於種子見當來有恐怖、有災患故，…", "s": "a kudzu seed, scorched by the sun and bursting, falls under a sal tree."}, {"key": "ma174:5.6", "p": "便往至彼樹神所，而慰勞曰：『樹神勿怖！…"}, {"key": "ma174:5.7", "p": "樹神勿怖！…"}, {"key": "ma174:5.8", "p": "今此種子或為鹿食，或孔雀食，或風吹去，…", "s": "At that time, the deity of that sal tree becomes frightened because of this."}, {"key": "ma174:5.9", "p": "或村火燒，或野火燒，或敗壞不成種子。…"}, {"key": "ma174:5.10", "p": "如是，樹神！…", "s": "Then, the deities of neighboring seed villages, village grains,"}, {"key": "ma174:5.11", "p": "汝得安隱。…"}, {"key": "ma174:5.12", "p": "若此種子非為鹿食，非孔雀食，非風吹去，…"}, {"key": "ma174:5.13", "p": "非村火燒，非野火燒，亦非敗壞不成種子，…", "s": "medicinal herbs, and trees who are relatives and friends of that tree deity,"}, {"key": "ma174:5.14", "p": "此種子不缺不穿，亦不剖坼，不為風、…"}, {"key": "ma174:5.15", "p": "雨、日所中傷，得大雨漬，便速生也。』…", "s": "seeing the future terror and calamity in the seed, go to that tree deity and console him, saying:"}]}, {"id": "6", "label": "「彼樹神而作是念：『以何等故？", "rows": [{"key": "ma174:6.1", "p": "「彼樹神而作是念：『以何等故？…", "s": "That tree spirit thought:"}, {"key": "ma174:6.2", "p": "彼邊傍種子村神、村百穀藥木親親朋友樹神，…", "s": "'Why is it that the neighboring tree spirits of the seed village, the village of a hundred medicinal herbs and trees,"}, {"key": "ma174:6.3", "p": "於種子見當來有何恐怖？…", "s": "and the tree spirits of my relatives and friends,"}, {"key": "ma174:6.4", "p": "有何災患？…", "s": "seeing what future terror and calamity this seed might bring, have come to console me, saying:"}, {"key": "ma174:6.5", "p": "而來慰勞我言：「樹神勿怖！…", "s": "\"Tree spirit, do not fear!"}, {"key": "ma174:6.6", "p": "樹神勿怖！樹神！…", "s": "Tree spirit, do not fear!"}, {"key": "ma174:6.7", "p": "此種子或為鹿食，或孔雀食，或風吹去，…", "s": "Tree spirit, this seed may be eaten by deer, or eaten by peacocks, or blown away by the wind,"}, {"key": "ma174:6.8", "p": "或村火燒，或野火燒，或敗壞不成種子。…", "s": "or burned by a village fire, or burned by a wildfire, or it may rot and fail to become a seed."}, {"key": "ma174:6.9", "p": "如是，樹神！…", "s": "Thus, tree spirit, you will be safe."}, {"key": "ma174:6.10", "p": "汝得安隱。…", "s": "If this seed is not eaten by deer, not eaten by peacocks, not blown away by the wind,"}, {"key": "ma174:6.11", "p": "若此種子非為鹿食，非孔雀食，非風吹去，…", "s": "not burned by a village fire, not burned by a wildfire, and does not rot and fail to become a seed,"}, {"key": "ma174:6.12", "p": "非村火燒，非野火燒，亦非敗壞不成種子，…", "s": "if this seed is intact, not pierced, not split, not damaged by wind,"}, {"key": "ma174:6.13", "p": "此種子不缺不穿，亦不剖坼，不為風、…", "s": "rain, or sun, and is soaked by a heavy rain, then it will quickly sprout.\"'"}, {"key": "ma174:6.14", "p": "雨、日所中傷，得大雨漬，便速生也。…", "s": "It grew stems, branches, leaves, soft and forming nodes, touching the body with delight."}, {"key": "ma174:6.15", "p": "」』成莖枝葉柔軟成節，觸體喜悅，…", "s": "This stem, branch, leaf, soft and forming nodes, touching the body with delight,"}, {"key": "ma174:6.16", "p": "此莖枝葉柔軟成節，觸體喜悅，樂更樂觸。…", "s": "was pleasant to the touch and delightful to contact."}, {"key": "ma174:6.17", "p": "此緣樹成大枝節葉，纏裹彼樹，覆蓋在上。…", "s": "Because of this, the tree grew large branches, nodes, and leaves, which entwined that tree, covering it from above."}, {"key": "ma174:6.18", "p": "覆蓋在上已，彼樹神方作是念：…", "s": "After covering it from above, that tree spirit then thought:"}, {"key": "ma174:6.19", "p": "『彼邊傍種子村神、村百穀藥木親親朋友樹神，…", "s": "'Those neighboring tree spirits of the seed village, the village of a hundred medicinal herbs and trees,"}, {"key": "ma174:6.20", "p": "於種子見此當來恐怖，見此災患故，…", "s": "and the tree spirits of my relatives and friends,"}, {"key": "ma174:6.21", "p": "而來慰勞我言：「樹神勿怖！…", "s": "seeing what future terror and calamity this seed would bring, came to console me, saying:"}, {"key": "ma174:6.22", "p": "樹神勿怖！…", "s": "\"Tree spirit, do not fear!"}, {"key": "ma174:6.23", "p": "此種子或為鹿食，或孔雀食，或風吹去，…", "s": "Tree spirit, do not fear!"}, {"key": "ma174:6.24", "p": "或村火燒，或野火燒，或敗壞不成種子。…", "s": "This seed may be eaten by deer, or eaten by peacocks, or blown away by the wind,"}, {"key": "ma174:6.25", "p": "如是，樹神！…", "s": "or burned by a village fire, or burned by a wildfire, or it may rot and fail to become a seed."}, {"key": "ma174:6.26", "p": "汝得安隱。…", "s": "Thus, tree spirit, you will be safe."}, {"key": "ma174:6.27", "p": "若此種子非為鹿食，非孔雀食，非風吹去，…", "s": "If this seed is not eaten by deer, not eaten by peacocks, not blown away by the wind,"}, {"key": "ma174:6.28", "p": "非村火燒，非野火燒，亦非敗壞不成種子，…", "s": "not burned by a village fire, not burned by a wildfire, and does not rot and fail to become a seed,"}, {"key": "ma174:6.29", "p": "此種子不缺不穿，亦不剖坼，不為風、…", "s": "if this seed is intact, not pierced, not split, not damaged by wind,"}, {"key": "ma174:6.30", "p": "雨、日所中傷，得大雨漬，便速生也。…", "s": "rain, or sun, and is soaked by a heavy rain, then it will quickly sprout.\""}, {"key": "ma174:6.31", "p": "」我因種子、緣種子故，受此極苦甚重苦也。』…", "s": "Because of this seed, conditioned by this seed, I now experience this extreme and severe suffering.'"}]}, {"id": "7", "label": "「如是，或有沙門、梵志，", "rows": [{"key": "ma174:7.1", "p": "「如是，或有沙門、梵志，…", "s": "\"Thus, there are some ascetics and brahmins who enjoy themselves with a beautifully adorned woman, saying:"}, {"key": "ma174:7.2", "p": "快莊嚴女共相娛樂，作如是說：『此沙門、…", "s": "'What future terror or calamity do these ascetics and brahmins see in\ndesire that they cut off desire and teach the cutting off of desire?"}, {"key": "ma174:7.3", "p": "梵志於欲見當來有何恐怖，…", "s": "This beautifully adorned woman's body gives pleasure and delightful contact.'"}, {"key": "ma174:7.4", "p": "有何災患，而斷於欲，施設斷欲？…", "s": "They enjoy themselves with this woman, playing together."}, {"key": "ma174:7.5", "p": "此快莊嚴於女身體樂更樂觸。…", "s": "Having fully undertaken this practice, when their body breaks up and life ends,"}, {"key": "ma174:7.6", "p": "』彼與此女共相娛樂，於中遊戲，彼受此法，…", "s": "they go to a bad destination, being reborn in hell."}, {"key": "ma174:7.7", "p": "成具足已，身壞命終，趣至惡處，生地獄中，…", "s": "Then they think:"}, {"key": "ma174:7.8", "p": "方作是念：『彼沙門、梵志於欲見此當來恐怖，…", "s": "'Those ascetics and brahmins saw this future terror and calamity in desire,"}, {"key": "ma174:7.9", "p": "見此災患故，斷於欲，施設斷欲。…", "s": "therefore they cut off desire and taught the cutting off of desire."}, {"key": "ma174:7.10", "p": "我等因欲、諍欲、緣欲故，受如是極苦甚重苦也。…", "s": "Because of desire, quarreling over desire, and relying on desire,"}, {"key": "ma174:7.11", "p": "』是謂受法現樂、當來受苦報。…", "s": "we have experienced such extreme and severe suffering.'\nThis is called a practice that is pleasant in the present but brings suffering as its result in the futu…"}]}, {"id": "8", "label": "「云何受法現苦、當來受樂報？", "rows": [{"key": "ma174:8.1", "p": "「云何受法現苦、當來受樂報？…", "s": "\"What is the practice that is painful in the present but brings happiness as its result in the future?"}, {"key": "ma174:8.2", "p": "或有一自然重濁欲、重濁恚、重濁癡，彼數隨欲心，…", "s": "There is someone who is naturally heavily burdened with desire,"}, {"key": "ma174:8.3", "p": "受苦憂慼，數隨恚心、癡心，受苦憂慼。…", "s": "heavily burdened with aversion, heavily burdened with delusion.\nThey repeatedly follow a mind of desire, experiencing suffering and distress;"}, {"key": "ma174:8.4", "p": "彼以苦以憂，盡其形壽，修行梵行，…", "s": "they repeatedly follow a mind of aversion and delusion, experiencing suffering and distress."}, {"key": "ma174:8.5", "p": "乃至啼泣墮淚，彼受此法，…", "s": "With suffering and distress, they live out their entire life practicing the holy life,\neven to the point of weeping and shedding tears."}, {"key": "ma174:8.6", "p": "成具足已，身壞命終，必昇善處，…", "s": "Having fully undertaken this practice, when their body breaks up and life ends,"}, {"key": "ma174:8.7", "p": "生於天中，是謂受法現苦、當來受樂報。…", "s": "they certainly arise in a good destination, being reborn among the devas.\nThis is called a practice that is painful in the present but brings happiness as its r…"}]}, {"id": "9", "label": "「云何受法現苦、當來亦受苦報？", "rows": [{"key": "ma174:9.1", "p": "「云何受法現苦、當來亦受苦報？…", "s": "\"What is the practice that is painful in the present and also brings suffering as its result in the future?"}, {"key": "ma174:9.2", "p": "或有沙門、梵志裸形無衣，或以手為衣，…", "s": "There are some ascetics and brahmins who go naked without clothes,"}, {"key": "ma174:9.3", "p": "或以葉為衣，或以珠為衣，或不以瓶取水，…", "s": "or use their hands as clothes, or use leaves as clothes, or use pearls as clothes.\nThey do not take water with a pot, they do not take water with a ladle."}, {"key": "ma174:9.4", "p": "或不以櫆取水，不食刀杖劫抄之食，不食欺妄食，…", "s": "They do not eat food obtained by violence or robbery, they do not eat food obtained by deceit or falsehood."}, {"key": "ma174:9.5", "p": "不自往，不遣信，不來尊，不善尊、不住尊。…", "s": "They do not go themselves, they do not send messengers."}, {"key": "ma174:9.6", "p": "若有二人食，不在中食，不懷妊家食，…", "s": "They do not honor the honored, they do not respect the respected, they do not stay with the respected.\nIf two people are eating, they do not eat in between."}, {"key": "ma174:9.7", "p": "不畜狗家食，家有糞蠅飛來而不食，…", "s": "They do not eat from a house where a woman is pregnant, they do not eat from a house where dogs are kept."}, {"key": "ma174:9.8", "p": "不噉魚，不食肉，不飲酒，…", "s": "If there are flies and maggots in a house, they do not eat there."}, {"key": "ma174:9.9", "p": "不飲惡水，或都不飲，學無飲行。…", "s": "They do not eat fish, they do not eat meat, they do not drink alcohol, they do not drink impure water.\nSometimes they do not drink at all, practicing the non-dr…"}, {"key": "ma174:9.10", "p": "或噉一口，以一口為足，或二、…", "s": "Sometimes they eat one mouthful, considering one mouthful sufficient;"}, {"key": "ma174:9.11", "p": "三、四，乃至七口，以七口為足。…", "s": "or two, three, four, up to seven mouthfuls, considering seven mouthfuls sufficient.\nSometimes they eat one morsel, considering one morsel sufficient;"}, {"key": "ma174:9.12", "p": "或食一得，以一得為足，或二、…", "s": "or two, three, four, up to seven morsels, considering seven morsels sufficient."}, {"key": "ma174:9.13", "p": "三、四，乃至七得，以七得為足。…", "s": "Sometimes they eat once a day, considering one meal sufficient;"}, {"key": "ma174:9.14", "p": "或日一食，以一食為足，或二、三、四、五、…", "s": "or two, three, four, five, six, seven days, half a month, one month, eating once, considering one meal sufficient.\nSometimes they eat vegetables, sometimes they…"}, {"key": "ma174:9.15", "p": "六、七日、半月、一月一食，以一食為足。…", "s": "sometimes they eat mixed husks, sometimes they eat head-head-lo food, sometimes they eat coarse food."}, {"key": "ma174:9.16", "p": "或食菜茹，或食稗子，或食［楑－天＋示］米，…", "s": "Sometimes they go to a secluded place, dwelling in seclusion."}, {"key": "ma174:9.17", "p": "或食雜［麩－夫＋黃］，或食頭頭邏食，或食麁食。…", "s": "Sometimes they eat roots, sometimes they eat fruits, sometimes they eat fallen fruits.\nSometimes they wear a garment made of woven strips, sometimes they wear a…"}, {"key": "ma174:9.18", "p": "或至無事處，依於無事，或食根，或食果，或食自落果。…", "s": "sometimes they wear a garment made of head-covering cloth,"}, {"key": "ma174:9.19", "p": "或持連合衣，或持毛衣，或持頭舍衣，…", "s": "sometimes they wear a garment made of hair and head-covering cloth, sometimes they wear a whole hide,"}, {"key": "ma174:9.20", "p": "或持毛頭舍衣，或持全皮，或持穿皮，或持全穿皮。…", "s": "sometimes they wear a perforated hide, sometimes they wear a whole perforated hide.\nSometimes they let their hair hang loose, sometimes they wear their hair in …"}, {"key": "ma174:9.21", "p": "或持散髮，或持編髮，或持散編髮，或有剃髮，…", "s": "sometimes they wear it both loose and in a topknot."}, {"key": "ma174:9.22", "p": "或有剃鬚，或剃鬚髮，或有拔髮，或有拔鬚，或拔鬚髮。…", "s": "Sometimes they shave their head, sometimes they shave their beard, sometimes they shave both head and beard.\nSometimes they pull out their hair, sometimes they …"}, {"key": "ma174:9.23", "p": "或住立斷坐，或修蹲行，或有臥刺，…", "s": "Sometimes they stand continuously, cutting off sitting;"}, {"key": "ma174:9.24", "p": "以刺為床，或有臥草，以草為床。…", "s": "sometimes they practice squatting while walking;"}, {"key": "ma174:9.25", "p": "或有事水，晝夜手抒。…", "s": "sometimes they lie on thorns, using thorns as a bed;\nsometimes they lie on grass, using grass as a bed."}, {"key": "ma174:9.26", "p": "或有事火，竟昔燃之。…", "s": "Sometimes they worship water, scooping it with their hands day and night."}, {"key": "ma174:9.27", "p": "或事日、月、尊祐大德，叉手向彼。…", "s": "Sometimes they worship fire, keeping it burning all night long."}, {"key": "ma174:9.28", "p": "如此之比，受無量苦，學煩熱行，彼受此法，成具足已，…", "s": "Sometimes they worship the sun, the moon, honored ones, and great sages, raising their joined hands towards them.\nIn such ways, they undergo countless suffering…"}, {"key": "ma174:9.29", "p": "身壞命終，必至惡處，生地獄中，…", "s": "Having fully undertaken this practice, when their body breaks up and life ends,"}, {"key": "ma174:9.30", "p": "是謂受法現苦、當來亦受苦報。…", "s": "they certainly go to a bad destination, being reborn in hell.\nThis is called a practice that is painful in the present and also brings suffering as its result i…"}]}, {"id": "10", "label": "「云何受法現樂、當來亦受樂報？", "rows": [{"key": "ma174:10.1", "p": "「云何受法現樂、當來亦受樂報？…", "s": "\"What is the practice that is pleasant in the present and also brings happiness as its result in the future?"}, {"key": "ma174:10.2", "p": "或有一自然不重濁欲、不重濁恚、…", "s": "There is someone who is naturally not heavily burdened with desire,"}, {"key": "ma174:10.3", "p": "不重濁癡，彼不數隨欲心，受苦憂慼，…", "s": "not heavily burdened with aversion, not heavily burdened with delusion."}, {"key": "ma174:10.4", "p": "不數隨恚心、癡心，受苦憂慼，彼以樂以喜，…", "s": "They do not repeatedly follow a mind of desire, experiencing suffering and distress;"}, {"key": "ma174:10.5", "p": "盡其形壽，修行梵行，乃至歡悅心。…", "s": "they do not repeatedly follow a mind of aversion and delusion, experiencing suffering and distress.\nWith pleasure and joy, they live out their entire life pract…"}, {"key": "ma174:10.6", "p": "彼受此法，成具足已，五下分結盡，…", "s": "Having fully undertaken this practice, when the five lower fetters are completely eradicated,"}, {"key": "ma174:10.7", "p": "化生於彼而般涅槃，得不退法，不還此世。…", "s": "they are spontaneously reborn in that realm and attain final Nibbāna,"}, {"key": "ma174:10.8", "p": "是謂受法現樂、當來亦受樂報。…", "s": "attaining the state of non-returning, not coming back to this world."}, {"key": "ma174:10.9", "p": "世間真實有是四種受法者，因此故說。」…", "s": "This is called a practice that is pleasant in the present and also brings happiness as its result in the future.\nThe world truly has these four kinds of practic…"}]}, {"id": "11", "label": "佛說如是。", "rows": [{"key": "ma174:11.1", "p": "佛說如是。…", "s": "The Buddha spoke thus."}, {"key": "ma174:11.2", "p": "彼諸比丘聞佛所說，歡喜奉行。…", "s": "Those monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

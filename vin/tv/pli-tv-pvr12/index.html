@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../../help.html">Help</a><a href="../../../help.html#about">About</a><a href="../../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:32 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../../help.html">Help</a><a href="../../../help.html#about">About</a><a href="../../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:34 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -966,12 +1025,14 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 <script type="application/json" id="tx-bodhi-esque">["Parivāra", "Another Collection of Verses", "12.\nQuestions and Answers on Censures, etc.", "For what purpose is censure?", "For what reason is reminding?", "For what purpose is the Saṅgha?", "And the formal resolution is for what reason?", "Censure serves the purpose of reminding,", "Reminding serves the purpose of reprimand;", "The Saṅgha serves the purpose of taking charge,", "And the formal resolution is a separate matter.", "Do not speak hastily,", "do not speak out of anger;", "Do not generate aversion,", "if you are an investigator.", "Do not speak hastily,", "How is it quarrelsome and connected with harm?", "In conformity with the suttas and the Vinaya,", "Laid down as conformable.", "Reflecting on the duty of interrogation,", "Done by the wise one with skill;", "Well spoken, conformable to the training rules,", "Not destroying the future state;", "Seeking welfare, apply yourself,", "To that which is connected with timely benefit.", "Of the accused and of the accuser,", "Do not pronounce a verdict hastily;", "The accuser says,\n'He has fallen into an offense,'", "The accused says,\n'I have not fallen into an offense.'", "Both, without suspending,", "One should make it by that connection of acknowledgment.", "Acknowledgment is made among those with moral shame.", "Among the shameless, it is not found thus.", "Even if a shameless person speaks much,", "One should make it by that connection of a speaker.", "What kind is a shameless person?", "In whom acknowledgment does not take effect;", "And this I ask you:", "What kind of person is called a shameless person.", "He intentionally commits an offense,", "He conceals the offense.", "And he goes on a wrong course,", "Such a person is called a shameless person.", "I also know the truth,", "Such a person is called a shameless person.", "Moreover, I ask you:", "What kind is called a person endowed with moral shame?", "He does not commit an offense intentionally,", "He does not conceal an offense;", "He does not resort to a wrong course,", "Such a one is called a person endowed with moral shame.", "Truly, I also know:", "Such a one is called a person endowed with moral shame;", "And another thing I ask you:", "What kind is called an unrighteous accuser?", "He accuses at the wrong time, with what is untrue,", "Harshly, with speech that is unbeneficial;", "He accuses with a mind of hate, not with a mind of loving-kindness,", "Such a one is called an unrighteous accuser.", "Truly, I also know:", "Such a one is called an unrighteous reprover.", "And another thing I ask:", "What kind is called a righteous reprover?", "He reproves at the right time, with what is true,", "gently, in a way that is beneficial;", "With a mind of loving-kindness he reproves, without hatred within;", "Such a one is called a righteous reprover.", "Truly, I also know,", "Such a one is called a righteous reprover;", "And another thing I ask:", "What kind is called a foolish reprover?", "He does not know the earlier and the later,", "unskilled in the earlier and the later;", "He does not know the connection of the way of speech,", "unskilled in the connection of the way of speech;", "Such a one is called a foolish accuser.", "Truly, I also know,", "Such a one is called a foolish accuser;", "And another thing I ask:", "What kind is called a wise accuser?", "He knows the earlier and the later,", "Skilled in the earlier and the later;", "He knows the path of speech with its connections,", "Skilled in the path of speech with its connections;", "Such a one is called a wise accuser.", "Truly, I also know,", "Such a one is called a wise accuser;", "And another thing I ask:", "What is called an accusation?", "He accuses in regard to a failure in virtuous behavior,", "Moreover, by conduct and view;", "He also accuses by livelihood,", "It is called an accusation by that.", "The other collection of verses is finished."]</script>
 <script type="application/json" id="tx-pali_myanmar">["", "", "", "စောဒနာ ကိမတ္ထာယ၊", "သာရဏာ ကိဿ ကာရဏာ။", "သင်္ဃော ကိမတ္ထာယ၊", "မတိကမ္မံ ပန ကိဿ ကာရဏာ။", "စောဒနာ သာရဏတ္ထာယ၊", "နိဂ္ဂဟတ္ထာယ သာရဏာ။", "သင်္ဃော ပရိဂ္ဂဟတ္ထာယ၊", "မတိကမ္မံ ပန ပါဋိယေက္ကံ။", "မာ ခေါ တုရိတော အဘဏိ၊", "မာ ခေါ စဏ္ဍိကတော ဘဏိ။", "မာ ခေါ ပဋိဃံ ဇနယိ၊", "သစေ အနုဝိဇ္ဇကော တုဝံ။", "မာ ခေါ သဟသာ အဘဏိ၊", "ကထံ ဝိဂ္ဂါဟိကံ အနတ္ထသံဟိတံ။", "သုတ္တေ ဝိနယေ အနုလောမေ၊", "ပညတ္တေ အနုလောမိကေ။", "အနုယောဂဝတ္တံ နိသာမယ၊", "ကုသလေန ဗုဒ္ဓိမတာ ကတံ။", "သုဝုတ္တံ သိက္ခါပဒာနုလောမိကံ၊", "ဂတိံ န နာသေန္တော သမ္ပရာယိကံ။", "ဟိတေသီ အနုယုဉ္ဇဿု၊", "ကာလေနတ္ထူပသံဟိတံ။", "စုဒိတဿ စ စောဒကဿ စ။", "သဟသာ ဝေါဟာရံ မာ ပဓာရေသိ။", "စောဒကော အာဟ အာပန္နောတိ။", "စုဒိတကော အာဟ အနာပန္နောတိ။", "ဥဘော အနုက္ခိပန္တော၊", "ပဋိညာနုသန္ဓိတေန ကာရယေ။", "ပဋိညာ လဇ္ဇီသု ကတာ၊", "အလဇ္ဇီသု ဧဝံ န ဝိဇ္ဇတိ။", "ဗဟုမ္ပိ အလဇ္ဇီ ဘာသေယျ၊", "ဝတ္တာနုသန္ဓိတေန ကာရယေ။", "အလဇ္ဇီ ကီဒိသော ဟောတိ၊", "ပဋိညာ ယဿ န ရူဟတိ။", "ဧတဉ္စ တာဟံ ပုစ္ဆာမိ၊", "ကီဒိသော ဝုစ္စတိ အလဇ္ဇီ ပုဂ္ဂလော။", "သဉ္စိစ္စ အာပတ္တိံ အာပဇ္ဇတိ၊", "အာပတ္တိံ ပရိဂူဟတိ။", "အဂတိဂမနဉ္စ ဂစ္ဆတိ၊", "ဧဒိသော ဝုစ္စတိ အလဇ္ဇီပုဂ္ဂလော။", "သစ္စံ အဟမ္ပိ ဇာနာမိ၊", "ဧဒိသော ဝုစ္စတိ အလဇ္ဇီပုဂ္ဂလော။", "အညဉ္စ တာဟံ ပုစ္ဆာမိ၊", "ကီဒိသော ဝုစ္စတိ လဇ္ဇီပုဂ္ဂလော။", "သဉ္စိစ္စ အာပတ္တိံ နာပဇ္ဇတိ၊", "အာပတ္တိံ န ပရိဂူဟတိ။", "အဂတိဂမနံ န ဂစ္ဆတိ၊", "ဧဒိသော ဝုစ္စတိ လဇ္ဇီပုဂ္ဂလော။", "သစ္စံ အဟမ္ပိ ဇာနာမိ၊", "ဧဒိသော ဝုစ္စတိ လဇ္ဇီပုဂ္ဂလော။", "အညဉ္စ တာဟံ ပုစ္ဆာမိ၊", "ကီဒိသော ဝုစ္စတိ အဓမ္မစောဒကော။ အကာလေ", "စောဒေတိ အဘူတေန။", "ဖရုသေန အနတ္ထသံဟိတေန။", "ဒောသန္တရော စောဒေတိ နော မေတ္တာစိတ္တော။", "ဧဒိသော ဝုစ္စတိ အဓမ္မစောဒကော။", "သစ္စံ အဟမ္ပိ ဇာနာမိ၊", "ဧဒိသော ဝုစ္စတိ အဓမ္မစောဒကော။", "အညဉ္စ တာဟံ ပုစ္ဆာမိ၊", "ကီဒိသော ဝုစ္စတိ ဓမ္မစောဒကော။", "ကာလေန စောဒေတိ ဘူတေန၊", "သဏှေန အတ္ထသံဟိတေန။", "မေတ္တာစိတ္တော စောဒေတိ နော ဒောသန္တရော။", "ဧဒိသော ဝုစ္စတိ ဓမ္မစောဒကော။", "သစ္စံ အဟမ္ပိ ဇာနာမိ၊", "ဧဒိသော ဝုစ္စတိ ဓမ္မစောဒကော။", "အညဉ္စ တာဟံ ပုစ္ဆာမိ၊", "ကီဒိသော ဝုစ္စတိ ဗာလစောဒကော။", "ပုဗ္ဗာပရံ န ဇာနာတိ၊", "ပုဗ္ဗာပရဿ အကောဝိဒော။", "အနုသန္ဓိဝစနပထံ န ဇာနာတိ။", "အနုသန္ဓိဝစနပထဿ အကောဝိဒော။", "ဧဒိသော ဝုစ္စတိ ဗာလစောဒကော။", "သစ္စံ အဟမ္ပိ ဇာနာမိ၊", "ဧဒိသော ဝုစ္စတိ ဗာလစောဒကော။", "အညဉ္စ တာဟံ ပုစ္ဆာမိ၊", "ကီဒိသော ဝုစ္စတိ ပဏ္ဍိတစောဒကော။", "ပုဗ္ဗာပရမ္ပိ ဇာနာတိ၊", "ပုဗ္ဗာပရဿ ကောဝိဒော။", "အနုသန္ဓိဝစနပထံ ဇာနာတိ၊", "အနုသန္ဓိဝစနပထဿ ကောဝိဒော။", "ဧဒိသော ဝုစ္စတိ ပဏ္ဍိတစောဒကော။", "သစ္စံ အဟမ္ပိ ဇာနာမိ၊", "ဧဒိသော ဝုစ္စတိ ပဏ္ဍိတစောဒကော။", "အညဉ္စ တာဟံ ပုစ္ဆာမိ၊", "စောဒနာ ကိန္တိ ဝုစ္စတိ။", "သီလဝိပတ္တိယာ စောဒေတိ၊", "အထော အာစာရဒိဋ္ဌိယာ။", "အာဇီဝေနပိ စောဒေတိ၊", "စောဒနာ တေန ဝုစ္စတီတိ။", ""]</script>
 <script type="application/json" id="tx-pali_myanmar_iast">["", "", "", "codanā kimatthāya.", "sāraṇā kissa kāraṇā..", "saṅgho kimatthāya.", "matikammaṃ pana kissa kāraṇā..", "codanā sāraṇatthāya.", "niggahatthāya sāraṇā..", "saṅgho pariggahatthāya.", "matikammaṃ pana pāṭiyekkaṃ..", "mā kho turito abhaṇi.", "mā kho caṇḍikato bhaṇi..", "mā kho paṭighaṃ janayi.", "sace anuvijjako tuvaṃ..", "mā kho sahasā abhaṇi.", "kathaṃ viggāhikaṃ anatthasaṃhitaṃ..", "sutte vinaye anulome.", "paññatte anulomike..", "anuyogavattaṃ nisāmaya.", "kusalena buddhimatā kataṃ..", "suvuttaṃ sikkhāpadānulomikaṃ.", "gatiṃ na nāsento samparāyikaṃ..", "hitesī anuyuñjassu.", "kālenatthūpasaṃhitaṃ..", "cuditassa ca codakassa ca..", "sahasā vohāraṃ mā padhāresi..", "codako āha āpannoti..", "cuditako āha anāpannoti..", "ubho anukkhipanto.", "paṭiññānusandhitena kāraye..", "paṭiññā lajjīsu katā.", "alajjīsu evaṃ na vijjati..", "bahumpi alajjī bhāseyya.", "vattānusandhitena kāraye..", "alajjī kīdiso hoti.", "paṭiññā yassa na rūhati..", "etañca tāhaṃ pucchāmi.", "kīdiso vuccati alajjī puggalo..", "sañcicca āpattiṃ āpajjati.", "āpattiṃ parigūhati..", "agatigamanañca gacchati.", "ediso vuccati alajjīpuggalo..", "saccaṃ ahampi jānāmi.", "ediso vuccati alajjīpuggalo..", "aññañca tāhaṃ pucchāmi.", "kīdiso vuccati lajjīpuggalo..", "sañcicca āpattiṃ nāpajjati.", "āpattiṃ na parigūhati..", "agatigamanaṃ na gacchati.", "ediso vuccati lajjīpuggalo..", "saccaṃ ahampi jānāmi.", "ediso vuccati lajjīpuggalo..", "aññañca tāhaṃ pucchāmi.", "kīdiso vuccati adhammacodako.. akāle", "codeti abhūtena..", "pharusena anatthasaṃhitena..", "dosantaro codeti no mettācitto..", "ediso vuccati adhammacodako..", "saccaṃ ahampi jānāmi.", "ediso vuccati adhammacodako..", "aññañca tāhaṃ pucchāmi.", "kīdiso vuccati dhammacodako..", "kālena codeti bhūtena.", "saṇhena atthasaṃhitena..", "mettācitto codeti no dosantaro..", "ediso vuccati dhammacodako..", "saccaṃ ahampi jānāmi.", "ediso vuccati dhammacodako..", "aññañca tāhaṃ pucchāmi.", "kīdiso vuccati bālacodako..", "pubbāparaṃ na jānāti.", "pubbāparassa akovido..", "anusandhivacanapathaṃ na jānāti..", "anusandhivacanapathassa akovido..", "ediso vuccati bālacodako..", "saccaṃ ahampi jānāmi.", "ediso vuccati bālacodako..", "aññañca tāhaṃ pucchāmi.", "kīdiso vuccati paṇḍitacodako..", "pubbāparampi jānāti.", "pubbāparassa kovido..", "anusandhivacanapathaṃ jānāti.", "anusandhivacanapathassa kovido..", "ediso vuccati paṇḍitacodako..", "saccaṃ ahampi jānāmi.", "ediso vuccati paṇḍitacodako..", "aññañca tāhaṃ pucchāmi.", "codanā kinti vuccati..", "sīlavipattiyā codeti.", "atho ācāradiṭṭhiyā..", "ājīvenapi codeti.", "codanā tena vuccatīti..", ""]</script>
+<script type="application/json" id="tx-pali_bjt">["", "", "", "චොදනා කිමත්ථාය,", "සාරණා කිස්ස කාරණා.", "සඞ්ඝො කිමත්ථාය", "මතිකම්මං පන කිස්ස කාරණා :", "චොදනා සාරණත්ථාය", "නිග්ගහත්ථාය සාරණා,", "සඞ්ඝො පරිග්ගහත්ථාය", "මතිකම්මං පන පාටියෙක්කං.", "මා ඛො තුරිතො අභණි", "මා ඛො චණ්ඩික්කතො භණී,", "මා ඛො පටිඝං ජනයි", "සචෙ අනුවිජ්ජකො තුවං.", "මා ඛො සහසා අභණි", "කථං විග්ගාහිකං අනත්ථසංහිතං,", "සුත්තෙ විනයෙ අනුලොමෙ", "පඤ්ඤත්තෙ අනුලොමිකෙ.", "අනුයොගවත්තං නිසාමය", "කුසලෙන බුද්ධිමතා කතං,", "සුවුත්තං සික්ඛාපදානුලොමිකං", "ගතිං න නාසෙන්තො සම්පරායිකං,", "හිතෙසී අනුයුඤ්ජස්සු", "කාලෙනත්ථූපසංහිතං,", "චුදිතස්ස ච චොදකස්ස ච", "සහසා වොහාරං මා පධාරෙහි", "චොදකො ආහ ආපන්නොති", "චුදිතකො ආහ අනාපන්නොති.", "උභො අනුක්ඛිපන්තො", "පටිඤ්ඤානුසන්ධිතෙන කාරයෙ.", "පටිඤ්ඤා ලජ්ජීසු කතා", "අලජ්ජීසු එවං න විජ්ජති,", "බහුම්පි අලජ්ජී භාසෙය්ය", "වත්තානුසන්ධිතෙන කාරයෙ.", "අලජ්ජී කීදිසො හොති", "පටිඤ්ඤා යස්ස න රූහති, එවඤ්ච", "තාහං පුච්ඡාමි,", "කීදිසො වුච්චති අලජ්ජී පුග්ගලො :\nසංචිච්ච", "ආපත්තිං ආපජ්ජති", "ආපත්තිං පරිගූහති,", "අගතිගමනඤ්ච ගච්ඡති", "එදිසො වුච්චති අලජ්ජීපුග්ගලො.", "සච්චං අහම්පි ජානාමි", "එදිසො වුච්චති අලජ්ජීපුග්ගලො,", "අඤ්ඤඤ්ච තාහං පුච්ඡාමි", "කීදිසො වුච්චති ලජ්ජීපුග්ගලො :\nසංචිච්ච", "ආපත්තිං නාපජ්ජති", "ආපත්තිං න පරිගූහති,", "අගතිගමනං න ගච්ඡති", "එදිසො වුච්චති ලජ්ජීපුග්ගලො.", "සච්චං අහම්පි ජානාමි,", "එදිසො වුච්චති ලජ්ජීපුග්ගලො,", "අඤ්ඤඤ්ච තාහං පුච්ඡාමි", "කීදිසො වුච්චති අධම්මචොදකො :\nඅකාලෙ", "චොදෙති අභූතෙන", "ඵරුසෙන අනත්ථසංහිතෙන,", "දොසන්තරො චොදෙති නො මෙත්තචිත්තො", "එදිසො වුච්චති අධම්මචොදකො.", "සච්චං අහම්පි ජානාමි", "එදිසො වුච්චති අධම්මචොදකො,", "අඤ්ඤඤ්ච තාහං පුච්ඡාමි", "කීදිසො වුච්චති ධම්මචොදකො :", "කාලෙන චොදෙති භූතෙන,", "සණ්හෙන අත්ථසංහිතෙන,", "මෙත්තාචිත්තො චොදෙති නො දොසන්තරො", "එදිසො වුච්චති ධම්මචොදකො.", "සච්චං අහම්පි ජානාමි", "එදිසො වුච්චති ධම්මචොදකො,", "අඤ්ඤඤ්ච තාහං පුච්ඡාමි", "කීදිසො වුච්චති බාලචොදකො :", "පුබ්බාපරං න ජානාති", "පුබ්බාපරස්ස අකොවිදො,", "අනුසන්ධිවචනපථං න ජානාති", "අනුසන්ධිවචනපථස්ස අකොවිදො", "එදිසො වුච්චති බාලචොදකො.", "සච්චං අහම්පි ජානාමි", "එදිසො වුච්චති බාලචොදකො,", "අඤ්ඤඤ්ච තාහං පුච්ඡාමි", "කීදිසො වුච්චති පණ්ඩිතචොදකො :\nපුබ්බාපරං විජානාති", "", "පුබ්බාපරස්ස කොවිදො,", "අනුසන්ධිවචනපථං ජානාති", "අනුසන්ධිවචනපථස්ස කොවිදො ;", "එදිසො වුච්චති පණ්ඩිතචොදකො.", "සච්චං අහම්පි ජානාමි", "එදිසො වුච්චති පණ්ඩිතචොදකො,", "අඤ්ඤඤ්ච තාහං පුච්ඡාමි", "චොදනා කින්ති වුච්චති :", "සීලවිපත්තියා චොදෙති", "අථො ආචාරදිට්ඨියා,", "ආජීවෙනපි චොදෙති", "චොදනා තෙන", ""]</script>
+<script type="application/json" id="tx-pali_bjt_iast">["", "", "", "codanā kimatthāya,", "sāraṇā kissa kāraṇā.", "saṅgho kimatthāya", "matikammaṃ pana kissa kāraṇā :", "codanā sāraṇatthāya", "niggahatthāya sāraṇā,", "saṅgho pariggahatthāya", "matikammaṃ pana pāṭiyekkaṃ.", "mā kho turito abhaṇi", "mā kho caṇḍikkato bhaṇī,", "mā kho paṭighaṃ janayi", "sace anuvijjako tuvaṃ.", "mā kho sahasā abhaṇi", "kathaṃ viggāhikaṃ anatthasaṃhitaṃ,", "sutte vinaye anulome", "paññatte anulomike.", "anuyogavattaṃ nisāmaya", "kusalena buddhimatā kataṃ,", "suvuttaṃ sikkhāpadānulomikaṃ", "gatiṃ na nāsento samparāyikaṃ,", "hitesī anuyuñjassu", "kālenatthūpasaṃhitaṃ,", "cuditassa ca codakassa ca", "sahasā vohāraṃ mā padhārehi", "codako āha āpannoti", "cuditako āha anāpannoti.", "ubho anukkhipanto", "paṭiññānusandhitena kāraye.", "paṭiññā lajjīsu katā", "alajjīsu evaṃ na vijjati,", "bahumpi alajjī bhāseyya", "vattānusandhitena kāraye.", "alajjī kīdiso hoti", "paṭiññā yassa na rūhati, evañca", "tāhaṃ pucchāmi,", "kīdiso vuccati alajjī puggalo :\nsaṃcicca", "āpattiṃ āpajjati", "āpattiṃ parigūhati,", "agatigamanañca gacchati", "ediso vuccati alajjīpuggalo.", "saccaṃ ahampi jānāmi", "ediso vuccati alajjīpuggalo,", "aññañca tāhaṃ pucchāmi", "kīdiso vuccati lajjīpuggalo :\nsaṃcicca", "āpattiṃ nāpajjati", "āpattiṃ na parigūhati,", "agatigamanaṃ na gacchati", "ediso vuccati lajjīpuggalo.", "saccaṃ ahampi jānāmi,", "ediso vuccati lajjīpuggalo,", "aññañca tāhaṃ pucchāmi", "kīdiso vuccati adhammacodako :\nakāle", "codeti abhūtena", "pharusena anatthasaṃhitena,", "dosantaro codeti no mettacitto", "ediso vuccati adhammacodako.", "saccaṃ ahampi jānāmi", "ediso vuccati adhammacodako,", "aññañca tāhaṃ pucchāmi", "kīdiso vuccati dhammacodako :", "kālena codeti bhūtena,", "saṇhena atthasaṃhitena,", "mettācitto codeti no dosantaro", "ediso vuccati dhammacodako.", "saccaṃ ahampi jānāmi", "ediso vuccati dhammacodako,", "aññañca tāhaṃ pucchāmi", "kīdiso vuccati bālacodako :", "pubbāparaṃ na jānāti", "pubbāparassa akovido,", "anusandhivacanapathaṃ na jānāti", "anusandhivacanapathassa akovido", "ediso vuccati bālacodako.", "saccaṃ ahampi jānāmi", "ediso vuccati bālacodako,", "aññañca tāhaṃ pucchāmi", "kīdiso vuccati paṇḍitacodako :\npubbāparaṃ vijānāti", "", "pubbāparassa kovido,", "anusandhivacanapathaṃ jānāti", "anusandhivacanapathassa kovido ;", "ediso vuccati paṇḍitacodako.", "saccaṃ ahampi jānāmi", "ediso vuccati paṇḍitacodako,", "aññañca tāhaṃ pucchāmi", "codanā kinti vuccati :", "sīlavipattiyā codeti", "atho ācāradiṭṭhiyā,", "ājīvenapi codeti", "codanā tena", ""]</script>
 <script type="application/json" id="nt-brahmali-corrected">{"pli-tv-pvr12:1.4": ["Sp 5.359: \u003ci>Matikammaṁ vuccati mantaggahaṇaṁ\u003c/i>,\n“Taking advice is called \u003ci>matikammaṁ\u003c/i>.”\nVmv 5.359: \u003ci>Mantaggahaṇanti tesaṁ vicāraṇāgahaṇaṁ, suttantikattherānaṁ, vinayadharattherānañca adhippāyagahaṇanti attho\u003c/i>,\n“\u003ci>Mantaggahaṇa\u003c/i>:\nlearning from them by investigation;\nthe meaning is learning the meaning from the experts on the discourse and the experts on the Monastic Law.” "], "pli-tv-pvr12:2.3": ["Sp 5.359: \u003ci>Saṅgho pariggahatthāyāti tattha sannipatito saṅgho vinicchayapariggahaṇatthāya;\ndhammādhammaṁ tulanatthāya suvinicchitadubbinicchitaṁ jānanatthāyāti attho\u003c/i>,\n“\u003ci>Saṅgho pariggahatthāya\u003c/i>:\nthe Sangha is assembled there for the purpose of investigating to make a decision.\nThe meaning is that it is for the purpose of weighing up what is the Teaching and what is contrary to the Teaching,\nand for the purpose of knowing what is well and badly decided.” "], "pli-tv-pvr12:7.3": ["Sp 5.359: \u003ci>Lajjiṁ paṭiññāya kāraye;\nalajjiṁ vattānusandhināti attho.\nTasmā eva paṭiññā lajjīsūti gāthamāha\u003c/i>,\n“The meaning is that the conscientious should be dealt with according to their admission,\nbut the shameless according to their conduct.\nThis is why the verse says \u003ci>paṭiññā lajjīsu\u003c/i>.” "], "pli-tv-pvr12:17.1": ["Sp 5.359: \u003ci>Pubbāparaṁ na jānātīti purekathitañca pacchākathitañca na jānāti\u003c/i>,\n“They do not know the right order:\nthey do not know what was said first and what afterwards.” "]}</script>
 <script>
 const TREE=[{"id": "pli-tv-pvr12/0", "label": "Pari·vāra", "rows": [{"key": "pli-tv-pvr12:0.1", "p": "Pari·vāra…", "s": "The Compendium"}, {"key": "pli-tv-pvr12:0.2", "p": "Apara·gāthā·saṅgaṇika…", "s": "Verses on how to accuse properly"}, {"key": "pli-tv-pvr12:0.3", "p": "12.\nCodan·ādi·pucchā·vissajjanā…", "s": "Questions and answers on accusing, etc."}]}, {"id": "pli-tv-pvr12/1", "label": "Codanā kimatth·āya,", "rows": [{"key": "pli-tv-pvr12:1.1", "p": "Codanā kimatth·āya,…", "s": "“What is the purpose of accusing?"}, {"key": "pli-tv-pvr12:1.2", "p": "Sāraṇā kissa kāraṇā;…", "s": "Why is there reminding?"}, {"key": "pli-tv-pvr12:1.3", "p": "Saṅgho kimatth·āya,…", "s": "What is the purpose of the Sangha?"}, {"key": "pli-tv-pvr12:1.4", "p": "Mati·kammaṁ pana kissa kāraṇā.…", "s": "Why is there the taking of advice?"}]}, {"id": "pli-tv-pvr12/2", "label": "Codanā sāraṇ·atthāya,", "rows": [{"key": "pli-tv-pvr12:2.1", "p": "Codanā sāraṇ·atthāya,…", "s": "The purpose of accusing is reminding,"}, {"key": "pli-tv-pvr12:2.2", "p": "Niggah·atthāya sāraṇā;…", "s": "The purpose of reminding is restraint;"}, {"key": "pli-tv-pvr12:2.3", "p": "Saṅgho pariggah·atthāya,…", "s": "The purpose of the Sangha is scrutiny,"}, {"key": "pli-tv-pvr12:2.4", "p": "Mati·kammaṁ pana pāṭi·yekkaṁ.…", "s": "But taking advice is individual."}]}, {"id": "pli-tv-pvr12/3", "label": "Mā kho turito abhaṇi,", "rows": [{"key": "pli-tv-pvr12:3.1", "p": "Mā kho turito abhaṇi,…", "s": "Don’t speak hastily,"}, {"key": "pli-tv-pvr12:3.2", "p": "mā kho caṇḍi·kato bhaṇi;…", "s": "Don’t speak fiercely;"}, {"key": "pli-tv-pvr12:3.3", "p": "Mā kho paṭi·ghaṁ janayi,…", "s": "Don’t be hostile—"}, {"key": "pli-tv-pvr12:3.4", "p": "sace anu·vijjako tuvaṁ.…", "s": "If you are an investigator."}]}, {"id": "pli-tv-pvr12/4", "label": "Mā kho sahasā abhaṇi,", "rows": [{"key": "pli-tv-pvr12:4.1", "p": "Mā kho sahasā abhaṇi,…", "s": "Don’t speak fast,"}, {"key": "pli-tv-pvr12:4.2", "p": "Kathaṁ viggāhikaṁ an·attha·saṁhitaṁ;…", "s": "Argumentative speech is not beneficial."}, {"key": "pli-tv-pvr12:4.3", "p": "Sutte vinaye anu·lome,…", "s": "In line with the discourses and the Monastic Law,"}, {"key": "pli-tv-pvr12:4.4", "p": "Paññatte anulomike.…", "s": "In line with what has been laid down,"}]}, {"id": "pli-tv-pvr12/5", "label": "Anuyogavattaṁ nisāmaya,", "rows": [{"key": "pli-tv-pvr12:5.1", "p": "Anuyogavattaṁ nisāmaya,…", "s": "Consider carefully the proper procedure of examination,"}, {"key": "pli-tv-pvr12:5.2", "p": "Kusalena buddh·imatā kataṁ;…", "s": "As formulated by the skilled Awakened One,"}, {"key": "pli-tv-pvr12:5.3", "p": "Su·vuttaṁ sikkhā·padā·nulomikaṁ,…", "s": "Well-spoken in line with the training rules—"}, {"key": "pli-tv-pvr12:5.4", "p": "Gatiṁ na nāsento samparāyikaṁ;…", "s": "Do not ruin your future rebirth."}, {"key": "pli-tv-pvr12:5.5", "p": "Hitesī anuyuñjassu,…", "s": "You should seek what is beneficial,"}, {"key": "pli-tv-pvr12:5.6", "p": "Kālena·t·thūpasaṁhitaṁ.…", "s": "At the right time, what is connected with the goal."}]}, {"id": "pli-tv-pvr12/6", "label": "Cuditassa ca codakassa ca,", "rows": [{"key": "pli-tv-pvr12:6.1", "p": "Cuditassa ca codakassa ca,…", "s": "The statements of the accuser and the accused,"}, {"key": "pli-tv-pvr12:6.2", "p": "Sahasā vohāraṁ mā padhāresi;…", "s": "Do not consider them hastily:"}, {"key": "pli-tv-pvr12:6.3", "p": "Codako āha āpannoti,…", "s": "If the accuser says the accused has offended,"}, {"key": "pli-tv-pvr12:6.4", "p": "Cuditako āha anāpannoti.…", "s": "But the accused says he has not,"}]}, {"id": "pli-tv-pvr12/7", "label": "Ubho an·ukkhipanto,", "rows": [{"key": "pli-tv-pvr12:7.1", "p": "Ubho an·ukkhipanto,…", "s": "Then, proceeding,"}, {"key": "pli-tv-pvr12:7.2", "p": "Paṭiññā·nusandhi·tena kāraye;…", "s": "Both should be dealt with in line with their admission."}, {"key": "pli-tv-pvr12:7.3", "p": "Paṭiññā lajjīsu katā,…", "s": "The conscientious admit their faults,"}, {"key": "pli-tv-pvr12:7.4", "p": "A·lajjīsu evaṁ na vijjati;…", "s": "But there is no such thing among the shameless;"}, {"key": "pli-tv-pvr12:7.5", "p": "Bahumpi a·lajjī bhāseyya,…", "s": "For even if the shameless should speak a lot,"}, {"key": "pli-tv-pvr12:7.6", "p": "Vattā·nusandhi·tena kāraye.…", "s": "They should be dealt with in line with their conduct."}]}, {"id": "pli-tv-pvr12/8", "label": "A·lajjī kīdiso hoti,", "rows": [{"key": "pli-tv-pvr12:8.1", "p": "A·lajjī kīdiso hoti,…", "s": "What are the shameless like,"}, {"key": "pli-tv-pvr12:8.2", "p": "Paṭiññā yassa na rūhati;…", "s": "In that an admission is not effective?"}, {"key": "pli-tv-pvr12:8.3", "p": "Etañca tāhaṁ pucchāmi,…", "s": "I ask you this:"}, {"key": "pli-tv-pvr12:8.4", "p": "Kīdiso vuccati a·lajjī puggalo.…", "s": "What are they like, the people called shameless?"}]}, {"id": "pli-tv-pvr12/9", "label": "Sañcicca āpattiṁ āpajjati,", "rows": [{"key": "pli-tv-pvr12:9.1", "p": "Sañcicca āpattiṁ āpajjati,…", "s": "They intentionally commit offenses,"}, {"key": "pli-tv-pvr12:9.2", "p": "Āpattiṁ pari·gūhati;…", "s": "Hide their offenses,"}, {"key": "pli-tv-pvr12:9.3", "p": "A·gati·gamanañca gacchati,…", "s": "And follow a wrong course—"}, {"key": "pli-tv-pvr12:9.4", "p": "Ediso vuccati a·lajjī·puggalo.…", "s": "Such people are called shameless."}]}, {"id": "pli-tv-pvr12/10", "label": "Sa·c·caṁ ahampi jānāmi,", "rows": [{"key": "pli-tv-pvr12:10.1", "p": "Sa·c·caṁ ahampi jānāmi,…", "s": "I too know the truth—"}, {"key": "pli-tv-pvr12:10.2", "p": "Ediso vuccati a·lajjī·puggalo;…", "s": "Such people are called shameless."}, {"key": "pli-tv-pvr12:10.3", "p": "Aññañca tāhaṁ pucchāmi,…", "s": "And may I ask you something else:"}, {"key": "pli-tv-pvr12:10.4", "p": "Kīdiso vuccati lajjī·puggalo.…", "s": "What are they like, the people called conscientious?"}]}, {"id": "pli-tv-pvr12/11", "label": "Sañcicca āpattiṁ nāpajjati,", "rows": [{"key": "pli-tv-pvr12:11.1", "p": "Sañcicca āpattiṁ nāpajjati,…", "s": "They do not intentionally commit offenses,"}, {"key": "pli-tv-pvr12:11.2", "p": "Āpattiṁ na pari·gūhati;…", "s": "Nor do they hide them,"}, {"key": "pli-tv-pvr12:11.3", "p": "A·gati·gamanaṁ na gacchati,…", "s": "Nor do they follow a wrong course—"}, {"key": "pli-tv-pvr12:11.4", "p": "Ediso vuccati lajjī·puggalo.…", "s": "Such people are called conscientious."}]}, {"id": "pli-tv-pvr12/12", "label": "Sa·c·caṁ ahampi jānāmi,", "rows": [{"key": "pli-tv-pvr12:12.1", "p": "Sa·c·caṁ ahampi jānāmi,…", "s": "I too know the truth—"}, {"key": "pli-tv-pvr12:12.2", "p": "Ediso vuccati lajjī·puggalo;…", "s": "Such people are called conscientious."}, {"key": "pli-tv-pvr12:12.3", "p": "Aññañca tāhaṁ pucchāmi,…", "s": "And may I ask you something else:"}, {"key": "pli-tv-pvr12:12.4", "p": "Kīdiso vuccati a·dhamma·codako.…", "s": "What are they like, those who accuse illegitimately?"}]}, {"id": "pli-tv-pvr12/13", "label": "A·kālena codeti a·bhūtena,", "rows": [{"key": "pli-tv-pvr12:13.1", "p": "A·kālena codeti a·bhūtena,…", "s": "They accuse at the wrong time, untruthfully,"}, {"key": "pli-tv-pvr12:13.2", "p": "Pharusena an·attha·saṁhitena;…", "s": "Harshly, without benefit;"}, {"key": "pli-tv-pvr12:13.3", "p": "Dosa·ntaro codeti no mettā·citto,…", "s": "They accuse with a mind of ill will, not a mind of good will—"}, {"key": "pli-tv-pvr12:13.4", "p": "Ediso vuccati a·dhamma·codako.…", "s": "Such a person is called one who accuses illegitimately."}]}, {"id": "pli-tv-pvr12/14", "label": "Sa·c·caṁ ahampi jānāmi,", "rows": [{"key": "pli-tv-pvr12:14.1", "p": "Sa·c·caṁ ahampi jānāmi,…", "s": "I too know the truth—"}, {"key": "pli-tv-pvr12:14.2", "p": "Ediso vuccati a·dhamma·codako;…", "s": "Such a person is called one who accuses illegitimately."}, {"key": "pli-tv-pvr12:14.3", "p": "Aññañca tāhaṁ pucchāmi,…", "s": "And may I ask you something else:"}, {"key": "pli-tv-pvr12:14.4", "p": "Kīdiso vuccati dhamma·codako.…", "s": "What are they like, those who accuse legitimately?"}]}, {"id": "pli-tv-pvr12/15", "label": "Kālena codeti bhūtena,", "rows": [{"key": "pli-tv-pvr12:15.1", "p": "Kālena codeti bhūtena,…", "s": "They accuse at the right time, truthfully,"}, {"key": "pli-tv-pvr12:15.2", "p": "Saṇhena attha·saṁhitena;…", "s": "Gently, beneficially;"}, {"key": "pli-tv-pvr12:15.3", "p": "Mettā·citto codeti no dosa·ntaro,…", "s": "They accuse with a mind of good will, not a mind of ill will—"}, {"key": "pli-tv-pvr12:15.4", "p": "Ediso vuccati dhamma·codako.…", "s": "Such a person is called one who accuses legitimately."}]}, {"id": "pli-tv-pvr12/16", "label": "Sa·c·caṁ ahampi jānāmi,", "rows": [{"key": "pli-tv-pvr12:16.1", "p": "Sa·c·caṁ ahampi jānāmi,…", "s": "I too know the truth—"}, {"key": "pli-tv-pvr12:16.2", "p": "Ediso vuccati dhamma·codako;…", "s": "Such a person is called one who accuses legitimately."}, {"key": "pli-tv-pvr12:16.3", "p": "Aññañca tāhaṁ pucchāmi,…", "s": "And may I ask you something else:"}, {"key": "pli-tv-pvr12:16.4", "p": "Kīdiso vuccati bāla·codako.…", "s": "What are they like, the people called ignorant accusers?"}]}, {"id": "pli-tv-pvr12/17", "label": "Pubbā·paraṁ na jānāti,", "rows": [{"key": "pli-tv-pvr12:17.1", "p": "Pubbā·paraṁ na jānāti,…", "s": "They do not know the right order;"}, {"key": "pli-tv-pvr12:17.2", "p": "Pubbā·parassa a·kovido;…", "s": "They are ignorant about it."}, {"key": "pli-tv-pvr12:17.3", "p": "Anusandhi·vacana·pathaṁ na jānāti,…", "s": "They do not know the sequence of statements;"}, {"key": "pli-tv-pvr12:17.4", "p": "Anusandhi·vacana·pathassa a·kovido;…", "s": "They are ignorant about it—"}, {"key": "pli-tv-pvr12:17.5", "p": "Ediso vuccati bāla·codako.…", "s": "Such people are called ignorant accusers."}]}, {"id": "pli-tv-pvr12/18", "label": "Sa·c·caṁ ahampi jānāmi,", "rows": [{"key": "pli-tv-pvr12:18.1", "p": "Sa·c·caṁ ahampi jānāmi,…", "s": "I too know the truth—"}, {"key": "pli-tv-pvr12:18.2", "p": "Ediso vuccati bāla·codako;…", "s": "Such people are called ignorant accusers."}, {"key": "pli-tv-pvr12:18.3", "p": "Aññañca tāhaṁ pucchāmi,…", "s": "And may I ask you something else:"}, {"key": "pli-tv-pvr12:18.4", "p": "Kīdiso vuccati paṇḍita·codako.…", "s": "What are they like, the people called learned accusers?"}]}, {"id": "pli-tv-pvr12/19", "label": "Pubbā·parampi jānāti,", "rows": [{"key": "pli-tv-pvr12:19.1", "p": "Pubbā·parampi jānāti,…", "s": "They know the right order;"}, {"key": "pli-tv-pvr12:19.2", "p": "Pubbā·parassa kovido;…", "s": "They are knowledgeable about it."}, {"key": "pli-tv-pvr12:19.3", "p": "Anusandhi·vacana·pathaṁ jānāti,…", "s": "They know the sequence of statements;"}, {"key": "pli-tv-pvr12:19.4", "p": "Anusandhi·vacana·pathassa kovido;…", "s": "They are knowledgeable about it—"}, {"key": "pli-tv-pvr12:19.5", "p": "Ediso vuccati paṇḍita·codako.…", "s": "Such people are called learned accusers."}]}, {"id": "pli-tv-pvr12/20", "label": "Sa·c·caṁ ahampi jānāmi,", "rows": [{"key": "pli-tv-pvr12:20.1", "p": "Sa·c·caṁ ahampi jānāmi,…", "s": "I too know the truth—"}, {"key": "pli-tv-pvr12:20.2", "p": "Ediso vuccati paṇḍita·codako;…", "s": "Such people are called learned accusers."}, {"key": "pli-tv-pvr12:20.3", "p": "Aññañca tāhaṁ pucchāmi,…", "s": "And may I ask you something else:"}, {"key": "pli-tv-pvr12:20.4", "p": "Codanā kinti vuccati.…", "s": "What is meant by accusing?"}]}, {"id": "pli-tv-pvr12/21", "label": "Sīla·vipattiyā codeti,", "rows": [{"key": "pli-tv-pvr12:21.1", "p": "Sīla·vipattiyā codeti,…", "s": "One accuses because of failure in morality,"}, {"key": "pli-tv-pvr12:21.2", "p": "atho ācāra·diṭṭhiyā;…", "s": "And for failure in conduct and view;"}, {"key": "pli-tv-pvr12:21.3", "p": "Ājīvenapi codeti,…", "s": "Also one accuses for failure in livelihood—"}, {"key": "pli-tv-pvr12:21.4", "p": "codanā tena vucca·tīti.…", "s": "Because of this it is called accusing.”"}]}, {"id": "pli-tv-pvr12/22", "label": "Aparaṁ gāthā·saṅgaṇikaṁ niṭṭhitaṁ.", "rows": [{"key": "pli-tv-pvr12:22.1", "p": "Aparaṁ gāthā·saṅgaṇikaṁ niṭṭhitaṁ.…", "s": "Verses on how to accuse properly are finished."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "brahmali-corrected", "label": "Brahmali (Corrected)", "dot": "#7a9c4a", "light": {"bg": "#f1f5e6", "text": "#1c2b0a"}, "dark": {"bg": "#181f0e", "text": "#bcd498"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "pali_myanmar", "label": "Myanmar (မြန်မာ)", "dot": "#5b6ee1", "light": {"bg": "#ecedfb", "text": "#10163a"}, "dark": {"bg": "#12142a", "text": "#b7c0f0"}, "italic": false, "font_scale": 1.15, "font_family": "'Noto Sans Myanmar','Padauk','Myanmar Text','Myanmar3',sans-serif", "rtl": false, "warn": ""}, {"key": "pali_myanmar_iast", "label": "Myanmar (IAST)", "dot": "#8a97ee", "light": {"bg": "#f0f1fc", "text": "#14183a"}, "dark": {"bg": "#14162b", "text": "#c7cff5"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Root Pāli (SuttaCentral / Mahāsaṅgīti edition)"}, {"key": "brahmali-corrected", "label": "Brahmali (Corrected)", "dot": "#7a9c4a", "light": {"bg": "#f1f5e6", "text": "#1c2b0a"}, "dark": {"bg": "#181f0e", "text": "#bcd498"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Brahmali with lucid24 glossary corrections applied"}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI-generated from the Pāli, in Bhikkhu Bodhi's style"}, {"key": "pali_myanmar", "label": "Myanmar (မြန်မာ)", "dot": "#5b6ee1", "light": {"bg": "#ecedfb", "text": "#10163a"}, "dark": {"bg": "#12142a", "text": "#b7c0f0"}, "italic": false, "font_scale": 1.15, "font_family": "'Noto Sans Myanmar','Padauk','Myanmar Text','Myanmar3',sans-serif", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Same canonical Pāli in Burmese script (CST, Sixth Council)"}, {"key": "pali_myanmar_iast", "label": "Myanmar (IAST)", "dot": "#8a97ee", "light": {"bg": "#f0f1fc", "text": "#14183a"}, "dark": {"bg": "#14162b", "text": "#c7cff5"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "CST (Sixth Council) Pāli, romanised (IAST)"}, {"key": "pali_bjt", "label": "BJT (සිංහල)", "dot": "#b5468f", "light": {"bg": "#f8ecf4", "text": "#330f2a"}, "dark": {"bg": "#251223", "text": "#eab7dc"}, "italic": false, "font_scale": 1.1, "font_family": "'Noto Sans Sinhala','Noto Serif Sinhala','Iskoola Pota','Nirmala UI',sans-serif", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Same canonical Pāli in Sinhala script (Buddha Jayanti Tipiṭaka)"}, {"key": "pali_bjt_iast", "label": "BJT (IAST)", "dot": "#d072b3", "light": {"bg": "#fbf0f8", "text": "#3a1230"}, "dark": {"bg": "#271424", "text": "#f0c7e5"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Buddha Jayanti (BJT) Pāli, romanised (IAST)"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2068,8 +2129,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2109,30 +2323,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

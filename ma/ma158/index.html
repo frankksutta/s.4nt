@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma158:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma158:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jetavana Grove of Anāthapiṇḍada’s Park."}]}, {"id": "3", "label": "爾時，頭那梵志中後彷徉，往詣佛所，", "rows": [{"key": "ma158:3.1", "p": "爾時，頭那梵志中後彷徉，往詣佛所，…", "s": "At that time, the brahmin Tuṇḍa was wandering about in the middle of the day and came to the Buddha’s presence."}, {"key": "ma158:3.2", "p": "共相問訊，却坐一面，世尊問曰：「頭那！…", "s": "After exchanging greetings, he sat down to one side."}, {"key": "ma158:3.3", "p": "若有問汝是梵志耶？…", "s": "The Blessed One asked him:"}, {"key": "ma158:3.4", "p": "汝梵志汝自稱說。」…", "s": "“Tuṇḍa, if someone were to ask you,\n‘Are you a brahmin?’ would you claim to be a brahmin?”"}]}, {"id": "4", "label": "梵志頭那答曰：「瞿曇！", "rows": [{"key": "ma158:4.1", "p": "梵志頭那答曰：「瞿曇！…", "s": "The brahmin Tuṇḍa replied:"}, {"key": "ma158:4.2", "p": "若有正稱說梵志者，為父母所舉，…", "s": "“Gotama, if one is rightly called a brahmin, it is because one is born from a mother and father of pure descent,"}, {"key": "ma158:4.3", "p": "受生清淨，乃至七世父母不絕種族，…", "s": "even back to seven generations, with no break in the lineage,"}, {"key": "ma158:4.4", "p": "生生無惡，博聞總持，誦過四典經，…", "s": "no evil in any birth, widely learned, retaining what is learned,"}, {"key": "ma158:4.5", "p": "深達因、緣、正、文、戲五句說。瞿曇！…", "s": "having recited the four Vedas, and deeply understanding the five types of statements:"}, {"key": "ma158:4.6", "p": "正稱說梵志者，即是我也。…", "s": "cause, condition, correctness, text, and wordplay.\nGotama, the one rightly called a brahmin is myself."}, {"key": "ma158:4.7", "p": "所以者何？…", "s": "Why is that?"}, {"key": "ma158:4.8", "p": "我為父母所舉，受生清淨，…", "s": "Because I am born from a mother and father of pure descent,"}, {"key": "ma158:4.9", "p": "乃至七世父母不絕種族，生生無惡，…", "s": "even back to seven generations, with no break in the lineage, no evil in any birth,"}, {"key": "ma158:4.10", "p": "博聞總持，誦過四典經，…", "s": "widely learned, retaining what is learned, having recited the four Vedas,"}, {"key": "ma158:4.11", "p": "深達因、緣、正、文、戲五句說。」…", "s": "and deeply understanding the five types of statements:\ncause, condition, correctness, text, and wordplay.”"}]}, {"id": "5", "label": "世尊告曰：「頭那！", "rows": [{"key": "ma158:5.1", "p": "世尊告曰：「頭那！…"}, {"key": "ma158:5.2", "p": "我今問汝，隨所解答。頭那！…", "s": "The Blessed One said:"}, {"key": "ma158:5.3", "p": "於意云何？…", "s": "“Tuṇḍa, I now ask you a question."}, {"key": "ma158:5.4", "p": "若昔有梵志壽終命過，誦持經書，…", "s": "Answer as you see fit."}, {"key": "ma158:5.5", "p": "流布經書，誦習典經，所謂夜吒、…", "s": "What do you think, Tuṇḍa?"}, {"key": "ma158:5.6", "p": "婆摩、婆摩提婆、毗奢蜜哆邏、…", "s": "In the past, there were brahmins who lived and died, who recited and upheld the scriptures, spread the scriptures,"}, {"key": "ma158:5.7", "p": "夜陀揵尼、應疑羅娑、婆私吒、…", "s": "and studied the canonical texts—namely, Yaṭa, Bama, Bāmadeva, Viśvāmitra,"}, {"key": "ma158:5.8", "p": "迦葉、婆羅婆、婆和，…", "s": "Yathākandana, Aṅgirasa, Bhāradvāja, Kāśyapa, Bhārgava, and Vasiṣṭha."}, {"key": "ma158:5.9", "p": "謂此施設五種梵志，有梵志猶如梵，…", "s": "They established five kinds of brahmins:"}, {"key": "ma158:5.10", "p": "有梵志似如天，有梵志不越界，…", "s": "a brahmin like Brahmā, a brahmin like a deva, a brahmin who does not transgress the boundary,"}, {"key": "ma158:5.11", "p": "有梵志越界，有梵志旃茶羅第五。頭那！…", "s": "a brahmin who transgresses the boundary, and a brahmin who is a caṇḍāla as the fifth."}, {"key": "ma158:5.12", "p": "此五種梵志，汝為似誰？」…", "s": "Tuṇḍa, which of these five kinds of brahmins do you resemble?”"}]}, {"id": "6", "label": "頭那白曰：「瞿曇略說此義，不廣分別，我不能知。", "rows": [{"key": "ma158:6.1", "p": "頭那白曰：「瞿曇略說此義，不廣分別，我不能知。…", "s": "Tuṇḍa said:\n“Gotama, you have spoken this meaning briefly, without explaining it in detail."}, {"key": "ma158:6.2", "p": "唯願沙門瞿曇善說，令我知義。」…", "s": "I cannot understand it.\nI only wish that the ascetic Gotama would explain it well, so that I may understand its meaning.”"}]}, {"id": "7", "label": "世尊告曰：「頭那！", "rows": [{"key": "ma158:7.1", "p": "世尊告曰：「頭那！…", "s": "The Blessed One said:"}, {"key": "ma158:7.2", "p": "諦聽，善思念之，我當為汝廣分別說。」…", "s": "\"Headman!\nListen carefully, think well upon it, and I will explain it to you in detail.\""}]}, {"id": "8", "label": "頭那白曰：「唯然。瞿曇！", "rows": [{"key": "ma158:8.1", "p": "頭那白曰：「唯然。瞿曇！…", "s": "Headman replied:"}, {"key": "ma158:8.2", "p": "」頭那梵志受教而聽。…", "s": "\"Yes, Gotama!\"\nThe brahmin Headman listened, having received the instruction."}]}, {"id": "9", "label": "佛言：「頭那！", "rows": [{"key": "ma158:9.1", "p": "佛言：「頭那！…", "s": "The Buddha said:"}, {"key": "ma158:9.2", "p": "云何梵志猶如梵耶？…", "s": "\"Headman!"}, {"key": "ma158:9.3", "p": "若有梵志為父母所舉，受生清淨，…", "s": "How is a brahmin like Brahmā?"}, {"key": "ma158:9.4", "p": "乃至七世父母不絕種族，…", "s": "If a brahmin is born from parents of pure lineage,"}, {"key": "ma158:9.5", "p": "生生無惡，彼四十八年行童子梵行，…", "s": "even back to seven generations without any break in the clan, and without any evil in any birth,"}, {"key": "ma158:9.6", "p": "欲得經書，誦習典經。…", "s": "and he lives the holy life of a youth for forty-eight years,"}, {"key": "ma158:9.7", "p": "彼得經書，誦習典經已，…", "s": "desiring to learn the scriptures and reciting the sacred texts."}, {"key": "ma158:9.8", "p": "為供養師求乞財物，如法，非不如法。…", "s": "Having learned the scriptures and recited the sacred texts,"}, {"key": "ma158:9.9", "p": "云何不如法？…", "s": "he seeks wealth to support his teacher, in a lawful manner, not unlawfully."}, {"key": "ma158:9.10", "p": "非田作，非治生，非書，非算，非數，非印，…", "s": "What is unlawful?\nNot farming, not trade, not writing, not arithmetic, not counting, not sealing, not handwriting,"}, {"key": "ma158:9.11", "p": "非手筆，非文章，非經，非詩，非以刀杖，非王從事。…", "s": "not composition, not scripture, not poetry, not using weapons, not serving the king."}, {"key": "ma158:9.12", "p": "如法求乞，求乞財物供養於師，…", "s": "He seeks wealth lawfully, and having sought wealth to support his teacher, he gives gifts."}, {"key": "ma158:9.13", "p": "布施財物已，心與慈俱，遍滿一方成就遊。…", "s": "Then, with a mind endowed with loving-kindness, he dwells pervading one direction,"}, {"key": "ma158:9.14", "p": "如是二三四方、四維上下，…", "s": "and likewise the second, third, and fourth directions, above, below, and all around, everywhere."}, {"key": "ma158:9.15", "p": "普周一切，心與慈俱，無結無怨，…", "s": "With a mind endowed with loving-kindness, without enmity, without resentment, without hostility,"}, {"key": "ma158:9.16", "p": "無恚無諍，極廣甚大，無量善修，遍滿一切世間成就遊。…", "s": "without conflict, vast, great, immeasurable, well-cultivated, he dwells pervading the entire world."}, {"key": "ma158:9.17", "p": "如是悲、喜心與捨俱，無結無怨，無恚無諍，…", "s": "Likewise, with compassion, altruistic joy, and equanimity, without enmity, without resentment, without hostility,"}, {"key": "ma158:9.18", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。頭那！…", "s": "without conflict, vast, great, immeasurable, well-cultivated, he dwells pervading the entire world."}, {"key": "ma158:9.19", "p": "如是梵志猶如梵也。…", "s": "Headman!\nThus a brahmin is like Brahmā.\""}]}, {"id": "10", "label": "「頭那！", "rows": [{"key": "ma158:10.1", "p": "「頭那！…", "s": "\"Headman!"}, {"key": "ma158:10.2", "p": "云何梵志似如天耶？…", "s": "How is a brahmin like a deva?"}, {"key": "ma158:10.3", "p": "若有梵志為父母所舉，受生清淨，…", "s": "If a brahmin is born from parents of pure lineage,"}, {"key": "ma158:10.4", "p": "乃至七世父母不絕種族，生生無惡。…", "s": "even back to seven generations without any break in the clan, and without any evil in any birth,"}, {"key": "ma158:10.5", "p": "彼四十八年行童子梵行，…", "s": "and he lives the holy life of a youth for forty-eight years,"}, {"key": "ma158:10.6", "p": "欲得經書，誦習典經，彼得經書，…", "s": "desiring to learn the scriptures and reciting the sacred texts."}, {"key": "ma158:10.7", "p": "誦習典經已，為供養師求乞財物，如法，非不如法。…", "s": "Having learned the scriptures and recited the sacred texts,"}, {"key": "ma158:10.8", "p": "云何不如法？…", "s": "he seeks wealth to support his teacher, in a lawful manner, not unlawfully.\nWhat is unlawful?"}, {"key": "ma158:10.9", "p": "非田作，非治生，非書，非算，非數，非印，…", "s": "Not farming, not trade, not writing, not arithmetic, not counting, not sealing, not handwriting,"}, {"key": "ma158:10.10", "p": "非手筆，非文章，非經，非詩，非以刀杖，非王從事。…", "s": "not composition, not scripture, not poetry, not using weapons, not serving the king."}, {"key": "ma158:10.11", "p": "如法求乞，求乞財物供養於師，…", "s": "He seeks wealth lawfully, and having sought wealth to support his teacher, he gives gifts."}, {"key": "ma158:10.12", "p": "布施財物已，行身妙行，口、意妙行，…", "s": "Then he practices good conduct in body, speech, and mind."}, {"key": "ma158:10.13", "p": "行身妙行，口、意妙行已，彼因緣此，…", "s": "Having practiced good conduct in body, speech, and mind, because of this,"}, {"key": "ma158:10.14", "p": "身壞命終，必昇善處，上生天中。頭那！…", "s": "after the breakup of the body, after death, he is reborn in a good destination, in the heavenly realm."}, {"key": "ma158:10.15", "p": "如是梵志似如天也。…", "s": "Headman!\nThus a brahmin is like a deva.\""}]}, {"id": "11", "label": "「頭那！", "rows": [{"key": "ma158:11.1", "p": "「頭那！…", "s": "\"Headman!"}, {"key": "ma158:11.2", "p": "云何梵志不越界耶？…", "s": "How is a brahmin one who does not transgress the boundary?"}, {"key": "ma158:11.3", "p": "若有梵志為父母所舉，受生清淨，…", "s": "If a brahmin is born from parents of pure lineage,"}, {"key": "ma158:11.4", "p": "乃至七世父母不絕種族，…", "s": "even back to seven generations without any break in the clan, and without any evil in any birth,"}, {"key": "ma158:11.5", "p": "生生無惡，彼四十八年行童子梵行，…", "s": "and he lives the holy life of a youth for forty-eight years,\ndesiring to learn the scriptures and reciting the sacred texts."}, {"key": "ma158:11.6", "p": "欲得經書，誦習典經。…", "s": "Having learned the scriptures and recited the sacred texts,"}, {"key": "ma158:11.7", "p": "彼得經書，誦習典經已，…", "s": "he seeks wealth to support his teacher, in a lawful manner, not unlawfully."}, {"key": "ma158:11.8", "p": "為供養師求乞財物，如法，非不如法。…", "s": "What is unlawful?"}, {"key": "ma158:11.9", "p": "云何不如法？…", "s": "Not farming, not trade, not writing, not arithmetic, not counting, not sealing, not handwriting,\nnot composition, not scripture, not poetry, not using weapons, …"}, {"key": "ma158:11.10", "p": "非田作，非治生，非書，非算，非數，非印，…", "s": "He seeks wealth lawfully, and having sought wealth to support his teacher, he gives gifts."}, {"key": "ma158:11.11", "p": "非手筆，非文章，非經，非詩，非以刀杖，非王從事。…", "s": "Then he seeks a wife for himself, in a lawful manner, not unlawfully."}, {"key": "ma158:11.12", "p": "如法求乞，求乞財物供養於師，…", "s": "What is unlawful?"}, {"key": "ma158:11.13", "p": "布施財物已，為自求妻，如法，非不如法。…", "s": "A brahmin does not act thus:\nhe does not set his mind on a brahmin woman to cause mutual love, mutual attraction, and union."}, {"key": "ma158:11.14", "p": "云何不如法？…", "s": "He approaches a brahmin woman, not a non-brahmin woman,"}, {"key": "ma158:11.15", "p": "梵志不如是，意向梵志女，令更相愛，相攝合會，…", "s": "nor a khattiya woman, one who is not pregnant, one who has not given birth."}, {"key": "ma158:11.16", "p": "彼趣梵志女，非不梵志女，…", "s": "Headman!"}, {"key": "ma158:11.17", "p": "亦非剎利女，不懷姙，不產生。頭那！…", "s": "Why does a brahmin not approach a pregnant woman?"}, {"key": "ma158:11.18", "p": "以何等故梵志非趣懷姙？…", "s": "So that the man and woman are not called impure in sexual intercourse.\nTherefore a brahmin does not approach a pregnant woman."}, {"key": "ma158:11.19", "p": "莫令彼男及以女人名不淨婬，是故梵志非趣懷姙。頭那！…", "s": "Headman!"}, {"key": "ma158:11.20", "p": "以何等故梵志非趣產生？…", "s": "Why does a brahmin not approach a woman who has given birth?"}, {"key": "ma158:11.21", "p": "莫令彼男及以女人名不淨恚，是故梵志不趣產生。頭那！…", "s": "So that the man and woman are not called impure in anger."}, {"key": "ma158:11.22", "p": "彼所趣向，不為財物，不為憍慠，…", "s": "Therefore a brahmin does not approach a woman who has given birth.\nHeadman!"}, {"key": "ma158:11.23", "p": "不為莊嚴，不為珓餝，但為子故。…", "s": "He approaches not for wealth, not for pride, not for adornment, not for decoration, but only for the sake of children."}, {"key": "ma158:11.24", "p": "彼生子已，若有故梵志要誓處所界障，…", "s": "Having fathered children, if there are the old brahmin vows, boundaries,"}, {"key": "ma158:11.25", "p": "住彼、持彼，不越於彼。頭那！…", "s": "and barriers, he stays there, holds to them, and does not transgress them."}, {"key": "ma158:11.26", "p": "如是梵志不越界也。…", "s": "Headman!\nThus a brahmin does not transgress the boundary.\""}]}, {"id": "12", "label": "「頭那！", "rows": [{"key": "ma158:12.1", "p": "「頭那！…", "s": "\"Headman!"}, {"key": "ma158:12.2", "p": "云何梵志為越界耶？…", "s": "How is a brahmin one who transgresses the boundary?"}, {"key": "ma158:12.3", "p": "若有梵志為父母所舉，受生清淨，…", "s": "If a brahmin is born from parents of pure lineage,"}, {"key": "ma158:12.4", "p": "乃至七世父母不絕種族，…", "s": "even back to seven generations without any break in the clan, and without any evil in any birth,"}, {"key": "ma158:12.5", "p": "生生無惡，彼四十八年行童子梵行，…", "s": "and he lives the holy life of a youth for forty-eight years,\ndesiring to learn the scriptures and reciting the sacred texts."}, {"key": "ma158:12.6", "p": "欲得經書，誦習典經。…", "s": "Having learned the scriptures and recited the sacred texts,"}, {"key": "ma158:12.7", "p": "彼得經書，誦習典經已，…", "s": "he seeks wealth to support his teacher, in a lawful manner, not unlawfully."}, {"key": "ma158:12.8", "p": "為供養師求乞財物，如法，非不如法。…", "s": "What is unlawful?"}, {"key": "ma158:12.9", "p": "云何不如法？…", "s": "Not farming, not trade, not writing, not arithmetic, not counting, not sealing, not handwriting,\nnot composition, not scripture, not poetry, not using weapons, …"}, {"key": "ma158:12.10", "p": "非田作，非治生，非書，非算，非數，非印，…", "s": "He seeks wealth lawfully, and having sought wealth to support his teacher, he gives gifts."}, {"key": "ma158:12.11", "p": "非手筆，非文章，非經，非詩，非以刀杖，非王從事。…", "s": "Then he seeks a wife for himself, in a lawful manner, not unlawfully."}, {"key": "ma158:12.12", "p": "如法求乞，求乞財物供養於師，…", "s": "What is unlawful?"}, {"key": "ma158:12.13", "p": "布施財物已，為自求妻，如法，非不如法。…", "s": "A brahmin does not act thus:\nhe does not set his mind on a brahmin woman to cause mutual love, mutual attraction, and union."}, {"key": "ma158:12.14", "p": "云何不如法？…", "s": "He approaches a brahmin woman, not a non-brahmin woman,"}, {"key": "ma158:12.15", "p": "梵志不如是，意向梵志女，令更相愛，相攝合會，…", "s": "nor a khattiya woman, one who is not pregnant, one who has not given birth."}, {"key": "ma158:12.16", "p": "彼趣梵志女，非不梵志女，…", "s": "Headman!"}, {"key": "ma158:12.17", "p": "亦非剎利女，不懷姙，不產生。頭那！…", "s": "Why does a brahmin not approach a pregnant woman?"}, {"key": "ma158:12.18", "p": "以何等故梵志不趣懷姙？…", "s": "So that the man and woman are not called impure in sexual intercourse.\nTherefore a brahmin does not approach a pregnant woman."}, {"key": "ma158:12.19", "p": "莫令彼男及以女人名不淨婬，是故梵志不趣懷姙。頭那！…", "s": "Headman!"}, {"key": "ma158:12.20", "p": "以何等故梵志不趣產生？…", "s": "Why does a brahmin not approach a woman who has given birth?"}, {"key": "ma158:12.21", "p": "莫令彼男及以女人名不淨恚，是故梵志不趣產生。頭那！…", "s": "So that the man and woman are not called impure in anger."}, {"key": "ma158:12.22", "p": "彼所趣向，不為財物，不為憍慠，…", "s": "Therefore a brahmin does not approach a woman who has given birth.\nHeadman!"}, {"key": "ma158:12.23", "p": "不為莊嚴，不為珓餝，但為子故。…", "s": "He approaches not for wealth, not for pride, not for adornment, not for decoration, but only for the sake of children."}, {"key": "ma158:12.24", "p": "彼生子已，若有故梵志要誓處所界障，…", "s": "Having fathered children, if there are the old brahmin vows, boundaries,"}, {"key": "ma158:12.25", "p": "不住止彼，不受持彼，便越於彼。頭那！…", "s": "and barriers, he does not stay there, does not hold to them, and transgresses them."}, {"key": "ma158:12.26", "p": "如是梵志名越界也。…", "s": "Headman!\nThus a brahmin is called one who transgresses the boundary.\""}]}, {"id": "13", "label": "「頭那！", "rows": [{"key": "ma158:13.1", "p": "「頭那！…", "s": "\"Headman!"}, {"key": "ma158:13.2", "p": "云何梵志梵志旃茶羅？…", "s": "What is a brahmin who is a brahmin outcast?"}, {"key": "ma158:13.3", "p": "若有梵志為父母所舉，受生清淨，…", "s": "If a brahmin is raised by his parents, born into a pure lineage,"}, {"key": "ma158:13.4", "p": "乃至七世父母不絕種族，…", "s": "even up to seven generations of ancestors without any break in the clan,\nand without any evil in successive births, and he lives the holy life of a brahmin stud…"}, {"key": "ma158:13.5", "p": "生生無惡，彼四十八年行童子梵行，…", "s": "desiring to study the scriptures and reciting and learning the sacred texts."}, {"key": "ma158:13.6", "p": "欲得經書，誦習典經。…", "s": "After he has studied the scriptures and recited and learned the sacred texts,"}, {"key": "ma158:13.7", "p": "彼得經書，誦習典經已，…", "s": "he seeks wealth for the support of his teacher, in accordance with the Dharma, not contrary to the Dharma."}, {"key": "ma158:13.8", "p": "為供養師求乞財物，如法，非不如法。…", "s": "What is contrary to the Dharma?\nNot farming, not trade, not writing, not arithmetic, not counting, not sealing, not handwriting,"}, {"key": "ma158:13.9", "p": "云何不如法？…", "s": "not composition, not scripture, not poetry, not using weapons, not serving the king."}, {"key": "ma158:13.10", "p": "非田作，非治生，非書，非算，非數，非印，…", "s": "He seeks wealth in accordance with the Dharma,"}, {"key": "ma158:13.11", "p": "非手筆，非文章，非經，非詩，非以刀杖，非王從事。…", "s": "and after seeking wealth to support his teacher and making offerings of wealth,"}, {"key": "ma158:13.12", "p": "如法求乞，求乞財物供養於師，…", "s": "he seeks a wife for himself, in accordance with the Dharma, not contrary to the Dharma.\nWhat is contrary to the Dharma?"}, {"key": "ma158:13.13", "p": "布施財物已，為自求妻，如法，非不如法。…", "s": "A brahmin does not act thus:"}, {"key": "ma158:13.14", "p": "云何不如法？…", "s": "he does not set his mind on a brahmin woman, causing them to love each other, to unite and come together,"}, {"key": "ma158:13.15", "p": "梵志不如是，意向梵志女，令更相愛，相攝合會，…", "s": "approaching that brahmin woman, not a non-brahmin woman,"}, {"key": "ma158:13.16", "p": "趣彼梵志女，非不梵志女，…", "s": "nor a noble woman, not one who is pregnant, not one who has given birth.\nHeadman!"}, {"key": "ma158:13.17", "p": "亦不剎利女，不懷姙，不產生。頭那！…", "s": "For what reason does a brahmin not approach a pregnant woman?"}, {"key": "ma158:13.18", "p": "以何等故梵志不趣懷姙？…", "s": "So that that man and woman are not called engaging in impure lust;"}, {"key": "ma158:13.19", "p": "莫令彼男及以女人名不淨婬，是故梵志不趣懷姙。頭那！…", "s": "therefore a brahmin does not approach a pregnant woman."}, {"key": "ma158:13.20", "p": "以何等故梵志不趣產生？…", "s": "Headman!\nFor what reason does a brahmin not approach a woman who has given birth?"}, {"key": "ma158:13.21", "p": "莫令彼男及以女人名不淨恚，是故梵志不趣產生。頭那！…", "s": "So that that man and woman are not called engaging in impure anger;"}, {"key": "ma158:13.22", "p": "彼所趣向，不為財物，不為憍慠，…", "s": "therefore a brahmin does not approach a woman who has given birth."}, {"key": "ma158:13.23", "p": "不為莊嚴，不為珓飾，但為子故。…", "s": "Headman!"}, {"key": "ma158:13.24", "p": "彼生子已，作王相應事、…", "s": "He approaches not for wealth, not for pride, not for adornment, not for decoration, but only for the sake of children.\nAfter he has fathered children, he does t…"}, {"key": "ma158:13.25", "p": "賊相應事、邪道相應事，作如是說：…", "s": "things appropriate to a thief, things appropriate to a wrong path, and says thus:"}, {"key": "ma158:13.26", "p": "『梵志應作一切事，梵志不以此染著，…", "s": "'A brahmin should do all things;"}, {"key": "ma158:13.27", "p": "亦不穢污，猶若如火，淨亦燒，不淨亦燒。…", "s": "a brahmin is not defiled or polluted by this, just like fire, which burns both pure and impure things."}, {"key": "ma158:13.28", "p": "梵志不應作一切事，梵志不以此染著，亦不穢污。…", "s": "A brahmin should not do all things;\na brahmin is not defiled or polluted by this.'"}, {"key": "ma158:13.29", "p": "』頭那！…", "s": "Headman!"}, {"key": "ma158:13.30", "p": "如是梵志梵志旃茶羅。頭那！…", "s": "Such is a brahmin who is a brahmin outcast."}, {"key": "ma158:13.31", "p": "此五種梵志，汝為似誰？」…", "s": "Headman!\nWhich of these five kinds of brahmins do you resemble?\""}]}, {"id": "14", "label": "頭那白曰：「瞿曇！", "rows": [{"key": "ma158:14.1", "p": "頭那白曰：「瞿曇！…", "s": "Headman said:"}, {"key": "ma158:14.2", "p": "說此最後梵志旃茶羅者，我尚不及，況復餘耶？世尊！…", "s": "\"Gotama!\nAs for this last brahmin outcast you have spoken of, I am not even equal to that, how much less the others?"}, {"key": "ma158:14.3", "p": "我已知。善逝！…", "s": "World-Honored One!\nI have understood."}, {"key": "ma158:14.4", "p": "我已解。世尊！…", "s": "Well-Gone One!\nI have comprehended."}, {"key": "ma158:14.5", "p": "我今自歸於佛、法及比丘眾，唯願世尊受我為優婆塞，…", "s": "World-Honored One!\nI now take refuge in the Buddha, the Dharma, and the community of monks."}, {"key": "ma158:14.6", "p": "從今日始，終身自歸，乃至命盡。」…", "s": "May the World-Honored One accept me as a lay follower,\nfrom today onward, for life, taking refuge until the end of my life.\""}]}, {"id": "15", "label": "佛說如是。", "rows": [{"key": "ma158:15.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma158:15.2", "p": "頭那梵志聞佛所說，歡喜奉行。…", "s": "Headman the brahmin, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

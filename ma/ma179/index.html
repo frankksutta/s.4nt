@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma179:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma179:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada’s Park."}]}, {"id": "3", "label": "爾時，五支物主平旦出舍衛國，往詣佛所，", "rows": [{"key": "ma179:3.1", "p": "爾時，五支物主平旦出舍衛國，往詣佛所，…", "s": "At that time, the householder Pañcakaṅga set out from Śrāvastī early in the morning and went to the Buddha’s presence,"}, {"key": "ma179:3.2", "p": "欲見世尊供養禮事，五支物主便作是念：…", "s": "wishing to see the World-Honored One and pay homage."}, {"key": "ma179:3.3", "p": "「且置往見佛世尊，或能宴坐及諸尊比丘，…", "s": "Then the householder Pañcakaṅga thought:\n'I should put aside going to see the Buddha, the World-Honored One,"}, {"key": "ma179:3.4", "p": "我今寧可詣一娑邏末利異學園。…", "s": "for he might be in meditation, as might the venerable monks."}, {"key": "ma179:3.5", "p": "」於是，五支物主便至比道遊戲歡樂，…", "s": "Instead, I should go to the park of the wanderers of the Śāla-Mālā sect.'"}, {"key": "ma179:3.6", "p": "近巾頭阿梨，往詣一娑邏末利異學園。…", "s": "So the householder Pañcakaṅga went to that place of amusement and pleasure,\nnear the head of the road, and approached the park of the wanderers of the Śāla-Mālā…"}]}, {"id": "4", "label": "彼時，娑邏末利異學園中，有一異學沙門文祁子，", "rows": [{"key": "ma179:4.1", "p": "彼時，娑邏末利異學園中，有一異學沙門文祁子，…", "s": "At that time, in the park of the wanderers of the Śāla-Mālā sect, there was a wanderer, a recluse named Maskarīputra,"}, {"key": "ma179:4.2", "p": "在於彼中為大宗主，眾人之師，…", "s": "who was the great leader there, the teacher of the multitude,"}, {"key": "ma179:4.3", "p": "眾所敬重，統領大眾五百異學師。…", "s": "respected by all, commanding a following of five hundred wanderers."}, {"key": "ma179:4.4", "p": "彼在擾亂眾發高大音聲，其聲喧閙，…", "s": "He was in the midst of a noisy, tumultuous crowd, raising loud voices, discussing various kinds of worldly talk—"}, {"key": "ma179:4.5", "p": "說若干種畜生之論，謂論王、論賊、論鬪諍、論飲食、…", "s": "talk about kings, talk about thieves, talk about quarrels, talk about food and drink,"}, {"key": "ma179:4.6", "p": "論衣被、論婦人、論童女、論婬女、論世間、…", "s": "talk about clothing, talk about women, talk about girls, talk about prostitutes, talk about the world,"}, {"key": "ma179:4.7", "p": "論邪道、論海中，如是比聚集，論若干種畜生之論。…", "s": "talk about wrong paths, talk about the sea—and suchlike gatherings, discussing various kinds of worldly talk."}, {"key": "ma179:4.8", "p": "異學沙門文祁子遙見五支物主來，…", "s": "The wanderer Maskarīputra saw the householder Pañcakaṅga coming from afar,\nand he commanded his own followers to be silent:"}, {"key": "ma179:4.9", "p": "便自勅己眾，令默然住：…", "s": "'You all be silent, do not speak any more;"}, {"key": "ma179:4.10", "p": "「汝等默然，莫復語言，宜自收斂，…", "s": "you should restrain yourselves."}, {"key": "ma179:4.11", "p": "此沙門瞿曇弟子五支物主來。…", "s": "This disciple of the ascetic Gotama, the householder Pañcakaṅga, is coming."}, {"key": "ma179:4.12", "p": "若有沙門瞿曇在家弟子居舍衛國者，無過於五支物主。…", "s": "Among the lay disciples of the ascetic Gotama living in Śrāvastī, none surpasses the householder Pañcakaṅga."}, {"key": "ma179:4.13", "p": "所以者何？…", "s": "Why is that?"}, {"key": "ma179:4.14", "p": "彼愛樂默然，稱說默然，若彼見此眾默然者，或能來前。…", "s": "He delights in silence and praises silence."}, {"key": "ma179:4.15", "p": "」彼時，異學沙門文祁子止己眾已，自默然住。…", "s": "If he sees this assembly silent, he might come forward.'\nThen the wanderer Maskarīputra, having silenced his followers, himself remained silent."}]}, {"id": "5", "label": "於是，五支物主往詣異學沙門文祁子所，共相問訊，", "rows": [{"key": "ma179:5.1", "p": "於是，五支物主往詣異學沙門文祁子所，共相問訊，…", "s": "Then the householder Pañcakaṅga went to the wanderer Maskarīputra, exchanged greetings, and sat down to one side."}, {"key": "ma179:5.2", "p": "却坐一面，異學沙門文祁子語曰：「物主！…", "s": "The wanderer Maskarīputra said:"}, {"key": "ma179:5.3", "p": "若有四事，我施設彼成就善、第一善、…", "s": "'Householder!\nIf someone has four qualities, I declare him to be accomplished in goodness, foremost in goodness,"}, {"key": "ma179:5.4", "p": "無上士，得第一義、質直沙門。…", "s": "a supreme person, one who has attained the highest meaning, an upright ascetic."}, {"key": "ma179:5.5", "p": "云何為四？…", "s": "What are the four?"}, {"key": "ma179:5.6", "p": "身不作惡業、口不惡言，不行邪命、不念惡念。物主！…", "s": "The body does no evil deed, the mouth speaks no evil word,\none does not practice wrong livelihood, and one does not think evil thoughts."}, {"key": "ma179:5.7", "p": "若有此四事者，我施設彼成就善、…", "s": "Householder!"}, {"key": "ma179:5.8", "p": "第一善、無上士，得第一義、質直沙門。」…", "s": "If someone has these four qualities, I declare him to be accomplished in goodness,\nforemost in goodness, a supreme person, one who has attained the highest mean…"}]}, {"id": "6", "label": "五支物主聞異學沙門文祁子所說，不是不非，從坐起去。", "rows": [{"key": "ma179:6.1", "p": "五支物主聞異學沙門文祁子所說，不是不非，從坐起去。…", "s": "The householder Pañcakaṅga, having heard what the wanderer Maskarīputra said,"}, {"key": "ma179:6.2", "p": "「如此所說，我自詣佛，當問此義。…", "s": "neither approved nor disapproved, but rose from his seat and departed."}, {"key": "ma179:6.3", "p": "」便往詣佛，稽首作禮，却坐一面，…", "s": "'As for what was said, I will go to the Buddha myself and ask about this meaning.'"}, {"key": "ma179:6.4", "p": "與異學沙門文祁子所共論者，盡向佛說。…", "s": "He then went to the Buddha, bowed his head at his feet, sat down to one side,\nand told the Buddha everything that had been discussed with the wanderer Maskarīpu…"}]}, {"id": "7", "label": "世尊聞已，告曰：「物主！", "rows": [{"key": "ma179:7.1", "p": "世尊聞已，告曰：「物主！…", "s": "Having heard this, the Blessed One said:"}, {"key": "ma179:7.2", "p": "如異學沙門文祁子所說，若當爾者，嬰孩童子支節柔軟，…", "s": "\"Potaliya!"}, {"key": "ma179:7.3", "p": "仰向臥眠，亦當成就善、第一善、…", "s": "If what the wandering ascetic Maskārin's son said were true,\nthen even a tender infant lying on its back would also achieve goodness,"}, {"key": "ma179:7.4", "p": "無上士，得第一義，質直沙門。物主！…", "s": "supreme goodness, the unsurpassed state, attain the ultimate meaning, and be a straightforward ascetic."}, {"key": "ma179:7.5", "p": "嬰孩童子尚無身想，況復作身惡業耶？…", "s": "Potaliya!\nAn infant does not even have the concept of a body, how could it perform bodily evil deeds?"}, {"key": "ma179:7.6", "p": "唯能動身。物主！…", "s": "It can only move its body."}, {"key": "ma179:7.7", "p": "嬰孩童子，尚無口想，況復惡言耶？…", "s": "Potaliya!\nAn infant does not even have the concept of speech, how could it utter evil words?"}, {"key": "ma179:7.8", "p": "唯能得啼。物主！…", "s": "It can only cry."}, {"key": "ma179:7.9", "p": "嬰孩童子，尚無命想，況復行邪命耶？…", "s": "Potaliya!"}, {"key": "ma179:7.10", "p": "唯有呻吟。物主！…", "s": "An infant does not even have the concept of livelihood, how could it practice wrong livelihood?\nIt can only groan."}, {"key": "ma179:7.11", "p": "嬰孩童子，尚無念想，況復惡念耶？…", "s": "Potaliya!"}, {"key": "ma179:7.12", "p": "唯念母乳。物主！…", "s": "An infant does not even have the concept of thought, how could it have evil thoughts?\nIt only thinks of its mother's milk."}, {"key": "ma179:7.13", "p": "若如異學沙門文祁子說者，如是嬰孩童子成就善、…", "s": "Potaliya!"}, {"key": "ma179:7.14", "p": "第一善、無上士，得第一義、質直沙門。…", "s": "If what the wandering ascetic Maskārin's son said were true, then such an infant would achieve goodness,\nsupreme goodness, the unsurpassed state, attain the ult…"}]}, {"id": "8", "label": "「物主！", "rows": [{"key": "ma179:8.1", "p": "「物主！…", "s": "\"Potaliya!"}, {"key": "ma179:8.2", "p": "若有四事，我施設彼成就善、第一善，…", "s": "For four things, I declare that one achieves goodness and supreme goodness,"}, {"key": "ma179:8.3", "p": "然非無上士，不得第一義，亦非質直沙門。…", "s": "yet is not the unsurpassed one, does not attain the ultimate meaning, and is not a straightforward ascetic."}, {"key": "ma179:8.4", "p": "云何為四？…", "s": "What are the four?\nNot performing evil deeds with the body, not uttering evil words with speech,"}, {"key": "ma179:8.5", "p": "身不作惡業，口不惡言，不行邪命，不念惡念。物主！…", "s": "not practicing wrong livelihood, and not having evil thoughts."}, {"key": "ma179:8.6", "p": "若有此四事，我施設彼成就善、第一善，…", "s": "Potaliya!"}, {"key": "ma179:8.7", "p": "然非無上士，不得第一義，亦非質直沙門。物主！…", "s": "For these four things, I declare that one achieves goodness and supreme goodness,"}, {"key": "ma179:8.8", "p": "身業、口業者，我施設是戒；物主！…", "s": "yet is not the unsurpassed one, does not attain the ultimate meaning, and is not a straightforward ascetic.\nPotaliya!"}, {"key": "ma179:8.9", "p": "念者，我施設是心所有與心相隨。物主！…", "s": "Bodily deeds and verbal deeds—these I declare to be virtuous behavior."}, {"key": "ma179:8.10", "p": "我說當知不善戒，當知不善戒從何而生？…", "s": "Potaliya!"}, {"key": "ma179:8.11", "p": "當知不善戒何處滅無餘？…", "s": "Thoughts—these I declare to be what belongs to the mind and accompanies the mind.\nPotaliya!"}, {"key": "ma179:8.12", "p": "何處敗壞無餘？…", "s": "I say that one should know unwholesome virtuous behavior, should know from what unwholesome virtuous behavior arises,"}, {"key": "ma179:8.13", "p": "當知賢聖弟子云何行滅不善戒耶？物主！…", "s": "should know where unwholesome virtuous behavior ceases without remainder,"}, {"key": "ma179:8.14", "p": "我說當知善戒，當知善戒從何而生？…", "s": "where it is destroyed without remainder,"}, {"key": "ma179:8.15", "p": "當知善戒何處滅無餘？…", "s": "and should know how a noble disciple practices to cease unwholesome virtuous behavior.\nPotaliya!"}, {"key": "ma179:8.16", "p": "何處敗壞無餘？…", "s": "I say that one should know wholesome virtuous behavior, should know from what wholesome virtuous behavior arises,"}, {"key": "ma179:8.17", "p": "當知賢聖弟子云何行滅善戒耶？物主！…", "s": "should know where wholesome virtuous behavior ceases without remainder,"}, {"key": "ma179:8.18", "p": "我說當知不善念，當知不善念從何而生，…", "s": "where it is destroyed without remainder,\nand should know how a noble disciple practices to cease wholesome virtuous behavior."}, {"key": "ma179:8.19", "p": "當知不善念何處滅無餘？…", "s": "Potaliya!"}, {"key": "ma179:8.20", "p": "何處敗壞無餘？…", "s": "I say that one should know unwholesome thoughts, should know from what unwholesome thoughts arise,"}, {"key": "ma179:8.21", "p": "當知賢聖弟子云何行滅不善念耶？物主！…", "s": "should know where unwholesome thoughts cease without remainder,"}, {"key": "ma179:8.22", "p": "我說當知善念，當知善念從何而生？…", "s": "where they are destroyed without remainder,\nand should know how a noble disciple practices to cease unwholesome thoughts."}, {"key": "ma179:8.23", "p": "當知善念何處滅無餘？…", "s": "Potaliya!"}, {"key": "ma179:8.24", "p": "何處敗壞無餘？…", "s": "I say that one should know wholesome thoughts, should know from what wholesome thoughts arise,"}, {"key": "ma179:8.25", "p": "當知賢聖弟子云何行滅善念耶？…", "s": "should know where wholesome thoughts cease without remainder, where they are destroyed without remainder,\nand should know how a noble disciple practices to ceas…"}]}, {"id": "9", "label": "「物主！", "rows": [{"key": "ma179:9.1", "p": "「物主！…", "s": "\"Potaliya!"}, {"key": "ma179:9.2", "p": "云何不善戒耶？…", "s": "What is unwholesome virtuous behavior?"}, {"key": "ma179:9.3", "p": "不善身行，不善口、意行，是謂不善戒。物主！…", "s": "Unwholesome bodily conduct, unwholesome verbal and mental conduct—this is called unwholesome virtuous behavior.\nPotaliya!"}, {"key": "ma179:9.4", "p": "此不善戒從何而生？…", "s": "From what does this unwholesome virtuous behavior arise?"}, {"key": "ma179:9.5", "p": "我說彼所從生，當知從心生。…", "s": "I say that from what it arises, one should know that it arises from the mind.\nWhat is the mind?"}, {"key": "ma179:9.6", "p": "云何為心？…", "s": "If the mind has desire, has aversion, has delusion,"}, {"key": "ma179:9.7", "p": "若心有欲、有恚、有癡，當知不善戒從是心生。物主！…", "s": "one should know that unwholesome virtuous behavior arises from this mind.\nPotaliya!"}, {"key": "ma179:9.8", "p": "不善戒何處滅無餘？…", "s": "Where does unwholesome virtuous behavior cease without remainder?"}, {"key": "ma179:9.9", "p": "何處敗壞無餘？…", "s": "Where is it destroyed without remainder?"}, {"key": "ma179:9.10", "p": "多聞聖弟子捨身不善業，修身善業，捨口、意不善業，…", "s": "A learned noble disciple abandons unwholesome bodily deeds,\ncultivates wholesome bodily deeds, abandons unwholesome verbal and mental deeds,"}, {"key": "ma179:9.11", "p": "修口、意善業，此不善戒滅無餘，敗壞無餘。物主！…", "s": "cultivates wholesome verbal and mental deeds—"}, {"key": "ma179:9.12", "p": "賢聖弟子云何行滅不善戒？…", "s": "this unwholesome virtuous behavior ceases without remainder, is destroyed without remainder.\nPotaliya!"}, {"key": "ma179:9.13", "p": "若多聞聖弟子觀內身如身，至觀覺、心、…", "s": "How does a noble disciple practice to cease unwholesome virtuous behavior?"}, {"key": "ma179:9.14", "p": "法如法，賢聖弟子如是行者，滅不善戒也。…", "s": "If a learned noble disciple contemplates the body internally as the body, up to contemplating feelings,\nmind, and phenomena as phenomena, a noble disciple pract…"}]}, {"id": "10", "label": "「物主！", "rows": [{"key": "ma179:10.1", "p": "「物主！…", "s": "\"Potaliya!"}, {"key": "ma179:10.2", "p": "云何善戒耶？…", "s": "What is wholesome virtuous behavior?"}, {"key": "ma179:10.3", "p": "善身業，善口、意業，是謂善戒。物主！…", "s": "Wholesome bodily deeds, wholesome verbal and mental deeds—this is called wholesome virtuous behavior.\nPotaliya!"}, {"key": "ma179:10.4", "p": "此善戒從何而生？…", "s": "From what does this wholesome virtuous behavior arise?"}, {"key": "ma179:10.5", "p": "我說彼所從生，當知從心生。…", "s": "I say that from what it arises, one should know that it arises from the mind."}, {"key": "ma179:10.6", "p": "云何為心？…", "s": "What is the mind?\nIf the mind is without desire, without aversion, without delusion,"}, {"key": "ma179:10.7", "p": "若心無欲、無恚、無癡，當知善戒從是心生。物主！…", "s": "one should know that wholesome virtuous behavior arises from this mind."}, {"key": "ma179:10.8", "p": "善戒何處滅無餘？…", "s": "Potaliya!\nWhere does wholesome virtuous behavior cease without remainder?"}, {"key": "ma179:10.9", "p": "何處敗壞無餘？…", "s": "Where is it destroyed without remainder?"}, {"key": "ma179:10.10", "p": "若多聞聖弟子行戒不著戒，此善戒滅無餘，敗壞無餘。物主！…", "s": "If a learned noble disciple practices virtuous behavior without clinging to virtuous behavior,"}, {"key": "ma179:10.11", "p": "賢聖弟子云何行滅善戒？…", "s": "this wholesome virtuous behavior ceases without remainder, is destroyed without remainder.\nPotaliya!"}, {"key": "ma179:10.12", "p": "若多聞聖弟子觀內身如身，至觀覺、心、…", "s": "How does a noble disciple practice to cease wholesome virtuous behavior?"}, {"key": "ma179:10.13", "p": "法如法，賢聖弟子如是行者，滅善戒也。…", "s": "If a learned noble disciple contemplates the body internally as the body, up to contemplating feelings,\nmind, and phenomena as phenomena, a noble disciple pract…"}]}, {"id": "11", "label": "「物主！", "rows": [{"key": "ma179:11.1", "p": "「物主！…", "s": "\"Potaliya!"}, {"key": "ma179:11.2", "p": "云何不善念耶？…", "s": "What are unwholesome thoughts?"}, {"key": "ma179:11.3", "p": "欲念、恚念、害念，是謂不善念。物主！…", "s": "Thoughts of desire, thoughts of aversion, thoughts of harm—these are called unwholesome thoughts.\nPotaliya!"}, {"key": "ma179:11.4", "p": "不善念從何而生？…", "s": "From what do unwholesome thoughts arise?"}, {"key": "ma179:11.5", "p": "我說彼所從生，當知從想生。…", "s": "I say that from what they arise, one should know that they arise from perception."}, {"key": "ma179:11.6", "p": "云何為想？…", "s": "What is perception?\nI say that perception is of many kinds, countless kinds, various kinds of activity—"}, {"key": "ma179:11.7", "p": "我說想多種、無量種、若干種行，…", "s": "either perception of desire, or perception of aversion, or perception of harm."}, {"key": "ma179:11.8", "p": "或欲想，或恚想，或害想。物主！…", "s": "Potaliya!"}, {"key": "ma179:11.9", "p": "眾生因欲界想故，生不善念，欲界相應。…", "s": "Because beings have perception of the realm of desire, unwholesome thoughts arise, connected with the realm of desire.\nIf there is perception, because of that p…"}, {"key": "ma179:11.10", "p": "若有想者，因彼想故，生不善念，欲界相應。物主！…", "s": "Potaliya!"}, {"key": "ma179:11.11", "p": "眾生因恚、害界想故，生不善念，恚、害界相應。…", "s": "Because beings have perception of the realm of aversion and harm,"}, {"key": "ma179:11.12", "p": "若有想者，因彼想故，生不善念，…", "s": "unwholesome thoughts arise, connected with the realm of aversion and harm.\nIf there is perception, because of that perception, unwholesome thoughts arise,"}, {"key": "ma179:11.13", "p": "恚、害界相應，此不善念從是想生。物主！…", "s": "connected with the realm of aversion and harm—these unwholesome thoughts arise from this perception."}, {"key": "ma179:11.14", "p": "不善念何處滅無餘？…", "s": "Potaliya!"}, {"key": "ma179:11.15", "p": "何處敗壞無餘？…", "s": "Where do unwholesome thoughts cease without remainder?\nWhere are they destroyed without remainder?"}, {"key": "ma179:11.16", "p": "若多聞聖弟子離欲、離惡不善之法，…", "s": "If a learned noble disciple, secluded from desires, secluded from unwholesome states,"}, {"key": "ma179:11.17", "p": "有覺、有觀，離生喜、樂，得初禪成就遊。…", "s": "with applied thought and sustained thought, born of seclusion,"}, {"key": "ma179:11.18", "p": "此不善念滅無餘，敗壞無餘。物主！…", "s": "with rapture and happiness, attains and dwells in the first jhāna—\nthese unwholesome thoughts cease without remainder, are destroyed without remainder."}, {"key": "ma179:11.19", "p": "賢聖弟子云何行滅不善念？…", "s": "Potaliya!"}, {"key": "ma179:11.20", "p": "若多聞聖弟子觀內身如身，至觀覺、心、…", "s": "How does a noble disciple practice to cease unwholesome thoughts?"}, {"key": "ma179:11.21", "p": "法如法，賢聖弟子如是行者，滅不善念也。…", "s": "If a learned noble disciple contemplates the body internally as the body, up to contemplating feelings,\nmind, and phenomena as phenomena, a noble disciple pract…"}]}, {"id": "12", "label": "「物主！", "rows": [{"key": "ma179:12.1", "p": "「物主！…", "s": "\"Potaliya!"}, {"key": "ma179:12.2", "p": "云何善念耶？…", "s": "What are wholesome thoughts?"}, {"key": "ma179:12.3", "p": "無欲念、無恚念、無害念，是謂善念。物主！…", "s": "Thoughts without desire, thoughts without aversion, thoughts without harm—these are called wholesome thoughts.\nPotaliya!"}, {"key": "ma179:12.4", "p": "善念從何而生？…", "s": "From what do wholesome thoughts arise?"}, {"key": "ma179:12.5", "p": "我說彼所從生，當知從想生。…", "s": "I say that from what they arise, one should know that they arise from perception."}, {"key": "ma179:12.6", "p": "云何為想？…", "s": "What is perception?\nI say that perception is of many kinds, countless kinds, various kinds of activity—"}, {"key": "ma179:12.7", "p": "我說想多種、無量種、若干種行，…", "s": "either perception without desire, or perception without aversion, or perception without harm."}, {"key": "ma179:12.8", "p": "或無欲想，或無恚想，或無害想。物主！…", "s": "Potaliya!\nBecause beings have perception of the realm without desire,"}, {"key": "ma179:12.9", "p": "眾生因無欲界想故，生善念，無欲界相應。…", "s": "wholesome thoughts arise, connected with the realm without desire."}, {"key": "ma179:12.10", "p": "若有想者，因彼想故，生善念，無欲界相應。物主！…", "s": "If there is perception, because of that perception, wholesome thoughts arise, connected with the realm without desire."}, {"key": "ma179:12.11", "p": "眾生因無恚、無害界故，生善念無恚、無害界相應。…", "s": "Potaliya!\nBecause beings have the realm without aversion and without harm,"}, {"key": "ma179:12.12", "p": "若有想者，因彼想故生善念，無恚、…", "s": "wholesome thoughts arise, connected with the realm without aversion and without harm."}, {"key": "ma179:12.13", "p": "無害界相應，此善念從是想生。物主！…", "s": "If there is perception, because of that perception, wholesome thoughts arise,"}, {"key": "ma179:12.14", "p": "善念何處滅無餘？…", "s": "connected with the realm without aversion and without harm—these wholesome thoughts arise from this perception.\nPotaliya!"}, {"key": "ma179:12.15", "p": "何處敗壞無餘？…", "s": "Where do wholesome thoughts cease without remainder?"}, {"key": "ma179:12.16", "p": "若多聞聖弟子樂滅、苦滅，喜、憂本已滅，…", "s": "Where are they destroyed without remainder?\nIf a learned noble disciple, with the cessation of happiness and suffering,"}, {"key": "ma179:12.17", "p": "不苦不樂、捨、念、清淨，得第四禪成就遊。…", "s": "with the previous disappearance of joy and sorrow, attains and dwells in the fourth jhāna,"}, {"key": "ma179:12.18", "p": "此善念滅無餘，敗壞無餘。物主！…", "s": "which is neither painful nor pleasant, with mindfulness purified by equanimity—"}, {"key": "ma179:12.19", "p": "賢聖弟子云何行滅善念？…", "s": "these wholesome thoughts cease without remainder, are destroyed without remainder.\nPotaliya!"}, {"key": "ma179:12.20", "p": "若多聞聖弟子觀內身如身，至觀覺、心、…", "s": "How does a noble disciple practice to cease wholesome thoughts?"}, {"key": "ma179:12.21", "p": "法如法，賢聖弟子如是行者，滅善念也。…", "s": "If a learned noble disciple contemplates the body internally as the body, up to contemplating feelings,\nmind, and phenomena as phenomena, a noble disciple pract…"}]}, {"id": "13", "label": "「物主！", "rows": [{"key": "ma179:13.1", "p": "「物主！…", "s": "\"Householder!"}, {"key": "ma179:13.2", "p": "若多聞聖弟子以慧觀不善戒知如真，從生不善戒知如真，…", "s": "If a learned noble disciple, with wisdom, understands unwholesome virtuous behavior as it really is,\nunderstands the origin of unwholesome virtuous behavior as …"}, {"key": "ma179:13.3", "p": "此不善戒滅無餘，敗壞無餘，知如真，以慧觀。…", "s": "understands that this unwholesome virtuous behavior ceases without remainder,"}, {"key": "ma179:13.4", "p": "賢聖弟子如是行者，滅不善戒知如真。…", "s": "is destroyed without remainder, as it really is, with wisdom.\nThe noble disciple who practices thus understands the cessation of unwholesome virtuous behavior a…"}, {"key": "ma179:13.5", "p": "以慧觀善戒知如真，從生善戒知如真，…", "s": "With wisdom, he understands wholesome virtuous behavior as it really is,"}, {"key": "ma179:13.6", "p": "此善戒滅無餘，敗壞無餘，知如真，以慧觀。…", "s": "understands the origin of wholesome virtuous behavior as it really is,\nunderstands that this wholesome virtuous behavior ceases without remainder,"}, {"key": "ma179:13.7", "p": "賢聖弟子如是行者，滅善戒知如真。…", "s": "is destroyed without remainder, as it really is, with wisdom.\nThe noble disciple who practices thus understands the cessation of wholesome virtuous behavior as …"}, {"key": "ma179:13.8", "p": "以慧觀不善念知如真，從生不善念知如真，…", "s": "With wisdom, he understands unwholesome intention as it really is,"}, {"key": "ma179:13.9", "p": "此不善念滅無餘，敗壞無餘，知如真，以慧觀。…", "s": "understands the origin of unwholesome intention as it really is,\nunderstands that this unwholesome intention ceases without remainder,"}, {"key": "ma179:13.10", "p": "賢聖弟子如是行者，滅不善念知如真。…", "s": "is destroyed without remainder, as it really is, with wisdom."}, {"key": "ma179:13.11", "p": "以慧觀善念知如真，從生善念知如真，…", "s": "The noble disciple who practices thus understands the cessation of unwholesome intention as it really is.\nWith wisdom, he understands wholesome intention as it …"}, {"key": "ma179:13.12", "p": "此善念滅無餘，敗壞無餘，知如真，以慧觀。…", "s": "understands the origin of wholesome intention as it really is,"}, {"key": "ma179:13.13", "p": "賢聖弟子如是行者，滅善念知如真。…", "s": "understands that this wholesome intention ceases without remainder,\nis destroyed without remainder, as it really is, with wisdom."}, {"key": "ma179:13.14", "p": "所以者何？…", "s": "The noble disciple who practices thus understands the cessation of wholesome intention as it really is.\nWhy is that?"}, {"key": "ma179:13.15", "p": "因正見故生正志，因正志故生正語，…", "s": "Because of right view, right intention arises;"}, {"key": "ma179:13.16", "p": "因正語故生正業，因正業故生正命，…", "s": "because of right intention, right speech arises;\nbecause of right speech, right action arises;"}, {"key": "ma179:13.17", "p": "因正命故生正方便，…", "s": "because of right action, right livelihood arises;"}, {"key": "ma179:13.18", "p": "因正方便故生正念，因正念故生正定。…", "s": "because of right livelihood, right effort arises;\nbecause of right effort, right mindfulness arises;"}, {"key": "ma179:13.19", "p": "賢聖弟子心如是定已，便解脫一切婬、怒、癡。…", "s": "because of right mindfulness, right concentration arises.\nWhen the noble disciple's mind is thus concentrated, he is liberated from all lust, anger, and delusio…"}]}, {"id": "14", "label": "「物主！", "rows": [{"key": "ma179:14.1", "p": "「物主！…", "s": "\"Householder!"}, {"key": "ma179:14.2", "p": "賢聖弟子如是正心解脫已，便知一切生已盡，…", "s": "When the noble disciple's mind is thus rightly liberated,\nhe understands that all birth is exhausted, the holy life has been established,"}, {"key": "ma179:14.3", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "what had to be done has been done, and there is no more coming into any state of existence, as it really is.\nThis is called the learner who has attained the vis…"}, {"key": "ma179:14.4", "p": "是謂學見跡成就八支，漏盡阿羅訶成就十支。物主！…", "s": "and the arahant who has destroyed the taints and accomplished the ten factors."}, {"key": "ma179:14.5", "p": "云何學見跡成就八支？…", "s": "Householder!\nWhat is the learner who has attained the vision and accomplished the eight factors?"}, {"key": "ma179:14.6", "p": "謂學正見至學正定，是謂學見跡成就八支。物主！…", "s": "It is the learner's right view up to the learner's right concentration.\nThis is called the learner who has attained the vision and accomplished the eight factor…"}, {"key": "ma179:14.7", "p": "云何漏盡阿羅訶成就十支？…", "s": "Householder!"}, {"key": "ma179:14.8", "p": "謂無學正見至無學正智，是謂漏盡阿羅訶成就十支。物主！…", "s": "What is the arahant who has destroyed the taints and accomplished the ten factors?\nIt is the adept's right view up to the adept's right knowledge."}, {"key": "ma179:14.9", "p": "若有十支，我施設彼成就善、第一善、…", "s": "This is called the arahant who has destroyed the taints and accomplished the ten factors.\nHouseholder!"}, {"key": "ma179:14.10", "p": "無上士，得第一義、質直沙門。」…", "s": "For one who has accomplished the ten factors, I declare him to be accomplished in the good,\nthe supreme good, the unsurpassed one, who has attained the ultimate…"}]}, {"id": "15", "label": "佛說如是。", "rows": [{"key": "ma179:15.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma179:15.2", "p": "彼五支物主及諸比丘，聞佛所說，歡喜奉行。…", "s": "The five-factored householder and the monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

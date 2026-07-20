@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:39 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:40 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -967,7 +1026,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "ea5", "label": "", "children": [{"id": "ea5.1", "label": "EA 5.1", "children": [{"id": "ea5.1/1", "label": "「我聲聞中第一比丘尼，久出家學，", "rows": [{"key": "ea5.1:1.1", "p": "「我聲聞中第一比丘尼，久出家學，…", "s": "Among my bhikkhunī disciples, the foremost in having long left home to train,"}, {"key": "ea5.1:1.2", "p": "國王所 敬，所謂大愛道瞿曇彌比丘尼是。…", "s": "and honored by kings, is the bhikkhunī Mahāprajāpatī Gautamī."}, {"key": "ea5.1:1.3", "p": "智慧聰 明，所謂讖摩比丘尼是。…", "s": "Wise and intelligent is the bhikkhunī Śyāmā."}, {"key": "ea5.1:1.4", "p": "神足第一，感致諸神， 所謂優鉢華色比丘尼是。…", "s": "Foremost in psychic power, able to summon various deities, is the bhikkhunī Utpalavarṇā."}, {"key": "ea5.1:1.5", "p": "行頭陀法，十一限 礙，所謂機梨舍瞿曇彌比丘尼是。…", "s": "Practicing the dhūta practices, with eleven restrictions, is the bhikkhunī Kṣemā Gautamī."}, {"key": "ea5.1:1.6", "p": "天眼第一， 所照無礙，所謂奢拘梨比丘尼是。…", "s": "Foremost in the divine eye, seeing without obstruction, is the bhikkhunī Śākulyā."}, {"key": "ea5.1:1.7", "p": "坐禪入定， 意不分散，所謂奢摩比丘尼是。…", "s": "Sitting in meditation and entering concentration, with mind not scattered, is the bhikkhunī Śamā."}, {"key": "ea5.1:1.8", "p": "分別義趣， 廣演道教，所謂波頭蘭闍那比丘尼是。…", "s": "Analyzing meanings and extensively expounding the Dharma, is the bhikkhunī Padmāñjanā."}, {"key": "ea5.1:1.9", "p": "奉持 律教，無所加犯，所謂波羅遮那比丘尼是。…", "s": "Upholding the Vinaya without any transgression, is the bhikkhunī Pāṭacārā."}, {"key": "ea5.1:1.10", "p": "得信解脫，不復退還，所謂迦旃延比丘尼 是。…", "s": "Attaining liberation through faith, never regressing, is the bhikkhunī Kātyāyanī."}, {"key": "ea5.1:1.11", "p": "得四辯才，不懷怯弱，所謂最勝比丘尼 是。」…", "s": "Attaining the four analytical knowledges, without timidity, is the bhikkhunī Jyeṣṭhā.”"}]}, {"id": "ea5.1/2", "label": "大愛及讖摩 優鉢、機曇彌 拘利、", "rows": [{"key": "ea5.1:2.1", "p": "大愛及讖摩　　優鉢、機曇彌 \n拘利、…", "s": "Mahāprajāpatī and Śyāmā, Utpalavarṇā, Kṣemā Gautamī, Śākulyā,"}, {"key": "ea5.1:2.2", "p": "奢、蘭闍　　那羅、迦旃、勝…", "s": "Śamā, Padmāñjanā, Pāṭacārā, Kātyāyanī, Jyeṣṭhā."}]}]}, {"id": "ea5.2", "label": "EA 5.2", "children": [{"id": "ea5.2/1", "label": "「我聲聞中第一比丘尼，自識宿命無數劫 事，", "rows": [{"key": "ea5.2:1.1", "p": "「我聲聞中第一比丘尼，自識宿命無數劫 事，…", "s": "Among my bhikkhunī disciples, the foremost in recollecting past lives over countless eons"}, {"key": "ea5.2:1.2", "p": "所謂拔陀迦毘離比丘尼是。…", "s": "is the bhikkhunī Bhaddā Kāpilānī."}, {"key": "ea5.2:1.3", "p": "顏色端正， 人所敬愛，所謂醯摩闍比丘尼是。…", "s": "Of beautiful complexion, loved and respected by all, is the bhikkhunī Hemajā."}, {"key": "ea5.2:1.4", "p": "降伏外 道，立以正教，所謂輸那比丘尼是。…", "s": "Who subdues heretics and establishes the true teaching is the bhikkhunī Sūnā."}, {"key": "ea5.2:1.5", "p": "分別義 趣，廣說分部，所謂曇摩提那比丘尼是。…", "s": "Who distinguishes meanings and elaborates on the divisions is the bhikkhunī Dhammadinnā."}, {"key": "ea5.2:1.6", "p": "身 著麁衣，不以為愧，所謂優多羅比丘尼是。…", "s": "Who wears coarse robes without shame is the bhikkhunī Uttarā."}, {"key": "ea5.2:1.7", "p": "諸根寂靜，恒若一心，所謂光明比丘尼是。…", "s": "Whose faculties are calm, always with a unified mind, is the bhikkhunī Pabhā."}, {"key": "ea5.2:1.8", "p": "衣服齊整，常如法教，所謂禪頭比丘尼是。…", "s": "Whose robes are neat and always according to the Dharma is the bhikkhunī Cintā."}, {"key": "ea5.2:1.9", "p": "能雜種論，亦無疑滯，所謂檀多比丘尼是。…", "s": "Who can discuss various topics without hesitation is the bhikkhunī Tandā."}, {"key": "ea5.2:1.10", "p": "堪 任造偈，讚如來德，所謂天與比丘尼是。…", "s": "Who is capable of composing verses praising the Tathāgata's virtues is the bhikkhunī Devadattā."}, {"key": "ea5.2:1.11", "p": "多聞 博知恩慧接下，所謂瞿卑比丘尼是。」…", "s": "Who is learned, wise, kind, and guides others is the bhikkhunī Gopī."}]}, {"id": "ea5.2/2", "label": "拔陀、闍、輸那 曇摩那、", "rows": [{"key": "ea5.2:2.1", "p": "拔陀、闍、輸那　　曇摩那、…", "s": "Bhaddā, Hemajā, Sūnā, Dhammadinnā,"}, {"key": "ea5.2:2.2", "p": "優多 \n光明、禪、檀多　　天與及瞿卑…", "s": "Uttarā, Pabhā, Cintā, Tandā, Devadattā, and Gopī."}]}]}, {"id": "ea5.3", "label": "EA 5.3", "children": [{"id": "ea5.3/1", "label": "「我聲聞中第一比丘尼，恒處閑靜，", "rows": [{"key": "ea5.3:1.1", "p": "「我聲聞中第一比丘尼，恒處閑靜，…", "s": "Among my bhikkhunī disciples, the foremost in constantly dwelling in quiet seclusion,"}, {"key": "ea5.3:1.2", "p": "不居 人間，所謂無畏比丘尼是。…", "s": "never living among people, is the bhikkhunī named Fearless."}, {"key": "ea5.3:1.3", "p": "苦體乞食，不擇貴 賤，所謂毘舍佉比丘尼是。…", "s": "Enduring hardship while begging for alms, not discriminating between noble and lowly, is the bhikkhunī named Viśākhā."}, {"key": "ea5.3:1.4", "p": "一處一坐，終不 移易，所謂拔陀婆羅比丘尼是。…", "s": "Sitting in one place, never moving, is the bhikkhunī named Bhadrapālā."}, {"key": "ea5.3:1.5", "p": "遍行乞求，廣 度人民，所謂摩怒呵利比丘尼是。…", "s": "Going everywhere to beg, extensively saving people, is the bhikkhunī named Manoharī."}, {"key": "ea5.3:1.6", "p": "速成道 果，中間不滯，所謂陀摩比丘尼是。…", "s": "Quickly attaining the path and its fruit, without delay in between, is the bhikkhunī named Dharmā."}, {"key": "ea5.3:1.7", "p": "執持三 衣，終不捨離，所謂須陀摩比丘尼是。…", "s": "Holding to the three robes, never abandoning them, is the bhikkhunī named Srotāpannā."}, {"key": "ea5.3:1.8", "p": "恒坐 樹下，意不改易，所謂珕須那比丘尼是。…", "s": "Always sitting under a tree, with unwavering resolve, is the bhikkhunī named Śailanā."}, {"key": "ea5.3:1.9", "p": "恒 居露地，不念覆蓋，所謂奢陀比丘尼是。…", "s": "Always dwelling in the open air, not thinking of shelter, is the bhikkhunī named Śāntā."}, {"key": "ea5.3:1.10", "p": "樂 空閑處，不在人間，所謂優迦羅比丘尼是。…", "s": "Delighting in quiet places, not staying among people, is the bhikkhunī named Utpalā."}, {"key": "ea5.3:1.11", "p": "長坐草蓐，不著服飾，所謂離那比丘尼是。…", "s": "Long sitting on a grass mat, not wearing ornaments, is the bhikkhunī named Nandā."}, {"key": "ea5.3:1.12", "p": "著五納衣，以次分越，所謂阿奴波摩比丘 尼是。」…", "s": "Wearing a robe of five patches, distributing alms in order, is the bhikkhunī named Anupamā."}]}, {"id": "ea5.3/2", "label": "無畏、多毘舍 婆陀、阿奴波 檀、", "rows": [{"key": "ea5.3:2.1", "p": "無畏、多毘舍　　婆陀、阿奴波 \n檀、…", "s": "Fearless, Viśākhā, Bhadrā, Anupamā,"}, {"key": "ea5.3:2.2", "p": "須檀、奢多　　優迦、離、阿奴…", "s": "Srotāpannā, Śāntā, Utpalā, Nandā, Anu."}]}]}, {"id": "ea5.4", "label": "EA 5.4", "children": [{"id": "ea5.4/1", "label": "「我聲聞中第一比丘尼，", "rows": [{"key": "ea5.4:1.1", "p": "「我聲聞中第一比丘尼，…", "s": "Among my bhikkhunī disciples, the foremost is:"}, {"key": "ea5.4:1.2", "p": "樂空塚間，所謂 優迦摩比丘尼是。…", "s": "One who delights in empty charnel grounds — that is, the bhikkhunī Ukkā.\n(Ukkā is a proper name;\nthe Chinese 優迦摩 likely corresponds to Ukkā or a similar name.)"}, {"key": "ea5.4:1.3", "p": "多遊於慈，愍念生類，所 謂清明比丘尼是。…", "s": "One who often abides in loving-kindness, compassionately mindful of living beings —\nthat is, the bhikkhunī Qingming (清明, meaning 'Clear Brightness')."}, {"key": "ea5.4:1.4", "p": "悲泣眾生，不及道者，所 謂素摩比丘尼是。…", "s": "One who weeps for sentient beings who have not reached the path — that is, the bhikkhunī Sumā (素摩, likely Sumā)."}, {"key": "ea5.4:1.5", "p": "喜得道者，願及一切，所 謂摩陀利比丘尼是。…", "s": "One who rejoices in those who have attained the path, wishing it for all —\nthat is, the bhikkhunī Mādhalī (摩陀利, likely Mādhalī)."}, {"key": "ea5.4:1.6", "p": "護守諸行，意不遠離， 所謂迦羅伽比丘尼是。…", "s": "One who guards and maintains all volitional activities,\nwith mind not straying far — that is, the bhikkhunī Kālakā (迦羅伽, likely Kālakā)."}, {"key": "ea5.4:1.7", "p": "守空執虛，了之無 有，所謂提婆修比丘尼是。…", "s": "One who abides in emptiness and holds to the void, understanding it as non-existent —\nthat is, the bhikkhunī Devasū (提婆修, likely Devasū)."}, {"key": "ea5.4:1.8", "p": "心樂無想，除去 諸著，所謂日光比丘尼是。…", "s": "One whose mind delights in signlessness, removing all attachments — that is, the bhikkhunī Sunlight (日光, Rìguāng)."}, {"key": "ea5.4:1.9", "p": "修習無願，心恒廣 濟，所謂末那婆比丘尼是。…", "s": "One who cultivates wishlessness, with a mind ever broadly beneficent —\nthat is, the bhikkhunī Manāpa (末那婆, likely Manāpa)."}, {"key": "ea5.4:1.10", "p": "諸法無疑，度人無 限，所謂毘摩達比丘尼是。…", "s": "One who has no doubt about all phenomena, liberating people without limit —\nthat is, the bhikkhunī Vimadā (毘摩達, likely Vimadā)."}, {"key": "ea5.4:1.11", "p": "能廣說義，分別 深法，所謂普照比丘尼是。」…", "s": "One who can extensively explain the meaning, analyzing profound teachings —\nthat is, the bhikkhunī Universal Illumination (普照, Pǔzhào)."}]}, {"id": "ea5.4/2", "label": "優迦、明、素摩 摩陀、迦、", "rows": [{"key": "ea5.4:2.1", "p": "優迦、明、素摩　　摩陀、迦、…", "s": "Ukkā, Qingming, Sumā, Mādhalī, Kālakā,"}, {"key": "ea5.4:2.2", "p": "提婆 \n日光、摩那婆　　毘摩達、普照…", "s": "Devasū, Sunlight, Manāpa, Vimadā, Universal Illumination."}]}]}, {"id": "ea5.5", "label": "EA 5.5", "children": [{"id": "ea5.5/1", "label": "「我聲聞中第一比丘尼，心懷忍辱，", "rows": [{"key": "ea5.5:1.1", "p": "「我聲聞中第一比丘尼，心懷忍辱，…", "s": "Among my bhikkhunī disciples, the foremost in patiently enduring insults,"}, {"key": "ea5.5:1.2", "p": "如地 容受，所謂曇摩提比丘尼是。…", "s": "like the earth receiving all, is the bhikkhunī Dharmadinnā."}, {"key": "ea5.5:1.3", "p": "能教化人，使 立檀會，所謂須夜摩比丘尼是。…", "s": "Able to teach people and establish them in giving offerings, is the bhikkhunī Suyāmā."}, {"key": "ea5.5:1.4", "p": "辦具床座， 亦是須夜摩比丘尼是。…", "s": "Arranging and providing bedding and seats, also the bhikkhunī Suyāmā."}, {"key": "ea5.5:1.5", "p": "心已永息，不興亂 想，所謂因陀闍比丘尼是。…", "s": "The mind has become forever still, not giving rise to confused thoughts, is the bhikkhunī Indrajā."}, {"key": "ea5.5:1.6", "p": "觀了諸法，而無 厭足，所謂龍比丘尼是。…", "s": "Contemplating all phenomena without ever tiring, is the bhikkhunī Nāgā."}, {"key": "ea5.5:1.7", "p": "意強勇猛，無所染 著，所謂拘那羅比丘尼是。…", "s": "With strong and courageous intent, without any attachment, is the bhikkhunī Kuntī."}, {"key": "ea5.5:1.8", "p": "入水三昧，普潤 一切，所謂婆須比丘尼是。…", "s": "Entering the water samādhi, universally moistening all, is the bhikkhunī Vāsī."}, {"key": "ea5.5:1.9", "p": "入焰光三昧，悉照 萠類，所謂降提比丘尼是。…", "s": "Entering the flame-light samādhi, completely illuminating all beings, is the bhikkhunī Jyotikā."}, {"key": "ea5.5:1.10", "p": "觀惡露不淨，分 別緣起，所謂遮波羅比丘尼是。…", "s": "Contemplating the foul and impure, analyzing dependent origination, is the bhikkhunī Cāpālā."}, {"key": "ea5.5:1.11", "p": "育養眾人， 施與所乏，守迦比丘尼是。…", "s": "Nurturing the multitude, giving what they lack, is the bhikkhunī Śaṅkā."}, {"key": "ea5.5:1.12", "p": "我聲聞中最後 第一比丘尼，…", "s": "Among my bhikkhunī disciples, the last and foremost,"}, {"key": "ea5.5:1.13", "p": "拔陀軍陀羅拘夷國比丘尼是。」…", "s": "is the bhikkhunī Bhadrā Kuṇḍalakeśā of the Kāśī country."}]}, {"id": "ea5.5/2", "label": "曇摩、須夜摩 因提、龍、", "rows": [{"key": "ea5.5:2.1", "p": "曇摩、須夜摩　　因提、龍、…", "s": "Dharmadinnā, Suyāmā, Indrajā, Nāgā,"}, {"key": "ea5.5:2.2", "p": "拘那 \n婆須、降、遮波　　守迦、拔陀羅…", "s": "Kuntī, Vāsī, Jyotikā, Cāpālā, Śaṅkā, Bhadrā."}]}, {"id": "ea5.5/3", "label": "此五十比丘尼，當廣說如上。", "rows": [{"key": "ea5.5:3.1", "p": "此五十比丘尼，當廣說如上。…", "s": "These fifty bhikkhunīs should be explained in detail as above."}]}]}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2064,8 +2123,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2105,30 +2317,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

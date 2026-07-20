@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:39 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:40 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -967,7 +1026,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "ea15", "label": "", "children": [{"id": "ea15.1", "label": "EA 15.1 — 見", "children": [{"id": "ea15.1/1", "label": "聞如是：", "rows": [{"key": "ea15.1:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea15.1/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea15.1:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea15.1/3", "label": "爾時，世尊告諸比丘：「當知有此二見。", "rows": [{"key": "ea15.1:3.1", "p": "爾時，世尊告諸比丘：「當知有此二見。…", "s": "At that time, the Blessed One said to the monks:\n'You should know that there are these two views."}, {"key": "ea15.1:3.2", "p": "云 何為二？…", "s": "What are the two?"}, {"key": "ea15.1:3.3", "p": "所謂有見、無見。…", "s": "They are the view of existence and the view of non-existence."}, {"key": "ea15.1:3.4", "p": "諸有沙門、婆羅門 於此二見習已、誦已，…", "s": "Whatever ascetics or brahmins have studied and recited these two views,"}, {"key": "ea15.1:3.5", "p": "終不從其法，如實而 不知，此則非沙門、婆羅門。…", "s": "yet do not follow their teaching and do not understand them as they truly are—these are not true ascetics or brahmins."}, {"key": "ea15.1:3.6", "p": "於沙門，則犯沙 門法；於婆羅門，…", "s": "Toward asceticism, they violate the ascetic's code;\ntoward brahminhood,"}, {"key": "ea15.1:3.7", "p": "則犯婆羅門法，此沙門、 終不以身作證而自遊戲。…", "s": "they violate the brahmin's code.\nSuch ascetics never personally realize and delight in it."}, {"key": "ea15.1:3.8", "p": "諸有沙門、婆羅 門於此二見誦讀、諷念，…", "s": "Whatever ascetics or brahmins, having studied and recited these two views,"}, {"key": "ea15.1:3.9", "p": "知捨，如實而知， 此則沙門持沙門行，…", "s": "know to abandon them and understand them as they truly are—these are ascetics who uphold the ascetic's practice,"}, {"key": "ea15.1:3.10", "p": "婆羅門知婆羅門行， 自身取證而自遊戲：…", "s": "brahmins who know the brahmin's practice, personally realize and delight in it:"}, {"key": "ea15.1:3.11", "p": "生死已盡，梵行已立， 更不復受有，如真知之。…", "s": "Birth is exhausted, the holy life has been established, and there is no further state of existence;\nthey know this as it truly is."}, {"key": "ea15.1:3.12", "p": "是故，諸比丘！…", "s": "Therefore, monks!"}, {"key": "ea15.1:3.13", "p": "於此二見不應習行，不應諷誦，盡當捨 離。…", "s": "You should not practice these two views, nor recite them;\nyou should completely abandon them.'"}, {"key": "ea15.1:3.14", "p": "如是，諸比丘！…", "s": "Thus, monks!"}, {"key": "ea15.1:3.15", "p": "當作是學。」…", "s": "You should train yourselves in this way.\""}]}, {"id": "ea15.1/4", "label": "爾時，諸比丘聞 佛所說，歡喜奉行。", "rows": [{"key": "ea15.1:4.1", "p": "爾時，諸比丘聞 佛所說，歡喜奉行。…", "s": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}]}, {"id": "ea15.2", "label": "EA 15.2 — 見", "children": [{"id": "ea15.2/1", "label": "聞如是：", "rows": [{"key": "ea15.2:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea15.2/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea15.2:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea15.2/3", "label": "爾時，世尊告諸比丘：「有此二見。", "rows": [{"key": "ea15.2:3.1", "p": "爾時，世尊告諸比丘：「有此二見。…", "s": "At that time, the Blessed One said to the monks:\n'There are these two views."}, {"key": "ea15.2:3.2", "p": "云何為 二見？…", "s": "What are the two views?"}, {"key": "ea15.2:3.3", "p": "所謂有見、無見。…", "s": "They are the view of existence and the view of non-existence."}, {"key": "ea15.2:3.4", "p": "彼云何為有見？…", "s": "What is the view of existence?"}, {"key": "ea15.2:3.5", "p": "所謂欲 有見、色有見、無色有見。…", "s": "It is the view of existence in the realm of desire,\nthe view of existence in the realm of form, and the view of existence in the formless realm."}, {"key": "ea15.2:3.6", "p": "彼云何為欲有見？…", "s": "What is the view of existence in the realm of desire?"}, {"key": "ea15.2:3.7", "p": "所謂五欲是也。…", "s": "It refers to the five objects of desire."}, {"key": "ea15.2:3.8", "p": "云何為五欲？…", "s": "What are the five objects of desire?"}, {"key": "ea15.2:3.9", "p": "所謂眼見色，甚 愛敬念，未曾捨離，世人宗奉。…", "s": "They are:\nseeing forms with the eye, which are greatly loved, cherished,\nand remembered, never abandoned, and revered by the world."}, {"key": "ea15.2:3.10", "p": "若耳聞聲，鼻 嗅香，口知味，…", "s": "Hearing sounds with the ear, smelling fragrances with the nose, tasting flavors with the tongue,"}, {"key": "ea15.2:3.11", "p": "身知細滑，意了諸法，是謂 有見。…", "s": "feeling tangible objects with the body, and cognizing phenomena with the mind—this is called the view of existence."}, {"key": "ea15.2:3.12", "p": "彼云何名為無見？…", "s": "What is called the view of non-existence?"}, {"key": "ea15.2:3.13", "p": "所謂有常見、無常 見、有斷滅見、無斷滅見、…", "s": "It is the view of permanence, the view of impermanence, the view of annihilation, the view of non-annihilation,"}, {"key": "ea15.2:3.14", "p": "有邊見、無邊見、有身 見、無身見、…", "s": "The view of existence, the view of non-existence, the view of personal existence, the view of no personal existence,"}, {"key": "ea15.2:3.15", "p": "有命見、無命見、異身見、異命見，此 六十二見，…", "s": "the view of a life, the view of no life, the view of a different body,\nthe view of a different life — these sixty-two views"}, {"key": "ea15.2:3.16", "p": "名曰無見，亦非真見，是謂名 為無見。…", "s": "are called the view of non-existence, and are not the true view.\nThis is what is called the view of non-existence."}, {"key": "ea15.2:3.17", "p": "是故，諸比丘！…", "s": "Therefore, monks,"}, {"key": "ea15.2:3.18", "p": "當捨此二見。…", "s": "you should abandon these two views."}, {"key": "ea15.2:3.19", "p": "如是，諸 比丘！…", "s": "Thus, monks,"}, {"key": "ea15.2:3.20", "p": "當作是學。」…", "s": "you should train yourselves like this.”"}]}, {"id": "ea15.2/4", "label": "爾時，諸比丘聞佛所說，歡 喜奉行。", "rows": [{"key": "ea15.2:4.1", "p": "爾時，諸比丘聞佛所說，歡 喜奉行。…", "s": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}]}, {"id": "ea15.3", "label": "EA 15.3 — 施", "children": [{"id": "ea15.3/1", "label": "聞如是：", "rows": [{"key": "ea15.3:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea15.3/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea15.3:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea15.3/3", "label": "爾時，世尊告諸比丘：「有此二施。", "rows": [{"key": "ea15.3:3.1", "p": "爾時，世尊告諸比丘：「有此二施。…", "s": "At that time, the Blessed One said to the monks:\n'There are these two kinds of giving."}, {"key": "ea15.3:3.2", "p": "云何為 二？…", "s": "What are the two?"}, {"key": "ea15.3:3.3", "p": "所謂法施、財施。…", "s": "They are the gift of the Dharma and the gift of material wealth."}, {"key": "ea15.3:3.4", "p": "諸比丘！…", "s": "Monks!"}, {"key": "ea15.3:3.5", "p": "施中之上者不 過法施。…", "s": "The foremost among gifts is none other than the gift of the Dharma."}, {"key": "ea15.3:3.6", "p": "是故，諸比丘！…", "s": "Therefore, monks!"}, {"key": "ea15.3:3.7", "p": "常當學法施。…", "s": "You should always learn to give the gift of the Dharma."}, {"key": "ea15.3:3.8", "p": "如是，諸 比丘！…", "s": "Thus, monks!"}, {"key": "ea15.3:3.9", "p": "當作是學。」…", "s": "You should train yourselves in this way.'"}]}, {"id": "ea15.3/4", "label": "爾時，諸比丘聞佛所說，歡 喜奉行。", "rows": [{"key": "ea15.3:4.1", "p": "爾時，諸比丘聞佛所說，歡 喜奉行。…", "s": "At that time, the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea15.4", "label": "EA 15.4 — 施", "children": [{"id": "ea15.4/1", "label": "聞如是：", "rows": [{"key": "ea15.4:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea15.4/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea15.4:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea15.4/3", "label": "爾時，世尊告諸比丘：「有此二業。", "rows": [{"key": "ea15.4:3.1", "p": "爾時，世尊告諸比丘：「有此二業。…", "s": "At that time, the Blessed One said to the monks:\n'There are these two kinds of deeds."}, {"key": "ea15.4:3.2", "p": "云何為 二業？…", "s": "What are the two kinds of deeds?"}, {"key": "ea15.4:3.3", "p": "有法業、有財業。…", "s": "There is the deed of Dharma and the deed of wealth."}, {"key": "ea15.4:3.4", "p": "業中之上者，不過法 業。…", "s": "The highest among deeds is none other than the deed of Dharma."}, {"key": "ea15.4:3.5", "p": "是故，諸比丘！…", "s": "Therefore, monks!"}, {"key": "ea15.4:3.6", "p": "當學法業，不學財業。…", "s": "You should learn the deed of Dharma, not the deed of wealth."}, {"key": "ea15.4:3.7", "p": "如是， 諸比丘！…", "s": "Thus, monks!"}, {"key": "ea15.4:3.8", "p": "當作是學。」…", "s": "You should train yourselves in this way.'"}]}, {"id": "ea15.4/4", "label": "爾時，諸比丘聞佛所說， 歡喜奉行。", "rows": [{"key": "ea15.4:4.1", "p": "爾時，諸比丘聞佛所說， 歡喜奉行。…", "s": "At that time, the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea15.5", "label": "EA 15.5", "children": [{"id": "ea15.5/1", "label": "聞如是：", "rows": [{"key": "ea15.5:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea15.5/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea15.5:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea15.5/3", "label": "爾時，世尊告諸比丘：「有此二恩。", "rows": [{"key": "ea15.5:3.1", "p": "爾時，世尊告諸比丘：「有此二恩。…", "s": "At that time, the Blessed One said to the monks:\n'There are these two kinds of kindness."}, {"key": "ea15.5:3.2", "p": "云何為 二？…", "s": "What are the two?"}, {"key": "ea15.5:3.3", "p": "所謂法恩、財恩。…", "s": "They are the kindness of the Dharma and the kindness of material wealth."}, {"key": "ea15.5:3.4", "p": "恩中之上者，所謂不過 法恩也。…", "s": "The foremost among kinds of kindness is none other than the kindness of the Dharma."}, {"key": "ea15.5:3.5", "p": "是故，諸比丘！…", "s": "Therefore, monks!"}, {"key": "ea15.5:3.6", "p": "當修行法恩。…", "s": "You should cultivate the kindness of the Dharma."}, {"key": "ea15.5:3.7", "p": "如是，諸 比丘！…", "s": "Thus, monks!"}, {"key": "ea15.5:3.8", "p": "當作是學。」…", "s": "You should train yourselves.'"}]}, {"id": "ea15.5/4", "label": "爾時，諸比丘聞佛所說，歡 喜奉行。", "rows": [{"key": "ea15.5:4.1", "p": "爾時，諸比丘聞佛所說，歡 喜奉行。…", "s": "At that time, the monks, having heard what the Buddha said, joyfully practiced it."}]}]}, {"id": "ea15.6", "label": "EA 15.6 — 愚者有二相", "children": [{"id": "ea15.6/1", "label": "聞如是：", "rows": [{"key": "ea15.6:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea15.6/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea15.6:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea15.6/3", "label": "爾時，世尊告諸比丘：「愚者有此二相像 貌。", "rows": [{"key": "ea15.6:3.1", "p": "爾時，世尊告諸比丘：「愚者有此二相像 貌。…", "s": "At that time, the Blessed One said to the monks:\n\"A fool has these two characteristics and appearances."}, {"key": "ea15.6:3.2", "p": "云何為二？…", "s": "What are the two?"}, {"key": "ea15.6:3.3", "p": "於是，愚者所不能辦者而 辦之，垂辦之事厭而捨之。…", "s": "Here, a fool undertakes what he cannot accomplish,\nand when something is nearly accomplished, he becomes weary and abandons it."}, {"key": "ea15.6:3.4", "p": "是謂，諸比丘！…", "s": "This is what, monks,"}, {"key": "ea15.6:3.5", "p": "愚 者有此二相像貌。…", "s": "a fool has these two characteristics and appearances."}, {"key": "ea15.6:3.6", "p": "復次，比丘！…", "s": "Furthermore, monks,"}, {"key": "ea15.6:3.7", "p": "智者有二相 像貌。…", "s": "a wise person has two characteristics and appearances."}, {"key": "ea15.6:3.8", "p": "云何為二？…", "s": "What are the two?"}, {"key": "ea15.6:3.9", "p": "於是，智者所不能 辦 事亦 不成辦，…", "s": "Here, a wise person does not undertake what he cannot accomplish,"}, {"key": "ea15.6:3.10", "p": "垂辦之事亦不厭捨。…", "s": "and when something is nearly accomplished, he does not become weary and abandon it."}, {"key": "ea15.6:3.11", "p": "是故，諸比丘！…", "s": "Therefore, monks,"}, {"key": "ea15.6:3.12", "p": "愚者二相像貌當捨離之，當念修行智者 二相。…", "s": "you should abandon the two characteristics and appearances of a fool,\nand should always cultivate the two characteristics of a wise person."}, {"key": "ea15.6:3.13", "p": "如是，諸比丘！…", "s": "Thus, monks!\""}, {"key": "ea15.6:3.14", "p": "當作是學。」…", "s": "You should train thus."}]}, {"id": "ea15.6/4", "label": "爾時，諸比丘 聞佛所說，歡喜奉行。", "rows": [{"key": "ea15.6:4.1", "p": "爾時，諸比丘 聞佛所說，歡喜奉行。…", "s": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}]}, {"id": "ea15.7", "label": "EA 15.7 — 禮", "children": [{"id": "ea15.7/1", "label": "聞如是：", "rows": [{"key": "ea15.7:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea15.7/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea15.7:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea15.7/3", "label": "爾時，世尊告諸比丘：「有此二法，", "rows": [{"key": "ea15.7:3.1", "p": "爾時，世尊告諸比丘：「有此二法，…", "s": "At that time, the Blessed One said to the monks:\n'There are these two things."}, {"key": "ea15.7:3.2", "p": "內自思 惟，專精一意，當禮如來。…", "s": "Reflecting inwardly, with one-pointed mind, one should pay homage to the Tathāgata."}, {"key": "ea15.7:3.3", "p": "云何為二法？…", "s": "What are the two things?"}, {"key": "ea15.7:3.4", "p": "一為 智慧，二為滅盡。…", "s": "One is wisdom, and the other is cessation."}, {"key": "ea15.7:3.5", "p": "是謂，比丘！…", "s": "This, monks,"}, {"key": "ea15.7:3.6", "p": "內自思惟，專精一 意，當禮如來。…", "s": "reflecting inwardly, with one-pointed mind, one should pay homage to the Tathāgata."}, {"key": "ea15.7:3.7", "p": "如是諸比丘！…", "s": "Thus, monks!"}, {"key": "ea15.7:3.8", "p": "當作是學。」…", "s": "You should train yourselves.'"}]}, {"id": "ea15.7/4", "label": "爾時， 諸比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea15.7:4.1", "p": "爾時， 諸比丘聞佛所說，歡喜奉行。…", "s": "At that time, the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea15.8", "label": "EA 15.8 — 法", "children": [{"id": "ea15.8/1", "label": "聞如是：", "rows": [{"key": "ea15.8:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea15.8/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea15.8:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea15.8/3", "label": "爾時，世尊告諸比丘：「有此二法，內自思 惟，", "rows": [{"key": "ea15.8:3.1", "p": "爾時，世尊告諸比丘：「有此二法，內自思 惟，…", "s": "At that time, the Blessed One said to the monks:\n'There are these two things that one should reflect upon inwardly,"}, {"key": "ea15.8:3.2", "p": "專精一意，當禮法寶，亦禮如來神廟。…", "s": "with one-pointed concentration:\none should pay homage to the Dharma treasure, and also pay homage to the Tathāgata's shrine."}, {"key": "ea15.8:3.3", "p": "云 何二法？…", "s": "What are the two things?"}, {"key": "ea15.8:3.4", "p": "有力、有無畏。…", "s": "Power and fearlessness."}, {"key": "ea15.8:3.5", "p": "是謂，比丘！…", "s": "This, monks,"}, {"key": "ea15.8:3.6", "p": "有此二法， 內自思惟，…", "s": "is having these two things that one should reflect upon inwardly,"}, {"key": "ea15.8:3.7", "p": "專精一意，當禮法寶及如來神廟。…", "s": "with one-pointed concentration:\none should pay homage to the Dharma treasure and the Tathāgata's shrine."}, {"key": "ea15.8:3.8", "p": "如是，諸比丘！…", "s": "Thus, monks,"}, {"key": "ea15.8:3.9", "p": "當作是學。」…", "s": "you should train yourselves.'"}]}, {"id": "ea15.8/4", "label": "爾時，諸比丘聞佛 所說，歡喜奉行。", "rows": [{"key": "ea15.8:4.1", "p": "爾時，諸比丘聞佛 所說，歡喜奉行。…", "s": "Then, having heard what the Buddha said, the monks rejoiced and practiced it."}]}]}, {"id": "ea15.9", "label": "EA 15.9 — 如來廟", "children": [{"id": "ea15.9/1", "label": "聞如是：", "rows": [{"key": "ea15.9:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea15.9/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea15.9:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍada's Park in Sāvatthī."}]}, {"id": "ea15.9/3", "label": "爾時，世尊告諸比丘：「有此二法，", "rows": [{"key": "ea15.9:3.1", "p": "爾時，世尊告諸比丘：「有此二法，…", "s": "At that time, the Blessed One said to the monks:\n'There are these two things,"}, {"key": "ea15.9:3.2", "p": "內自思 惟，專精一意，禮如來寺。…", "s": "to reflect inwardly, to concentrate the mind single-mindedly, and to pay homage to the Tathāgata's monastery."}, {"key": "ea15.9:3.3", "p": "云何為二法？…", "s": "What are the two things?"}, {"key": "ea15.9:3.4", "p": "如來 與世間人民無與等者；…", "s": "The Tathāgata is unequaled among the people of the world;"}, {"key": "ea15.9:3.5", "p": "如來有大慈大悲， 矜念十方。…", "s": "the Tathāgata possesses great loving-kindness and great compassion, pitying and mindful of the ten directions."}, {"key": "ea15.9:3.6", "p": "是謂，比丘！…", "s": "This is, monks,"}, {"key": "ea15.9:3.7", "p": "有此二法，內自思惟， 專精一意，禮如來寺。…", "s": "having these two things, to reflect inwardly, to concentrate the mind single-mindedly,\nand to pay homage to the Tathāgata's monastery."}, {"key": "ea15.9:3.8", "p": "如是，諸比丘！…", "s": "Thus, monks,"}, {"key": "ea15.9:3.9", "p": "當作是 學。」…", "s": "you should train yourselves.'"}]}, {"id": "ea15.9/4", "label": "爾時，諸比丘聞佛所說，歡喜奉行。", "rows": [{"key": "ea15.9:4.1", "p": "爾時，諸比丘聞佛所說，歡喜奉行。…", "s": "At that time, the monks, having heard what the Buddha said, rejoiced and practiced it."}]}]}, {"id": "ea15.10", "label": "EA 15.10 — 正見", "children": [{"id": "ea15.10/1", "label": "聞如是：", "rows": [{"key": "ea15.10:1.1", "p": "聞如是：…", "s": "Thus have I heard:"}]}, {"id": "ea15.10/2", "label": "一時，佛在舍衛國祇樹給孤獨 園。", "rows": [{"key": "ea15.10:2.1", "p": "一時，佛在舍衛國祇樹給孤獨 園。…", "s": "At one time, the Buddha was staying in the Jeta Grove, Anāthapiṇḍika's Park in Sāvatthī."}]}, {"id": "ea15.10/3", "label": "爾時，世尊告諸比丘：「有二因二緣起於 正見。", "rows": [{"key": "ea15.10:3.1", "p": "爾時，世尊告諸比丘：「有二因二緣起於 正見。…", "s": "At that time, the Blessed One said to the monks:\n'There are two causes and two conditions that give rise to right view."}, {"key": "ea15.10:3.2", "p": "云何為二？…", "s": "What are the two?"}, {"key": "ea15.10:3.3", "p": "受法教化，內思止觀。…", "s": "Receiving the teaching and instruction, and internally reflecting on calm and insight."}, {"key": "ea15.10:3.4", "p": "是 謂，比丘！…", "s": "This, monks,"}, {"key": "ea15.10:3.5", "p": "有此二因二緣起於正見。…", "s": "is having these two causes and two conditions that give rise to right view."}, {"key": "ea15.10:3.6", "p": "如是，諸 比丘！…", "s": "Thus, monks,"}, {"key": "ea15.10:3.7", "p": "當作是學。」…", "s": "you should train yourselves.'"}]}, {"id": "ea15.10/4", "label": "爾時，諸比丘聞佛所說，歡 喜奉行。", "rows": [{"key": "ea15.10:4.1", "p": "爾時，諸比丘聞佛所說，歡 喜奉行。…", "s": "At that time, the monks heard what the Buddha said and joyfully practiced it."}]}, {"id": "ea15.10/5", "label": "二見及二施 愚者有二相 禮法如來廟 正見最在後", "rows": [{"key": "ea15.10:5.1", "p": "二見及二施　　愚者有二相 \n禮法如來廟　　正見最在後…", "s": "Two views and two gifts, the fool has two characteristics;\npaying homage to the Dharma and the Tathāgata's shrine, right view is placed last."}]}]}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2064,8 +2123,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2105,30 +2317,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

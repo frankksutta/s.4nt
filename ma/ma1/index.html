@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -970,7 +1029,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "0", "label": "中阿含經 1", "rows": [{"key": "ma1:0.1", "p": "中阿含經 1…", "s": "Medium Discourses 1"}, {"key": "ma1:0.2", "p": "善法經…", "s": "Skillful Qualities"}]}, {"id": "1", "label": "我聞如是：", "rows": [{"key": "ma1:1.1", "p": "我聞如是：…", "s": "Thus I have heard:"}, {"key": "ma1:1.2", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "One time, the Buddha traveled to the country of Śrāvastī and was staying at Anāthapiṇḍada’s Park in Jeta’s Grove."}]}, {"id": "2", "label": "爾時，世尊告諸比丘：", "rows": [{"key": "ma1:2.1", "p": "爾時，世尊告諸比丘：…", "s": "It was then that the Bhagavān addressed the monks,"}, {"key": "ma1:2.2", "p": "「若有比丘成就七法者，便於賢聖得歡喜樂，正趣漏盡。…", "s": "“If a monk accomplishes seven qualities, then he’ll attain the joy and happiness of the noble ones,\nand he’ll be rightly headed for the end of the contaminants."}, {"key": "ma1:2.3", "p": "云何爲七。…", "s": "What are the seven?"}, {"key": "ma1:2.4", "p": "謂比丘知法，知義，知時，知節，知己，知衆，知人勝如。…", "s": "A monk knows the teaching, knows the meaning, knows the time, knows moderation,\nknows himself, knows the community, and knows what the better person is like."}]}, {"id": "3", "label": "「云何比丘爲知法耶。", "rows": [{"key": "ma1:3.1", "p": "「云何比丘爲知法耶。…", "s": "“How does a monk know the teaching?"}, {"key": "ma1:3.2", "p": "謂比丘知正經，歌詠，記説，偈咃，因縁，撰録，本起，此説，生處，廣解，未曾有法，及説義。…", "s": "A monk knows the proper <em>sūtra</em>s, songs, explanations, verses, circumstances, records, legends,\nlectures, birth places, extensive discourses, unprecedent…"}, {"key": "ma1:3.3", "p": "是謂比丘爲知法也。…", "s": "This is called a monk who knows the teaching."}]}, {"id": "4", "label": "「若有比丘不知法者，謂不知正經，歌詠，記説，偈咃，因縁，撰録，本起，此説，生處，廣解，未曾有法，及説義。", "rows": [{"key": "ma1:4.1", "p": "「若有比丘不知法者，謂不知正經，歌詠，記説，偈咃，因縁，撰録，本起，此説，生處，廣解，未曾有法，及説義。…", "s": "“Suppose a monk doesn’t know the teaching,\nwhich is to say that he doesn’t know the proper <em>sūtra</em>s, songs, explanations, verses,\ncircumstances, records,…"}, {"key": "ma1:4.2", "p": "如是比丘爲不知法。…", "s": "Such a monk doesn’t know the teaching."}]}, {"id": "5", "label": "「若有比丘善知法者，謂知正經，歌詠，記説，偈咃，因縁，撰録，本起，此説，生處，廣解，未曾有法，及説義。", "rows": [{"key": "ma1:5.1", "p": "「若有比丘善知法者，謂知正經，歌詠，記説，偈咃，因縁，撰録，本起，此説，生處，廣解，未曾有法，及説義。…", "s": "“Suppose a monk knows the teaching well,\nwhich is to say that he knows the proper <em>sūtra</em>s, songs, explanations, verses,\ncircumstances, records, legends,…"}, {"key": "ma1:5.2", "p": "是謂比丘善知法也。…", "s": "This is called a monk who knows the teaching well."}]}, {"id": "6", "label": "「云何比丘爲知義耶。", "rows": [{"key": "ma1:6.1", "p": "「云何比丘爲知義耶。…", "s": "“How does a monk know the meaning?"}, {"key": "ma1:6.2", "p": "謂比丘知彼彼説義是彼義是此義。…", "s": "A monk knows that this or that expression has this or that meaning."}, {"key": "ma1:6.3", "p": "是謂比丘爲知義也。…", "s": "This is called a monk who knows the meaning."}]}, {"id": "7", "label": "「若有比丘不知義者，謂不知彼彼説義是彼義是此義。", "rows": [{"key": "ma1:7.1", "p": "「若有比丘不知義者，謂不知彼彼説義是彼義是此義。…", "s": "“Suppose a monk doesn’t know the meaning,\nwhich is to say that he doesn’t know that this or that expression has this or that meaning."}, {"key": "ma1:7.2", "p": "如是比丘爲不知義。…", "s": "Such a monk doesn’t know the meaning."}]}, {"id": "8", "label": "「若有比丘善知義者，謂知彼彼説義是彼義是此義。", "rows": [{"key": "ma1:8.1", "p": "「若有比丘善知義者，謂知彼彼説義是彼義是此義。…", "s": "“Suppose a monk knows the meaning well,\nwhich is to say that he knows that this or that expression has this or that meaning."}, {"key": "ma1:8.2", "p": "是謂比丘善知義也。…", "s": "This is called a monk who knows the meaning well."}]}, {"id": "9", "label": "「云何比丘爲知時耶。", "rows": [{"key": "ma1:9.1", "p": "「云何比丘爲知時耶。…", "s": "“How does a monk know the time?"}, {"key": "ma1:9.2", "p": "謂比丘知：『是時修下相，是時修高相，是時修捨相。』…", "s": "A monk knows the time to cultivate a humble appearance,\nthe time to cultivate a dignified appearance, and the time to cultivate an indifferent appearance."}, {"key": "ma1:9.3", "p": "是謂比丘爲知時也。…", "s": "This is called a monk who knows the time."}]}, {"id": "10", "label": "「若有比丘不知時者。謂不知：『是時修下相，是時修高相，是時修捨相。』", "rows": [{"key": "ma1:10.1", "p": "「若有比丘不知時者。謂不知：『是時修下相，是時修高相，是時修捨相。』…", "s": "“Suppose a monk doesn’t know the time, which is to say that he doesn’t know the time to cultivate a humble appearance,\nthe time to cultivate a dignified appeara…"}, {"key": "ma1:10.2", "p": "如是比丘爲不知時。…", "s": "Such a monk doesn’t know the time."}]}, {"id": "11", "label": "「若有比丘善知時者。謂知：『是時修下相，是時修高相，是時修捨相。』", "rows": [{"key": "ma1:11.1", "p": "「若有比丘善知時者。謂知：『是時修下相，是時修高相，是時修捨相。』…", "s": "“Suppose a monk knows the time well, which is to say that he knows the time to cultivate a humble appearance,\nthe time to cultivate a dignified appearance, and …"}, {"key": "ma1:11.2", "p": "是謂比丘善知時也。…", "s": "This is called a monk who knows the time well."}]}, {"id": "12", "label": "「云何比丘爲知節耶。", "rows": [{"key": "ma1:12.1", "p": "「云何比丘爲知節耶。…", "s": "“How does a monk know moderation?"}, {"key": "ma1:12.2", "p": "謂比丘知節若飮，若食，若去，若住，若坐，若臥，若語，若默，若大小便，捐除睡眠，修行正智。…", "s": "It means a monk knows moderation whether he is drinking, eating, departing, standing, sitting, lying down,\nspeaking, being silent, relieving himself, rousing hi…"}, {"key": "ma1:12.3", "p": "是謂比丘爲知節也。…", "s": "This is called a monk who knows moderation."}]}, {"id": "13", "label": "「若有比丘不知節者，謂不知若飮，若食，若去，若住，若坐，若臥，若語，若默，若大小便，捐除睡眠，修行正智。", "rows": [{"key": "ma1:13.1", "p": "「若有比丘不知節者，謂不知若飮，若食，若去，若住，若坐，若臥，若語，若默，若大小便，捐除睡眠，修行正智。…", "s": "“Suppose a monk doesn’t know moderation,\nwhich is to say that he doesn’t know it whether he is drinking, eating, departing, standing,\nsitting, lying down, speak…"}, {"key": "ma1:13.2", "p": "如是比丘爲不知節。…", "s": "Such a monk doesn’t know moderation."}]}, {"id": "14", "label": "「若有比丘善知節者，謂知若飮，若食，若去，若住，若坐，若臥，若語，若默，若大小便，捐除睡眠，修行正智。", "rows": [{"key": "ma1:14.1", "p": "「若有比丘善知節者，謂知若飮，若食，若去，若住，若坐，若臥，若語，若默，若大小便，捐除睡眠，修行正智。…", "s": "“Suppose a monk knows moderation well,\nwhich is to say that he knows it whether he is drinking, eating, departing, standing,\nsitting, lying down, speaking, bein…"}, {"key": "ma1:14.2", "p": "是謂比丘善知節也。…", "s": "This is called a monk who knows moderation well."}]}, {"id": "15", "label": "「云何比丘爲知己耶。", "rows": [{"key": "ma1:15.1", "p": "「云何比丘爲知己耶。…", "s": "“How does a monk know himself?"}, {"key": "ma1:15.2", "p": "謂比丘自知：…", "s": "It means a monk knows:"}, {"key": "ma1:15.3", "p": "『我有爾所信，戒，聞，施，慧，辯，阿含，及所得。』…", "s": "‘Such are my belief, discipline, learning, generosity, wisdom, eloquence, scriptures, and attainments.’"}, {"key": "ma1:15.4", "p": "是謂比丘爲知己也。…", "s": "This is called a monk who knows himself."}]}, {"id": "16", "label": "「若有比丘不知己者，謂不自知：", "rows": [{"key": "ma1:16.1", "p": "「若有比丘不知己者，謂不自知：…", "s": "“Suppose a monk doesn’t know himself, which is to say that he doesn’t know:"}, {"key": "ma1:16.2", "p": "『我有爾所信，戒，聞，施，慧，辯，阿含，及所得。』…", "s": "‘Such are my belief, discipline, learning, generosity, wisdom, eloquence, scriptures, and attainments.’"}, {"key": "ma1:16.3", "p": "如是比丘爲不知己。…", "s": "Such a monk doesn’t know himself."}]}, {"id": "17", "label": "「若有比丘善知己者，謂自知：", "rows": [{"key": "ma1:17.1", "p": "「若有比丘善知己者，謂自知：…", "s": "“Suppose a monk knows himself well, which is to say that he knows:"}, {"key": "ma1:17.2", "p": "『我有爾所信，戒，聞，施，慧，辯，阿含，及所得。』…", "s": "‘Such are my belief, discipline, learning, generosity, wisdom, eloquence, scriptures, and attainments.’"}, {"key": "ma1:17.3", "p": "是謂比丘善知己也。…", "s": "This is called a monk who knows himself well."}]}, {"id": "18", "label": "「云何比丘爲知衆耶。", "rows": [{"key": "ma1:18.1", "p": "「云何比丘爲知衆耶。…", "s": "“How does a monk know the community?"}, {"key": "ma1:18.2", "p": "謂比丘知：…", "s": "A monk knows:"}, {"key": "ma1:18.3", "p": "『此刹利衆，此梵志衆，此居士衆，此沙門衆。…", "s": "‘This is a community of warriors … this is a community of brahmins …\nthis is a community of householders … this is a community of ascetics."}, {"key": "ma1:18.4", "p": "我於彼衆應如是去，如是住，如是坐，如是語，如是默。』…", "s": "In that community, I should depart in this way, stand in this way,\nsit in this way, speak in this way, and be silent in this way.’"}, {"key": "ma1:18.5", "p": "是謂比丘爲知衆也。…", "s": "This is called a monk who knows the community."}]}, {"id": "19", "label": "「若有比丘不知衆者，謂不知：", "rows": [{"key": "ma1:19.1", "p": "「若有比丘不知衆者，謂不知：…", "s": "“Suppose a monk doesn’t know the community, which is to say that he doesn’t know:"}, {"key": "ma1:19.2", "p": "『此刹利衆，此梵志衆，此居士衆，此沙門衆。…", "s": "‘This is a community of warriors … this is a community of brahmins …\nthis is a community of householders … this is a community of ascetics."}, {"key": "ma1:19.3", "p": "我於彼衆應如是去，如是住，如是坐，如是語，如是默。』…", "s": "In that community, I should depart in this way, stand in this way,\nsit in this way, speak in this way, and be silent in this way.’"}, {"key": "ma1:19.4", "p": "如是比丘爲不知衆。…", "s": "Such a monk doesn’t know the community."}]}, {"id": "20", "label": "「若有比丘善知衆者，謂知：", "rows": [{"key": "ma1:20.1", "p": "「若有比丘善知衆者，謂知：…", "s": "“Suppose a monk knows the community well, which is to say that he knows:"}, {"key": "ma1:20.2", "p": "『此刹利衆，此梵志衆，此居士衆，此沙門衆。…", "s": "‘This is a community of warriors … this is a community of brahmins …\nthis is a community of householders … this is a community of ascetics."}, {"key": "ma1:20.3", "p": "我於彼衆應如是去，如是住，如是坐，如是語，如是默。』…", "s": "In that community, I should depart in this way, stand in this way,\nsit in this way, speak in this way, and be silent in this way.’"}, {"key": "ma1:20.4", "p": "是謂比丘善知衆也。…", "s": "This is called a monk who knows the community well."}]}, {"id": "21", "label": "「云何比丘知人勝如。", "rows": [{"key": "ma1:21.1", "p": "「云何比丘知人勝如。…", "s": "“How does a monk know the what the better person is like?"}, {"key": "ma1:21.2", "p": "謂比丘知有二種人：有信，有不信。…", "s": "A monk knows there are two kinds of people:\nbelievers and non-believers."}, {"key": "ma1:21.3", "p": "若信者勝。不信者爲不如也。…", "s": "If someone is a believer, they’re the better one;\na non-believer is not."}]}, {"id": "22", "label": "「謂信人復有二種：有數往見比丘，有不數往見比丘。", "rows": [{"key": "ma1:22.1", "p": "「謂信人復有二種：有數往見比丘，有不數往見比丘。…", "s": "“Also, there are two kinds of believers:\nthose who frequently visit the monks and those who don’t frequently visit the monks."}, {"key": "ma1:22.2", "p": "若數往見比丘者勝。不數往見比丘者爲不如也。…", "s": "If someone frequently visits the monks, they’re the better one;\nsomeone who doesn’t frequently visit the monks is not."}]}, {"id": "23", "label": "「謂數往見比丘人復有二種：有禮敬比丘，有不禮敬比丘。", "rows": [{"key": "ma1:23.1", "p": "「謂數往見比丘人復有二種：有禮敬比丘，有不禮敬比丘。…", "s": "“Also, there are two kinds of people who frequently visit the monks:\nthose who revere the monks and those who don’t revere the monks."}, {"key": "ma1:23.2", "p": "若禮敬比丘者勝。不禮敬比丘者爲不如也。…", "s": "If someone reveres the monks, they’re the better one;\nsomeone who doesn’t revere the monks is not."}]}, {"id": "24", "label": "「謂禮敬比丘人復有二種：有問經，有不問經。", "rows": [{"key": "ma1:24.1", "p": "「謂禮敬比丘人復有二種：有問經，有不問經。…", "s": "“Also, there are two kinds of people who revere the monks:\nthose who have questions about the <em>sūtra</em>s and those who don’t have questions about the <em>s…"}, {"key": "ma1:24.2", "p": "若問經者勝。不問經者爲不如也。…", "s": "If someone asks about the <em>sūtra</em>s, they’re the better one;\nsomeone who doesn’t ask about the <em>sūtra</em>s is not."}]}, {"id": "25", "label": "「謂問經人復有二種：有一心聽經，有不一心聽經。", "rows": [{"key": "ma1:25.1", "p": "「謂問經人復有二種：有一心聽經，有不一心聽經。…", "s": "“Also, there are two kinds of people who ask about the <em>sūtra</em>s:\nthose who whole-heartedly listen to the <em>sūtra</em>s and\nthose who don’t whole-hearte…"}, {"key": "ma1:25.2", "p": "若一心聽經者勝。不一心聽經者爲不如也。…", "s": "If someone whole-heartedly listens to the <em>sūtra</em>s, they’re the better one;\nsomeone who doesn’t whole-heartedly listen to the <em>sūtra</em>s is not."}]}, {"id": "26", "label": "「謂一心聽經人復有二種：有聞持法，有聞不持法。", "rows": [{"key": "ma1:26.1", "p": "「謂一心聽經人復有二種：有聞持法，有聞不持法。…", "s": "“Also, there are two kinds of people who whole-heartedly listen to the <em>sūtra</em>s:\nthose who hear and retain the teaching and those who hear but don’t reta…"}, {"key": "ma1:26.2", "p": "若聞持法者勝。聞不持法者爲不如也。…", "s": "If someone hears and retains the teaching, they’re the better one;\nsomeone who hears but doesn’t retain the teaching is not."}]}, {"id": "27", "label": "「謂聞持法人復有二種：有聞法觀義，有聞法不觀義。", "rows": [{"key": "ma1:27.1", "p": "「謂聞持法人復有二種：有聞法觀義，有聞法不觀義。…", "s": "“Also, there are two kinds of people who hear and retain the teaching:\nthose who hear the teaching and contemplate its meaning and\nthose who hear the teaching b…"}, {"key": "ma1:27.2", "p": "若聞法觀義者勝。聞法不觀義者爲不如也。…", "s": "If someone hears the teaching and contemplates its meaning, they’re the better one;\nsomeone who hears the teaching but doesn’t contemplate its meaning is not."}]}, {"id": "28", "label": "「謂聞法觀義人復有二種：有知法，知義，向法次法，隨順於法，如法行之；有不知法，不知義，不向法次法，不隨順法，不如法行。", "rows": [{"key": "ma1:28.1", "p": "「謂聞法觀義人復有二種：有知法，知義，向法次法，隨順於法，如法行之；有不知法，不知義，不向法次法，不…", "s": "“Also, there are two kinds of people who hear the teaching and contemplate its meaning:\nThere are those who know the teaching, know its meaning, go from one pri…"}, {"key": "ma1:28.2", "p": "若知法，知義，向法次法，隨順於法，如法行者勝。…", "s": "If someone knows the teaching, knows its meaning, goes from one principle to the next,\nconforms to the teaching, and conducts themselves according to the teachi…"}, {"key": "ma1:28.3", "p": "不知法，不知義，不向法次法，不隨順法，不如法行者爲不如也。…", "s": "Someone who doesn’t know the teaching, doesn’t know its meaning, doesn’t go from one principle to the next,\ndoesn’t conform to the teaching, and doesn’t conduct…"}]}, {"id": "29", "label": "「謂知法，知義，向法次法，隨順於法，如法行人復有二種：有自饒益，亦饒益他，饒益多人，愍傷世間，爲天爲人求義及饒益，求安隱快樂；有不自饒益，亦不饒益他，不饒益多人，不愍傷世間，不爲天不爲人求義及饒益，求安隱快樂。", "rows": [{"key": "ma1:29.1", "p": "「謂知法，知義，向法次法，隨順於法，如法行人復有二種：有自饒益，亦饒益他，饒益多人，愍傷世間，爲天爲…", "s": "“It also means that there are two kinds of people who know the teaching, know its meaning,\ngo from one principle to the next, conform to the teaching, and condu…"}, {"key": "ma1:29.2", "p": "若自饒益，亦饒益他，饒益多人，愍傷世間，爲天爲人求義及饒益，求安隱快樂者，此人於彼人中爲極第一。…", "s": "If someone benefits themselves, benefits others, benefits many people, pities the world,\nseeks both meaning and benefit for gods and humans,\nand seeks their pea…"}, {"key": "ma1:29.3", "p": "爲大，爲上，爲最，爲勝，爲尊，爲妙。…", "s": "They’re great, better, exceptional, excellent, honored, and marvelous."}]}, {"id": "30", "label": "「譬如因牛有乳，因乳有酪，因酪有生酥，因生酥有熟酥，因熟酥有酥精。", "rows": [{"key": "ma1:30.1", "p": "「譬如因牛有乳，因乳有酪，因酪有生酥，因生酥有熟酥，因熟酥有酥精。…", "s": "“Just as there’s milk because of a cow, there’s cream because of milk,\nbutter because of cream, refined butter because of butter, and ghee because of refined bu…"}, {"key": "ma1:30.2", "p": "酥精者於彼中爲極第一。…", "s": "Ghee is the very best of those things."}, {"key": "ma1:30.3", "p": "爲大，爲上，爲最，爲勝，爲尊，爲妙。…", "s": "It’s great, better, exceptional, excellent, honored, and marvelous."}, {"key": "ma1:30.4", "p": "如是，若人自饒益，亦饒益他，饒益多人，愍傷世間，爲天爲人求義及饒益，求安隱快樂。…", "s": "Such is the person who benefits himself, benefits others, benefits many people, pities the world,\nseeks both meaning and benefit for gods and humans, and seeks …"}, {"key": "ma1:30.5", "p": "此二人，如上所説，如上分別，如上施設，此爲第一，爲大，爲上，爲最，爲勝，爲尊，爲妙。…", "s": "Of these pairs of people as they’ve been described, as they’ve been discerned, and as they’ve been defined,\nthey’re the best, great, better, exceptional, excell…"}, {"key": "ma1:30.6", "p": "是謂比丘知人勝如。」…", "s": "This is called a monk who knows what the better person is like.”"}]}, {"id": "31", "label": "佛説如是。", "rows": [{"key": "ma1:31.1", "p": "佛説如是。…", "s": "This is what the Buddha said."}, {"key": "ma1:31.2", "p": "彼諸比丘聞佛所説，歡喜，奉行。…", "s": "Those monks who heard what the Buddha taught rejoiced and approved."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "patton", "label": "Patton", "dot": "#5d8ac8", "light": {"bg": "#eef2f8", "text": "#0d1a2b"}, "dark": {"bg": "#121820", "text": "#a8c0d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "patton", "label": "Patton", "dot": "#5d8ac8", "light": {"bg": "#eef2f8", "text": "#0d1a2b"}, "dark": {"bg": "#121820", "text": "#a8c0d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Charles Patton's English translation from the Chinese"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2067,8 +2126,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2108,30 +2320,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

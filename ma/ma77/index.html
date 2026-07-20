@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma77:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊娑雞帝，在青林中。", "rows": [{"key": "ma77:2.1", "p": "一時，佛遊娑雞帝，在青林中。…", "s": "At one time, the Buddha was traveling in the country of Sāketa, dwelling in the Dark Forest."}]}, {"id": "3", "label": "爾時，娑雞帝有三族姓子，尊者阿那律陀、尊者難提、", "rows": [{"key": "ma77:3.1", "p": "爾時，娑雞帝有三族姓子，尊者阿那律陀、尊者難提、…", "s": "At that time, there were three clansmen in Sāketa—"}, {"key": "ma77:3.2", "p": "尊者金毘羅，並皆年少新出家學，共來入此正法不久。…", "s": "the venerable Anuruddha, the venerable Nandiya, and the venerable Kimbila—"}, {"key": "ma77:3.3", "p": "爾時，世尊問諸比丘：「此三族姓子並皆年少新出家學，…", "s": "all of whom were young and had recently left home to study, having entered this true Dharma not long ago."}, {"key": "ma77:3.4", "p": "共來入此正法不久，…", "s": "Then the World-Honored One asked the monks:"}, {"key": "ma77:3.5", "p": "此三族姓子頗樂於此正法、律中行梵行耶？…", "s": "'These three clansmen are all young and have recently left home to study, having entered this true Dharma not long ago."}, {"key": "ma77:3.6", "p": "」時，諸比丘嘿然不答。…", "s": "Do these three clansmen delight in practicing the holy life under this Dharma and discipline?'\nAt that time, the monks remained silent and did not answer."}]}, {"id": "4", "label": "世尊復再三問諸比丘：「此三族姓子並皆年少新出家學，", "rows": [{"key": "ma77:4.1", "p": "世尊復再三問諸比丘：「此三族姓子並皆年少新出家學，…", "s": "The World-Honored One asked the monks a second and third time:"}, {"key": "ma77:4.2", "p": "共來入此正法不久，…", "s": "'These three clansmen are all young and have recently left home to study, having entered this true Dharma not long ago."}, {"key": "ma77:4.3", "p": "此三族姓子頗樂於此正法、律中行梵行耶？…", "s": "Do these three clansmen delight in practicing the holy life under this Dharma and discipline?'"}, {"key": "ma77:4.4", "p": "」時，諸比丘亦復再三嘿然不答。…", "s": "At that time, the monks again remained silent and did not answer a second or third time."}]}, {"id": "5", "label": "於是，世尊自問三族姓子，告尊者阿那律陀：", "rows": [{"key": "ma77:5.1", "p": "於是，世尊自問三族姓子，告尊者阿那律陀：…"}, {"key": "ma77:5.2", "p": "「汝等三族姓子並皆年少新出家學，…", "s": "Then the World-Honored One himself asked the three clansmen, addressing the venerable Anuruddha:"}, {"key": "ma77:5.3", "p": "共來入此正法不久，阿那律陀！…", "s": "'You three clansmen are all young and have recently left home to study, having entered this true Dharma not long ago."}, {"key": "ma77:5.4", "p": "汝等頗樂此正法、律中行梵行耶？」…", "s": "Anuruddha, do you delight in practicing the holy life under this Dharma and discipline?'"}]}, {"id": "6", "label": "尊者阿那律陀白曰：「世尊！如是。", "rows": [{"key": "ma77:6.1", "p": "尊者阿那律陀白曰：「世尊！如是。…", "s": "The venerable Anuruddha replied:"}, {"key": "ma77:6.2", "p": "我等樂此正法，修行梵行。」…", "s": "'World-Honored One, it is so.\nWe delight in this Dharma and practice the holy life.'"}]}, {"id": "7", "label": "世尊問曰：「阿那律陀！", "rows": [{"key": "ma77:7.1", "p": "世尊問曰：「阿那律陀！…", "s": "The Blessed One asked:"}, {"key": "ma77:7.2", "p": "汝等小時年幼童子，清淨黑髮，…", "s": "'Anuruddha, when you were young children, with clean black hair,"}, {"key": "ma77:7.3", "p": "身體盛壯，樂於遊戲，樂數澡浴，…", "s": "in the prime of your body, delighting in play, delighting in frequent bathing,"}, {"key": "ma77:7.4", "p": "嚴愛其身，於後親親及其父母皆相愛戀，…", "s": "cherishing your bodies, your relatives and parents, loving and attached,"}, {"key": "ma77:7.5", "p": "悲泣啼哭，不欲令汝出家學道。…", "s": "wept and cried, not wanting you to go forth and train."}, {"key": "ma77:7.6", "p": "汝等故能剃除鬚髮，著袈裟衣，…", "s": "Yet you were able to shave off your hair and beard, put on the monastic robe,"}, {"key": "ma77:7.7", "p": "至信、捨家、無家、學道，阿那律陀！…", "s": "and with faith go forth from the home life into homelessness."}, {"key": "ma77:7.8", "p": "汝等不畏王而行學道，亦不畏賊，不畏負債，不畏恐怖，…", "s": "Anuruddha, did you go forth to train not because of fear of the king, nor fear of thieves,"}, {"key": "ma77:7.9", "p": "不畏貧窮不得活故而行學道，但厭生、老、…", "s": "nor fear of debt, nor fear of terror, nor fear of poverty and inability to live,"}, {"key": "ma77:7.10", "p": "病、死、啼哭、憂苦，或復欲得大苦聚邊。…", "s": "but because you were weary of birth, aging, sickness, death, weeping,"}, {"key": "ma77:7.11", "p": "阿那律陀！…", "s": "and sorrow, or perhaps wishing to attain the end of the great mass of suffering?"}, {"key": "ma77:7.12", "p": "汝等不以如是心故出家學道耶？」…", "s": "Anuruddha, did you not go forth and train with such a mind?'"}]}, {"id": "8", "label": "答曰：「如是。」", "rows": [{"key": "ma77:8.1", "p": "答曰：「如是。」…", "s": "He replied:\n'Yes, that is so.'"}]}, {"id": "9", "label": "「阿那律陀！", "rows": [{"key": "ma77:9.1", "p": "「阿那律陀！…"}, {"key": "ma77:9.2", "p": "若族姓子以如是心出家學道者，…", "s": "'Anuruddha, if a clansman goes forth and trains with such a mind,"}, {"key": "ma77:9.3", "p": "為知所由，得無量善法耶？」…", "s": "does he understand the reason and attain countless wholesome qualities?'"}]}, {"id": "10", "label": "尊者阿那律陀白世尊曰：「世尊為法本，世尊為法主，", "rows": [{"key": "ma77:10.1", "p": "尊者阿那律陀白世尊曰：「世尊為法本，世尊為法主，…", "s": "The venerable Anuruddha said to the Blessed One:\n'The Blessed One is the source of the Dharma,"}, {"key": "ma77:10.2", "p": "法由世尊，唯願說之，我等聞已，得廣知義。」…", "s": "the Blessed One is the lord of the Dharma, the Dharma comes from the Blessed One.\nPlease explain it, and having heard it, we will understand the meaning broadly…"}]}, {"id": "11", "label": "佛便告曰：「阿那律陀！", "rows": [{"key": "ma77:11.1", "p": "佛便告曰：「阿那律陀！…", "s": "The Buddha then told them:"}, {"key": "ma77:11.2", "p": "汝等諦聽，善思念之，我當為汝分別其義。…", "s": "'Anuruddha, listen carefully and pay close attention, I will explain its meaning for you.'"}, {"key": "ma77:11.3", "p": "」阿那律陀等受教而聽。…", "s": "Anuruddha and the others listened, receiving the instruction."}]}, {"id": "12", "label": "世尊告曰：「阿那律陀！", "rows": [{"key": "ma77:12.1", "p": "世尊告曰：「阿那律陀！…", "s": "The Blessed One said:"}, {"key": "ma77:12.2", "p": "若為欲所覆、惡法所纏者，不得捨樂、無上止息，…", "s": "'Anuruddha, one who is covered by desire and entangled by unwholesome\nstates cannot attain the bliss of renunciation and the supreme stilling."}, {"key": "ma77:12.3", "p": "彼心生增伺、瞋恚、睡眠，…", "s": "In such a one, the mind gives rise to resentment, anger, and drowsiness;"}, {"key": "ma77:12.4", "p": "心生不樂，身生頻伸，多食心憂；…", "s": "the mind gives rise to discontent;"}, {"key": "ma77:12.5", "p": "彼比丘便不能忍飢渴、寒熱、…", "s": "the body gives rise to stretching;"}, {"key": "ma77:12.6", "p": "蚊虻、蠅蚤、風日所逼，惡聲、…", "s": "one eats much and the mind is anxious."}, {"key": "ma77:12.7", "p": "捶杖亦不能忍，身遇諸疾極為苦痛，…", "s": "That monk cannot endure hunger and thirst, cold and heat, mosquitoes, gadflies, flies, fleas, wind, and sun;\nhe cannot endure harsh sounds and beatings;"}, {"key": "ma77:12.8", "p": "至命欲絕，諸不可樂，皆不堪耐。…", "s": "when his body encounters various painful illnesses,"}, {"key": "ma77:12.9", "p": "所以者何？…", "s": "even to the point of death, he cannot bear all the unpleasant things."}, {"key": "ma77:12.10", "p": "以為欲所覆、惡法所纏，不得捨樂、無上止息故。…", "s": "Why is that?"}, {"key": "ma77:12.11", "p": "若有離欲，非為惡法之所纏者，…", "s": "Because he is covered by desire and entangled by unwholesome states,"}, {"key": "ma77:12.12", "p": "必得捨樂及無上止息，彼心不生增伺、…", "s": "and cannot attain the bliss of renunciation and the supreme stilling."}, {"key": "ma77:12.13", "p": "瞋恚、睡眠、心不生不樂，…", "s": "But one who is free from desire and not entangled by unwholesome states\nwill surely attain the bliss of renunciation and the supreme stilling."}, {"key": "ma77:12.14", "p": "身不生頻伸，亦不多食，心不愁憂；…", "s": "In such a one, the mind does not give rise to resentment, anger, or drowsiness;\nthe mind does not give rise to discontent;"}, {"key": "ma77:12.15", "p": "彼比丘便能忍飢渴、寒熱、…", "s": "the body does not give rise to stretching;"}, {"key": "ma77:12.16", "p": "蚊虻、蠅蚤、風日所逼，惡聲、…", "s": "one does not eat much, and the mind is not anxious."}, {"key": "ma77:12.17", "p": "捶杖亦能忍之，身遇諸疾極為苦痛，…", "s": "That monk can endure hunger and thirst, cold and heat, mosquitoes, gadflies, flies, fleas, wind, and sun;"}, {"key": "ma77:12.18", "p": "至命欲絕，諸不可樂，皆能堪耐。…", "s": "he can endure harsh sounds and beatings;"}, {"key": "ma77:12.19", "p": "所以者何？…", "s": "when his body encounters various painful illnesses, even to the point of death, he can bear all the unpleasant things."}, {"key": "ma77:12.20", "p": "以非為欲所覆故，不為惡法之所纏故，…", "s": "Why is that?"}, {"key": "ma77:12.21", "p": "又得捨樂、無上止息故。」…", "s": "Because he is not covered by desire, not entangled by unwholesome states,\nand has attained the bliss of renunciation and the supreme stilling.'"}]}, {"id": "13", "label": "世尊問曰：「阿那律陀！", "rows": [{"key": "ma77:13.1", "p": "世尊問曰：「阿那律陀！…"}, {"key": "ma77:13.2", "p": "如來以何義故？…", "s": "The Blessed One asked:"}, {"key": "ma77:13.3", "p": "或有所除，或有所用，或有所堪，…", "s": "\"Anuruddha, for what reason does the Tathāgata sometimes remove,"}, {"key": "ma77:13.4", "p": "或有所止，或有所吐耶？」…", "s": "sometimes use, sometimes endure, sometimes stop, or sometimes expel?\""}]}, {"id": "14", "label": "阿那律陀白世尊曰：「世尊為法本，世尊為法主，", "rows": [{"key": "ma77:14.1", "p": "阿那律陀白世尊曰：「世尊為法本，世尊為法主，…", "s": "Anuruddha said to the Blessed One:\n\"The Blessed One is the source of the Dharma,"}, {"key": "ma77:14.2", "p": "法由世尊，唯願說之，我等聞已，得廣知義。」…", "s": "the Blessed One is the master of the Dharma, the Dharma comes from the Blessed One.\nPlease explain it, and after hearing it, we will understand its meaning wide…"}]}, {"id": "15", "label": "佛便告曰：「阿那律陀！", "rows": [{"key": "ma77:15.1", "p": "佛便告曰：「阿那律陀！…", "s": "The Buddha then told him:"}, {"key": "ma77:15.2", "p": "汝等諦聽，善思念之，我當為汝分別其義。…", "s": "\"Anuruddha, listen carefully, pay attention and remember it well."}, {"key": "ma77:15.3", "p": "」阿那律陀等受教而聽。…", "s": "I will explain its meaning for you.\"\nAnuruddha and the others received the teaching and listened."}]}, {"id": "16", "label": "世尊告曰：「阿那律陀！", "rows": [{"key": "ma77:16.1", "p": "世尊告曰：「阿那律陀！…"}, {"key": "ma77:16.2", "p": "諸漏穢污為當來有本，煩熱苦報，…", "s": "The Blessed One said:"}, {"key": "ma77:16.3", "p": "生、老、病、死因，如來非不盡，…", "s": "\"Anuruddha, the taints, defilements, and impurities are the root of future existence,"}, {"key": "ma77:16.4", "p": "非不知故，或有所除，或有所用，…", "s": "the cause of affliction, painful retribution, birth, aging, sickness, and death."}, {"key": "ma77:16.5", "p": "或有所堪，或有所止，或有所吐。…", "s": "It is not that the Tathāgata does not completely eliminate them or does not know them,"}, {"key": "ma77:16.6", "p": "阿那律陀！…", "s": "so he sometimes removes, sometimes uses, sometimes endures, sometimes stops, or sometimes expels."}, {"key": "ma77:16.7", "p": "如來但因此身故，因六處故，因壽命故，或有所除，…", "s": "Anuruddha, it is only because of this body, because of the six sense bases,"}, {"key": "ma77:16.8", "p": "或有所用，或有所堪，或有所止，或有所吐。…", "s": "and because of the life span that the Tathāgata sometimes removes,"}, {"key": "ma77:16.9", "p": "阿那律陀！…", "s": "sometimes uses, sometimes endures, sometimes stops, or sometimes expels."}, {"key": "ma77:16.10", "p": "如來以此義故，或有所除，或有所用，…", "s": "Anuruddha, it is for this reason that the Tathāgata sometimes removes,"}, {"key": "ma77:16.11", "p": "或有所堪，或有所止，或有所吐。」…", "s": "sometimes uses, sometimes endures, sometimes stops, or sometimes expels.\""}]}, {"id": "17", "label": "世尊問曰：「阿那律陀！", "rows": [{"key": "ma77:17.1", "p": "世尊問曰：「阿那律陀！…", "s": "The Blessed One asked:"}, {"key": "ma77:17.2", "p": "如來以何義故，住無事處、山林樹下，樂居高巖，…", "s": "\"Anuruddha, for what reason does the Tathāgata dwell in secluded places, forests under trees, delight in high crags,"}, {"key": "ma77:17.3", "p": "寂無音聲，遠離，無惡，無有人民，隨順燕坐耶？」…", "s": "where it is silent, without noise, remote, without evil, without people, and practice sitting meditation in accordance?\""}]}, {"id": "18", "label": "尊者阿那律陀白世尊曰：「世尊為法本，世尊為法主，", "rows": [{"key": "ma77:18.1", "p": "尊者阿那律陀白世尊曰：「世尊為法本，世尊為法主，…", "s": "The venerable Anuruddha said to the Blessed One:\n\"The Blessed One is the source of the Dharma,"}, {"key": "ma77:18.2", "p": "法由世尊，唯願說之，我等聞已，得廣知義。」…", "s": "the Blessed One is the master of the Dharma, the Dharma comes from the Blessed One.\nPlease explain it, and after hearing it, we will understand its meaning wide…"}]}, {"id": "19", "label": "佛便告曰：「阿那律陀！", "rows": [{"key": "ma77:19.1", "p": "佛便告曰：「阿那律陀！…", "s": "The Buddha then said:"}, {"key": "ma77:19.2", "p": "汝等諦聽，善思念之，我當為汝分別其義。…", "s": "\"Ānuruddha, listen carefully and pay close attention;"}, {"key": "ma77:19.3", "p": "」阿那律陀等受教而聽。…", "s": "I will explain the meaning for you.\"\nĀnuruddha and the others received the instruction and listened."}]}, {"id": "20", "label": "世尊告曰：「阿那律陀！", "rows": [{"key": "ma77:20.1", "p": "世尊告曰：「阿那律陀！…", "s": "The Blessed One said:"}, {"key": "ma77:20.2", "p": "如來非為未得欲得、未獲欲獲、…", "s": "\"Ānuruddha, the Tathāgata does not dwell in remote places, forests, under trees,"}, {"key": "ma77:20.3", "p": "未證欲證故，住無事處、山林樹下，…", "s": "delighting in high cliffs, in quiet places without noise, secluded, without evil, without people,"}, {"key": "ma77:20.4", "p": "樂居高巖，寂無音聲，遠離，…", "s": "practicing sitting meditation, because he has not yet attained what he wants to attain,"}, {"key": "ma77:20.5", "p": "無惡，無有人民，隨順燕坐。…", "s": "not yet obtained what he wants to obtain, not yet realized what he wants to realize."}, {"key": "ma77:20.6", "p": "阿那律陀！…", "s": "Ānuruddha, the Tathāgata dwells in remote places, forests, under trees, delighting in high cliffs,"}, {"key": "ma77:20.7", "p": "如來但以二義故，住無事處、…", "s": "in quiet places without noise, secluded, without evil,"}, {"key": "ma77:20.8", "p": "山林樹下，樂居高巖，寂無音聲，遠離，…", "s": "without people, practicing sitting meditation, for only two reasons:"}, {"key": "ma77:20.9", "p": "無惡，無有人民，隨順燕坐：…", "s": "first, to dwell happily in the present teaching;"}, {"key": "ma77:20.10", "p": "一者為自現法樂居故，二者為慈愍後生人故。…", "s": "second, out of compassion for later generations."}, {"key": "ma77:20.11", "p": "或有後生人效如來住無事處、山林樹下，樂居高巖，…", "s": "There may be later people who imitate the Tathāgata, dwelling in remote places, forests, under trees,"}, {"key": "ma77:20.12", "p": "寂無音聲，遠離，無惡，無有人民，隨順燕坐。…", "s": "delighting in high cliffs, in quiet places without noise, secluded,"}, {"key": "ma77:20.13", "p": "阿那律陀！…", "s": "without evil, without people, practicing sitting meditation."}, {"key": "ma77:20.14", "p": "如來以此義故，住無事處、山林樹下，樂居高巖，…", "s": "Ānuruddha, it is for this reason that the Tathāgata dwells in remote places,"}, {"key": "ma77:20.15", "p": "寂無音聲，遠離，無惡，無有人民，隨順燕坐。」…", "s": "forests, under trees, delighting in high cliffs, in quiet places without noise,\nsecluded, without evil, without people, practicing sitting meditation.\""}]}, {"id": "21", "label": "世尊問曰：「阿那律陀！", "rows": [{"key": "ma77:21.1", "p": "世尊問曰：「阿那律陀！…", "s": "The Blessed One asked:"}, {"key": "ma77:21.2", "p": "如來以何義故，弟子命終，記說某生某處、某生某處？」…", "s": "\"Ānuruddha, for what reason does the Tathāgata, when a disciple has passed away,\ndeclare that he was reborn in such-and-such a place, in such-and-such a place?\""}]}, {"id": "22", "label": "尊者阿那律陀白世尊曰：「世尊為法本，世尊為法主，", "rows": [{"key": "ma77:22.1", "p": "尊者阿那律陀白世尊曰：「世尊為法本，世尊為法主，…", "s": "The venerable Ānuruddha said to the Blessed One:\n\"The Blessed One is the source of the teaching, the Blessed One is the master of the teaching;"}, {"key": "ma77:22.2", "p": "法由世尊，唯願說之，我等聞已，得廣知義。」…", "s": "the teaching comes from the Blessed One.\nPlease explain it, and having heard it, we will understand its meaning broadly.\""}]}, {"id": "23", "label": "佛便告曰：「阿那律陀！", "rows": [{"key": "ma77:23.1", "p": "佛便告曰：「阿那律陀！…", "s": "The Buddha then said:"}, {"key": "ma77:23.2", "p": "汝等諦聽，善思念之，我當為汝分別其義。…", "s": "\"Ānuruddha, listen carefully and pay close attention;"}, {"key": "ma77:23.3", "p": "」阿那律陀等受教而聽。…", "s": "I will explain the meaning for you.\"\nĀnuruddha and the others received the instruction and listened."}]}, {"id": "24", "label": "世尊告曰：「阿那律陀！", "rows": [{"key": "ma77:24.1", "p": "世尊告曰：「阿那律陀！…", "s": "The Blessed One said:"}, {"key": "ma77:24.2", "p": "如來非為趣為人說，亦不欺誑人，亦不欲得人歡樂故，…", "s": "\"Ānuruddha, the Tathāgata does not declare,"}, {"key": "ma77:24.3", "p": "弟子命終，記說某生某處、某生某處。…", "s": "when a disciple has passed away, that he was reborn in such-and-such a place,"}, {"key": "ma77:24.4", "p": "阿那律陀！…", "s": "in such-and-such a place, in order to please people, nor to deceive people, nor to gain people's delight."}, {"key": "ma77:24.5", "p": "如來但為清信族姓男、族姓女，…", "s": "Ānuruddha, the Tathāgata does so only for the sake of faithful clansmen and clanwomen who have great faith, great love,"}, {"key": "ma77:24.6", "p": "極信極愛，極生喜悅，聞此正法、…", "s": "and great joy, and who, having heard this true teaching and discipline,"}, {"key": "ma77:24.7", "p": "律已，或心願效如是如是，…", "s": "may wish in their hearts to emulate such-and-such."}, {"key": "ma77:24.8", "p": "故弟子命終，記說某生某處、某生某處。…", "s": "Therefore, when a disciple has passed away,\nhe declares that he was reborn in such-and-such a place, in such-and-such a place."}, {"key": "ma77:24.9", "p": "若比丘聞某尊者於某處命終，彼為佛所記，得究竟智，…", "s": "If a monk hears that a certain venerable has passed away in a certain place,"}, {"key": "ma77:24.10", "p": "生已盡，梵行已立，所作已辦，不更受有，知如真。…", "s": "and that he was declared by the Buddha to have attained final knowledge, with birth exhausted,"}, {"key": "ma77:24.11", "p": "或自見彼尊者，或復從他數數聞之，彼尊者如是有信、…", "s": "the holy life established, what was to be done accomplished, no more existence to come,"}, {"key": "ma77:24.12", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "knowing it as it truly is—whether he himself saw that venerable,"}, {"key": "ma77:24.13", "p": "其人聞已，憶彼尊者有信、持戒、博聞、惠施、…", "s": "or repeatedly heard from others that that venerable had such faith, such virtuous behavior,"}, {"key": "ma77:24.14", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "such learning, such generosity, such wisdom—that person, having heard it,"}, {"key": "ma77:24.15", "p": "阿那律陀！…", "s": "recollects that venerable's faith, virtuous behavior, learning, generosity, and wisdom,"}, {"key": "ma77:24.16", "p": "如是比丘必得差降安樂住止。…", "s": "and having heard this true teaching and discipline, may wish in his heart to emulate such-and-such.\nĀnuruddha, such a monk will surely attain a peaceful and hap…"}]}, {"id": "25", "label": "「阿那律陀！", "rows": [{"key": "ma77:25.1", "p": "「阿那律陀！…", "s": "\"Anuruddha!"}, {"key": "ma77:25.2", "p": "復次，比丘聞某尊者於某處命終，彼為佛所記，…", "s": "Furthermore, a monk hears that a certain venerable has passed away in a certain place,"}, {"key": "ma77:25.3", "p": "五下分結已盡，生於彼間而般涅槃，…", "s": "and that the Blessed One has declared that he,"}, {"key": "ma77:25.4", "p": "得不退法，不還此世。…", "s": "having exhausted the five lower fetters,"}, {"key": "ma77:25.5", "p": "或自見彼尊者，或復從他數數聞之，彼尊者如是有信、…", "s": "is reborn in that realm and attains final Nibbāna, never to return from that world."}, {"key": "ma77:25.6", "p": "如是持戒、如是博聞、如是慧施、如是智慧。…", "s": "Whether he sees that venerable himself or repeatedly hears from others about him—"}, {"key": "ma77:25.7", "p": "其人聞已，憶彼尊者有信、持戒、博聞、惠施、…", "s": "that venerable has such faith, such virtuous behavior, such learning, such generosity, such wisdom."}, {"key": "ma77:25.8", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "Having heard this, he recollects that venerable's faith, virtuous behavior, learning, generosity, and wisdom."}, {"key": "ma77:25.9", "p": "阿那律陀！…", "s": "Having heard this true Dharma and discipline, he may wish in his heart to emulate him in just such a way."}, {"key": "ma77:25.10", "p": "如是比丘必得差降安樂住止。…", "s": "Anuruddha!\nSuch a monk will surely attain a peaceful abiding with distinction.\""}]}, {"id": "26", "label": "「阿那律陀！", "rows": [{"key": "ma77:26.1", "p": "「阿那律陀！…", "s": "\"Anuruddha!"}, {"key": "ma77:26.2", "p": "復次，比丘聞某尊者於某處命終，…", "s": "Furthermore, a monk hears that a certain venerable has passed away in a certain place,"}, {"key": "ma77:26.3", "p": "彼為佛所記，三結已盡，…", "s": "and that the Blessed One has declared that he, having exhausted the three fetters and weakened greed,"}, {"key": "ma77:26.4", "p": "婬怒癡薄，得一往來天上人間，一往來已而得苦際。…", "s": "hatred, and delusion, is a once-returner, coming back once to the human and heavenly realms,"}, {"key": "ma77:26.5", "p": "或自見彼尊者，或復從他數數聞之，彼尊者如是有信、…", "s": "and after that one return attains the end of suffering."}, {"key": "ma77:26.6", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "Whether he sees that venerable himself or repeatedly hears from others about him—"}, {"key": "ma77:26.7", "p": "其人聞已，憶彼尊者有信、持戒、博聞、惠施、…", "s": "that venerable has such faith, such virtuous behavior, such learning, such generosity, such wisdom."}, {"key": "ma77:26.8", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "Having heard this, he recollects that venerable's faith, virtuous behavior, learning, generosity, and wisdom."}, {"key": "ma77:26.9", "p": "阿那律陀！…", "s": "Having heard this true Dharma and discipline, he may wish in his heart to emulate him in just such a way."}, {"key": "ma77:26.10", "p": "如是比丘必得差降安樂住止。…", "s": "Anuruddha!\nSuch a monk will surely attain a peaceful abiding with distinction.\""}]}, {"id": "27", "label": "「阿那律陀！", "rows": [{"key": "ma77:27.1", "p": "「阿那律陀！…", "s": "\"Anuruddha!"}, {"key": "ma77:27.2", "p": "復次，比丘聞某尊者於某處命終，…", "s": "Furthermore, a monk hears that a certain venerable has passed away in a certain place,"}, {"key": "ma77:27.3", "p": "彼為佛所記，三結已盡，得須陀洹，…", "s": "and that the Blessed One has declared that he, having exhausted the three fetters, has attained stream-entry,"}, {"key": "ma77:27.4", "p": "不墮惡法，定趣正覺，極受七有，…", "s": "will not fall into evil states, is definitely headed for enlightenment, and will undergo at most seven existences,"}, {"key": "ma77:27.5", "p": "天上人間七往來已而得苦際。…", "s": "coming and going seven times among humans and devas, and after that attains the end of suffering."}, {"key": "ma77:27.6", "p": "或自見彼尊者，或復從他數數聞之，彼尊者如是有信、…", "s": "Whether he sees that venerable himself or repeatedly hears from others about him—"}, {"key": "ma77:27.7", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "that venerable has such faith, such virtuous behavior, such learning, such generosity, such wisdom."}, {"key": "ma77:27.8", "p": "其人聞已，憶彼尊者有信、持戒、博聞、惠施、…", "s": "Having heard this, he recollects that venerable's faith, virtuous behavior, learning, generosity, and wisdom."}, {"key": "ma77:27.9", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "Having heard this true Dharma and discipline, he may wish in his heart to emulate him in just such a way."}, {"key": "ma77:27.10", "p": "阿那律陀！…", "s": "Anuruddha!"}, {"key": "ma77:27.11", "p": "如是比丘必得差降安樂住止。…", "s": "Such a monk will surely attain a peaceful abiding with distinction.\""}]}, {"id": "28", "label": "「阿那律陀！", "rows": [{"key": "ma77:28.1", "p": "「阿那律陀！…", "s": "\"Anuruddha!"}, {"key": "ma77:28.2", "p": "若比丘尼聞某比丘尼於某處命終，…", "s": "If a nun hears that a certain nun has passed away in a certain place,"}, {"key": "ma77:28.3", "p": "彼為佛所記，得究竟智，…", "s": "and that the Blessed One has declared that she has attained final knowledge:"}, {"key": "ma77:28.4", "p": "生已盡，梵行已立，所作已辦，不更受有，知如真。…", "s": "birth is exhausted, the holy life has been established, what had to be done has been done,"}, {"key": "ma77:28.5", "p": "或自見彼比丘尼，或復從他數數聞之，…", "s": "there is no further state of existence, and she knows it as it really is."}, {"key": "ma77:28.6", "p": "彼比丘尼如是有信、…", "s": "Whether she sees that nun herself or repeatedly hears from others about her—"}, {"key": "ma77:28.7", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "that nun has such faith, such virtuous behavior, such learning, such generosity, such wisdom."}, {"key": "ma77:28.8", "p": "其人聞已，憶彼比丘尼有信、持戒、博聞、惠施、…", "s": "Having heard this, she recollects that nun's faith, virtuous behavior, learning, generosity, and wisdom."}, {"key": "ma77:28.9", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "Having heard this true Dharma and discipline, she may wish in her heart to emulate her in just such a way."}, {"key": "ma77:28.10", "p": "阿那律陀！…", "s": "Anuruddha!"}, {"key": "ma77:28.11", "p": "如是比丘尼必得差降安樂住止。…", "s": "Such a nun will surely attain a peaceful abiding with distinction.\""}]}, {"id": "29", "label": "「阿那律陀！", "rows": [{"key": "ma77:29.1", "p": "「阿那律陀！…", "s": "\"Anuruddha!"}, {"key": "ma77:29.2", "p": "復次，比丘尼聞某比丘尼於某處命終，彼為佛所記，…", "s": "Furthermore, a nun hears that a certain nun has passed away in a certain place,"}, {"key": "ma77:29.3", "p": "五下分結已盡，生於彼間而般涅槃，…", "s": "and that the Blessed One has declared that she,"}, {"key": "ma77:29.4", "p": "得不退法，不還此生。…", "s": "having exhausted the five lower fetters,"}, {"key": "ma77:29.5", "p": "或自見彼比丘尼，或復從他數數聞之，…", "s": "is reborn in that realm and attains final Nibbāna, never to return from that world."}, {"key": "ma77:29.6", "p": "彼比丘尼如是有信、…", "s": "Whether she sees that nun herself or repeatedly hears from others about her—"}, {"key": "ma77:29.7", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "that nun has such faith, such virtuous behavior, such learning, such generosity, such wisdom."}, {"key": "ma77:29.8", "p": "其人聞已，憶彼比丘尼有信、持戒、博聞、惠施、…", "s": "Having heard this, she recollects that nun's faith, virtuous behavior, learning, generosity, and wisdom."}, {"key": "ma77:29.9", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "Having heard this true Dharma and discipline, she may wish in her heart to emulate her in just such a way."}, {"key": "ma77:29.10", "p": "阿那律陀！…", "s": "Anuruddha!"}, {"key": "ma77:29.11", "p": "如是比丘尼必得差降安樂住止。…", "s": "Such a nun will surely attain a peaceful abiding with distinction.\""}]}, {"id": "30", "label": "「阿那律陀！", "rows": [{"key": "ma77:30.1", "p": "「阿那律陀！…", "s": "\"Anuruddha!"}, {"key": "ma77:30.2", "p": "復次，比丘尼聞某比丘尼於某處命終，彼為佛所記，…", "s": "Furthermore, a nun hears that a certain nun has passed away in a certain place,"}, {"key": "ma77:30.3", "p": "三結已盡，婬怒癡薄，…", "s": "and that the Blessed One has declared that she, having exhausted the three fetters and weakened greed,"}, {"key": "ma77:30.4", "p": "得一往來天上人間，一往來已而得苦際。…", "s": "hatred, and delusion, is a once-returner, coming back once to the human and heavenly realms,"}, {"key": "ma77:30.5", "p": "或自見彼比丘尼，或復從他數數聞之，…", "s": "and after that one return attains the end of suffering."}, {"key": "ma77:30.6", "p": "彼比丘尼如是有信、…", "s": "Whether she sees that nun herself or repeatedly hears from others about her—"}, {"key": "ma77:30.7", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "that nun has such faith, such virtuous behavior, such learning, such generosity, such wisdom."}, {"key": "ma77:30.8", "p": "其人聞已，憶彼比丘尼有信、持戒、博聞、惠施、…", "s": "Having heard this, she recollects that nun's faith, virtuous behavior, learning, generosity, and wisdom."}, {"key": "ma77:30.9", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "Having heard this true Dharma and discipline, she may wish in her heart to emulate her in just such a way."}, {"key": "ma77:30.10", "p": "阿那律陀！…", "s": "Anuruddha!"}, {"key": "ma77:30.11", "p": "如是比丘尼必得差降安樂住止。…", "s": "Such a nun will surely attain a peaceful abiding with distinction.\""}]}, {"id": "31", "label": "「阿那律陀！", "rows": [{"key": "ma77:31.1", "p": "「阿那律陀！…"}, {"key": "ma77:31.2", "p": "復次，比丘尼聞某比丘尼於某處命終，…", "s": "“Anuruddha!"}, {"key": "ma77:31.3", "p": "彼為佛所記，三結已盡，…", "s": "Furthermore, a nun hears that a certain nun has passed away in a certain place,"}, {"key": "ma77:31.4", "p": "得須陀洹，不墮惡法，定趣正覺，…", "s": "and the Buddha has declared that she, having completely eradicated the three fetters, has attained stream-entry,"}, {"key": "ma77:31.5", "p": "極受七有，天上人間七往來已而得苦際。…", "s": "will not fall into evil states, is destined for enlightenment, and will experience at most seven existences,"}, {"key": "ma77:31.6", "p": "或自見彼比丘尼，或復從他數數聞之，…", "s": "passing through seven rebirths among devas and humans before reaching the end of suffering."}, {"key": "ma77:31.7", "p": "彼比丘尼如是有信、…", "s": "Whether she sees that nun herself or repeatedly hears about her from others,"}, {"key": "ma77:31.8", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "that nun had such faith, such virtuous behavior, such learning, such generosity, and such wisdom."}, {"key": "ma77:31.9", "p": "其人聞已，憶彼比丘尼有信、持戒、博聞、惠施、…", "s": "Having heard this, she recalls that nun’s faith, virtuous behavior, learning, generosity, and wisdom,"}, {"key": "ma77:31.10", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "and upon hearing this true Dharma and discipline, she may wish in her heart to emulate her in such a way."}, {"key": "ma77:31.11", "p": "阿那律陀！…", "s": "Anuruddha!"}, {"key": "ma77:31.12", "p": "如是比丘尼必得差降安樂住止。…", "s": "Such a nun will surely attain a peaceful abiding with gradual improvement."}]}, {"id": "32", "label": "「阿那律陀！", "rows": [{"key": "ma77:32.1", "p": "「阿那律陀！…", "s": "“Anuruddha!"}, {"key": "ma77:32.2", "p": "若優婆塞聞某優婆塞於某村命終，彼為佛所記，…", "s": "If a male lay follower hears that a certain male lay follower has passed away in a certain village,"}, {"key": "ma77:32.3", "p": "五下分結已盡，生於彼間而般涅槃，…", "s": "and the Buddha has declared that he,"}, {"key": "ma77:32.4", "p": "得不退法，不還此世。…", "s": "having completely eradicated the five lower fetters,"}, {"key": "ma77:32.5", "p": "或自見彼優婆塞，或復從他數數聞之，…", "s": "is reborn spontaneously and attains final Nibbāna there, never to return from that world."}, {"key": "ma77:32.6", "p": "彼優婆塞如是有信、…", "s": "Whether he sees that male lay follower himself or repeatedly hears about him from others,"}, {"key": "ma77:32.7", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "that male lay follower had such faith, such virtuous behavior, such learning, such generosity, and such wisdom."}, {"key": "ma77:32.8", "p": "其人聞已，憶彼優婆塞有信、持戒、博聞、惠施、…", "s": "Having heard this, he recalls that male lay follower’s faith, virtuous behavior, learning, generosity, and wisdom,"}, {"key": "ma77:32.9", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "and upon hearing this true Dharma and discipline, he may wish in his heart to emulate him in such a way."}, {"key": "ma77:32.10", "p": "阿那律陀！…", "s": "Anuruddha!"}, {"key": "ma77:32.11", "p": "如是優婆塞必得差降安樂住止。…", "s": "Such a male lay follower will surely attain a peaceful abiding with gradual improvement."}]}, {"id": "33", "label": "「阿那律陀！", "rows": [{"key": "ma77:33.1", "p": "「阿那律陀！…", "s": "“Anuruddha!"}, {"key": "ma77:33.2", "p": "復次，優婆塞聞某優婆塞於某村命終，彼為佛所記，…", "s": "Furthermore, a male lay follower hears that a certain male lay follower has passed away in a certain village,"}, {"key": "ma77:33.3", "p": "三結已盡，婬怒癡薄，…", "s": "and the Buddha has declared that he,"}, {"key": "ma77:33.4", "p": "得一往來天上人間，一往來已而得苦際。…", "s": "having completely eradicated the three fetters and weakened lust, anger, and delusion,"}, {"key": "ma77:33.5", "p": "或自見彼優婆塞，或復從他數數聞之，…", "s": "is a once-returner, who will return once to the human and deva realms and then reach the end of suffering."}, {"key": "ma77:33.6", "p": "彼優婆塞如是有信、…", "s": "Whether he sees that male lay follower himself or repeatedly hears about him from others,"}, {"key": "ma77:33.7", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "that male lay follower had such faith, such virtuous behavior, such learning, such generosity, and such wisdom."}, {"key": "ma77:33.8", "p": "其人聞已，憶彼優婆塞有信、持戒、博聞、惠施、…", "s": "Having heard this, he recalls that male lay follower’s faith, virtuous behavior, learning, generosity, and wisdom,"}, {"key": "ma77:33.9", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "and upon hearing this true Dharma and discipline, he may wish in his heart to emulate him in such a way."}, {"key": "ma77:33.10", "p": "阿那律陀！…", "s": "Anuruddha!"}, {"key": "ma77:33.11", "p": "如是彼優婆塞必得差降安樂住止。…", "s": "Such a male lay follower will surely attain a peaceful abiding with gradual improvement."}]}, {"id": "34", "label": "「阿那律陀！", "rows": [{"key": "ma77:34.1", "p": "「阿那律陀！…"}, {"key": "ma77:34.2", "p": "復次，優婆塞聞某優婆塞於某村命終，…", "s": "“Anuruddha!"}, {"key": "ma77:34.3", "p": "彼為佛所記，三結已盡，…", "s": "Furthermore, a male lay follower hears that a certain male lay follower has passed away in a certain village,"}, {"key": "ma77:34.4", "p": "得須陀洹，不墮惡法，定趣正覺，…", "s": "and the Buddha has declared that he, having completely eradicated the three fetters, has attained stream-entry,"}, {"key": "ma77:34.5", "p": "極受七有，天上人間七往來已而得苦際。…", "s": "will not fall into evil states, is destined for enlightenment, and will experience at most seven existences,"}, {"key": "ma77:34.6", "p": "或自見彼優婆塞，或復從他數數聞之，…", "s": "passing through seven rebirths among devas and humans before reaching the end of suffering."}, {"key": "ma77:34.7", "p": "彼優婆塞如是有信、…", "s": "Whether he sees that male lay follower himself or repeatedly hears about him from others,"}, {"key": "ma77:34.8", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "that male lay follower had such faith, such virtuous behavior, such learning, such generosity, and such wisdom."}, {"key": "ma77:34.9", "p": "其人聞已，憶彼優婆塞有信、持戒、博聞、惠施、…", "s": "Having heard this, he recalls that male lay follower’s faith, virtuous behavior, learning, generosity, and wisdom,"}, {"key": "ma77:34.10", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "and upon hearing this true Dharma and discipline, he may wish in his heart to emulate him in such a way."}, {"key": "ma77:34.11", "p": "阿那律陀！…", "s": "Anuruddha!"}, {"key": "ma77:34.12", "p": "如是優婆塞必得差降安樂住止。…", "s": "Such a male lay follower will surely attain a peaceful abiding with gradual improvement."}]}, {"id": "35", "label": "「阿那律陀！", "rows": [{"key": "ma77:35.1", "p": "「阿那律陀！…", "s": "“Anuruddha!"}, {"key": "ma77:35.2", "p": "若優婆私聞某優婆私於某村命終，彼為佛所記，…", "s": "If a female lay follower hears that a certain female lay follower has passed away in a certain village,"}, {"key": "ma77:35.3", "p": "五下分結已盡，生於彼間而般涅槃，…", "s": "and the Buddha has declared that she,"}, {"key": "ma77:35.4", "p": "得不退法，不還此世。…", "s": "having completely eradicated the five lower fetters,"}, {"key": "ma77:35.5", "p": "或自見彼優婆私，或復從他數數聞之，…", "s": "is reborn spontaneously and attains final Nibbāna there, never to return from that world."}, {"key": "ma77:35.6", "p": "彼優婆私如是有信、…", "s": "Whether she sees that female lay follower herself or repeatedly hears about her from others,"}, {"key": "ma77:35.7", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "that female lay follower had such faith, such virtuous behavior, such learning, such generosity, and such wisdom."}, {"key": "ma77:35.8", "p": "其人聞已，憶彼優婆私有信、持戒、博聞、慧施、…", "s": "Having heard this, she recalls that female lay follower’s faith, virtuous behavior, learning, generosity,"}, {"key": "ma77:35.9", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "and wisdom, and upon hearing this true Dharma and discipline, she may wish in her heart to emulate her in such a way."}, {"key": "ma77:35.10", "p": "阿那律陀！…", "s": "Anuruddha!"}, {"key": "ma77:35.11", "p": "如是優婆私必得差降安樂住止。…", "s": "Such a female lay follower will surely attain a peaceful abiding with gradual improvement."}]}, {"id": "36", "label": "「阿那律陀！", "rows": [{"key": "ma77:36.1", "p": "「阿那律陀！…", "s": "“Anuruddha!"}, {"key": "ma77:36.2", "p": "復次，優婆私聞某優婆私於某村命終，彼為佛所記，…", "s": "Furthermore, a female lay follower hears that a certain female lay follower has passed away in a certain village,"}, {"key": "ma77:36.3", "p": "三結已盡，婬怒癡薄，…", "s": "and the Buddha has declared that she,"}, {"key": "ma77:36.4", "p": "得一往來天上人間，一往來已而得苦際。…", "s": "having completely eradicated the three fetters and weakened lust, anger, and delusion,"}, {"key": "ma77:36.5", "p": "或自見彼優婆私，或復從他數數聞之，…", "s": "is a once-returner, who will return once to the human and deva realms and then reach the end of suffering."}, {"key": "ma77:36.6", "p": "彼優婆私如是有信、…", "s": "Whether she sees that female lay follower herself or repeatedly hears about her from others,"}, {"key": "ma77:36.7", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "that female lay follower had such faith, such virtuous behavior, such learning, such generosity, and such wisdom."}, {"key": "ma77:36.8", "p": "其人聞已，憶彼優婆私有信、持戒、博聞、慧施、…", "s": "Having heard this, she recalls that female lay follower’s faith, virtuous behavior, learning, generosity,"}, {"key": "ma77:36.9", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "and wisdom, and upon hearing this true Dharma and discipline, she may wish in her heart to emulate her in such a way."}, {"key": "ma77:36.10", "p": "阿那律陀！…", "s": "Anuruddha!"}, {"key": "ma77:36.11", "p": "如是優婆私必得差降安樂住止。…", "s": "Such a female lay follower will surely attain a peaceful abiding with gradual improvement."}]}, {"id": "37", "label": "「阿那律陀！", "rows": [{"key": "ma77:37.1", "p": "「阿那律陀！…"}, {"key": "ma77:37.2", "p": "復次，優婆私聞某優婆私於某村命終，…", "s": "\"Anuruddha!"}, {"key": "ma77:37.3", "p": "彼為佛所記，三結已盡，…", "s": "Furthermore, a female lay disciple hears that a certain female lay disciple in a certain village has passed away,"}, {"key": "ma77:37.4", "p": "得須陀洹，不墮惡趣，定趣正覺，…", "s": "and that the Buddha declared that she, having completely eradicated the three fetters,"}, {"key": "ma77:37.5", "p": "極受七有，天上人間七往來已而得苦際。…", "s": "has attained stream-entry, will not fall into states of misery, is destined for enlightenment,"}, {"key": "ma77:37.6", "p": "或自見彼優婆私，或復從他數數聞之，…", "s": "and will be reborn at most seven times, passing among devas and humans seven times before reaching the end of suffering."}, {"key": "ma77:37.7", "p": "彼優婆私如是有信、…", "s": "She may have seen that female lay disciple herself, or repeatedly heard about her from others—"}, {"key": "ma77:37.8", "p": "如是持戒、如是博聞、如是惠施、如是智慧。…", "s": "that she had such faith, such virtuous behavior, such learning, such generosity, such wisdom."}, {"key": "ma77:37.9", "p": "其人聞已，憶彼優婆私有信、持戒、博聞、惠施、…", "s": "Upon hearing this, recalling that female lay disciple's faith, virtuous behavior, learning, generosity, and wisdom,"}, {"key": "ma77:37.10", "p": "智慧，聞此正法、律已，或心願效如是如是。…", "s": "and having heard this true Dharma and discipline, she may wish in her heart to emulate her in just such a way."}, {"key": "ma77:37.11", "p": "阿那律陀！…", "s": "Anuruddha!"}, {"key": "ma77:37.12", "p": "如是優婆私必得差降安樂住止。…", "s": "In this way, that female lay disciple will surely attain a peaceful and secure dwelling.\""}]}, {"id": "38", "label": "「阿那律陀！", "rows": [{"key": "ma77:38.1", "p": "「阿那律陀！…", "s": "\"Anuruddha!"}, {"key": "ma77:38.2", "p": "如來以此義故，弟子命終，記說某生某處、某生某處。」…", "s": "It is for this reason that the Tathāgata, when a disciple passes away, declares where they have been reborn.\""}]}, {"id": "39", "label": "佛說如是。", "rows": [{"key": "ma77:39.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma77:39.2", "p": "尊者阿那律陀及諸比丘，聞佛所說，歡喜奉行。…", "s": "The venerable Anuruddha and the monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

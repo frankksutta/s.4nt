@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma35:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊鞞蘭若，在黃蘆園。", "rows": [{"key": "ma35:2.1", "p": "一時，佛遊鞞蘭若，在黃蘆園。…", "s": "At one time, the Buddha was traveling in Verañjā, staying in the Yellow Reed Grove."}]}, {"id": "3", "label": "爾時，婆羅邏阿修羅王、牟梨遮阿修羅子，色像巍巍，", "rows": [{"key": "ma35:3.1", "p": "爾時，婆羅邏阿修羅王、牟梨遮阿修羅子，色像巍巍，…", "s": "At that time, the Asura king Bālī, son of Muñjaka, with a majestic form, radiant and brilliant,"}, {"key": "ma35:3.2", "p": "光耀暐曄，夜將向旦，往詣佛所，禮世尊足，却住一面。…", "s": "approached the Buddha at the end of the night, paid homage at the Blessed One's feet, and stood to one side."}]}, {"id": "4", "label": "世尊問曰：「婆羅邏！", "rows": [{"key": "ma35:4.1", "p": "世尊問曰：「婆羅邏！…", "s": "The Blessed One asked:"}, {"key": "ma35:4.2", "p": "大海中阿修羅無有衰退阿修羅壽、阿修羅色、…", "s": "\"Bālī, do the asuras in the great ocean not decline in asura lifespan, asura beauty, asura happiness, or asura strength?"}, {"key": "ma35:4.3", "p": "阿修羅樂、阿修羅力，諸阿修羅樂大海中耶？」…", "s": "Do all asuras delight in the great ocean?\""}]}, {"id": "5", "label": "婆羅邏阿修羅王、牟梨遮阿修羅子答曰：「世尊！", "rows": [{"key": "ma35:5.1", "p": "婆羅邏阿修羅王、牟梨遮阿修羅子答曰：「世尊！…", "s": "The Asura king Bālī, son of Muñjaka, replied:"}, {"key": "ma35:5.2", "p": "我大海中諸阿修羅無有衰退於阿修羅壽、阿修羅色、…", "s": "\"Blessed One, the asuras in my great ocean do not decline in asura lifespan,"}, {"key": "ma35:5.3", "p": "阿修羅樂、阿修羅力，諸阿修羅樂大海中。」…", "s": "asura beauty, asura happiness, or asura strength.\nAll asuras delight in the great ocean.\""}]}, {"id": "6", "label": "世尊復問曰：「婆羅邏！", "rows": [{"key": "ma35:6.1", "p": "世尊復問曰：「婆羅邏！…", "s": "The Blessed One further asked:"}, {"key": "ma35:6.2", "p": "大海中有幾未曾有法，令諸阿修羅見已樂中。」…", "s": "\"Bālī, how many unprecedented qualities are there in the great ocean that,\nwhen seen by the asuras, make them delight in it?\""}]}, {"id": "7", "label": "婆羅邏答曰：「世尊！", "rows": [{"key": "ma35:7.1", "p": "婆羅邏答曰：「世尊！…", "s": "Bālāla replied:"}, {"key": "ma35:7.2", "p": "我大海中有八未曾有法，令諸阿修羅見已樂中。…", "s": "'World-Honored One!"}, {"key": "ma35:7.3", "p": "云何為八？世尊！…", "s": "In my great ocean there are eight unprecedented things that cause the asuras to delight upon seeing them."}, {"key": "ma35:7.4", "p": "我大海從下至上，周迴漸廣，均調轉上，…", "s": "What are the eight?"}, {"key": "ma35:7.5", "p": "以成於岸，其水常滿，未曾流出。世尊！…", "s": "World-Honored One!\nMy great ocean, from bottom to top, gradually widens around, evenly slopes upward,"}, {"key": "ma35:7.6", "p": "若我大海從下至上，周迴漸廣，…", "s": "forming its shores, and its water is always full, never flowing out."}, {"key": "ma35:7.7", "p": "均調轉上，以成於岸，其水常滿，…", "s": "World-Honored One!"}, {"key": "ma35:7.8", "p": "未曾流出者，是謂我大海中第一未曾有法，…", "s": "That my great ocean, from bottom to top, gradually widens around,"}, {"key": "ma35:7.9", "p": "諸阿修羅見已樂中。…", "s": "evenly slopes upward, forming its shores, and its water is always full,\nnever flowing out—this is called the first unprecedented thing in my great ocean, which …"}]}, {"id": "8", "label": "「復次，世尊！", "rows": [{"key": "ma35:8.1", "p": "「復次，世尊！…", "s": "'Furthermore, World-Honored One!"}, {"key": "ma35:8.2", "p": "我大海潮未曾失時。世尊！…", "s": "The tides of my great ocean never miss their time."}, {"key": "ma35:8.3", "p": "若我大海潮未曾失時者，…", "s": "World-Honored One!"}, {"key": "ma35:8.4", "p": "是謂我大海中第二未曾有法，諸阿修羅見已樂中。…", "s": "That the tides of my great ocean never miss their time—\nthis is called the second unprecedented thing in my great ocean, which the asuras delight upon seeing."}]}, {"id": "9", "label": "「復次，世尊！", "rows": [{"key": "ma35:9.1", "p": "「復次，世尊！…", "s": "'Furthermore, World-Honored One!"}, {"key": "ma35:9.2", "p": "我大海水甚深無底，極廣無邊。世尊！…", "s": "The water of my great ocean is extremely deep, without bottom, and immensely vast, without limit."}, {"key": "ma35:9.3", "p": "若我大海甚深無底，極廣無邊者，…", "s": "World-Honored One!"}, {"key": "ma35:9.4", "p": "是謂我大海中第三未曾有法，諸阿修羅見已樂中。…", "s": "That the water of my great ocean is extremely deep, without bottom, and immensely vast, without limit—\nthis is called the third unprecedented thing in my great …"}]}, {"id": "10", "label": "「復次，世尊！", "rows": [{"key": "ma35:10.1", "p": "「復次，世尊！…", "s": "'Furthermore, World-Honored One!"}, {"key": "ma35:10.2", "p": "我大海水鹹，皆同一味。世尊！…", "s": "The water of my great ocean is salty, all of one taste."}, {"key": "ma35:10.3", "p": "若我大海水鹹，皆同一味者，…", "s": "World-Honored One!"}, {"key": "ma35:10.4", "p": "是謂我大海中第四未曾有法，諸阿修羅見已樂中。…", "s": "That the water of my great ocean is salty, all of one taste—\nthis is called the fourth unprecedented thing in my great ocean, which the asuras delight upon seei…"}]}, {"id": "11", "label": "「復次，世尊！", "rows": [{"key": "ma35:11.1", "p": "「復次，世尊！…", "s": "'Furthermore, World-Honored One!"}, {"key": "ma35:11.2", "p": "我大海中多有珍寶，無量璝異，種種珍琦，…", "s": "In my great ocean there are many precious treasures,"}, {"key": "ma35:11.3", "p": "充滿其中，珍寶名者，謂金、銀、水精、…", "s": "countless rare and extraordinary things, various precious gems, filling it completely."}, {"key": "ma35:11.4", "p": "琉璃、摩尼、真珠、碧玉、白珂、螺璧、…", "s": "The names of the precious treasures are:\ngold, silver, crystal, lapis lazuli, mani pearls, true pearls, jade, white conch,"}, {"key": "ma35:11.5", "p": "珊瑚、虎珀、馬瑙、瑇瑁、赤石、琁珠。世尊！…", "s": "spiral shells, coral, amber, agate, tortoiseshell, red stone, and xuan pearls."}, {"key": "ma35:11.6", "p": "若我大海中多有珍寶，無量璝異、種種珍琦，充滿其中，…", "s": "World-Honored One!"}, {"key": "ma35:11.7", "p": "珍寶名者，謂金、銀、水精、琉璃、摩尼、真珠、…", "s": "That in my great ocean there are many precious treasures, countless rare and extraordinary things,\nvarious precious gems, filling it completely, and the names o…"}, {"key": "ma35:11.8", "p": "碧玉、白珂、螺璧、珊瑚、虎珀、馬瑙、瑇瑁、赤石、…", "s": "gold, silver, crystal, lapis lazuli, mani pearls, true pearls,"}, {"key": "ma35:11.9", "p": "琁珠者，是謂我大海中第五未曾有法，…", "s": "jade, white conch, spiral shells, coral, amber, agate, tortoiseshell,"}, {"key": "ma35:11.10", "p": "諸阿修羅見已樂中。…", "s": "red stone, and xuan pearls—this is called the fifth unprecedented thing in my great ocean,\nwhich the asuras delight upon seeing."}]}, {"id": "12", "label": "「復次，世尊！", "rows": [{"key": "ma35:12.1", "p": "「復次，世尊！…"}, {"key": "ma35:12.2", "p": "我大海中大神所居，大神名者，…", "s": "'Furthermore, World-Honored One!"}, {"key": "ma35:12.3", "p": "謂阿修羅、乾塔惒、羅剎、…", "s": "In my great ocean dwell great spirits."}, {"key": "ma35:12.4", "p": "魚摩竭、龜、鼉、婆留泥、…", "s": "The names of the great spirits are:"}, {"key": "ma35:12.5", "p": "帝麑、帝麑伽羅、提帝麑伽羅。…", "s": "asuras, gandhabbas, rakshasas, makara fish, turtles, crocodiles, varuna, timi, timingala, and timitimingala."}, {"key": "ma35:12.6", "p": "復次，大海中甚奇！甚特！…", "s": "Furthermore, in the great ocean it is very marvelous!"}, {"key": "ma35:12.7", "p": "眾生身體有百由延，有二百由延，…", "s": "Very special!"}, {"key": "ma35:12.8", "p": "有三百由延，有至七百由延，身皆居海中。世尊！…", "s": "The bodies of beings are a hundred yojanas, two hundred yojanas,"}, {"key": "ma35:12.9", "p": "若大海中大神所居，大神名者，…", "s": "three hundred yojanas, up to seven hundred yojanas, and they all dwell in the ocean."}, {"key": "ma35:12.10", "p": "謂阿修羅、乾塔惒、羅剎、…", "s": "World-Honored One!"}, {"key": "ma35:12.11", "p": "魚摩竭、龜、鼉、婆留泥、…", "s": "That in my great ocean dwell great spirits, the names of the great spirits being:"}, {"key": "ma35:12.12", "p": "帝麑、帝麑伽羅、提帝麑伽羅。…", "s": "asuras, gandhabbas, rakshasas, makara fish, turtles, crocodiles, varuna, timi, timingala, and timitimingala;"}, {"key": "ma35:12.13", "p": "復次，大海中甚奇！甚特！…", "s": "and furthermore, in the great ocean it is very marvelous!"}, {"key": "ma35:12.14", "p": "眾生身體有百由延，有二百由延，…", "s": "Very special!"}, {"key": "ma35:12.15", "p": "有三百由延，有至七百由延，…", "s": "The bodies of beings are a hundred yojanas, two hundred yojanas, three hundred yojanas, up to seven hundred yojanas,"}, {"key": "ma35:12.16", "p": "身皆居海中者，是謂我大海中第六未曾有法，…", "s": "and they all dwell in the ocean—this is called the sixth unprecedented thing in my great ocean,"}, {"key": "ma35:12.17", "p": "諸阿修羅見已樂中。…", "s": "which the asuras delight upon seeing."}]}, {"id": "13", "label": "「復次，世尊！", "rows": [{"key": "ma35:13.1", "p": "「復次，世尊！…"}, {"key": "ma35:13.2", "p": "我大海清淨，不受死屍。…", "s": "\"Furthermore, World-Honored One, my great ocean is pure and does not accept dead bodies."}, {"key": "ma35:13.3", "p": "若有命終者，過夜風便吹著岸上。世尊！…", "s": "If any being dies, the wind during the night blows it onto the shore."}, {"key": "ma35:13.4", "p": "若我大海清淨，不受死屍。…", "s": "World-Honored One, that my great ocean is pure and does not accept dead bodies, and that if any being dies,"}, {"key": "ma35:13.5", "p": "若有命終者，過夜風便吹著岸上者，…", "s": "the wind during the night blows it onto the shore—"}, {"key": "ma35:13.6", "p": "是謂我大海中第七未曾有法，諸阿修羅見已樂中。…", "s": "this is called the seventh unprecedented quality in my great ocean, which the asuras see and delight in.\""}]}, {"id": "14", "label": "「復次，世尊！", "rows": [{"key": "ma35:14.1", "p": "「復次，世尊！…", "s": "\"Furthermore, World-Honored One, in my great ocean, on the continent of Jambudvīpa, there are five great rivers:"}, {"key": "ma35:14.2", "p": "我大海閻浮洲中有五大河，…", "s": "first, the Ganges;\nsecond, the Yamunā;"}, {"key": "ma35:14.3", "p": "一曰恒伽，二曰搖尤那，三曰舍牢浮，…", "s": "third, the Sarabhū;\nfourth, the Aciravatī;"}, {"key": "ma35:14.4", "p": "四曰阿夷羅婆提，五曰摩企，悉入大海，…", "s": "fifth, the Mahī.\nThey all flow into the great ocean, and once they have entered it,"}, {"key": "ma35:14.5", "p": "既入中已，各捨本名，皆曰大海。世尊！…", "s": "they each abandon their original names and are all called 'great ocean.'"}, {"key": "ma35:14.6", "p": "若我大海閻浮洲中有五大河，一曰恒伽，二曰搖尤那，…", "s": "World-Honored One, that in my great ocean, on the continent of Jambudvīpa,\nthere are five great rivers—first, the Ganges;"}, {"key": "ma35:14.7", "p": "三曰舍牢浮，四曰阿夷羅婆提，五曰摩企，…", "s": "second, the Yamunā;\nthird, the Sarabhū;"}, {"key": "ma35:14.8", "p": "悉入大海，既入中已，各捨本名，皆曰大海者，…", "s": "fourth, the Aciravatī;\nfifth, the Mahī—which all flow into the great ocean, and once they have entered it,"}, {"key": "ma35:14.9", "p": "是謂我大海中第八未曾有法，諸阿修羅見已樂中。…", "s": "they each abandon their original names and are all called 'great ocean'—\nthis is called the eighth unprecedented quality in my great ocean, which the asuras see…"}]}, {"id": "15", "label": "「世尊！", "rows": [{"key": "ma35:15.1", "p": "「世尊！…", "s": "\"World-Honored One, these are the eight unprecedented qualities in my great ocean, which the asuras see and delight in."}, {"key": "ma35:15.2", "p": "是謂我大海中有八未曾有法，諸阿修羅見已樂中。世尊！…", "s": "World-Honored One, in the Buddha's true Dharma and discipline,"}, {"key": "ma35:15.3", "p": "於佛正法、律中有幾未曾有法，令諸比丘見已樂中。」…", "s": "how many unprecedented qualities are there that cause the monks to see and delight in them?\""}]}, {"id": "16", "label": "世尊答曰：「婆羅邏！", "rows": [{"key": "ma35:16.1", "p": "世尊答曰：「婆羅邏！…", "s": "The World-Honored One replied:"}, {"key": "ma35:16.2", "p": "我正法、律中亦有八未曾有法，令諸比丘見已樂中。…", "s": "\"Bālāla, in my true Dharma and discipline,"}, {"key": "ma35:16.3", "p": "云何為八？…", "s": "there are also eight unprecedented qualities that cause the monks to see and delight in them."}, {"key": "ma35:16.4", "p": "婆羅邏！…", "s": "What are the eight?"}, {"key": "ma35:16.5", "p": "如大海從下至上，周迴漸廣，均調轉上，…", "s": "Bālāla, just as the great ocean, from bottom to top,"}, {"key": "ma35:16.6", "p": "以成於岸，其水常滿，未曾流出。…", "s": "gradually widens all around, evenly and smoothly rising to form its shores,"}, {"key": "ma35:16.7", "p": "婆羅邏！…", "s": "and its water is always full, never flowing out—Bālāla, my true Dharma and discipline is likewise:"}, {"key": "ma35:16.8", "p": "我正法、律亦復如是，漸作漸學，漸盡漸教。…", "s": "gradual practice, gradual learning, gradual completion, gradual teaching."}, {"key": "ma35:16.9", "p": "婆羅邏！…", "s": "Bālāla, that in my true Dharma and discipline there is gradual practice,"}, {"key": "ma35:16.10", "p": "若我正法、律中漸作漸學，漸盡漸教者，…", "s": "gradual learning, gradual completion, gradual teaching—"}, {"key": "ma35:16.11", "p": "是謂我正法、律中第一未曾有法，令諸比丘見已樂中。…", "s": "this is called the first unprecedented quality in my true Dharma and discipline,\nwhich causes the monks to see and delight in it.\""}]}, {"id": "17", "label": "「復次，婆羅邏！", "rows": [{"key": "ma35:17.1", "p": "「復次，婆羅邏！…"}, {"key": "ma35:17.2", "p": "如大海潮，未曾失時。…", "s": "\"Furthermore, Bālāla, just as the great ocean's tides never miss their time—"}, {"key": "ma35:17.3", "p": "婆羅邏！…", "s": "Bālāla, my true Dharma and discipline is likewise:"}, {"key": "ma35:17.4", "p": "我正法、律亦復如是，為比丘、比丘尼、優婆塞、…", "s": "for monks, nuns, laymen, and laywomen, I establish precepts, and the sons of good families,"}, {"key": "ma35:17.5", "p": "優婆私施設禁戒，諸族姓子乃至命盡，終不犯戒。…", "s": "even until the end of their lives, never transgress these precepts."}, {"key": "ma35:17.6", "p": "婆羅邏！…"}, {"key": "ma35:17.7", "p": "若我正法、律中為比丘、比丘尼、優婆塞、…", "s": "Bālāla, that in my true Dharma and discipline, for monks, nuns, laymen, and laywomen,"}, {"key": "ma35:17.8", "p": "優婆私施設禁戒，諸族姓子乃至命盡，…", "s": "I establish precepts, and the sons of good families, even until the end of their lives,"}, {"key": "ma35:17.9", "p": "終不犯戒者，是謂我正法、…", "s": "never transgress these precepts—this is called the second unprecedented quality in my true Dharma and discipline,"}, {"key": "ma35:17.10", "p": "律中第二未曾有法，令諸比丘見已樂中。…", "s": "which causes the monks to see and delight in it.\""}]}, {"id": "18", "label": "「復次，婆羅邏！", "rows": [{"key": "ma35:18.1", "p": "「復次，婆羅邏！…", "s": "\"Furthermore, Bālāla, just as the water of the great ocean is extremely deep, without bottom,"}, {"key": "ma35:18.2", "p": "如大海水，甚深無底，極廣無邊。…", "s": "and extremely vast, without bounds—Bālāla, my true Dharma and discipline is likewise:"}, {"key": "ma35:18.3", "p": "婆羅邏！…", "s": "the teachings are extremely deep, without bottom, and extremely vast, without bounds."}, {"key": "ma35:18.4", "p": "我正法、律亦復如是，諸法甚深，甚深無底，極廣無邊。…", "s": "Bālāla, that in my true Dharma and discipline the teachings are extremely deep,"}, {"key": "ma35:18.5", "p": "婆羅邏！…", "s": "without bottom, and extremely vast, without bounds—"}, {"key": "ma35:18.6", "p": "若我正法、律中諸法甚深，甚深無底，極廣無邊者，…", "s": "this is called the third unprecedented quality in my true Dharma and discipline,"}, {"key": "ma35:18.7", "p": "是謂我正法、律中第三未曾有法，令諸比丘見已樂中。…", "s": "which causes the monks to see and delight in it.\""}]}, {"id": "19", "label": "「復次，婆羅邏！", "rows": [{"key": "ma35:19.1", "p": "「復次，婆羅邏！…", "s": "\"Furthermore, Bālāla!"}, {"key": "ma35:19.2", "p": "如大海水鹹，皆同一味，婆羅邏！…", "s": "Just as the waters of the great ocean are salty, all of one taste, so too, Bālāla, is my true Dharma and discipline:"}, {"key": "ma35:19.3", "p": "我正法、律亦復如是，無欲為味，覺味、息味及道味。…", "s": "it has the taste of freedom from desire, the taste of awakening, the taste of peace, and the taste of the path."}, {"key": "ma35:19.4", "p": "婆羅邏！…", "s": "Bālāla, if in my true Dharma and discipline there is the taste of freedom from desire,"}, {"key": "ma35:19.5", "p": "若我正法、律中無欲為味，覺味、息味及道味者，…", "s": "the taste of awakening, the taste of peace, and the taste of the path,"}, {"key": "ma35:19.6", "p": "是謂我正法、律中第四未曾有法，令諸比丘見已樂中。…", "s": "this is called the fourth unprecedented quality in my true Dharma and discipline,\nwhich causes the monks, having seen it, to delight in it.\""}]}, {"id": "20", "label": "「復次，婆羅邏！", "rows": [{"key": "ma35:20.1", "p": "「復次，婆羅邏！…", "s": "\"Furthermore, Bālāla!"}, {"key": "ma35:20.2", "p": "如大海中多有珍寶，無量璝異、種種珍琦，…", "s": "Just as in the great ocean there are many precious treasures,"}, {"key": "ma35:20.3", "p": "充滿其中，珍寶名者，謂金、銀、水精、…", "s": "countless rare and varied jewels, filling it completely—the names of these treasures are:"}, {"key": "ma35:20.4", "p": "琉璃、摩尼、真珠、碧玉、白珂、螺璧、…", "s": "gold, silver, crystal, lapis lazuli, mani pearl, genuine pearl, beryl, white jade,"}, {"key": "ma35:20.5", "p": "珊瑚、虎珀、馬瑙、瑇瑁、赤石、琁珠。…", "s": "conch shell, mother-of-pearl, coral, amber, agate, tortoiseshell, red stone, and cat's-eye gem."}, {"key": "ma35:20.6", "p": "婆羅邏！…", "s": "Bālāla, so too, in my true Dharma and discipline there are many precious treasures,"}, {"key": "ma35:20.7", "p": "我正法、律亦復如是，多有珍寶，…", "s": "countless rare and varied jewels, filling it completely—the names of these treasures are:"}, {"key": "ma35:20.8", "p": "無量璝異，種種珍琦，充滿其中，…", "s": "the four establishments of mindfulness, the four right efforts, the four bases of psychic power,"}, {"key": "ma35:20.9", "p": "珍寶名者，謂四念處、四正勤、四如意足、…", "s": "the five faculties, the five powers, the seven factors of enlightenment, and the noble eightfold path."}, {"key": "ma35:20.10", "p": "五根、五力、七覺支、八支聖道。…", "s": "Bālāla, if in my true Dharma and discipline there are many precious treasures,"}, {"key": "ma35:20.11", "p": "婆羅邏！…", "s": "countless rare and varied jewels, filling it completely—"}, {"key": "ma35:20.12", "p": "若我正法、律中多有珍寶，無量璝異，種種珍琦，…", "s": "the names of these treasures being the four establishments of mindfulness,"}, {"key": "ma35:20.13", "p": "充滿其中，珍寶名者，謂四念處、四正勤、…", "s": "the four right efforts, the four bases of psychic power,"}, {"key": "ma35:20.14", "p": "四如意足、五根、五力、七覺支、八支聖道者，…", "s": "the five faculties, the five powers, the seven factors of enlightenment, and the noble eightfold path—"}, {"key": "ma35:20.15", "p": "是謂我正法、律中第五未曾有法，令諸比丘見已樂中。…", "s": "this is called the fifth unprecedented quality in my true Dharma and discipline,\nwhich causes the monks, having seen it, to delight in it.\""}]}, {"id": "21", "label": "「復次，婆羅邏！", "rows": [{"key": "ma35:21.1", "p": "「復次，婆羅邏！…"}, {"key": "ma35:21.2", "p": "如大海中大神所居，大神名者，…", "s": "\"Furthermore, Bālāla!"}, {"key": "ma35:21.3", "p": "謂阿修羅、乾塔惒、羅剎、…", "s": "Just as in the great ocean great beings dwell—the names of these great beings are:"}, {"key": "ma35:21.4", "p": "魚摩竭、龜、鼉、婆留泥、…", "s": "asuras, gandhabbas, rākṣasas, makara fish, turtles, crocodiles, varuṇa fish, timiṅgala fish, timiṅgalagala fish."}, {"key": "ma35:21.5", "p": "帝麑、帝麑伽羅、提帝麑伽羅。…", "s": "Moreover, in the great ocean it is very wonderful!"}, {"key": "ma35:21.6", "p": "復次，大海中甚奇！甚特！…", "s": "Very extraordinary!"}, {"key": "ma35:21.7", "p": "眾生身體有百由延，有二百由延，…", "s": "The bodies of beings are a hundred leagues, two hundred leagues,"}, {"key": "ma35:21.8", "p": "有三百由延，有至七百由延，身皆居海中。…", "s": "three hundred leagues, up to seven hundred leagues, and they all dwell in the sea."}, {"key": "ma35:21.9", "p": "婆羅邏！…", "s": "Bālāla, so too, in my true Dharma and discipline the great community of noble ones all dwell therein—"}, {"key": "ma35:21.10", "p": "我正法、律亦復如是，…", "s": "the names of these great beings are:"}, {"key": "ma35:21.11", "p": "聖眾大神皆居其中，大神名者，謂阿羅訶、…", "s": "arahants, those on the path to arahantship, non-returners, those on the path to non-return,"}, {"key": "ma35:21.12", "p": "向阿羅訶、阿那含、向阿那含、…", "s": "once-returners, those on the path to once-return, stream-enterers, and those on the path to stream-entry."}, {"key": "ma35:21.13", "p": "斯陀含、向斯陀含、須陀洹、向須陀洹。…", "s": "Bālāla, if in my true Dharma and discipline the great community of noble ones all dwell therein—"}, {"key": "ma35:21.14", "p": "婆羅邏！…", "s": "the names of these great beings being arahants,"}, {"key": "ma35:21.15", "p": "若我正法、律中聖眾大神皆居其中，大神名者，…", "s": "those on the path to arahantship, non-returners, those on the path to non-return, once-returners,"}, {"key": "ma35:21.16", "p": "謂阿羅訶、向阿羅訶、阿那含、向阿那含、…", "s": "those on the path to once-return, stream-enterers, and those on the path to stream-entry—"}, {"key": "ma35:21.17", "p": "斯陀含、向斯陀含、須陀洹、向須陀洹者，…", "s": "this is called the sixth unprecedented quality in my true Dharma and discipline,"}, {"key": "ma35:21.18", "p": "是謂我正法、律中第六未曾有法，令諸比丘見已樂中。…", "s": "which causes the monks, having seen it, to delight in it.\""}]}, {"id": "22", "label": "「復次，婆羅邏！", "rows": [{"key": "ma35:22.1", "p": "「復次，婆羅邏！…", "s": "\"Furthermore, Bālāla!"}, {"key": "ma35:22.2", "p": "如大海清淨，不受死屍，…", "s": "Just as the great ocean is pure and does not accept a dead corpse—"}, {"key": "ma35:22.3", "p": "若有命終者，過夜風便吹著岸上。…", "s": "if someone dies, after a night the wind blows it onto the shore."}, {"key": "ma35:22.4", "p": "婆羅邏！…", "s": "Bālāla, so too, is my true Dharma and discipline:"}, {"key": "ma35:22.5", "p": "我正法、律亦復如是，聖眾清淨，不受死尸。…", "s": "the noble community is pure and does not accept a dead corpse.\nIf there is a person who is not diligent, of evil birth,"}, {"key": "ma35:22.6", "p": "若有不精進人惡生，非梵行稱梵行，非沙門稱沙門，…", "s": "who claims to live the holy life but does not, who claims to be a renunciant but is not,"}, {"key": "ma35:22.7", "p": "彼雖墮在聖眾之中，然去聖眾遠，聖眾亦復去離彼遠。…", "s": "though he may fall among the noble community,"}, {"key": "ma35:22.8", "p": "婆羅邏！…", "s": "he is far from the noble community, and the noble community is also far from him."}, {"key": "ma35:22.9", "p": "若我正法、律中聖眾清淨，不受死屍。…", "s": "Bālāla, if in my true Dharma and discipline the noble community is pure and does not accept a dead corpse—\nif there is a person who is not diligent, of evil bir…"}, {"key": "ma35:22.10", "p": "若有不精進人惡生，非梵行稱梵行，…", "s": "who claims to live the holy life but does not, who claims to be a renunciant but is not,"}, {"key": "ma35:22.11", "p": "非沙門稱沙門，彼雖墮在聖眾之中，然去聖眾遠，…", "s": "though he may fall among the noble community,"}, {"key": "ma35:22.12", "p": "聖眾亦復去離彼遠者，是謂我正法、…", "s": "he is far from the noble community, and the noble community is also far from him—"}, {"key": "ma35:22.13", "p": "律中第七未曾有法，令諸比丘見已樂中。…", "s": "this is called the seventh unprecedented quality in my true Dharma and discipline,\nwhich causes the monks, having seen it, to delight in it.\""}]}, {"id": "23", "label": "「復次，婆羅邏！", "rows": [{"key": "ma35:23.1", "p": "「復次，婆羅邏！…", "s": "\"Furthermore, Bālāla!"}, {"key": "ma35:23.2", "p": "如大海閻浮洲中有五大河，…", "s": "Just as in the great ocean there are five great rivers of Jambudvīpa:"}, {"key": "ma35:23.3", "p": "一曰恒伽，二曰搖尤那，三曰舍牢浮，…", "s": "first, the Ganges;\nsecond, the Yamunā;"}, {"key": "ma35:23.4", "p": "四曰阿夷羅婆提，五曰摩企，悉入大海，…", "s": "third, the Sarabhū;"}, {"key": "ma35:23.5", "p": "既入中已，各捨本名，皆曰大海。…", "s": "fourth, the Aciravatī;"}, {"key": "ma35:23.6", "p": "婆羅邏！…", "s": "and fifth, the Mahī.\nThey all flow into the great ocean, and once they have entered it,"}, {"key": "ma35:23.7", "p": "我正法、律亦復如是，剎利種族姓子，剃除鬚髮，…", "s": "they each abandon their original name and are all called 'great ocean.'"}, {"key": "ma35:23.8", "p": "著袈裟衣，至信、捨家、無家、…", "s": "Bālāla, so too, in my true Dharma and discipline:"}, {"key": "ma35:23.9", "p": "學道，彼捨本名，同曰沙門，…", "s": "sons of good families of the kṣatriya class, having shaved off their hair and beard,\nput on the ochre robe, and with faith gone forth from home to homelessness …"}, {"key": "ma35:23.10", "p": "梵志種、居士種、工師種族姓子，剃除鬚髮，著袈裟衣，…", "s": "they abandon their original name and are all called 'renunciants.'"}, {"key": "ma35:23.11", "p": "至信、捨家、無家、學道，彼捨本名，同曰沙門。…", "s": "Sons of good families of the brāhmaṇa class, the householder class,"}, {"key": "ma35:23.12", "p": "婆羅邏！…", "s": "and the artisan class, having shaved off their hair and beard, put on the ochre robe,\nand with faith gone forth from home to homelessness to train in the path,"}, {"key": "ma35:23.13", "p": "若我正法、律中剎利種族姓子剃除鬚髮，…", "s": "they abandon their original name and are all called 'renunciants.'"}, {"key": "ma35:23.14", "p": "著袈裟衣，至信、捨家、…", "s": "Bālāla, if in my true Dharma and discipline sons of good families of the kṣatriya class,"}, {"key": "ma35:23.15", "p": "無家、學道，彼捨本名，同曰沙門，…", "s": "having shaved off their hair and beard, put on the ochre robe,\nand with faith gone forth from home to homelessness to train in the path,"}, {"key": "ma35:23.16", "p": "梵志種、居士種、工師種族姓子，…", "s": "abandon their original name and are all called 'renunciants,' and sons of good families of the brāhmaṇa class,"}, {"key": "ma35:23.17", "p": "剃除鬚髮，著袈裟衣，至信、…", "s": "the householder class,"}, {"key": "ma35:23.18", "p": "捨家、無家、學道，彼捨本名，…", "s": "and the artisan class, having shaved off their hair and beard, put on the ochre robe,\nand with faith gone forth from home to homelessness to train in the path,"}, {"key": "ma35:23.19", "p": "同曰沙門者，是謂我正法、…", "s": "abandon their original name and are all called 'renunciants'—"}, {"key": "ma35:23.20", "p": "律中第八未曾有法，令諸比丘見已樂中。…", "s": "this is called the eighth unprecedented quality in my true Dharma and discipline,\nwhich causes the monks, having seen it, to delight in it.\""}]}, {"id": "24", "label": "「婆羅邏！", "rows": [{"key": "ma35:24.1", "p": "「婆羅邏！…", "s": "\"Bālāla!"}, {"key": "ma35:24.2", "p": "是謂正法、律中有八未曾有法，令諸比丘見已樂中。…", "s": "These are the eight unprecedented qualities in the true Dharma and discipline,"}, {"key": "ma35:24.3", "p": "婆羅邏！…", "s": "which cause the monks, having seen them, to delight in them."}, {"key": "ma35:24.4", "p": "於意云何？…", "s": "Bālāla, what do you think?"}, {"key": "ma35:24.5", "p": "若我正法、律中有八未曾有法，…", "s": "If my true Dharma and discipline has eight unprecedented qualities,"}, {"key": "ma35:24.6", "p": "若汝大海中有八未曾有法，…", "s": "and your great ocean has eight unprecedented qualities,"}, {"key": "ma35:24.7", "p": "此二種未曾有法，何者為上、為勝、為妙、為最？」…", "s": "which of these two sets of unprecedented qualities is superior, more excellent, more sublime, and supreme?\""}]}, {"id": "25", "label": "婆羅邏白曰：「世尊！", "rows": [{"key": "ma35:25.1", "p": "婆羅邏白曰：「世尊！…", "s": "Bārāṇa said:"}, {"key": "ma35:25.2", "p": "我大海中有八未曾有法，…", "s": "'World-Honored One, in my great ocean there are eight unprecedented things,"}, {"key": "ma35:25.3", "p": "不及如來八未曾有法，不如千倍萬倍，不可比，…", "s": "but they do not equal the Tathāgata's eight unprecedented things, not by a thousand or ten thousand times;"}, {"key": "ma35:25.4", "p": "不可喻，不可稱，不可數，…", "s": "they cannot be compared, cannot be illustrated, cannot be weighed, cannot be counted."}, {"key": "ma35:25.5", "p": "但世尊八未曾有法為上、為勝、為妙、為最。世尊！…", "s": "Yet the World-Honored One's eight unprecedented things are superior, more excellent, more sublime, and supreme."}, {"key": "ma35:25.6", "p": "我今自歸於佛、法及比丘眾，唯願世尊受我為優婆塞，…", "s": "World-Honored One, I now take refuge in the Buddha, the Dharma, and the community of monks."}, {"key": "ma35:25.7", "p": "從今日始，終身自歸，乃至命盡。」…", "s": "I only ask that the World-Honored One accept me as a lay follower,\nfrom today onward, taking refuge for life until the end of my life.'"}]}, {"id": "26", "label": "佛說如是。", "rows": [{"key": "ma35:26.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma35:26.2", "p": "婆羅邏阿修羅王及諸比丘，聞佛所說，歡喜奉行。…", "s": "King Bārāṇa the Asura and the monks, hearing what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

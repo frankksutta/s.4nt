@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:37 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "如是我聞：", "rows": [{"key": "da25:1.1", "p": "如是我聞：…", "s": "Thus I have heard:"}]}, {"id": "2", "label": "一時，佛在委若國金槃鹿野林 中，", "rows": [{"key": "da25:2.1", "p": "一時，佛在委若國金槃鹿野林 中，…", "s": "One time, the Buddha was staying at the deer preserve near Karṇakāṣṭha of [Ujuññā]."}, {"key": "da25:2.2", "p": "與大比丘眾千二百五十人俱。…", "s": "He was accompanied by a large assembly of 1,250 monks."}]}, {"id": "3", "label": "時，有倮 形梵志姓迦葉，詣世尊所，問訊已，一面坐。", "rows": [{"key": "da25:3.1", "p": "時，有倮 形梵志姓迦葉，詣世尊所，問訊已，一面坐。…", "s": "A naked wanderer from the Kāśyapa clan visited the Bhagavān.\nAfter they exchanged greetings, he sat to one side."}, {"key": "da25:3.2", "p": "倮形迦葉白佛言：…", "s": "That naked Kāśyapa said to the Buddha,"}, {"key": "da25:3.3", "p": "「我聞沙門瞿曇呵責一切 諸祭祀法，…", "s": "“I hear that the ascetic Gautama criticizes all ritual practices and rebukes other ascetics, considering them corrupt."}, {"key": "da25:3.4", "p": "罵諸苦行人以為弊穢。瞿曇！…"}, {"key": "da25:3.5", "p": "若 有言：『沙門瞿曇呵責一切諸祭祀法，…", "s": "Gautama, suppose someone said,\n‘The ascetic Gautama criticizes all the ritual practices and rebukes other ascetics, considering them corrupt.’"}, {"key": "da25:3.6", "p": "罵苦行 人以為弊穢。…"}, {"key": "da25:3.7", "p": "』作此言者，是為法語，…", "s": "If someone says this is Dharma speech that accomplishes the teachings,"}, {"key": "da25:3.8", "p": "法法成 就，不誹謗沙門瞿曇耶？」…", "s": "would they not be slandering the ascetic Gautama?”"}]}, {"id": "4", "label": "佛言：「迦葉！", "rows": [{"key": "da25:4.1", "p": "佛言：「迦葉！…", "s": "The Buddha replied,"}, {"key": "da25:4.2", "p": "彼若言： 『沙門瞿曇呵責一切諸祭祀法，…", "s": "“Kāśyapa, suppose someone said,\n‘The ascetic Gautama criticizes all ritual practices and rebukes other ascetics, considering them corrupt.’"}, {"key": "da25:4.3", "p": "罵苦行人 以為弊穢。…"}, {"key": "da25:4.4", "p": "』者，彼非法言，非法法成就，為 誹謗我，非誠實言。…", "s": "That wouldn’t be Dharma speech that accomplishes the teachings.\nThey would be slandering me, for it’s not a true statement."}, {"key": "da25:4.5", "p": "所以者何？迦葉！…", "s": "Why is that?"}, {"key": "da25:4.6", "p": "我見彼 等苦行人，有身壞命終，墮地獄中者；…", "s": "“Kāśyapa, I’ve seen those ascetics fall into hell when their bodies broke up and their lives ended."}, {"key": "da25:4.7", "p": "又見 苦行人身壞命終，生天善處者；…", "s": "I’ve also seen ascetics born in a heavenly good place when their bodies broke up and their lives ended."}, {"key": "da25:4.8", "p": "或見苦行 人樂為苦行，身壞命終，生地獄中者；…", "s": "Sometimes, I’ve seen ascetics who enjoyed the ascetic practices\nborn in hell when their bodies broke up and their lives ended."}, {"key": "da25:4.9", "p": "或見 苦行人樂為苦行，身壞命終，生天善處者。…", "s": "Sometimes, I’ve seen ascetics who enjoyed the ascetic practices born in a heavenly good place."}, {"key": "da25:4.10", "p": "迦葉！…", "s": "“Kāśyapa, I fully know and fully see these two destinies that are places gotten as rewards."}, {"key": "da25:4.11", "p": "我於此二趣所受報處，盡知盡見，…"}, {"key": "da25:4.12", "p": "我寧 可呵責諸苦行者以為弊穢耶？…", "s": "Why would I want to rebuke all those ascetics and consider them corrupt?"}, {"key": "da25:4.13", "p": "我正說是， 彼則言非，我正說非，彼則言是。迦葉！…", "s": "When I correctly say ‘Yes,’ they then say ‘No.’\nWhen I correctly say ‘No,’ they say ‘Yes.’"}, {"key": "da25:4.14", "p": "有法 沙門、婆羅門同，有法沙門、婆羅門不同。…", "s": "Kāśyapa, there are ascetics and priests who equally possess the way,\nand there are ascetics and priest who don’t equally possess the way."}, {"key": "da25:4.15", "p": "迦 葉！…", "s": "Kāśyapa, those who aren’t equal are the ones that I set aside because\ntheir teaching isn’t shared with ascetics and priests equally."}, {"key": "da25:4.16", "p": "彼不同者，我則捨置，以此法不與沙門、 婆羅門同故。…"}]}, {"id": "5", "label": "「迦葉！", "rows": [{"key": "da25:5.1", "p": "「迦葉！…", "s": "“Kāśyapa, those who are wise make this observation:"}, {"key": "da25:5.2", "p": "彼有智者作如是觀，沙 門瞿曇於不善法、…", "s": "‘When the ascetic Gautama had unskillful qualities, quite defiled, dark,"}, {"key": "da25:5.3", "p": "重濁、黑冥、非賢聖法，…", "s": "and ignoble and when other teachers had the same qualities, which of them was capable of destroying these qualities?’"}, {"key": "da25:5.4", "p": "彼異 眾師於不善法、重濁、黑冥、…"}, {"key": "da25:5.5", "p": "非賢聖法，誰能堪 任滅此法者？迦葉！…"}, {"key": "da25:5.6", "p": "彼有智者作是觀時，如 是知見，唯沙門瞿曇能滅是法。迦葉！…", "s": "Kāśyapa, when the wise make this observation,\nthey thus know and see that only the ascetic Gautama was able to destroy these qualities."}, {"key": "da25:5.7", "p": "彼有智 者作如是觀，如是推求，…", "s": "Kāśyapa, when those who are wise make this observation, inquire into this,\nand discuss this, I’m the one who they name as being so."}, {"key": "da25:5.8", "p": "如是論時，我於此 中則有名稱。…"}]}, {"id": "6", "label": "「復次，迦葉！", "rows": [{"key": "da25:6.1", "p": "「復次，迦葉！…", "s": "“Furthermore, Kāśyapa, those who are wise make this observation:"}, {"key": "da25:6.2", "p": "彼有智者作如是 觀，沙門瞿曇弟子於不善法、…", "s": "‘When the ascetic Gautama’s disciples have unskillful qualities, quite defiled, dark,"}, {"key": "da25:6.3", "p": "重濁、黑冥、非賢 聖法，…", "s": "and ignoble and the disciple of other teachers have the same qualities,"}, {"key": "da25:6.4", "p": "彼異眾師弟子於不善法、重濁、黑冥、…"}, {"key": "da25:6.5", "p": "非 賢聖法，誰能堪任滅此法者？迦葉！…", "s": "which of them is capable of destroying these qualities?"}, {"key": "da25:6.6", "p": "彼有智 者作如是觀，如是知見，…", "s": "Kāśyapa, when those who are wise make this observation, they thus know and see:"}, {"key": "da25:6.7", "p": "唯沙門瞿曇弟子能 滅是法。迦葉！…", "s": "‘The ascetic Gautama’s disciples are able to destroy these qualities.’"}, {"key": "da25:6.8", "p": "彼有智者作如是觀，如是推 求，…", "s": "Kāśyapa, when the wise make this observation, inquire into this,"}, {"key": "da25:6.9", "p": "如是論時，我弟子則得名稱。…", "s": "and discuss this, my disciples are who they name."}]}, {"id": "7", "label": "「復次，迦葉！", "rows": [{"key": "da25:7.1", "p": "「復次，迦葉！…", "s": "“Furthermore, Kāśyapa, those who are wise make this observation,"}, {"key": "da25:7.2", "p": "彼有智者作如是觀，沙門瞿曇於諸善法、…", "s": "‘The ascetic Gautama has skillful qualities, pristine, sublime, and noble and other teachers have the same qualities."}, {"key": "da25:7.3", "p": "清白、微妙及賢聖法，…"}, {"key": "da25:7.4", "p": "彼異眾師於諸善法、清 白、…"}, {"key": "da25:7.5", "p": "微妙及賢聖法，誰能堪任增廣修行者？…", "s": "Which of them is capable of cultivating and making them grow?’"}, {"key": "da25:7.6", "p": "迦 葉！…", "s": "Kāśyapa, when the wise make this observation, they thus know and see:"}, {"key": "da25:7.7", "p": "彼有智者作如是觀，如是知見，…"}, {"key": "da25:7.8", "p": "唯有沙 門瞿曇堪任增長修行是法。迦葉！…", "s": "‘Only the ascetic Gautama is capable of cultivating these qualities and making them grow.’"}, {"key": "da25:7.9", "p": "彼有智 者作如是觀，如是推求，…", "s": "Kāśyapa, when the wise make this observation, inquire into this,\nand discuss this, I’m the one who they name as being so."}, {"key": "da25:7.10", "p": "如是論時，我於此 中則有名稱。…"}]}, {"id": "8", "label": "「迦葉！", "rows": [{"key": "da25:8.1", "p": "「迦葉！…", "s": "“Kāśyapa, those who are wise make this observation:"}, {"key": "da25:8.2", "p": "彼有智者作如是觀，沙 門瞿曇弟子於諸善法、…", "s": "‘When the ascetic Gautama’s disciples have skillful qualities, pristine, sublime, and noble,"}, {"key": "da25:8.3", "p": "清白、微妙及賢聖法，…"}, {"key": "da25:8.4", "p": "彼異眾師弟子於諸善法、清白、…", "s": "and the disciples of other teachers have the same qualities,"}, {"key": "da25:8.5", "p": "微妙及賢聖 法，誰能堪任增長修行者？迦葉！…", "s": "which of them is capable of cultivating them and making them grow?’"}, {"key": "da25:8.6", "p": "彼有智者 作如是觀，如是知見，…", "s": "Kāśyapa, when the wise make this observation, they thus know and see,"}, {"key": "da25:8.7", "p": "唯有沙門瞿曇弟子 能堪任增長修行是法。迦葉！…", "s": "‘Only the ascetic Gautama’s disciples are capable of cultivating these qualities and making them grow.’"}, {"key": "da25:8.8", "p": "彼有智者作 如是觀，如是推求，…", "s": "Kāśyapa, when the wise make this observation, inquire into this,"}, {"key": "da25:8.9", "p": "如是論時，於我弟子 則有名稱。迦葉！…", "s": "and discuss this, my disciples are who they name."}, {"key": "da25:8.10", "p": "有道有迹，比丘於中修行， 則自知自見，…", "s": "“Kāśyapa, there’s a path and a way that a monk cultivates, and then he himself will know and see:"}, {"key": "da25:8.11", "p": "沙門瞿曇時說、實說、義說、法說、 律說。…", "s": "‘The ascetic Gautama’s speech is timely, genuine, meaningful, the teaching, and the discipline.’"}]}, {"id": "9", "label": "「迦葉！", "rows": [{"key": "da25:9.1", "p": "「迦葉！…", "s": "Kāśyapa, what is the path and what are the way that a monk cultivates, and then he himself will know and see:"}, {"key": "da25:9.2", "p": "何等是道？…"}, {"key": "da25:9.3", "p": "何等是迹？…"}, {"key": "da25:9.4", "p": "比丘於中修 行，自知自見，…", "s": "‘The ascetic Gautama’s speech is timely, genuine, meaningful, the teaching, and the discipline’?"}, {"key": "da25:9.5", "p": "沙門瞿曇時說、實說、義說、法說、 律說。迦葉！…"}, {"key": "da25:9.6", "p": "於是比丘修念覺意，依止息，依 無欲，依出要；修法、…", "s": "“Kāśyapa, a monk cultivates the awakening factor of mindfulness based on stopping, lack of desire, and escape.\nHe cultivates the awakening factor of the teachin…"}, {"key": "da25:9.7", "p": "精進、喜、猗、定、捨覺意，…", "s": "effort … joy … calm … samādhi … equanimity based on stopping, lack of desire, and escape."}, {"key": "da25:9.8", "p": "依 止息，依無欲，依出要。迦葉！…"}, {"key": "da25:9.9", "p": "是為道，是為 迹，比丘於中修行，自知自見，…", "s": "Kāśyapa, this is the path and the way that a monk cultivates, and then he himself will know and see:"}, {"key": "da25:9.10", "p": "沙門瞿曇時說、 實說、義說、法說、律說。」…", "s": "‘The ascetic Gautama’s speech is timely, genuine, meaningful, the teaching, and the discipline.”"}]}, {"id": "10", "label": "迦葉言：「瞿曇！", "rows": [{"key": "da25:10.1", "p": "迦葉言：「瞿曇！…", "s": "Kāśyapa said,"}, {"key": "da25:10.2", "p": "唯有是道、 是迹，比丘於中修行，自知自見。…", "s": "“Gautama, there’s only this path and this way that a monk cultivates, and then he himself knows and sees:"}, {"key": "da25:10.3", "p": "沙門瞿曇時 說、實說、義說、法說、律說。…", "s": "‘The ascetic Gautama’s speech is timely, genuine, meaningful, the teaching, and the discipline.’"}, {"key": "da25:10.4", "p": "但苦行穢污，有得婆 羅門名，有得沙門名。…", "s": "It’s only the dirty ascetic practices that make it possible to be named a priest or an ascetic."}, {"key": "da25:10.5", "p": "何等是苦行穢污，有 得婆羅門名，有得沙門名？瞿曇！…", "s": "What dirty ascetic practices make it possible to be named a priest or an ascetic?"}, {"key": "da25:10.6", "p": "離服倮形， 以手自障蔽，不受夜食，不受朽食，…", "s": "“Gautama, they part with clothing and go naked, covering themselves with their hands.\nThey don’t accept food in pots or bowls."}, {"key": "da25:10.7", "p": "不 受兩壁中間食，…", "s": "They don’t accept food while between two walls, between two people, between two blades, or between two bowls."}, {"key": "da25:10.8", "p": "不受 二 人中間食，不受 兩刀中間食，…"}, {"key": "da25:10.9", "p": "不受兩杇中間食，不受共食 家食，不受懷姙家食，…", "s": "They don’t accept food when a family is eating together, when there’s a pregnancy in the household,"}, {"key": "da25:10.10", "p": "狗在門前不食其 食，不受有蠅家食，不受請食。…", "s": "when they see a dog at the door, or when a home has many flies.\n“They don’t accept invitations to meals or food from someone who says they know them."}, {"key": "da25:10.11", "p": "他言先識則 不受其飡，不食魚，不食肉，…", "s": "They don’t eat fish or meat and don’t drink wine."}, {"key": "da25:10.12", "p": "不飲酒，不兩 器食，一飡一咽，至七飡止，…", "s": "They don’t take two bowls of food, considering one swallow to be a meal up to seven meals and stopping."}, {"key": "da25:10.13", "p": "受人益食，不過 七益，或一日一食，或二日、…", "s": "When they accept a person’s beneficial food, they don’t do so more than seven times."}, {"key": "da25:10.14", "p": "三日、四日、五日、六 日、七日一食。…", "s": "Sometimes, they eat one meal a day or one every two days, three days, four days, five days, six days, or seven days."}, {"key": "da25:10.15", "p": "或復食果，或復食莠，或食飯 汁，或食麻米，…", "s": "“Sometimes, they eat fruit or weeds and drink juice.\nThey eat flax seed, rice, long-grain rice, cow dung, deer dung,"}, {"key": "da25:10.16", "p": "或食 ［禾＊咸］ 稻，或食牛糞，或食 鹿糞，…", "s": "tree roots, branches, leaves, and fruit, or fruit that has fallen naturally."}, {"key": "da25:10.17", "p": "或食樹根枝葉花實，或食自落果；或 披衣，…", "s": "“Sometimes, they wear clothes, throw on sedge as clothes, wear tree bark, curtain yourselves in grass, or wear deerskin."}, {"key": "da25:10.18", "p": "或披莎衣，或衣樹皮，或草襜身，或 衣鹿皮，或留髮，…", "s": "Sometimes, they fasten head hair to themselves, wear plaited hair, or wear clothes from a charnel ground."}, {"key": "da25:10.19", "p": "或被毛編，或著塚間衣；或 有常舉手者，或不坐床席，…", "s": "“Sometimes, they keep your arms raised all the time, don’t sit on couches or mats, or crouch all the time."}, {"key": "da25:10.20", "p": "或有常蹲者，或 有剃髮留髭鬚者，或有臥荊棘上者，…", "s": "Sometimes, they cut their hair and fasten it to their beard,"}, {"key": "da25:10.21", "p": "或有 臥果蓏上者，或有倮形臥牛糞上者；…", "s": "lie on thorns, lie on fruits and berries, or lie naked on cow dung."}, {"key": "da25:10.22", "p": "或一 日三浴，或一夜三浴，以無數苦，苦役此身。…", "s": "Sometimes, they bath three times a day or three times a night.\nThey torment their bodies with these countless hardships."}, {"key": "da25:10.23", "p": "瞿曇！…", "s": "Gautama, these are the dirty practices that make it possible to be named a priest or ascetic.”"}, {"key": "da25:10.24", "p": "是為苦行穢污，或得沙門名，或得婆 羅門名。」…"}]}, {"id": "11", "label": "佛言：「迦葉！", "rows": [{"key": "da25:11.1", "p": "佛言：「迦葉！…", "s": "The Buddha said,"}, {"key": "da25:11.2", "p": "離服倮形者，以無數方 便苦役此身，…", "s": "“Kāśyapa, parting with clothes and going naked … tormenting one’s body with these countless hardships,\ntheir precepts aren’t complete, and their views aren’t co…"}, {"key": "da25:11.3", "p": "彼戒不具足，見不具足，不 能勤修，亦不廣普。」…", "s": "They aren’t able to diligently cultivate, and their [teachings] aren’t broad and open.”"}]}, {"id": "12", "label": "迦葉白佛言：「云何為戒 具足？", "rows": [{"key": "da25:12.1", "p": "迦葉白佛言：「云何為戒 具足？…", "s": "Kāśyapa said to the Buddha,\n“What are the completion of precepts and completion of views that\ngo beyond the ascetic practices and that are fine and supreme?”"}, {"key": "da25:12.2", "p": "云何為見具足？…"}, {"key": "da25:12.3", "p": "過諸苦行，微妙第一。」…"}]}, {"id": "13", "label": "佛告迦葉：「諦聽，善思念之，當為汝說。」", "rows": [{"key": "da25:13.1", "p": "佛告迦葉：「諦聽，善思念之，當為汝說。」…", "s": "The Buddha told Kāśyapa,\n“Listen closely, and well consider it.\nI’ll explain it for you.”"}]}, {"id": "14", "label": "迦葉 言：「唯然。瞿曇！", "rows": [{"key": "da25:14.1", "p": "迦葉 言：「唯然。瞿曇！…", "s": "Kāśyapa said,\n“Very well, Gautama."}, {"key": "da25:14.2", "p": "願樂欲聞。」…", "s": "I’d be glad to hear it.”"}]}, {"id": "15", "label": "佛告迦葉：「若如來、 至真出現於世，", "rows": [{"key": "da25:15.1", "p": "佛告迦葉：「若如來、 至真出現於世，…", "s": "The Buddha addressed Kāśyapa,\n“If a Tathāgata, an Arhat, arises in the world …"}, {"key": "da25:15.2", "p": "乃至四禪，於現法中而得 快樂。…", "s": "the four dhyānas, then he attains happiness in the present life."}, {"key": "da25:15.3", "p": "所以者何？…", "s": "Why is that?"}, {"key": "da25:15.4", "p": "斯由精勤，專念一心，樂於 閑靜，不放逸故。迦葉！…", "s": "These things are a result of diligence, focused attention, unified mind,\ndelighting in quiet seclusion, and not being self-indulgent."}, {"key": "da25:15.5", "p": "是為戒具足，見具足， 勝諸苦行，微妙第一。」…", "s": "Kāśyapa, this is the completion of precepts and completion of views that surpasses the ascetic practices,\nthat’s fine and supreme.”"}]}, {"id": "16", "label": "迦葉言：「瞿曇！", "rows": [{"key": "da25:16.1", "p": "迦葉言：「瞿曇！…", "s": "Kāśyapa said,"}, {"key": "da25:16.2", "p": "雖曰戒 具足，見具足，過諸苦行，…", "s": "“Gautama, although you say this completion of precepts and completion\nof views surpasses the ascetic practices and is fine and supreme,"}, {"key": "da25:16.3", "p": "微妙第一，但沙門法 難，婆羅門法難。」…", "s": "it’s only being an ascetic or priest that’s difficult.”"}]}, {"id": "17", "label": "佛言：「迦葉！", "rows": [{"key": "da25:17.1", "p": "佛言：「迦葉！…", "s": "The Buddha said,"}, {"key": "da25:17.2", "p": "此是世間不共 法。…", "s": "“Kāśyapa, this is world’s special teaching, that the teachings of ascetics and priests are difficult."}, {"key": "da25:17.3", "p": "所謂沙門法、婆羅門法難，迦葉！…"}, {"key": "da25:17.4", "p": "乃至優婆 夷亦能知此法。…", "s": "Kāśyapa, even a laywoman can understand these teachings."}, {"key": "da25:17.5", "p": "離服倮形，乃至無數方便苦 役此身，但不知其心：…", "s": "Parting with clothing and going naked … tormenting one’s body with these countless hardships,\na person still doesn’t understand their mind:"}, {"key": "da25:17.6", "p": "為有恚心、為無恚心， 有恨心、…", "s": "‘Am I angry or not …"}, {"key": "da25:17.7", "p": "無恨心，有害心、無害心？…", "s": "resentful or not … harmful or not?’"}, {"key": "da25:17.8", "p": "若知此心 者，不名沙門、婆羅門，…", "s": "If someone knows these mental states, they aren’t named ascetics or priests."}, {"key": "da25:17.9", "p": "為已不知故，沙門、婆 羅門為難。」…", "s": "It’s because they don’t understand themselves that being an ascetic or priest is difficult.”"}]}, {"id": "18", "label": "爾時，迦葉白佛言：「何等是沙門、 何等是婆羅門，", "rows": [{"key": "da25:18.1", "p": "爾時，迦葉白佛言：「何等是沙門、 何等是婆羅門，…", "s": "Kāśyapa then said to the Buddha,\n“What’s an ascetic or a priest like whose precepts and views are complete and who’s higher,"}, {"key": "da25:18.2", "p": "戒具足、見具足，為上為勝，微 妙第一？」…", "s": "superior, fine, and supreme?”"}]}, {"id": "19", "label": "佛告迦葉：「諦聽，諦聽，善思念之，當 為汝說。」", "rows": [{"key": "da25:19.1", "p": "佛告迦葉：「諦聽，諦聽，善思念之，當 為汝說。」…", "s": "The Buddha told Kāśyapa,\n“Listen closely, listen closely!\nConsider it well.\nI will explain this for you.”"}]}, {"id": "20", "label": "迦葉言：「唯然。瞿曇！", "rows": [{"key": "da25:20.1", "p": "迦葉言：「唯然。瞿曇！…", "s": "Kāśyapa said,\n“Very well, Gautama."}, {"key": "da25:20.2", "p": "願樂欲聞。」…", "s": "I’d be glad to hear it.”"}]}, {"id": "21", "label": "佛言： 「迦葉！", "rows": [{"key": "da25:21.1", "p": "佛言： 「迦葉！…", "s": "The Buddha said,"}, {"key": "da25:21.2", "p": "彼比丘以三昧心，乃至得三明，…", "s": "“Kāśyapa, with samādhi of mind, a monk … attains the three insights,\ndestroys the darkness of delusions, and produces the light of wisdom."}, {"key": "da25:21.3", "p": "滅諸 癡冥，生智慧明，所謂漏盡智生。…", "s": "This is called producing the knowledge that the contaminants have ended."}, {"key": "da25:21.4", "p": "所以者何？…", "s": "Why is that?"}, {"key": "da25:21.5", "p": "斯由精勤，專念不忘，樂獨閑靜，不放逸故。…", "s": "These things are a result of diligence, focused attention, not being forgetful,\ndelighting in quiet seclusion, and not being self-indulgent."}, {"key": "da25:21.6", "p": "迦葉！…", "s": "Kāśyapa, this is called an ascetic or priest whose precepts and views are complete,"}, {"key": "da25:21.7", "p": "此名沙門、婆羅門，戒具足、…"}, {"key": "da25:21.8", "p": "見具足，最勝 最上，微妙第一。」…", "s": "and who’s superior, higher, fine, and supreme."}]}, {"id": "22", "label": "迦葉言：「瞿曇！", "rows": [{"key": "da25:22.1", "p": "迦葉言：「瞿曇！…", "s": "Kāśyapa said,"}, {"key": "da25:22.2", "p": "雖言是沙門、 婆羅門，見具足、…", "s": "“Gautama, although you say this is an ascetic or priest whose views and precepts are complete and who’s higher,"}, {"key": "da25:22.3", "p": "戒具足，為上為勝，微妙第一。…", "s": "superior, fine, and supreme, it’s only being an ascetic or priest that’s exceedingly difficult."}, {"key": "da25:22.4", "p": "但沙門、婆羅門法，甚難！甚難！…", "s": "It’s exceedingly difficult!"}, {"key": "da25:22.5", "p": "沙門亦難知，婆 羅門亦難知。」…", "s": "An ascetic is also hard to know, and a priest is also hard to know.”"}]}, {"id": "23", "label": "佛告迦葉：「優婆塞亦能修行 此法。", "rows": [{"key": "da25:23.1", "p": "佛告迦葉：「優婆塞亦能修行 此法。…", "s": "The Buddha told Kāśyapa,\n“A layman can cultivate this teaching, too."}, {"key": "da25:23.2", "p": "」白言：「我從今日能離服倮形，…", "s": "Someone who says ‘From this day forward, I will part with clothing and go naked …"}, {"key": "da25:23.3", "p": "乃至以 無數方便苦役此身，…", "s": "and torment my body with these countless hardships’ can’t be\ncalled an ascetic or a priest on account of these practices."}, {"key": "da25:23.4", "p": "不可以此行名為沙 門、婆羅門，…"}, {"key": "da25:23.5", "p": "若當以此行名為沙門、婆羅門 者，不得言沙門甚難！…", "s": "If they were called an ascetic or priest because of these practices, it couldn’t be said,"}, {"key": "da25:23.6", "p": "婆羅門甚難！…", "s": "‘Being an ascetic is exceedingly difficult!\nBeing a priest is exceedingly difficult!’"}, {"key": "da25:23.7", "p": "不以此 行為沙門、婆羅門故，言沙門甚難！…", "s": "That isn’t possible to say on account of these practices of ascetics and priests,\n‘Being an ascetic is exceedingly difficult!"}, {"key": "da25:23.8", "p": "婆羅門 甚難！」…", "s": "Being a priest is exceedingly difficult!’”"}]}, {"id": "24", "label": "佛告迦葉：「我昔一時在羅閱祇，", "rows": [{"key": "da25:24.1", "p": "佛告迦葉：「我昔一時在羅閱祇，…", "s": "The Buddha told Kāśyapa,"}, {"key": "da25:24.2", "p": "於高 山七葉窟中，曾為尼俱陀梵志說清淨苦 行。…", "s": "“There was once a time I was in Rājagṛha, staying at Saptaparṇa Cave near Mount Vaibhāra."}, {"key": "da25:24.3", "p": "時梵志生歡喜心，得清淨信，供養我、…", "s": "There, I explained to that wanderer Nigrodha the pure ascetic practices.\nThat wanderer rejoiced, attained pure faith, gave offerings to me,"}, {"key": "da25:24.4", "p": "稱 讚我，第一供養稱讚於我。」…", "s": "praised me, and gave his best offerings and praise to me.”"}]}, {"id": "25", "label": "迦葉言：「瞿曇！", "rows": [{"key": "da25:25.1", "p": "迦葉言：「瞿曇！…", "s": "Kāśyapa said,"}, {"key": "da25:25.2", "p": "誰 於瞿曇不生第一歡喜、淨信、供養、稱讚者？…", "s": "“Gautama, who hasn’t Gautama made rejoice greatly, attain pure faith, make offerings, and praise him?"}, {"key": "da25:25.3", "p": "我今於瞿曇亦生第一歡喜，…", "s": "Now, Gautama has made me rejoice, attain pure faith, make offerings, and praise him."}, {"key": "da25:25.4", "p": "得清淨信，供 養、稱讚，歸依瞿曇。」…", "s": "I take refuge in Gautama.”"}]}, {"id": "26", "label": "佛告迦葉：「諸世間諸所有 戒，", "rows": [{"key": "da25:26.1", "p": "佛告迦葉：「諸世間諸所有 戒，…", "s": "The Buddha told Kāśyapa,"}, {"key": "da25:26.2", "p": "無有與此增上戒等者，況欲出其上？…", "s": "“Those precepts possessed by the world don’t possess or accompany the higher precepts, and the rest.\nHow could they want to produce anything higher?"}, {"key": "da25:26.3", "p": "諸有三昧、智慧、解脫、…", "s": "They possess samādhi, wisdom, and liberation, and have seen the liberation of wisdom,"}, {"key": "da25:26.4", "p": "見解脫慧，無有與此增 上三昧、…", "s": "but they don’t possess or accompany these higher samādhi, wisdom, liberation, and seeing the liberation of wisdom."}, {"key": "da25:26.5", "p": "智慧、解脫、見解脫慧等者，況欲出其 上？迦葉！…", "s": "How could they want to produce anything higher?"}, {"key": "da25:26.6", "p": "所謂師子者，是如來、至真、等正覺，…", "s": "“Kāśyapa, the Tathāgata, Arhat, and Completely Awakened One is a lion."}, {"key": "da25:26.7", "p": "如來於大眾中廣說法時，自在無畏，故號師 子。云何？迦葉！…", "s": "When he teachings Dharma in detail in a great assembly, he’s sovereign and fearless, so he’s called a lion.\n“How is it, Kāśyapa?"}, {"key": "da25:26.8", "p": "汝謂如來師子吼時不勇捍 耶？…", "s": "Would you say that Tathāgata isn’t courageous when he roars the lion’s roar?"}, {"key": "da25:26.9", "p": "勿造斯觀，如來師子吼勇捍無畏。迦葉！…", "s": "Don’t imagine this.\nThe Tathāgata’s lion’s roar is courageous and fearless."}, {"key": "da25:26.10", "p": "汝謂如來勇捍師子吼時不在大眾中耶？…", "s": "“Kāśyapa, would you say the Tathāgata’s courageous and fearless lion’s roar isn’t done in a large assembly?"}, {"key": "da25:26.11", "p": "勿造斯觀，如來在大眾中勇捍師子吼。…", "s": "Don’t imagine this.\nThe Tathāgata courageously roars the lion’s roar in a large assembly."}, {"key": "da25:26.12", "p": "迦 葉！…", "s": "“Kāśyapa, would you say that the Tathāgata doesn’t teach the Dharma\nwhen he courageously roars the lion’s roar in a large assembly?"}, {"key": "da25:26.13", "p": "汝謂如來在大眾中作師子吼不能說 法耶？…"}, {"key": "da25:26.14", "p": "勿造斯觀。…", "s": "Don’t imagine this."}, {"key": "da25:26.15", "p": "所以者何？…", "s": "Why is that?"}, {"key": "da25:26.16", "p": "如來在大眾中 勇捍無畏，作師子吼，善能說法。…", "s": "The Tathāgata skillfully teaches the Dharma when he courageously\nand fearlessly roars the lion’s roar in a large assembly."}]}, {"id": "27", "label": "「云何？迦葉！", "rows": [{"key": "da25:27.1", "p": "「云何？迦葉！…", "s": "“How is it, Kāśyapa?"}, {"key": "da25:27.2", "p": "汝謂如來於大眾中勇捍無畏，為師子吼，…", "s": "Would you say that the audience isn’t unified in mind when the Tathāgata courageously and\nfearlessly roars the lion’s roar in a large assembly and skillfully te…"}, {"key": "da25:27.3", "p": "善能說法，眾 會 聽者不一心耶？…"}, {"key": "da25:27.4", "p": "勿造斯觀。…", "s": "Don’t imagine this."}, {"key": "da25:27.5", "p": "所以者何？…", "s": "Why is that?"}, {"key": "da25:27.6", "p": "如來在大眾中勇捍無畏，為師 子吼，…", "s": "When the Tathāgata courageously and fearlessly roars the lion’s\nroar in a large assembly and skillfully teaches the Dharma,"}, {"key": "da25:27.7", "p": "善能說法，諸來會者皆一心聽。云何？…", "s": "the audience is unified in mind."}, {"key": "da25:27.8", "p": "迦 葉！…", "s": "“How is it, Kāśyapa?"}, {"key": "da25:27.9", "p": "汝謂如來在大眾中勇捍無畏，為師子 吼，…", "s": "Would you say that the audience doesn’t rejoice, believe,"}, {"key": "da25:27.10", "p": "善能說法，諸來會者皆一心聽，而不歡喜信 受行耶？…", "s": "and accept it when the Tathāgata courageously and fearlessly roars the lion’s roar in a large assembly,\nskillfully teaches the Dharma, and those present listen …"}, {"key": "da25:27.11", "p": "勿造斯觀。…", "s": "Don’t imagine this."}, {"key": "da25:27.12", "p": "所以者何？…", "s": "Why is that?"}, {"key": "da25:27.13", "p": "如來在大眾 中勇捍多力，能師子吼，…", "s": "When the Tathāgata courageously and fearlessly roars the lion’s roar in a large assembly, skillfully teaches the Dharma,"}, {"key": "da25:27.14", "p": "善能說法，諸來會 者皆一心聽，歡喜信受。迦葉！…", "s": "and the audience that’s present listens with unified minds, they rejoice, believe, and accept it."}, {"key": "da25:27.15", "p": "汝謂如來在大 眾中勇捍無畏，為師子吼，…", "s": "“Kāśyapa, would you say that the audience doesn’t make offerings when the\nTathāgata courageously and fearlessly roars the lion’s roar in a large assembly,"}, {"key": "da25:27.16", "p": "善能說法，諸來 會者歡喜信受，而不供養耶？…", "s": "skillfully teaches the Dharma, and the audience rejoices, believes, and accepts it?"}, {"key": "da25:27.17", "p": "勿造斯觀，如 來在大眾中勇捍無畏，為師子吼，…", "s": "Don’t imagine this."}, {"key": "da25:27.18", "p": "善能說 法，諸來會者皆一心聽，歡喜信受，而設供養。…", "s": "[Why is that?]\nWhen the Tathāgata courageously and fearlessly roars the lion’s roar in a large assembly,\nskillfully teaches the Dharma, and the audience rejoice…"}]}, {"id": "28", "label": "「迦葉！", "rows": [{"key": "da25:28.1", "p": "「迦葉！…", "s": "“Kāśyapa, would you say that the audience doesn’t shave their hair and beard, put on the three Dharma robes, leave home,"}, {"key": "da25:28.2", "p": "汝謂如來在大眾中勇捍無畏，為師 子吼，…", "s": "and cultivate the path when the Tathāgata courageously and fearlessly roars the lion’s roar in a large assembly …\nand they believe, respect, and make offerings?"}, {"key": "da25:28.3", "p": "乃至信敬供養，而不剃除鬚髮，…"}, {"key": "da25:28.4", "p": "服三法 衣，出家修道耶？…"}, {"key": "da25:28.5", "p": "勿造斯觀。…", "s": "Don’t imagine this."}, {"key": "da25:28.6", "p": "所以者何？…", "s": "Why is that?"}, {"key": "da25:28.7", "p": "如來 在大眾中勇捍無畏，乃至信敬供養，…", "s": "When the Tathāgata courageously and fearlessly roars the lion’s roar in a large assembly …\nand they believe, respect, and make offerings, the audience shaves th…"}, {"key": "da25:28.8", "p": "剃 除鬚髮，服三法衣，出家修道。迦葉！…", "s": "put on the three Dharma robes, leave home, and cultivate the path."}, {"key": "da25:28.9", "p": "汝謂如來 在大眾中勇捍無畏，乃至出家修道，…", "s": "“Kāśyapa, would you say that the audience doesn’t practice the ultimate religious practice and reach the peaceful abode,\nwhich is Nirvāṇa without remainder,\nwhe…"}, {"key": "da25:28.10", "p": "而不究 竟梵行，至安隱處，無餘泥洹耶？…"}, {"key": "da25:28.11", "p": "勿造斯觀。…", "s": "Don’t imagine this."}, {"key": "da25:28.12", "p": "所以者何？…", "s": "Why is that?"}, {"key": "da25:28.13", "p": "如來於大眾中勇捍無畏，乃至出 家修道，…", "s": "When the Tathāgata courageously and fearlessly roars the lion’s roar in a large assembly …\nand they leave home and cultivate the path,"}, {"key": "da25:28.14", "p": "究竟梵行，至安隱處，無餘泥洹。」…", "s": "the audience does practice the ultimate religious practice and reach a peaceful abode,\nwhich is Nirvāṇa without remainder.”"}]}, {"id": "29", "label": "時，迦 葉白佛言：「云何？瞿曇！", "rows": [{"key": "da25:29.1", "p": "時，迦 葉白佛言：「云何？瞿曇！…", "s": "Kāśyapa then said to the Buddha,"}, {"key": "da25:29.2", "p": "我得於此法中出家 受具戒不？」…", "s": "“How, Gautama, do I leave home and accept the full precepts in this teaching?”"}]}, {"id": "30", "label": "佛告迦葉：「若異學欲來入我法 中出家修道者，", "rows": [{"key": "da25:30.1", "p": "佛告迦葉：「若異學欲來入我法 中出家修道者，…", "s": "The Buddha told Kāśyapa,\n“If someone from another training wishes to enter my teaching, leave home, and cultivate the path,"}, {"key": "da25:30.2", "p": "當留四月觀察，稱可眾意， 然後當得出家受戒。迦葉！…", "s": "they will wait and be observed for four months and receive the Saṅgha’s assent.\nAfterward, they can leave home and accept the precepts."}, {"key": "da25:30.3", "p": "雖有是法，亦觀 其人耳。」…", "s": "Kāśyapa, this is simply because, while there is this teaching, we also observe the person.”"}]}, {"id": "31", "label": "迦葉言：「若有異學欲來入佛法中 修梵行者，", "rows": [{"key": "da25:31.1", "p": "迦葉言：「若有異學欲來入佛法中 修梵行者，…", "s": "Kāśyapa said,\n“If someone from another training wishes to enter the Buddha’s teaching and cultivate the religious life,"}, {"key": "da25:31.2", "p": "當留四月觀察，稱可眾意，然後 當得出家受戒。…", "s": "they will wait to be observed for four months to assess their many ideas.\nAfterward, they can leave home and receive the Saṅgha’s assent."}, {"key": "da25:31.3", "p": "我今能於佛法中四歲觀 察，…", "s": "Now, I would be willing to wait for four years of observation\nto enter the Buddha’s teaching to receive the Saṅgha’s assent."}, {"key": "da25:31.4", "p": "稱可眾意，然後乃出家受戒。」…", "s": "Afterward, I’ll leave home and accept the precepts.”"}]}, {"id": "32", "label": "佛告迦葉： 「我已有言，但觀其人耳。」", "rows": [{"key": "da25:32.1", "p": "佛告迦葉： 「我已有言，但觀其人耳。」…", "s": "The Buddha told Kāśyapa,\n“I would give you my assent, but it’s simply that we observe the person [first].”"}]}, {"id": "33", "label": "爾時，迦葉即於佛 法中出家受具足戒。", "rows": [{"key": "da25:33.1", "p": "爾時，迦葉即於佛 法中出家受具足戒。…", "s": "Kāśyapa then left home and accepted the full precepts in the Buddha’s teaching."}, {"key": "da25:33.2", "p": "時，迦葉受戒未久，…", "s": "It wasn’t long after Kāśyapa had accepted the precepts that he was\ncultivating the unsurpassed religious practice with pure faith."}, {"key": "da25:33.3", "p": "以 淨信心修無上梵行，現法中自身作證，…", "s": "In the present life, he himself realized:"}, {"key": "da25:33.4", "p": "生 死已盡，梵行已立，所作已辦，…", "s": "“My births have been ended, the religious practice has been established, and the task has been accomplished."}, {"key": "da25:33.5", "p": "不受後有，即 成阿羅漢。…", "s": "I won’t be subject to a later existence.”\nHe had become an arhat."}]}, {"id": "34", "label": "爾時，迦葉聞佛所說，歡喜奉行。", "rows": [{"key": "da25:34.1", "p": "爾時，迦葉聞佛所說，歡喜奉行。…", "s": "When Kāśyapa heard what the Buddha taught, he rejoiced and approved."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "patton", "label": "Patton", "dot": "#5d8ac8", "light": {"bg": "#eef2f8", "text": "#0d1a2b"}, "dark": {"bg": "#121820", "text": "#a8c0d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": null}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "patton", "label": "Patton", "dot": "#5d8ac8", "light": {"bg": "#eef2f8", "text": "#0d1a2b"}, "dark": {"bg": "#121820", "text": "#a8c0d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": null, "group": "English", "tip": "Charles Patton's English translation from the Chinese"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

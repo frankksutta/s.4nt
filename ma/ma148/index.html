@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma148:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma148:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada's Park."}]}, {"id": "3", "label": "爾時，生聞梵志中後彷徉，往詣佛所，", "rows": [{"key": "ma148:3.1", "p": "爾時，生聞梵志中後彷徉，往詣佛所，…", "s": "At that time, the brahmin Jāṇussoṇī was wandering about in the middle of the day and went to the Buddha's presence."}, {"key": "ma148:3.2", "p": "共相問訊，却坐一面，白曰：「瞿曇！…", "s": "After exchanging greetings, he sat down to one side and said,"}, {"key": "ma148:3.3", "p": "我欲有所問，聽乃敢陳。」…", "s": "'Gotama, I wish to ask a question.\nPlease allow me to ask it.'"}]}, {"id": "4", "label": "世尊告曰：「梵志！", "rows": [{"key": "ma148:4.1", "p": "世尊告曰：「梵志！…", "s": "The Blessed One said,"}, {"key": "ma148:4.2", "p": "恣汝所問。」…", "s": "'Brahmin, ask whatever you wish.'"}]}, {"id": "5", "label": "生聞梵志即便問曰：「瞿曇！", "rows": [{"key": "ma148:5.1", "p": "生聞梵志即便問曰：「瞿曇！…", "s": "The brahmin Jāṇussoṇī then asked,"}, {"key": "ma148:5.2", "p": "在家者有何苦？…", "s": "'Gotama, what is the suffering for a householder?"}, {"key": "ma148:5.3", "p": "出家學道者有何苦耶？」…", "s": "What is the suffering for one who has gone forth to train in the Dhamma?'"}]}, {"id": "6", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:6.1", "p": "世尊答曰：「梵志！…", "s": "The Blessed One replied,"}, {"key": "ma148:6.2", "p": "在家者，以不自在為苦，出家學道者，以自在為苦。」…", "s": "'Brahmin, for a householder, suffering is not being free;\nfor one who has gone forth to train in the Dhamma, suffering is being free.'"}]}, {"id": "7", "label": "生聞梵志復問曰：「瞿曇！", "rows": [{"key": "ma148:7.1", "p": "生聞梵志復問曰：「瞿曇！…", "s": "The brahmin Jāṇussoṇi asked further:"}, {"key": "ma148:7.2", "p": "在家者，云何以不自在為苦？…", "s": "'Gotama, in what sense is suffering for a householder due to lack of autonomy?"}, {"key": "ma148:7.3", "p": "出家學道者，云何以自在為苦耶？」…", "s": "In what sense is suffering for one who has gone forth to train due to autonomy?'"}]}, {"id": "8", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:8.1", "p": "世尊答曰：「梵志！…"}, {"key": "ma148:8.2", "p": "若在家者，錢不增長，金、銀、…", "s": "The Blessed One replied:"}, {"key": "ma148:8.3", "p": "真珠、琉璃、水精悉不增長，…", "s": "'Brahmin, if a householder’s wealth does not increase—gold, silver, pearls, beryl, crystal do not increase;"}, {"key": "ma148:8.4", "p": "畜牧、穀米及奴婢使亦不增長，爾時，在家憂苦愁慼。…", "s": "livestock, grain, and slaves do not increase—then the householder is pained, sorrowful, and distressed."}, {"key": "ma148:8.5", "p": "因此故在家者多有憂苦，多懷愁慼。梵志！…", "s": "For this reason, householders have much pain and sorrow."}, {"key": "ma148:8.6", "p": "若出家學道者行隨其欲，行隨恚、…", "s": "Brahmin, if one who has gone forth to train acts according to his desires,"}, {"key": "ma148:8.7", "p": "癡，爾時，出家學道憂苦愁慼。…", "s": "acts according to aversion and delusion, then that one who has gone forth is pained, sorrowful, and distressed."}, {"key": "ma148:8.8", "p": "因此故出家學道者多有憂苦，多懷愁慼。梵志！…", "s": "For this reason, those who have gone forth have much pain and sorrow."}, {"key": "ma148:8.9", "p": "如是在家者，以不自在為苦，出家學道者，以自在為苦。」…", "s": "Thus, brahmin, a householder suffers due to lack of autonomy, and one who has gone forth suffers due to autonomy.'"}]}, {"id": "9", "label": "生聞梵志復問曰：「瞿曇！", "rows": [{"key": "ma148:9.1", "p": "生聞梵志復問曰：「瞿曇！…", "s": "The brahmin Jāṇussoṇi asked further:"}, {"key": "ma148:9.2", "p": "在家者有何樂？…", "s": "'Gotama, what happiness is there for a householder?"}, {"key": "ma148:9.3", "p": "出家學道者有何樂耶？」…", "s": "What happiness is there for one who has gone forth to train?'"}]}, {"id": "10", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:10.1", "p": "世尊答曰：「梵志！…", "s": "The Blessed One replied:"}, {"key": "ma148:10.2", "p": "在家者，以自在為樂，出家學道者，以不自在為樂。」…", "s": "'Brahmin, a householder finds happiness in autonomy;\none who has gone forth to train finds happiness in lack of autonomy.'"}]}, {"id": "11", "label": "生聞梵志復問曰：「瞿曇！", "rows": [{"key": "ma148:11.1", "p": "生聞梵志復問曰：「瞿曇！…", "s": "The brahmin Jāṇussoṇi asked further:"}, {"key": "ma148:11.2", "p": "在家者，云何以自在為樂？…", "s": "'Gotama, in what sense is autonomy happiness for a householder?"}, {"key": "ma148:11.3", "p": "出家學道者，云何以不自在為樂耶？」…", "s": "In what sense is lack of autonomy happiness for one who has gone forth to train?'"}]}, {"id": "12", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:12.1", "p": "世尊答曰：「梵志！…", "s": "The Blessed One replied:"}, {"key": "ma148:12.2", "p": "若在家者錢得增長，金、銀、…", "s": "'Brahmin, if a householder’s wealth increases—gold, silver, pearls, beryl, crystal increase;"}, {"key": "ma148:12.3", "p": "真珠、琉璃、水精皆得增長，…", "s": "livestock, grain, and slaves increase—then the householder is joyful and delighted."}, {"key": "ma148:12.4", "p": "畜牧、穀米及奴婢使亦得增長，爾時，在家快樂歡喜。…", "s": "For this reason, householders have much joy and delight."}, {"key": "ma148:12.5", "p": "因此故在家者多快樂歡喜。梵志！…", "s": "Brahmin, if one who has gone forth to train does not act according to his desires,"}, {"key": "ma148:12.6", "p": "出家學道者行不隨欲，行不隨恚、…", "s": "does not act according to aversion and delusion, then that one who has gone forth is joyful and delighted."}, {"key": "ma148:12.7", "p": "癡，爾時，出家學道快樂歡喜。…", "s": "For this reason, those who have gone forth have much joy and delight."}, {"key": "ma148:12.8", "p": "因此故出家學道者多快樂歡喜。梵志！…", "s": "Thus, brahmin, a householder finds happiness in autonomy,"}, {"key": "ma148:12.9", "p": "如是在家者，以自在為樂，出家學道者，以不自在為樂。」…", "s": "and one who has gone forth finds happiness in lack of autonomy.'"}]}, {"id": "13", "label": "生聞梵志復問曰：「瞿曇！", "rows": [{"key": "ma148:13.1", "p": "生聞梵志復問曰：「瞿曇！…", "s": "The brahmin Sroṇa asked again:"}, {"key": "ma148:13.2", "p": "以何事故，令天及人必無利義？…", "s": "'Gotama, for what reason do devas and humans inevitably fail to gain benefit?"}, {"key": "ma148:13.3", "p": "以何事故，令天及人必有利義？」…", "s": "For what reason do devas and humans inevitably gain benefit?'"}]}, {"id": "14", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:14.1", "p": "世尊答曰：「梵志！…", "s": "The Blessed One replied:"}, {"key": "ma148:14.2", "p": "若天及人共諍者，必無利義，…", "s": "'Brahmin, if devas and humans quarrel, they inevitably fail to gain benefit;"}, {"key": "ma148:14.3", "p": "若天及人不諍者，必有利義。」…", "s": "if devas and humans do not quarrel, they inevitably gain benefit.'"}]}, {"id": "15", "label": "生聞梵志復問曰：「瞿曇！", "rows": [{"key": "ma148:15.1", "p": "生聞梵志復問曰：「瞿曇！…", "s": "The brahmin Sroṇa asked again:"}, {"key": "ma148:15.2", "p": "云何天及人共諍者，必無利義？…", "s": "'Gotama, how is it that when devas and humans quarrel, they inevitably fail to gain benefit?"}, {"key": "ma148:15.3", "p": "云何天及人不諍者，必有利義耶？」…", "s": "How is it that when devas and humans do not quarrel, they inevitably gain benefit?'"}]}, {"id": "16", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:16.1", "p": "世尊答曰：「梵志！…", "s": "The Blessed One replied:"}, {"key": "ma148:16.2", "p": "若時天及人鬪諍怨憎者，爾時，天及人憂苦愁慼，…", "s": "'Brahmin, at a time when devas and humans fight, quarrel, and bear enmity,"}, {"key": "ma148:16.3", "p": "因此故天及人多有憂苦，多懷愁慼。梵志！…", "s": "then devas and humans are sorrowful, distressed, and afflicted."}, {"key": "ma148:16.4", "p": "若時天及人不鬪諍、不怨憎者，爾時，…", "s": "Because of this, devas and humans have much sorrow and are full of distress.\nBrahmin, at a time when devas and humans do not fight, do not quarrel,"}, {"key": "ma148:16.5", "p": "天及人快樂歡喜，因此故天及人多快樂、多歡喜。梵志！…", "s": "and do not bear enmity, then devas and humans are happy and joyful."}, {"key": "ma148:16.6", "p": "如是天及人共諍者，必無利義，…", "s": "Because of this, devas and humans have much happiness and are full of joy."}, {"key": "ma148:16.7", "p": "天及人不諍者，必有利義。」…", "s": "Brahmin, thus when devas and humans quarrel, they inevitably fail to gain benefit;\nwhen devas and humans do not quarrel, they inevitably gain benefit.'"}]}, {"id": "17", "label": "生聞梵志復問曰：「瞿曇！", "rows": [{"key": "ma148:17.1", "p": "生聞梵志復問曰：「瞿曇！…", "s": "The brahmin Sroṇa asked again:"}, {"key": "ma148:17.2", "p": "以何事故，令天及人必不得饒益，必得其苦？…", "s": "'Gotama, for what reason do devas and humans inevitably fail to obtain benefit and inevitably obtain suffering?"}, {"key": "ma148:17.3", "p": "以何事故，令天及人必得饒益，必得其樂？」…", "s": "For what reason do devas and humans inevitably obtain benefit and inevitably obtain happiness?'"}]}, {"id": "18", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:18.1", "p": "世尊答曰：「梵志！…", "s": "The Blessed One replied:"}, {"key": "ma148:18.2", "p": "若天及人行於非法及行惡者，必不得益，必得其苦。…", "s": "'Brahmin, if devas and humans practice what is contrary to the Dharma and practice what is evil,\nthey inevitably fail to obtain benefit and inevitably obtain su…"}, {"key": "ma148:18.3", "p": "若天及人能行如法，不行惡者，必得饒益，必得其樂。」…", "s": "If devas and humans are able to practice in accordance with the Dharma and do not practice what is evil,\nthey inevitably obtain benefit and inevitably obtain ha…"}]}, {"id": "19", "label": "生聞梵志復問曰：「瞿曇！", "rows": [{"key": "ma148:19.1", "p": "生聞梵志復問曰：「瞿曇！…", "s": "The brahmin Jāṇussoṇi asked further:"}, {"key": "ma148:19.2", "p": "天及人云何行於非法及行惡者，必不得益，必得其苦？…", "s": "'Gotama, how do devas and humans who practice what is unlawful and do what is\nunwholesome inevitably fail to gain benefit and inevitably experience suffering?"}, {"key": "ma148:19.3", "p": "天及人云何行如法，不行惡者，必得饒益，必得其樂？」…", "s": "How do devas and humans who practice what is lawful and do not do what is\nunwholesome inevitably gain benefit and inevitably experience happiness?'"}]}, {"id": "20", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:20.1", "p": "世尊答曰：「梵志！…", "s": "The Blessed One replied:"}, {"key": "ma148:20.2", "p": "天及人身行非法及行惡，口、意行非法及行惡者，…", "s": "'Brahmin, when devas and humans practice what is unlawful and do what is unwholesome in body,"}, {"key": "ma148:20.3", "p": "爾時，天及人必當減損，阿修羅必當興盛。梵志！…", "s": "speech, and mind, then devas and humans will surely decline, and the asuras will surely prosper."}, {"key": "ma148:20.4", "p": "若天及人身行如法，守護其身，口、意行如法，守護口、…", "s": "Brahmin, when devas and humans practice what is lawful in body,"}, {"key": "ma148:20.5", "p": "意者，爾時，天及人必當興盛，阿修羅必當減損。梵志！…", "s": "guarding their body, and practice what is lawful in speech and mind,"}, {"key": "ma148:20.6", "p": "如是天及人行於非法及行惡者，必得不益，必得其苦。梵志！…", "s": "guarding their speech and mind, then devas and humans will surely prosper, and the asuras will surely decline."}, {"key": "ma148:20.7", "p": "如是天及人能行如法，不行惡者，必得饒益，必得其樂。」…", "s": "Brahmin, thus devas and humans who practice what is unlawful and do what is\nunwholesome inevitably fail to gain benefit and inevitably experience suffering.\nBra…"}]}, {"id": "21", "label": "生聞梵志復問曰：「瞿曇！", "rows": [{"key": "ma148:21.1", "p": "生聞梵志復問曰：「瞿曇！…", "s": "The brahmin Jāṇussoṇi asked further:"}, {"key": "ma148:21.2", "p": "云何觀惡知識？」…", "s": "'Gotama, how should one regard a bad friend?'"}]}, {"id": "22", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:22.1", "p": "世尊答曰：「梵志！…", "s": "The Blessed One replied:"}, {"key": "ma148:22.2", "p": "當觀惡知識猶如月也。」…", "s": "'Brahmin, one should regard a bad friend as like the moon.'"}]}, {"id": "23", "label": "生聞梵志復問曰：「瞿曇！", "rows": [{"key": "ma148:23.1", "p": "生聞梵志復問曰：「瞿曇！…", "s": "The brahmin Jāṇussoṇi asked further:"}, {"key": "ma148:23.2", "p": "云何當觀惡知識猶如月耶？」…", "s": "'Gotama, how should one regard a bad friend as like the moon?'"}]}, {"id": "24", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:24.1", "p": "世尊答曰：「梵志！…", "s": "The Blessed One replied:"}, {"key": "ma148:24.2", "p": "如向盡月，日日稍減，宮殿亦減，…", "s": "'Brahmin, just as the full moon gradually wanes day by day, its disk diminishes,"}, {"key": "ma148:24.3", "p": "光明亦減，形色亦減，日日盡去。梵志！…", "s": "its brightness diminishes, its color diminishes, and it disappears day by day."}, {"key": "ma148:24.4", "p": "有時月乃至於盡，都不復見。梵志！…", "s": "Brahmin, sometimes the moon even disappears entirely and is no longer seen."}, {"key": "ma148:24.5", "p": "惡知識人於如來正法、律亦得其信，…", "s": "Brahmin, a bad friend gains faith in the Tathāgata's true Dharma and discipline."}, {"key": "ma148:24.6", "p": "彼得信已，則於後時而不孝順，亦不恭敬，…", "s": "Having gained that faith, later he is not filial, nor respectful, his conduct is not proper,"}, {"key": "ma148:24.7", "p": "所行不順，不立正智，不趣向法次法，…", "s": "he does not establish right knowledge, and he does not progress in accordance with the Dharma."}, {"key": "ma148:24.8", "p": "彼便失信，持戒、博聞、庶幾、智慧亦復失之。梵志！…", "s": "He then loses his faith, and his virtuous behavior, learning, aspiration, and wisdom are also lost."}, {"key": "ma148:24.9", "p": "有時此惡知識教滅善法，猶如月盡。梵志！…", "s": "Brahmin, sometimes this bad friend causes wholesome qualities to cease, just like the moon's disappearance."}, {"key": "ma148:24.10", "p": "如是當觀惡知識猶如月也。」…", "s": "Brahmin, thus should one regard a bad friend as like the moon.'"}]}, {"id": "25", "label": "生聞梵志復問曰：「瞿曇！", "rows": [{"key": "ma148:25.1", "p": "生聞梵志復問曰：「瞿曇！…", "s": "The brahmin Jāṇussoṇi asked further:"}, {"key": "ma148:25.2", "p": "云何觀善知識？」…", "s": "'Gotama, how should one observe a good friend?'"}]}, {"id": "26", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:26.1", "p": "世尊答曰：「梵志！…", "s": "The Blessed One answered:"}, {"key": "ma148:26.2", "p": "當觀善知識猶如月也。」…", "s": "'Brahmin, one should observe a good friend as one observes the moon.'"}]}, {"id": "27", "label": "生聞梵志復問曰：「瞿曇！", "rows": [{"key": "ma148:27.1", "p": "生聞梵志復問曰：「瞿曇！…", "s": "The brahmin Jāṇussoṇi asked further:"}, {"key": "ma148:27.2", "p": "云何當觀善知識猶如月耶？」…", "s": "'Gotama, how should one observe a good friend like the moon?'"}]}, {"id": "28", "label": "世尊答曰：「梵志！", "rows": [{"key": "ma148:28.1", "p": "世尊答曰：「梵志！…", "s": "The Blessed One answered:"}, {"key": "ma148:28.2", "p": "猶如月初生，少壯明淨，日日增長。梵志！…", "s": "'Brahmin, just as the moon at its first appearance is young, bright, and pure, and grows day by day."}, {"key": "ma148:28.3", "p": "或時月十五日，其殿豐滿。梵志！…", "s": "Brahmin, sometimes on the fifteenth day the moon is full and complete."}, {"key": "ma148:28.4", "p": "如是善知識於如來正法、律得信，…", "s": "Brahmin, in the same way, a good friend gains faith in the Tathāgata's true Dharma and discipline."}, {"key": "ma148:28.5", "p": "彼得信已，而於後時孝順恭敬，所行隨順，…", "s": "Having gained that faith, later he is respectful and reverent, acts in accordance,"}, {"key": "ma148:28.6", "p": "立於正智，趣向法次法，彼增長信，…", "s": "establishes right knowledge, and proceeds from the Dharma to the Dharma."}, {"key": "ma148:28.7", "p": "持戒、博聞、庶幾、智慧亦復增長。梵志！…", "s": "His faith increases, and his virtuous behavior, learning, generosity, and wisdom also increase."}, {"key": "ma148:28.8", "p": "有時彼善知識善法具足，如十五日月。梵志！…", "s": "Brahmin, sometimes that good friend is complete in wholesome qualities, like the full moon on the fifteenth day."}, {"key": "ma148:28.9", "p": "如是當觀善知識猶如月也。」…", "s": "Brahmin, thus should one observe a good friend like the moon.'"}]}, {"id": "29", "label": "於是，世尊說此頌曰：", "rows": [{"key": "ma148:29.1", "p": "於是，世尊說此頌曰：…", "s": "Thereupon, the Blessed One spoke this verse:"}]}, {"id": "30", "label": "「譬如月無垢， 遊於虛空界，", "rows": [{"key": "ma148:30.1", "p": "「譬如月無垢，　　遊於虛空界，…"}, {"key": "ma148:30.2", "p": "一切世星宿，　　悉翳其光明。…", "s": "'Just as the moon, free from stain, travels in the realm of space, and all the stars in the sky are dimmed by its light,"}, {"key": "ma148:30.3", "p": "如是信博聞，　　庶幾無慳貪，…", "s": "so faith, learning, generosity, and freedom from stinginess —"}, {"key": "ma148:30.4", "p": "世間一切慳，　　悉翳施光明。…", "s": "all stinginess in the world is dimmed by the light of giving."}, {"key": "ma148:30.5", "p": "猶如有大龍，　　興起雲雷電，…"}, {"key": "ma148:30.6", "p": "雨下極滂沛，　　充滿一切地。…", "s": "Just as a great dragon raises clouds, thunder, and lightning,"}, {"key": "ma148:30.7", "p": "如是信博聞，　　庶幾無慳貪，…", "s": "and rain falls in a great downpour, filling all the earth, so faith,"}, {"key": "ma148:30.8", "p": "施飲食豐足，　　樂勸增廣施。…", "s": "learning, generosity, and freedom from stinginess —"}, {"key": "ma148:30.9", "p": "如是極雷震，　　如天降時雨，…"}, {"key": "ma148:30.10", "p": "彼福雨廣大，　　施主之所雨。…", "s": "giving food and drink in abundance, delighting in encouraging and increasing giving."}, {"key": "ma148:30.11", "p": "錢財多名譽，　　得生於善處，…", "s": "Thus, with a great thunderclap, like the timely rain from heaven, that rain of merit is vast, rained down by the giver."}, {"key": "ma148:30.12", "p": "彼當受於福，　　死已生天上。」…", "s": "Wealth and great renown, rebirth in a good place — he will receive that merit, and after death be born in heaven.'"}]}, {"id": "31", "label": "佛說如是。", "rows": [{"key": "ma148:31.1", "p": "佛說如是。…", "s": "The Buddha spoke thus."}, {"key": "ma148:31.2", "p": "生聞梵志聞佛所說，歡喜奉行。…", "s": "The brahmin student Sāmaṇamaṇḍikāputta, having heard what the Buddha said, was delighted and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

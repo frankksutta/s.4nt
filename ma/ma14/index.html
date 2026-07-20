@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma14:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊王舍城，在竹林迦蘭哆園。", "rows": [{"key": "ma14:2.1", "p": "一時，佛遊王舍城，在竹林迦蘭哆園。…", "s": "At one time, the Buddha was traveling in Rājagaha, staying in the Bamboo Grove at the Kalandaka Monastery."}]}, {"id": "3", "label": "爾時，尊者羅云亦遊王舍城溫泉林中。", "rows": [{"key": "ma14:3.1", "p": "爾時，尊者羅云亦遊王舍城溫泉林中。…", "s": "At that time, the venerable Rāhula was also traveling in Rājagaha, staying in the Hot Springs Forest."}, {"key": "ma14:3.2", "p": "於是，世尊過夜平旦，著衣持鉢入王舍城而行乞食，…", "s": "Then, after the night had passed, in the early morning,"}, {"key": "ma14:3.3", "p": "乞食已竟，至溫泉林羅云住處。…", "s": "the Blessed One put on his robe, took his bowl, and entered Rājagaha for alms.\nHaving finished his alms round, he went to the Hot Springs Forest where Rāhula wa…"}, {"key": "ma14:3.4", "p": "尊者羅云遙見佛來，即便往迎，取佛衣鉢，…", "s": "The venerable Rāhula saw the Buddha coming from afar, and immediately went to greet him,"}, {"key": "ma14:3.5", "p": "為敷坐具，汲水洗足，佛洗足已，坐羅云座。…", "s": "took his robe and bowl, prepared a seat, drew water for washing his feet.\nAfter the Buddha had washed his feet, he sat down on Rāhula's seat."}]}, {"id": "4", "label": "於是，世尊即取水器，瀉留少水已，問曰：「羅云！", "rows": [{"key": "ma14:4.1", "p": "於是，世尊即取水器，瀉留少水已，問曰：「羅云！…", "s": "Then the Blessed One took a water vessel, poured out some water, leaving a little, and asked:"}, {"key": "ma14:4.2", "p": "汝今見我取此水器，瀉留少水耶？」…", "s": "'Rāhula, do you see me taking this water vessel and pouring out some water, leaving a little?'"}]}, {"id": "5", "label": "羅云答曰：「見也。世尊！」", "rows": [{"key": "ma14:5.1", "p": "羅云答曰：「見也。世尊！」…", "s": "Rāhula replied:\n'I see it, Blessed One.'"}]}, {"id": "6", "label": "佛告羅云：「我說彼道少，亦復如是，", "rows": [{"key": "ma14:6.1", "p": "佛告羅云：「我說彼道少，亦復如是，…", "s": "The Buddha told Rāhula:"}, {"key": "ma14:6.2", "p": "謂知已妄言，不羞不悔，無慚無愧，羅云！…", "s": "'I say that the path of such a person is also meager, just like this—namely,"}, {"key": "ma14:6.3", "p": "彼亦無惡不作。…", "s": "one who knowingly speaks falsely, without shame or regret, without moral shame or moral dread."}, {"key": "ma14:6.4", "p": "是故，羅云！…", "s": "Rāhula, such a person is also capable of any evil deed."}, {"key": "ma14:6.5", "p": "當作是學，不得戲笑妄言。」…", "s": "Therefore, Rāhula, you should train thus:\ndo not speak falsely even as a joke.'"}]}, {"id": "7", "label": "世尊復取此少水器，盡瀉棄已，問曰：「羅云！", "rows": [{"key": "ma14:7.1", "p": "世尊復取此少水器，盡瀉棄已，問曰：「羅云！…", "s": "The Blessed One then took that same small water vessel, poured it all out, and asked,"}, {"key": "ma14:7.2", "p": "汝復見我取少水器，盡瀉棄耶？」…", "s": "'Rāhula, do you see me taking the small water vessel and pouring it all out?'"}]}, {"id": "8", "label": "羅云答曰：「見也。世尊！」", "rows": [{"key": "ma14:8.1", "p": "羅云答曰：「見也。世尊！」…", "s": "Rāhula replied,\n'Yes, I see it, Blessed One.'"}]}, {"id": "9", "label": "佛告羅云：「我說彼道盡棄，亦復如是，", "rows": [{"key": "ma14:9.1", "p": "佛告羅云：「我說彼道盡棄，亦復如是，…", "s": "The Buddha told Rāhula,"}, {"key": "ma14:9.2", "p": "謂知已妄言，不羞不悔，無慚無愧，羅云！…", "s": "'I say that the path of such a person is completely discarded in the same way—that is, one who,"}, {"key": "ma14:9.3", "p": "彼亦無惡不作。…", "s": "knowing it to be false, speaks falsely, without shame, without remorse, without moral shame, without moral dread."}, {"key": "ma14:9.4", "p": "是故，羅云！…", "s": "Rāhula, such a person is capable of any evil deed."}, {"key": "ma14:9.5", "p": "當作是學，不得戲笑妄言。」…", "s": "Therefore, Rāhula, you should train thus:\ndo not speak falsely even as a joke.'"}]}, {"id": "10", "label": "世尊復取此空水器，覆著地已，問曰：「羅云！", "rows": [{"key": "ma14:10.1", "p": "世尊復取此空水器，覆著地已，問曰：「羅云！…", "s": "The Blessed One then took that same empty water vessel, turned it upside down on the ground, and asked,"}, {"key": "ma14:10.2", "p": "汝復見我取空水器，覆著地耶？」…", "s": "'Rāhula, do you see me taking the empty water vessel and turning it upside down on the ground?'"}]}, {"id": "11", "label": "羅云答曰：「見也。世尊！」", "rows": [{"key": "ma14:11.1", "p": "羅云答曰：「見也。世尊！」…", "s": "Rāhula replied,\n'Yes, I see it, Blessed One.'"}]}, {"id": "12", "label": "佛告羅云：「我說彼道覆，亦復如是，", "rows": [{"key": "ma14:12.1", "p": "佛告羅云：「我說彼道覆，亦復如是，…", "s": "The Buddha told Rāhula,"}, {"key": "ma14:12.2", "p": "謂知已妄言，不羞不悔，無慚無愧，羅云！…", "s": "'I say that the path of such a person is overturned in the same way—that is, one who, knowing it to be false,"}, {"key": "ma14:12.3", "p": "彼亦無惡不作。…", "s": "speaks falsely, without shame, without remorse, without moral shame, without moral dread."}, {"key": "ma14:12.4", "p": "是故羅云！…", "s": "Rāhula, such a person is capable of any evil deed."}, {"key": "ma14:12.5", "p": "當作是學，不得戱笑妄言。」…", "s": "Therefore, Rāhula, you should train thus:\ndo not speak falsely even as a joke.'"}]}, {"id": "13", "label": "世尊復取此覆水器，發令仰已，問曰：「羅云！", "rows": [{"key": "ma14:13.1", "p": "世尊復取此覆水器，發令仰已，問曰：「羅云！…", "s": "The Blessed One again took this water-covered vessel, turned it upside down, and asked:"}, {"key": "ma14:13.2", "p": "汝復見我取覆水器，發令仰耶？」…", "s": "\"Rāhula, do you see me taking the water-covered vessel and turning it upside down?\""}]}, {"id": "14", "label": "羅云答曰：「見也。世尊！」", "rows": [{"key": "ma14:14.1", "p": "羅云答曰：「見也。世尊！」…", "s": "Rāhula replied:\n\"I see it, Blessed One.\""}]}, {"id": "15", "label": "佛告羅云：「我說彼道仰，亦復如是，", "rows": [{"key": "ma14:15.1", "p": "佛告羅云：「我說彼道仰，亦復如是，…", "s": "The Buddha told Rāhula:"}, {"key": "ma14:15.2", "p": "謂知已妄言，不羞不悔，不慚不愧，羅云！…", "s": "\"I say that path is also turned upside down, namely, knowing one has spoken falsely,"}, {"key": "ma14:15.3", "p": "彼亦無惡不作。…", "s": "without shame or regret, without moral shame or moral dread."}, {"key": "ma14:15.4", "p": "是故，羅云！…", "s": "Rāhula, such a one is also capable of any evil deed."}, {"key": "ma14:15.5", "p": "當作是學，不得戲笑妄言。…", "s": "Therefore, Rāhula, you should train thus:\ndo not speak falsely even in jest.\""}]}, {"id": "16", "label": "「羅云！", "rows": [{"key": "ma14:16.1", "p": "「羅云！…"}, {"key": "ma14:16.2", "p": "猶如王有大象入陣鬪時，用前脚、…", "s": "\"Rāhula, it is like a king's great elephant entering battle, using its front legs, hind legs,"}, {"key": "ma14:16.3", "p": "後脚、尾、髂、脊、脇、項、額、耳、…", "s": "tail, hips, spine, ribs, neck, forehead, ears, and tusks—everything except protecting its trunk."}, {"key": "ma14:16.4", "p": "牙，一切皆用，唯護於鼻，象師見已，…", "s": "The elephant trainer, seeing this, thinks:"}, {"key": "ma14:16.5", "p": "便作是念：『此王大象猶故惜命。…", "s": "'This king's great elephant still cherishes its life."}, {"key": "ma14:16.6", "p": "所以者何？…", "s": "Why is that?"}, {"key": "ma14:16.7", "p": "此王大象入陣鬪時，用前脚、後脚、尾、髂、…"}, {"key": "ma14:16.8", "p": "脊、脇、項、額、耳、牙，一切皆用，唯護於鼻。…", "s": "Because when this king's great elephant enters battle, it uses its front legs, hind legs, tail,"}, {"key": "ma14:16.9", "p": "』羅云！…", "s": "hips, spine, ribs, neck, forehead, ears, and tusks—everything except protecting its trunk.'"}, {"key": "ma14:16.10", "p": "若王大象入陣鬪時，用前脚、後脚、…", "s": "Rāhula, if a king's great elephant entering battle uses its front legs, hind legs, tail, hips, spine, ribs,"}, {"key": "ma14:16.11", "p": "尾、髂、脊、脇、項、額、耳、…", "s": "neck, forehead, ears, tusks, and trunk—everything completely—the elephant trainer, seeing this, thinks:"}, {"key": "ma14:16.12", "p": "牙、鼻，一切盡用，象師見已，…", "s": "'This king's great elephant no longer cherishes its life."}, {"key": "ma14:16.13", "p": "便作是念：『此王大象不復惜命。…"}, {"key": "ma14:16.14", "p": "所以者何？…", "s": "Why is that?"}, {"key": "ma14:16.15", "p": "此王大象入陣鬪時，用前脚、後脚、尾、髂、…", "s": "Because when this king's great elephant enters battle, it uses its front legs, hind legs,"}, {"key": "ma14:16.16", "p": "脊、脇、項、額、耳、牙、鼻，一切盡用。…", "s": "tail, hips, spine, ribs, neck, forehead, ears, tusks, and trunk—everything completely.'"}, {"key": "ma14:16.17", "p": "』羅云！…", "s": "Rāhula, if a king's great elephant entering battle uses its front legs,"}, {"key": "ma14:16.18", "p": "若王大象入陣鬪時，用前脚、後脚、尾、髂、…", "s": "hind legs, tail, hips, spine, ribs, neck, forehead, ears,"}, {"key": "ma14:16.19", "p": "脊、脇、項、額、耳、牙、鼻，一切盡用，羅云！…"}, {"key": "ma14:16.20", "p": "我說此王大象入陣鬪時，無惡不作。…", "s": "tusks, and trunk—everything completely—I say that this king's great elephant,"}, {"key": "ma14:16.21", "p": "如是，羅云！…", "s": "when entering battle, is capable of any evil deed."}, {"key": "ma14:16.22", "p": "謂知已妄言，不羞不悔，無慚無愧，羅云！…", "s": "So too, Rāhula, knowing one has spoken falsely, without shame or regret,"}, {"key": "ma14:16.23", "p": "我說彼亦無惡不作。…", "s": "without moral shame or moral dread—I say such a one is also capable of any evil deed."}, {"key": "ma14:16.24", "p": "是故，羅云！…", "s": "Therefore, Rāhula, you should train thus:"}, {"key": "ma14:16.25", "p": "當作是學，不得戲笑妄言。」…", "s": "do not speak falsely even in jest.\""}]}, {"id": "17", "label": "於是，世尊即說頌曰：", "rows": [{"key": "ma14:17.1", "p": "於是，世尊即說頌曰：…", "s": "Thereupon, the Blessed One spoke a verse:"}]}, {"id": "18", "label": "「人犯一法， 謂妄言是，", "rows": [{"key": "ma14:18.1", "p": "「人犯一法，　　謂妄言是，…", "s": "\"If a person transgresses one thing— namely, false speech—"}, {"key": "ma14:18.2", "p": "不畏後世，　　無惡不作。…", "s": "not fearing the hereafter, they are capable of any evil deed."}, {"key": "ma14:18.3", "p": "寧噉鐵丸，　　其熱如火，…", "s": "Better to eat an iron ball, hot as fire,"}, {"key": "ma14:18.4", "p": "不以犯戒，　　受世信施。…", "s": "than, being immoral, to accept offerings from the faithful."}, {"key": "ma14:18.5", "p": "若畏於苦，　　不愛念者，…", "s": "If one fears suffering and does not love it,"}, {"key": "ma14:18.6", "p": "於隱顯處，　　莫作惡業。…", "s": "whether in secret or in public, one should not do evil deeds."}, {"key": "ma14:18.7", "p": "若不善業，　　已作今作，…", "s": "If unwholesome deeds have been done or are being done now,"}, {"key": "ma14:18.8", "p": "終不得脫，　　亦無避處。」…", "s": "one will never escape them, nor is there any place to hide.\""}]}, {"id": "19", "label": "佛說頌已，復問羅云：「於意云何？", "rows": [{"key": "ma14:19.1", "p": "佛說頌已，復問羅云：「於意云何？…", "s": "After speaking the verse, the Blessed One again asked Rāhula:"}, {"key": "ma14:19.2", "p": "人用鏡為？」…", "s": "\"What do you think?\nWhat does a person use a mirror for?\""}]}, {"id": "20", "label": "尊者羅云答曰：「世尊！", "rows": [{"key": "ma14:20.1", "p": "尊者羅云答曰：「世尊！…", "s": "The venerable Rāhula replied:"}, {"key": "ma14:20.2", "p": "欲觀其面，見淨不淨。」…", "s": "\"World-Honored One, to see one's own face, to see whether it is clean or dirty.\""}]}, {"id": "21", "label": "「如是。羅云！", "rows": [{"key": "ma14:21.1", "p": "「如是。羅云！…", "s": "\"So it is, Rāhula."}, {"key": "ma14:21.2", "p": "若汝將作身業，即觀彼身業：『我將作身業，…", "s": "If you are about to perform a bodily action, then reflect on that bodily action:"}, {"key": "ma14:21.3", "p": "彼身業為淨、為不淨，為自為、為他？…", "s": "'This bodily action I am about to perform—is it pure or impure?"}, {"key": "ma14:21.4", "p": "』羅云！…", "s": "Is it for myself or for others?'"}, {"key": "ma14:21.5", "p": "若觀時則知，我將作身業，彼身業淨，…", "s": "Rāhula, if upon reflection you know that the bodily action you are about to perform is pure,"}, {"key": "ma14:21.6", "p": "或自為，或為他，不善與苦果受於苦報。羅云！…", "s": "whether for yourself or for others,"}, {"key": "ma14:21.7", "p": "汝當捨彼將作身業。羅云！…", "s": "but is unwholesome and brings a painful result, then you should abandon that intended bodily action."}, {"key": "ma14:21.8", "p": "若觀時則知，我將作身業，彼身業不淨，…", "s": "Rāhula, if upon reflection you know that the bodily action you are about to perform is impure,"}, {"key": "ma14:21.9", "p": "或自為，或為他，善與樂果受於樂報。羅云！…", "s": "whether for yourself or for others,"}, {"key": "ma14:21.10", "p": "汝當受彼將作身業。…", "s": "but is wholesome and brings a pleasant result, then you should undertake that intended bodily action."}]}, {"id": "22", "label": "「羅云！", "rows": [{"key": "ma14:22.1", "p": "「羅云！…"}, {"key": "ma14:22.2", "p": "若汝現作身業，即觀此身業：『若我現作身業，…", "s": "\"Rāhula, if you are presently performing a bodily action, then reflect on that bodily action:"}, {"key": "ma14:22.3", "p": "此身業為淨、為不淨，為自為、為他？…", "s": "'This bodily action I am now performing—is it pure or impure?"}, {"key": "ma14:22.4", "p": "』羅云！…", "s": "Is it for myself or for others?'"}, {"key": "ma14:22.5", "p": "若觀時則知，我現作身業，此身業淨，…", "s": "Rāhula, if upon reflection you know that the bodily action you are now performing is pure,"}, {"key": "ma14:22.6", "p": "或自為，或為他，不善與苦果受於苦報。羅云！…", "s": "whether for yourself or for others,"}, {"key": "ma14:22.7", "p": "汝當捨此現作身業。羅云！…", "s": "but is unwholesome and brings a painful result, then you should abandon this present bodily action."}, {"key": "ma14:22.8", "p": "若觀時則知，我現作身業，此身業不淨，…", "s": "Rāhula, if upon reflection you know that the bodily action you are now performing is impure,"}, {"key": "ma14:22.9", "p": "或自為，或為他，善與樂果受於樂報。羅云！…", "s": "whether for yourself or for others,"}, {"key": "ma14:22.10", "p": "汝當受此現作身業。…", "s": "but is wholesome and brings a pleasant result, then you should continue this present bodily action."}]}, {"id": "23", "label": "「羅云！", "rows": [{"key": "ma14:23.1", "p": "「羅云！…", "s": "\"Rāhula, if you have already performed a bodily action, then reflect on that bodily action:"}, {"key": "ma14:23.2", "p": "若汝已作身業，即觀彼身業：『若我已作身業，…", "s": "'This bodily action I have already performed, which is past, ceased, and changed—was it pure or impure?"}, {"key": "ma14:23.3", "p": "彼身業已過去、滅盡、變易，…", "s": "Was it for myself or for others?'"}, {"key": "ma14:23.4", "p": "為淨、為不淨，為自、或為他？…", "s": "Rāhula, if upon reflection you know that the bodily action you have already performed, which is past, ceased,"}, {"key": "ma14:23.5", "p": "』羅云！…", "s": "and changed, was pure, whether for yourself or for others, but was unwholesome and brings a painful result,"}, {"key": "ma14:23.6", "p": "若觀時則知，我已作身業，彼身業已過去、滅盡、變易，…", "s": "then you should go to a good friend or a fellow practitioner of the holy life,"}, {"key": "ma14:23.7", "p": "彼身業淨，或自為，或為他，不善與苦果受於苦報。羅云！…", "s": "and with a sincere heart confess and disclose that performed bodily action,"}, {"key": "ma14:23.8", "p": "汝當詣善知識、梵行人所，彼已作身業，…", "s": "be careful not to conceal it, and thereafter guard it well."}, {"key": "ma14:23.9", "p": "至心發露，應悔過說，慎莫覆藏，更善持護。羅云！…", "s": "Rāhula, if upon reflection you know that the bodily action you have already performed,"}, {"key": "ma14:23.10", "p": "若觀時則知，我已作身業，彼身業已過去滅盡變易，…", "s": "which is past, ceased, and changed, was impure, whether for yourself or for others,"}, {"key": "ma14:23.11", "p": "彼身業不淨，或自為，或為他，善與樂果受於樂報。羅云！…", "s": "but was wholesome and brings a pleasant result, then you should rejoice day and night,"}, {"key": "ma14:23.12", "p": "汝當晝夜歡喜，住正念正智，口業亦復如是。…", "s": "abiding in right mindfulness and right understanding.\nThe same applies to verbal actions."}]}, {"id": "24", "label": "「羅云！", "rows": [{"key": "ma14:24.1", "p": "「羅云！…"}, {"key": "ma14:24.2", "p": "因過去行故，已生意業，即觀彼意業：『若因過去行故，…", "s": "\"Rāhula, because of past actions, a mental action has arisen;"}, {"key": "ma14:24.3", "p": "已生意業，彼意業為淨、為不淨，為自為、為他？…", "s": "then reflect on that mental action:"}, {"key": "ma14:24.4", "p": "』羅云！…", "s": "'This mental action that has arisen because of past actions—is it pure or impure?"}, {"key": "ma14:24.5", "p": "若觀時則知，因過去行故，…", "s": "Is it for myself or for others?'"}, {"key": "ma14:24.6", "p": "已生意業，彼意業已過去、滅盡、…", "s": "Rāhula, if upon reflection you know that the mental action that has arisen because of past actions,"}, {"key": "ma14:24.7", "p": "變易，彼意業淨，或自為，…", "s": "which is past, ceased, and changed,"}, {"key": "ma14:24.8", "p": "或為他，不善與苦果受於苦報。羅云！…", "s": "was pure, whether for yourself or for others, but was unwholesome and brings a painful result,"}, {"key": "ma14:24.9", "p": "汝當捨彼過去意業，羅云！…", "s": "then you should abandon that past mental action."}, {"key": "ma14:24.10", "p": "若觀時則知，因過去行故，已生意業已過去、滅盡、…", "s": "Rāhula, if upon reflection you know that the mental action that has arisen because of past actions,"}, {"key": "ma14:24.11", "p": "變易，彼意業不淨，或自為，…", "s": "which is past, ceased, and changed,"}, {"key": "ma14:24.12", "p": "或為他，善與樂果受於樂報。羅云！…", "s": "was impure, whether for yourself or for others,"}, {"key": "ma14:24.13", "p": "汝當受彼過去意業。…", "s": "but was wholesome and brings a pleasant result, then you should accept that past mental action.\""}]}, {"id": "25", "label": "「羅云！", "rows": [{"key": "ma14:25.1", "p": "「羅云！…", "s": "“Rāhula, because of future actions, an intention of mind will arise."}, {"key": "ma14:25.2", "p": "因未來行故，當生意業，即觀彼意業：『若因未來行故，…", "s": "You should then examine that intention of mind:"}, {"key": "ma14:25.3", "p": "當生意業，彼意業為淨、為不淨，為自為、為他？…", "s": "‘Because of future actions, an intention of mind will arise."}, {"key": "ma14:25.4", "p": "』羅云！…", "s": "Is that intention of mind pure or impure?\nIs it for oneself or for others?’"}, {"key": "ma14:25.5", "p": "若觀時則知，因未來行故，當生意業，彼意業淨，…", "s": "Rāhula, if upon examination you know that because of future actions,"}, {"key": "ma14:25.6", "p": "或自為，或為他，不善與苦果受於苦報。羅云！…", "s": "an intention of mind will arise, and that intention of mind is pure,"}, {"key": "ma14:25.7", "p": "汝當捨彼未來意業。羅云！…", "s": "whether for oneself or for others, but is unwholesome and brings a painful result,\na painful retribution, then, Rāhula, you should abandon that future intention…"}, {"key": "ma14:25.8", "p": "若觀時則知，因未來行故，當生意業，…", "s": "Rāhula, if upon examination you know that because of future actions,"}, {"key": "ma14:25.9", "p": "彼意業不淨，或自為，或為他，善與樂果受於樂報。羅云！…", "s": "an intention of mind will arise, and that intention of mind is impure,"}, {"key": "ma14:25.10", "p": "汝當受彼未來意業。…", "s": "whether for oneself or for others, and is wholesome and brings a pleasant result,\na pleasant retribution, then, Rāhula, you should accept that future intention …"}]}, {"id": "26", "label": "「羅云！", "rows": [{"key": "ma14:26.1", "p": "「羅云！…", "s": "“Rāhula, because of present actions, an intention of mind arises now."}, {"key": "ma14:26.2", "p": "因現在行故，現生意業，即觀此意業：『若因現在行故，…", "s": "You should then examine this intention of mind:"}, {"key": "ma14:26.3", "p": "現生意業，此意業為淨、為不淨，為自為、為他？…", "s": "‘Because of present actions, an intention of mind arises now."}, {"key": "ma14:26.4", "p": "』羅云！…", "s": "Is this intention of mind pure or impure?\nIs it for oneself or for others?’"}, {"key": "ma14:26.5", "p": "若觀時則知，因現在行故，現生意業，此意業淨，…", "s": "Rāhula, if upon examination you know that because of present actions,"}, {"key": "ma14:26.6", "p": "或自為，或為他，不善與苦果受於苦報。羅云！…", "s": "an intention of mind arises now, and this intention of mind is pure,"}, {"key": "ma14:26.7", "p": "汝當捨此現在意業。羅云！…", "s": "whether for oneself or for others, but is unwholesome and brings a painful result,\na painful retribution, then, Rāhula, you should abandon this present intentio…"}, {"key": "ma14:26.8", "p": "若觀時則知，因現在行故，現生意業，…", "s": "Rāhula, if upon examination you know that because of present actions,"}, {"key": "ma14:26.9", "p": "此意業不淨，或自為，或為他，善與樂果受於樂報。羅云！…", "s": "an intention of mind arises now, and this intention of mind is impure,"}, {"key": "ma14:26.10", "p": "汝當受此現在意業。…", "s": "whether for oneself or for others, and is wholesome and brings a pleasant result,\na pleasant retribution, then, Rāhula, you should accept this present intention…"}]}, {"id": "27", "label": "「羅云！", "rows": [{"key": "ma14:27.1", "p": "「羅云！…"}, {"key": "ma14:27.2", "p": "若有過去沙門、梵志，身、口、意業，已觀而觀，…", "s": "“Rāhula, whatever ascetics or brahmins of the past have examined and purified their bodily, verbal,"}, {"key": "ma14:27.3", "p": "已淨而淨，彼一切即此身、口、…", "s": "and mental actions, they have all done so by examining and purifying these very bodily, verbal, and mental actions."}, {"key": "ma14:27.4", "p": "意業，已觀而觀，已淨而淨。羅云！…"}, {"key": "ma14:27.5", "p": "若有未來沙門、梵志，身、口、…", "s": "Rāhula, whatever ascetics or brahmins of the future will examine and purify their bodily, verbal,"}, {"key": "ma14:27.6", "p": "意業，當觀而觀，當淨而淨，…", "s": "and mental actions, they will all do so by examining and purifying these very bodily, verbal, and mental actions."}, {"key": "ma14:27.7", "p": "彼一切即此身、口、意業，當觀而觀，當淨而淨，羅云！…"}, {"key": "ma14:27.8", "p": "若有現在沙門、梵志，身、口、意業，現觀而觀，…", "s": "Rāhula, whatever ascetics or brahmins of the present examine and purify their bodily, verbal,"}, {"key": "ma14:27.9", "p": "現淨而淨，彼一切即此身、口、…", "s": "and mental actions, they all do so by examining and purifying these very bodily, verbal, and mental actions."}, {"key": "ma14:27.10", "p": "意業，現觀而觀，現淨而淨。羅云！…"}, {"key": "ma14:27.11", "p": "汝當如是學，我亦即此身、口、…", "s": "Rāhula, you should train thus:"}, {"key": "ma14:27.12", "p": "意業，現觀而觀，現淨而淨。」…", "s": "‘I too will examine and purify these very bodily, verbal, and mental actions in the present.’”"}]}, {"id": "28", "label": "於是，世尊復說頌曰：", "rows": [{"key": "ma14:28.1", "p": "於是，世尊復說頌曰：…", "s": "Thereupon, the Blessed One further spoke a verse, saying:"}]}, {"id": "29", "label": "「身業、口業、 意業，羅云！", "rows": [{"key": "ma14:29.1", "p": "「身業、口業、　　意業，羅云！…"}, {"key": "ma14:29.2", "p": "善不善法，　　汝應常觀。…", "s": "“Bodily action, verbal action, and mental action, Rāhula, you should always examine wholesome and unwholesome states."}, {"key": "ma14:29.3", "p": "知已妄言，　　羅云莫說，…", "s": "Knowing this, do not speak falsely, Rāhula."}, {"key": "ma14:29.4", "p": "禿從他活，　　何可妄言？…", "s": "How can a shaven-headed one who lives on others’ alms speak falsely?"}, {"key": "ma14:29.5", "p": "覆沙門法，　　空無真實，…", "s": "Concealing the ascetic’s way, empty and without truth, is called speaking falsely, not guarding one’s speech."}, {"key": "ma14:29.6", "p": "謂說妄言，　　不護其口。…"}, {"key": "ma14:29.7", "p": "故不妄言，　　正覺之子，…", "s": "Therefore, do not speak falsely, O son of the rightly awakened one."}, {"key": "ma14:29.8", "p": "是沙門法，　　羅云當學。…", "s": "This is the ascetic’s way, Rāhula, you should learn it."}, {"key": "ma14:29.9", "p": "方方豐樂，　　安隱無怖，…", "s": "Everywhere there is abundant happiness, peaceful and without fear."}, {"key": "ma14:29.10", "p": "羅云至彼，　　莫為害他。」…", "s": "Rāhula, when you go there, do not harm others.”"}]}, {"id": "30", "label": "佛說如是。", "rows": [{"key": "ma14:30.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma14:30.2", "p": "尊者羅云及諸比丘，聞佛所說，歡喜奉行。…", "s": "The venerable Rāhula and the monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

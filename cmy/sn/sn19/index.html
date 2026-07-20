@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../../help.html">Help</a><a href="../../../help.html#about">About</a><a href="../../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:47 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../../help.html">Help</a><a href="../../../help.html#about">About</a><a href="../../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:43 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -967,7 +1026,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "sn19-pathamavagga", "label": "Paṭhamavagga — Chapter One ", "children": [{"id": "sn-a19.1", "label": "SN 19.1 · Explanation of the Sutta on the Skeleton", "children": [{"id": "sn-a19.1/1", "label": "¶ paṭhama·vaggo", "rows": [{"key": "sn-a19.1:1.1", "p": "¶ paṭhama·vaggo…", "s": "First Chapter"}]}, {"id": "sn-a19.1/3", "label": "¶ 202. lakkhaṇa·saṃyutte yvāyaṃ āyasmā ca lakkhaṇoti…", "rows": [{"key": "sn-a19.1:3.1", "p": "¶ 202. lakkhaṇa·saṃyutte yvāyaṃ āyasmā ca lakkhaṇo…", "s": "202. In the Connected Discourses on the Sign, this venerable one is called the Elder Lakkhaṇa. He is to be understood as one who, among a thousand matted-hair a…"}, {"key": "sn-a19.1:3.2", "p": "yasmā panesa lakkhaṇasampannena sabb·ākāra·pari·pū…", "s": "But because he is endowed with a personal existence possessing the marks, complete in every way, equal to Brahmā, therefore he has come to be known as 'Lakkhaṇa…"}, {"key": "sn-a19.1:3.3", "p": "mahā·moggallāno pana pabbajita·divasato sa·t·tame …", "s": "But Mahā-Moggallāna, on the seventh day from the day of his going forth, attained arahantship, the second chief disciple."}]}, {"id": "sn-a19.1/4", "label": "¶ sitaṃ pātvākāsīti manda·hasitaṃ pātu·akāsi, pakāsayi dasse·sīti…", "rows": [{"key": "sn-a19.1:4.1", "p": "¶ sitaṃ pātvākāsīti manda·hasitaṃ pātu·akāsi, pakā…", "s": "He displayed a smile: he produced a gentle smile, he manifested it, he showed it, thus it is said."}, {"key": "sn-a19.1:4.2", "p": "kiṃ pana disvā thero sitaṃ pātvākāsīti?…", "s": "But what did the elder see that he manifested a smile?"}, {"key": "sn-a19.1:4.3", "p": "upari pāḷiyaṃ āgataṃ aṭṭhika·saṅkhalikaṃ ekaṃ peta…", "s": "Having seen, in the higher textual passage, a skeleton-chain, a being reborn in the world of petas."}, {"key": "sn-a19.1:4.4", "p": "tañca kho dibbena cakkhunā, na pasāda·cakkhunā.…", "s": "And that indeed by the divine eye, not by the physical eye."}, {"key": "sn-a19.1:4.5", "p": "pasāda·cakkhussa hi ete atta·bhāvā na āpāthaṃ āgac…", "s": "For these forms of personal existence do not come into range of the eye of faith."}, {"key": "sn-a19.1:4.6", "p": "evarūpaṃ pana atta·bhāvaṃ disvā kāruññe kattabbe k…", "s": "But having seen such a form of personal existence, why did he manifest a smile when compassion ought to have been shown?"}, {"key": "sn-a19.1:4.7", "p": "attano ca buddhañāṇassa ca sampattiṃ sa·manussa·ra…", "s": "Because he was recollecting his own accomplishment and that of the Buddha's knowledge."}, {"key": "sn-a19.1:4.8", "p": "tañhi disvā thero ``adiṭṭhasaccena nāma puggalena …", "s": "Having seen that, the elder, recollecting his own good fortune, thought: 'A person who has not seen the truth is said to obtain such a state of existence; I am …"}]}, {"id": "sn-a19.1/5", "label": "¶ atha lakkhaṇa·t·thero kasmā na addasa, kimassa…", "rows": [{"key": "sn-a19.1:5.1", "p": "¶ atha lakkhaṇa·t·thero kasmā na addasa, kimassa d…", "s": "Then why did the elder Lakkhaṇa not see? Was his divine eye absent?"}, {"key": "sn-a19.1:5.2", "p": "no natthi, mahā·moggallāno pana āvajjento addasa, …", "s": "No, it was not absent. However, Mahā-Moggallāna, when attending, saw; the other, through non-attention, did not see."}, {"key": "sn-a19.1:5.3", "p": "yasmā pana khīṇ·āsavā nāma na a·kāraṇā sitaṃ karon…", "s": "But since those who are destroyers of the taints do not smile without a reason, therefore the elder who knew the characteristic asked: 'What, friend Moggallāna,…"}, {"key": "sn-a19.1:5.4", "p": "thero pana yasmā yehi ayaṃ upapatti sāmaṃ a·diṭṭhā…", "s": "But since the elder, because those by whom this rebirth was not seen by himself are hard to convince, therefore, desiring to explain having made the Blessed One…"}, {"key": "sn-a19.1:5.5", "p": "tato bhagavato sa·ntike puṭṭho idhāhaṃ, āvusoti·ād…", "s": "Then, when asked in the presence of the Blessed One, he explained by way of: 'Here, friend,' and so on."}]}, {"id": "sn-a19.1/6", "label": "¶ tattha aṭṭhika·saṅkhalikanti setaṃ nimmaṃsa·lohitaṃ aṭṭhi·saṅghātaṃ.", "rows": [{"key": "sn-a19.1:6.1", "p": "¶ tattha aṭṭhika·saṅkhalikanti setaṃ nimmaṃsa·lohi…", "s": "There, 'a skeleton' means a white collection of bones without flesh and blood."}, {"key": "sn-a19.1:6.2", "p": "gijjhāpi kākāpi kulalā·pīti etepi yakkha·gijjhā ce…", "s": "'Vultures, crows, and hawks' — these should be understood as spirit vultures, spirit crows, and spirit hawks."}, {"key": "sn-a19.1:6.3", "p": "pākatikānaṃ pana gijjh·ādīnaṃ āpāthampi etaṃ rūpaṃ…", "s": "But this form does not come within the range of ordinary vultures and the like."}, {"key": "sn-a19.1:6.4", "p": "anupatitvā anupatitvāti anubandhitvā anubandhitvā.…", "s": "Having pursued, having pursued means having followed closely, having followed closely."}, {"key": "sn-a19.1:6.5", "p": "vi·tude·ntīti asidhārū·pamehi tikhiṇehi loha·tuṇḍa…", "s": "They pierce: with sword-blade-like sharp iron hooks, piercing again and again, they move and go here and there."}, {"key": "sn-a19.1:6.6", "p": "sā su·daṃ aṭṭa·s·saraṃ karo·tīti ettha su·danti ni…", "s": "She made a rattling sound: here 'su' is a particle; that skeleton-chain made a rattling sound, a sound of distress, is the meaning."}, {"key": "sn-a19.1:6.7", "p": "a·kusala·vipākā·nubhava·natthaṃ kira yojana·p·pamā…", "s": "For it is said that for the purpose of experiencing the result of unwholesome kamma, personal existences of that sort, even a yojana in size, arise, and they ar…"}, {"key": "sn-a19.1:6.8", "p": "tasmā sā aṭṭhika·saṅkhalikā balava·vedan·āturā tād…", "s": "Therefore that skeleton with its strong and painful feelings made such a sound."}]}, {"id": "sn-a19.1/7", "label": "¶ evañca pana vatvā puna āyasmā mahā·moggallāno…", "rows": [{"key": "sn-a19.1:7.1", "p": "¶ evañca pana vatvā puna āyasmā mahā·moggallāno ``…", "s": "And having spoken thus, the Venerable Mahāmoggallāna, showing the spiritual urgency that had arisen in him out of compassion for beings, thinking, 'Beings that …"}, {"key": "sn-a19.1:7.2", "p": "tato bhagavā therassa ānu·bhāvaṃ pakāsento cakkhu·…", "s": "Then the Blessed One, revealing the elder's power, said: 'Vision-become, indeed, bhikkhus, are the disciples dwelling,' and so on."}, {"key": "sn-a19.1:7.3", "p": "tattha cakkhu bhūtaṃ jātaṃ uppannaṃ etesanti cakkh…", "s": "Therein, 'vision-become' means those for whom vision is born, arisen, produced; the meaning is they dwell having generated vision, possessing arisen vision."}, {"key": "sn-a19.1:7.4", "p": "dutiya·padepi eseva nayo.…", "s": "In the second phrase also, this is the method."}, {"key": "sn-a19.1:7.5", "p": "yatra hi nāmāti ettha yatrāti kāraṇa·vacanaṃ.…", "s": "For here it is said 'yatra hi nāma' — here 'yatra' is a causal expression."}, {"key": "sn-a19.1:7.6", "p": "tatrāyaṃ attha·yojanā -- yasmā nāma sāvakopi evarū…", "s": "The construction of the meaning is this: Because even a disciple will know or see or witness such a thing, therefore we said: 'Indeed, bhikkhus, the disciples d…"}, {"key": "sn-a19.1:7.7", "p": "pubbeva me so, bhikkhave, satto diṭṭhoti bodhi·maṇ…", "s": "The Blessed One says: 'That being, bhikkhus, was seen by me before' — meaning: by me, who, on the seat of enlightenment, through the penetration of omniscient k…"}]}, {"id": "sn-a19.1/8", "label": "¶ goghātakoti gāvo vadhitvā aṭṭhito maṃsaṃ mocetvā…", "rows": [{"key": "sn-a19.1:8.1", "p": "¶ goghātakoti gāvo vadhitvā aṭṭhito maṃsaṃ mocetvā…", "s": "The cow-butcher is one who, having killed cows, having cut up the meat, having sold it, makes a living."}, {"key": "sn-a19.1:8.2", "p": "tasseva kammassa vipākā·vase·senāti tassa nānā·cet…", "s": "By way of the residual result of that same kamma, that is, of the kamma accumulated over many lifetimes by various volitions."}, {"key": "sn-a19.1:8.3", "p": "tatra hi yāya cetanāya narake paṭi·sandhi janitā, …", "s": "There, when the result of the volition by which rebirth-linking in hell was generated has been exhausted, taking as object the remaining kamma or kamma-sign, re…"}, {"key": "sn-a19.1:8.4", "p": "ayañca satto evaṃ uppanno.…", "s": "And this being has arisen in such a way."}, {"key": "sn-a19.1:8.5", "p": "tenāha -- ``tasseva kammassa vipākā·vase·senā''ti.…", "s": "Therefore it was said: 'Because of the predominance of the result of that very kamma.'"}, {"key": "sn-a19.1:8.6", "p": "tassa kira narakā cavana·kāle nimmaṃsa·katānaṃ gun…", "s": "For it is said that at the time of his passing away from hell, the sign that appeared to him was a heap of bones of oxen that had been stripped of flesh."}, {"key": "sn-a19.1:8.7", "p": "so paṭi·c·cha·n·nampi taṃ kammaṃ viññūnaṃ pākaṭaṃ …", "s": "He, making that deed manifest to the wise even when it was concealed, became a skeleton-chain ghost."}, {"key": "sn-a19.1:8.8", "p": "paṭhamaṃ.…", "s": "The first."}]}]}, {"id": "sn-a19.2", "label": "SN 19.2 · Explanation of the flesh-string", "children": [{"id": "sn-a19.2/2", "label": "¶ 203. maṃsa·pesi·vatthusmiṃ goghātakoti gomaṃsa·pesiyo katvā sukkhāpetvā…", "rows": [{"key": "sn-a19.2:2.1", "p": "¶ 203. maṃsa·pesi·vatthusmiṃ goghātakoti gomaṃsa·p…", "s": "203. In the case of a flesh-piece, a cow-butcher, having made pieces of cow-flesh, dried them, and for many years earned a living by selling dried meat; therefo…"}, {"key": "sn-a19.2:2.2", "p": "so maṃsa·pesi·peto jāto.…", "s": "He was reborn as a flesh-piece ghost."}, {"key": "sn-a19.2:2.3", "p": "dutiyaṃ.…", "s": "The second."}]}]}, {"id": "sn-a19.3", "label": "SN 19.3 · Explanation of the Lump of Flesh Sutta", "children": [{"id": "sn-a19.3/2", "label": "¶ 204. maṃsa·piṇḍa·vatthusmiṃ sākuṇikoti sakuṇe gahetvā vikkiṇana·kāle…", "rows": [{"key": "sn-a19.3:2.1", "p": "¶ 204. maṃsa·piṇḍa·vatthusmiṃ sākuṇikoti sakuṇe ga…", "s": "204. In the case of the lump of flesh: a fowler, who, at the time of selling birds after catching them, made a living by selling them as mere lumps of flesh wit…"}, {"key": "sn-a19.3:2.2", "p": "so maṃsa·piṇḍa·peto jāto.…", "s": "He was reborn as a lump-of-flesh ghost."}, {"key": "sn-a19.3:2.3", "p": "tatiyaṃ.…", "s": "The third."}]}]}, {"id": "sn-a19.4", "label": "SN 19.4 · Explanation of the Sutta on Flayed Skin", "children": [{"id": "sn-a19.4/2", "label": "¶ 205. nicchavi·vatthusmiṃ tassa orabbhikassa eḷake vadhitvā…", "rows": [{"key": "sn-a19.4:2.1", "p": "¶ 205. nicchavi·vatthusmiṃ tassa orabbhikassa eḷak…", "s": "205. In the case of the flayed skin, for that butcher of sheep who, having killed goats again and again, had made them skinned and had his livelihood thus arran…"}, {"key": "sn-a19.4:2.2", "p": "so nicchavi·peto jāto.…", "s": "He was reborn as a flayed ghost."}, {"key": "sn-a19.4:2.3", "p": "catu·t·thaṃ.…", "s": "The fourth."}]}]}, {"id": "sn-a19.5", "label": "SN 19.5 · Explanation of the Discourse on the Knife-Haired", "children": [{"id": "sn-a19.5/2", "label": "¶ 206. asiloma·vatthusmiṃ so sūkariko dīgha·rattaṃ nivāpa·puṭṭhe…", "rows": [{"key": "sn-a19.5:2.1", "p": "¶ 206. asiloma·vatthusmiṃ so sūkariko dīgha·rattaṃ…", "s": "206. In the Asiloma case, that swineherd, over a long period, having repeatedly killed pigs with a knife on the feeding ground, made his living for a long time;…"}, {"key": "sn-a19.5:2.2", "p": "tasmā asiloma·peto jāto.…", "s": "Therefore he was reborn as the Asiloma ghost."}, {"key": "sn-a19.5:2.3", "p": "pañcamaṃ.…", "s": "The fifth."}]}]}, {"id": "sn-a19.6", "label": "SN 19.6 · Description of the Dart Sutta", "children": [{"id": "sn-a19.6/2", "label": "¶ 207. satti·loma·vatthusmiṃ so māgaviko ekaṃ migañca…", "rows": [{"key": "sn-a19.6:2.1", "p": "¶ 207. satti·loma·vatthusmiṃ so māgaviko ekaṃ miga…", "s": "207. In the Dart-hair case, that hunter, having taken a deer and a dart, went to the forest and, having struck with the dart those deer that came near that deer…"}, {"key": "sn-a19.6:2.2", "p": "tasmā satti·loma·peto jāto.…", "s": "Therefore a dart-hair ghost was born."}, {"key": "sn-a19.6:2.3", "p": "cha·ṭ·ṭhaṃ.…", "s": "Sixth."}]}]}, {"id": "sn-a19.7", "label": "SN 19.7 · Explanation of the Arrow-Haired Discourse", "children": [{"id": "sn-a19.7/2", "label": "¶ 208. usu·loma·vatthusmiṃ kāraṇ·ikoti rājāparādhike an·ekāhi kāraṇāhi…", "rows": [{"key": "sn-a19.7:2.1", "p": "¶ 208. usu·loma·vatthusmiṃ kāraṇ·ikoti rājāparādhi…", "s": "208. In the arrow-haired story,"}, {"key": "sn-a19.7:2.2", "p": "so kira ``amukasmiṃ padese viddho maratī''ti ñatvā…", "s": "So, it is said, knowing that 'he will die when struck in such and such a spot,' he shoots."}, {"key": "sn-a19.7:2.3", "p": "tass·evaṃ jīvikaṃ kappetvā narake uppannassa tato …", "s": "For him, having thus earned his living and been reborn in hell, at the time of his reappearance here due to the remainder of his departure from there, the very …"}, {"key": "sn-a19.7:2.4", "p": "tasmā usu·loma·peto jāto.…", "s": "Therefore, he was born as a 'arrow-haired ghost.'"}, {"key": "sn-a19.7:2.5", "p": "sa·t·tamaṃ.…", "s": "The seventh."}]}]}, {"id": "sn-a19.8", "label": "SN 19.8 · Explanation of the Sūciloma Sutta", "children": [{"id": "sn-a19.8/2", "label": "¶ 209. sūci·loma·vatthusmiṃ sūtoti assa·damako.", "rows": [{"key": "sn-a19.8:2.1", "p": "¶ 209. sūci·loma·vatthusmiṃ sūtoti assa·damako.…", "s": "209. In the Sūciloma story, a sūta is a horse-tamer."}, {"key": "sn-a19.8:2.2", "p": "godamako·tipi vada·ntiyeva.…", "s": "They also call him 'Godamaka'."}, {"key": "sn-a19.8:2.3", "p": "tassa patoda·sūciyā vijjhana·bhāvo·yeva nimittaṃ a…", "s": "The very state of being pierced by the goad-needle was the sign for him."}, {"key": "sn-a19.8:2.4", "p": "tasmā sūci·loma·peto jāto.…", "s": "Therefore he was reborn as the needle-haired ghost."}, {"key": "sn-a19.8:2.5", "p": "aṭṭhamaṃ.…", "s": "The eighth."}]}]}, {"id": "sn-a19.9", "label": "SN 19.9 · Explanation of the Second Sūciloma Sutta", "children": [{"id": "sn-a19.9/2", "label": "¶ 210. dutiye sūci·loma·vatthusmiṃ sūcakoti pesuñña·kārako.", "rows": [{"key": "sn-a19.9:2.1", "p": "¶ 210. dutiye sūci·loma·vatthusmiṃ sūcakoti pesuññ…", "s": "210. In the second Sūciloma story, 'sūcako' means one who engages in slander."}, {"key": "sn-a19.9:2.2", "p": "so kira manusse añña·maññañca bhindi, rāja·kule ca…", "s": "It seems that he divided people against one another, and by repeatedly informing at the royal court, 'This one has such-and-such belonging to this one, this one…"}, {"key": "sn-a19.9:2.3", "p": "tasmā yathā tena sūcetvā manussā bhinnā, tathā sūc…", "s": "Therefore, just as people were divided by him through informing, so, having made the kamma itself as a sign to experience the suffering of division by needles, …"}, {"key": "sn-a19.9:2.4", "p": "navamaṃ.…", "s": "The ninth."}]}]}, {"id": "sn-a19.10", "label": "SN 19.10 · Explanation of the Kumbhaṇḍa Sutta", "children": [{"id": "sn-a19.10/2", "label": "¶ 211. aṇḍa·bhāri·vatthusmiṃ gāma·kūṭakoti vinicchayā·macco.", "rows": [{"key": "sn-a19.10:2.1", "p": "¶ 211. aṇḍa·bhāri·vatthusmiṃ gāma·kūṭakoti vinicch…", "s": "211. At the site of the egg-bearing village, the judge was a village rogue."}, {"key": "sn-a19.10:2.2", "p": "tassa kamma·sabhā·gatāya kumbha·mattā mahā·ghaṭa·p…", "s": "Due to the nature of his kamma, his testicles became the size of a pot, of the measure of a large jar."}, {"key": "sn-a19.10:2.3", "p": "so hi yasmā raho paṭi·c·channe ṭhāne lañjaṃ gahetv…", "s": "Because he took a bribe in a secluded, hidden place and, by a false verdict, made a manifest offence while rendering owners non-owners, therefore for him a mani…"}, {"key": "sn-a19.10:2.4", "p": "yasmā daṇḍaṃ paṭṭhapento paresaṃ a·sayhaṃ bhāraṃ ā…", "s": "Because, when imposing a punishment, he placed an unbearable burden on others, therefore for him the secret part became an unbearable burden and was produced."}, {"key": "sn-a19.10:2.5", "p": "yasmā yasmiṃ ṭhāne ṭhitena samena bhavitabbaṃ, tas…", "s": "Because, in the place where one standing should be impartial, having stood there he was partial, therefore for him in the secret constituent there was no impart…"}, {"key": "sn-a19.10:2.6", "p": "dasamaṃ.…", "s": "The tenth."}]}, {"id": "sn-a19.10/3", "label": "¶ paṭhamo vaggo.", "rows": [{"key": "sn-a19.10:3.1", "p": "¶ paṭhamo vaggo.…", "s": "The first chapter."}]}]}]}, {"id": "sn19-dutiyavagga", "label": "Dutiyavagga — Chapter Two ", "children": [{"id": "sn-a19.11", "label": "SN 19.11 · Explanation of the Discourse on the Head", "children": [{"id": "sn-a19.11/1", "label": "¶ dutiya·vaggo", "rows": [{"key": "sn-a19.11:1.1", "p": "¶ dutiya·vaggo…", "s": "The second chapter"}]}, {"id": "sn-a19.11/3", "label": "¶ 212. pāradārika·vatthusmiṃ so satto parassa rakkhita·gopitaṃ…", "rows": [{"key": "sn-a19.11:3.1", "p": "¶ 212. pāradārika·vatthusmiṃ so satto parassa rakk…", "s": "212. That being, in the case of the object of adultery, having delighted his mind with the pleasure of excrement, the pleasure of sensual pleasures, by touching…"}, {"key": "sn-a19.11:3.2", "p": "paṭhamaṃ.…", "s": "First."}]}]}, {"id": "sn-a19.12", "label": "SN 19.12 · Explanation of the Discourse on the Eater of Excrement", "children": [{"id": "sn-a19.12/2", "label": "¶ 213. duṭṭha·brāhmaṇa·vatthu pākaṭa·meva.", "rows": [{"key": "sn-a19.12:2.1", "p": "¶ 213. duṭṭha·brāhmaṇa·vatthu pākaṭa·meva.…", "s": "213. The case of the angry brahmin is clear enough."}, {"key": "sn-a19.12:2.2", "p": "dutiyaṃ.…", "s": "The second."}]}]}, {"id": "sn-a19.13", "label": "SN 19.13 · Description of the Sutta on the Flayed Woman", "children": [{"id": "sn-a19.13/2", "label": "¶ 214. nicchavi·t·thi·vatthusmiṃ yasmā mātu·gāmo nāma attano…", "rows": [{"key": "sn-a19.13:2.1", "p": "¶ 214. nicchavi·t·thi·vatthusmiṃ yasmā mātu·gāmo n…", "s": "214. In the case of the flayed woman, because a female is not independent with regard to her own sensual contact, and she, having stolen that contact belonging …"}, {"key": "sn-a19.13:2.2", "p": "tatiyaṃ.…", "s": "The third."}]}]}, {"id": "sn-a19.14", "label": "SN 19.14 · The commentary on the Maṅgulitthisutta", "children": [{"id": "sn-a19.14/2", "label": "¶ 215. maṅguli·t·thi·vatthusmiṃ maṅgulinti vi·rūpaṃ duddasikaṃ bībhacchaṃ.", "rows": [{"key": "sn-a19.14:2.1", "p": "¶ 215. maṅguli·t·thi·vatthusmiṃ maṅgulinti vi·rūpa…", "s": "215. In the case of the hunchbacked woman, 'maṅgulī' means deformed, ugly to see, repulsive."}, {"key": "sn-a19.14:2.2", "p": "sā kira yakkha·dāsi·kammaṃ karontī ``iminā ca imin…", "s": "It is said that while performing the work of a female yakkha slave, saying 'When such and such an offering is made in this way and that, this prosperity will be…"}, {"key": "sn-a19.14:2.3", "p": "catu·t·thaṃ.…", "s": "The fourth."}]}]}, {"id": "sn-a19.15", "label": "SN 19.15 · Explanation of the Sutta on the One Smeared with Filth", "children": [{"id": "sn-a19.15/2", "label": "¶ 216. okilinī·vatthusmiṃ uppakkaṃ okiliniṃ okirininti sā…", "rows": [{"key": "sn-a19.15:2.1", "p": "¶ 216. okilinī·vatthusmiṃ uppakkaṃ okiliniṃ okirin…", "s": "216. In the story of the one smeared with filth: she was cooked being smeared with filth and covered with filth. For she, lying on a bed of coals, writhing and …"}, {"key": "sn-a19.15:2.2", "p": "tassā hi heṭṭha·topi kiṃsuka·puppha·vaṇṇā aṅgārā, …", "s": "For below it there are coals the color of the coral tree flower, and on both sides and above they fall through the air."}, {"key": "sn-a19.15:2.3", "p": "tena vuttaṃ -- ``uppakkaṃ okiliniṃ okiri·ni''nti.…", "s": "Hence it was said: 'She scattered the cooked, the moist, the scattered.'"}, {"key": "sn-a19.15:2.4", "p": "sā issā·pakatā sapattiṃ aṅgāra·kaṭāhena okirīti ta…", "s": "She, being of a jealous nature, scattered her co-wife with a pot of coals; for it is said that a certain dancer of that king, having placed a pot of coals nearb…"}, {"key": "sn-a19.15:2.5", "p": "rājāpi tāya saddhiṃ kathañca karoti, pari·tuṭṭhā·k…", "s": "The king also converses with her and shows a gesture of satisfaction."}, {"key": "sn-a19.15:2.6", "p": "agga·mahesī taṃ a·saha·mānā issā·pakatā hutvā a·ci…", "s": "The chief queen, unable to bear that, being overcome with jealousy, took that pot of coals shortly after the king had departed and scattered coals over her."}, {"key": "sn-a19.15:2.7", "p": "sā taṃ kammaṃ katvā tādisaṃ·yeva vipākaṃ pacc·anub…", "s": "Having done that deed, she was reborn in the realm of ghosts to experience just such a result."}, {"key": "sn-a19.15:2.8", "p": "pañcamaṃ.…", "s": "The fifth."}]}]}, {"id": "sn-a19.16", "label": "SN 19.16 · Explanation of the Headless Sutta", "children": [{"id": "sn-a19.16/2", "label": "¶ 217. cora·ghāta·vatthusmiṃ so rañño āṇāya dīgha·rattaṃ…", "rows": [{"key": "sn-a19.16:2.1", "p": "¶ 217. cora·ghāta·vatthusmiṃ so rañño āṇāya dīgha·…", "s": "217. In the place of an executioner, having for a long time cut off the heads of bandits by the king's command, when he was reborn in the realm of ghosts, he wa…"}, {"key": "sn-a19.16:2.2", "p": "cha·ṭ·ṭhaṃ.…", "s": "The sixth."}]}, {"id": "sn-a19.16/3", "label": "Explanation of the discourse on the evil bhikkhu, etc. · pāpa·bhikkhusutt·ādi·vaṇṇanā", "children": [{"id": "sn-a19.16/4", "label": "¶ 218-222. bhikkhu·vatthusmiṃ pāpa·bhikkhūti lāmaka·bhikkhu.", "rows": [{"key": "sn-a19.16:4.2", "p": "¶ 218-222. bhikkhu·vatthusmiṃ pāpa·bhikkhūti lāmak…", "s": "218-222. In the bhikkhu's domain, 'a bad bhikkhu' means a vile bhikkhu."}, {"key": "sn-a19.16:4.3", "p": "so kira lokassa saddhā·deyye cattāro pacc·aye pari…", "s": "It is said that, having enjoyed the four requisites given out of faith by the world, he wandered about playing mental games, unrestrained at the doors of body a…"}, {"key": "sn-a19.16:4.4", "p": "tato ekaṃ buddhantaraṃ niraye pacc·itvā peta·loke …", "s": "Then, after having been tormented for one Buddha-interval in hell, he was reborn in the realm of ghosts, taking on a body similar to that of a bhikkhu."}, {"key": "sn-a19.16:4.5", "p": "bhikkhunī·sikkha·mānā·sāmaṇera·sāmaṇerī·vatthūsupi…", "s": "In the cases of a bhikkhunī, a female trainee, a sāmaṇera, and a sāmaṇerī, this same decision applies."}, {"key": "sn-a19.16:4.6", "p": "sattamādīni.…", "s": "The seventh, etc."}]}, {"id": "sn-a19.16/5", "label": "¶ lakkhaṇa·saṃyutta·vaṇṇanā niṭṭhitā.", "rows": [{"key": "sn-a19.16:5.1", "p": "¶ lakkhaṇa·saṃyutta·vaṇṇanā niṭṭhitā.…", "s": "The commentary on the Book of the Marks is finished."}]}]}]}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas"}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — AI rendering of a post-canonical commentary (aṭṭhakathā)"}];
+const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — Late Buddhist Text — post-canonical Theravāda commentary (aṭṭhakathā), centuries later than the suttas", "group": "Root: Pāli", "tip": "Root Pāli (SuttaCentral / Mahāsaṅgīti edition)"}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — AI rendering of a post-canonical commentary (aṭṭhakathā)", "group": "English", "tip": "AI-generated from the Pāli, in Bhikkhu Bodhi's style"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2064,8 +2123,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2105,30 +2317,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

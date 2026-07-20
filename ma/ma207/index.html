@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma207:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊王舍城，在竹林伽蘭哆園，", "rows": [{"key": "ma207:2.1", "p": "一時，佛遊王舍城，在竹林伽蘭哆園，…", "s": "At one time, the Buddha was traveling in Rājagaha, staying in the Bamboo Grove, the Squirrels' Feeding Ground,"}, {"key": "ma207:2.2", "p": "與大比丘眾俱，千二百五十人而受夏坐。…", "s": "together with a great community of bhikkhus, twelve hundred and fifty bhikkhus who were observing the rains retreat."}]}, {"id": "3", "label": "爾時，世尊過夜平旦，著衣持鉢，入王舍城而行乞食。", "rows": [{"key": "ma207:3.1", "p": "爾時，世尊過夜平旦，著衣持鉢，入王舍城而行乞食。…", "s": "Then, when the night had passed and it was morning,"}, {"key": "ma207:3.2", "p": "行乞食已，收舉衣鉢，澡洗手足，…", "s": "the Blessed One put on his robe, took his bowl, and entered Rājagaha for alms."}, {"key": "ma207:3.3", "p": "以尼師檀著於肩上，往至孔雀林異學園中。…", "s": "Having walked for alms, he put away his robe and bowl, washed his hands and feet,\nplaced his sitting cloth on his shoulder, and went to the park of the wanderer…"}]}, {"id": "4", "label": "爾時，孔雀林異學園中有一異學，名曰箭毛，名德宗主，", "rows": [{"key": "ma207:4.1", "p": "爾時，孔雀林異學園中有一異學，名曰箭毛，名德宗主，…", "s": "At that time, in the park of the wanderers of the Peacock Grove,"}, {"key": "ma207:4.2", "p": "眾人所師，有大名譽，眾所敬重，…", "s": "there was a wanderer named Arrow-hair, a leader of a sect,"}, {"key": "ma207:4.3", "p": "領大徒眾，五百異學之所尊也。…", "s": "a teacher of many, of great fame, respected by many, leading a large following, revered by five hundred wanderers."}, {"key": "ma207:4.4", "p": "彼在大眾喧閙嬈亂，放高大音聲，…", "s": "He was in the midst of a noisy, tumultuous crowd, speaking loudly about various kinds of pointless talk,"}, {"key": "ma207:4.5", "p": "說種種畜生之論，謂論王、論賊、論鬪、…", "s": "such as talk about kings, talk about thieves, talk about battles, talk about food,"}, {"key": "ma207:4.6", "p": "論食、論衣服、論婦人、論童女、論婬女、…", "s": "talk about clothes, talk about women, talk about maidens, talk about prostitutes,"}, {"key": "ma207:4.7", "p": "論世間、論空野、論海中、論國人民。…", "s": "talk about the world, talk about wilderness, talk about the sea, talk about countries and people."}, {"key": "ma207:4.8", "p": "彼共集坐論如是比畜生之論。…", "s": "They sat together discussing such pointless talk."}, {"key": "ma207:4.9", "p": "異學箭毛遙見佛來，勅己眾曰：…", "s": "The wanderer Arrow-hair saw the Buddha coming from afar and instructed his followers:"}, {"key": "ma207:4.10", "p": "「汝等默然住，彼沙門瞿曇來。…", "s": "\"Stay silent, the ascetic Gotama is coming."}, {"key": "ma207:4.11", "p": "彼眾默然，常樂默然，稱說默然。…", "s": "He delights in silence, always delights in silence, and praises silence."}, {"key": "ma207:4.12", "p": "彼若見此眾默然者，或來相見。…", "s": "If he sees this assembly silent, he might come to see us.\""}, {"key": "ma207:4.13", "p": "」異學箭毛令眾默然已，自默然住。…", "s": "Having made his followers silent, the wanderer Arrow-hair himself remained silent."}]}, {"id": "5", "label": "世尊往詣異學箭毛所，異學箭毛即從坐起，", "rows": [{"key": "ma207:5.1", "p": "世尊往詣異學箭毛所，異學箭毛即從坐起，…", "s": "The Blessed One approached the wanderer Arrow-hair."}, {"key": "ma207:5.2", "p": "偏袒著衣，叉手向佛，白曰：「善來，沙門瞿曇！…", "s": "The wanderer Arrow-hair then rose from his seat, arranged his robe over one shoulder,\nraised his joined hands towards the Buddha, and said:"}, {"key": "ma207:5.3", "p": "沙門瞿曇久不來此，願坐此坐。…", "s": "\"Welcome, ascetic Gotama!"}, {"key": "ma207:5.4", "p": "」世尊便坐異學箭毛所敷之座，…", "s": "It has been a long time since the ascetic Gotama last came here.\nPlease sit on this seat.\""}, {"key": "ma207:5.5", "p": "異學箭毛則與世尊共相問訊，却坐一面。…", "s": "The Blessed One sat on the seat prepared by the wanderer Arrow-hair.\nThe wanderer Arrow-hair then exchanged greetings with the Blessed One and sat down to one s…"}]}, {"id": "6", "label": "世尊問曰：「優陀夷！", "rows": [{"key": "ma207:6.1", "p": "世尊問曰：「優陀夷！…", "s": "The Blessed One asked:"}, {"key": "ma207:6.2", "p": "向論何等？…", "s": "\"Udāyī, what were you discussing just now?"}, {"key": "ma207:6.3", "p": "以何事故共集坐此？」…", "s": "For what reason were you sitting together here?\""}]}, {"id": "7", "label": "異學箭毛答曰：「瞿曇！", "rows": [{"key": "ma207:7.1", "p": "異學箭毛答曰：「瞿曇！…", "s": "The heretic Arrow-hair replied:\n'Gotama, set aside this discussion;"}, {"key": "ma207:7.2", "p": "且置此論，此論非妙，沙門瞿曇欲聞此論，後聞不難。」…", "s": "this discussion is not excellent.\nIf the ascetic Gotama wishes to hear this discussion, it will not be difficult to hear later.'"}]}, {"id": "8", "label": "世尊如是再三問曰：「優陀夷！", "rows": [{"key": "ma207:8.1", "p": "世尊如是再三問曰：「優陀夷！…", "s": "The Blessed One asked a second and third time:"}, {"key": "ma207:8.2", "p": "向論何等？…", "s": "'Udayin, what were you discussing?"}, {"key": "ma207:8.3", "p": "以何事故共集坐此？」…", "s": "For what reason did you all gather and sit here?'"}]}, {"id": "9", "label": "異學箭毛亦再三答曰：「瞿曇！", "rows": [{"key": "ma207:9.1", "p": "異學箭毛亦再三答曰：「瞿曇！…"}, {"key": "ma207:9.2", "p": "且置此論，此論非妙，沙門瞿曇欲聞此論，…", "s": "The heretic Arrow-hair also replied a second and third time:"}, {"key": "ma207:9.3", "p": "後聞不難，沙門瞿曇若至再三，其欲聞者，今當說之。瞿曇！…"}, {"key": "ma207:9.4", "p": "我等與拘薩羅國眾多梵志，…", "s": "'Gotama, set aside this discussion;"}, {"key": "ma207:9.5", "p": "悉共集坐拘薩羅學堂，說如是論。…"}, {"key": "ma207:9.6", "p": "鴦伽摩竭陀國人有大善利，鴦伽摩竭陀國人得大善利，…", "s": "this discussion is not excellent."}, {"key": "ma207:9.7", "p": "如此大福田眾在王舍城共受夏坐，謂不蘭迦葉。…"}, {"key": "ma207:9.8", "p": "所以者何？瞿曇！…", "s": "If the ascetic Gotama wishes to hear this discussion, it will not be difficult to hear later."}, {"key": "ma207:9.9", "p": "不蘭迦葉名德宗主，眾人所師，有大名譽，…"}, {"key": "ma207:9.10", "p": "眾所敬重，領大徒眾，五百異學之所尊也。…", "s": "Since the ascetic Gotama has asked up to three times and wishes to hear it, I will now speak of it."}, {"key": "ma207:9.11", "p": "於此王舍城共受夏坐，如是摩息迦利瞿舍利子、…"}, {"key": "ma207:9.12", "p": "娑若鞞羅遲子、尼揵親子、…", "s": "Gotama, we, together with many brahmins from the Kosala country,"}, {"key": "ma207:9.13", "p": "彼復迦栴、阿夷哆雞舍劍婆利。…", "s": "all gathered and sat in the Kosala lecture hall, discussing this topic:"}]}, {"id": "10", "label": "「瞿曇！", "rows": [{"key": "ma207:10.1", "p": "「瞿曇！…"}, {"key": "ma207:10.2", "p": "阿夷哆雞舍劍婆利名德宗主，…", "s": "\"Gotama, Ajita Kesakambala is a leader of renown, a teacher of many, of great fame,"}, {"key": "ma207:10.3", "p": "眾人所師，有大名譽，眾所敬重，…", "s": "respected by all, leading a large following, honored by five hundred sectarians."}, {"key": "ma207:10.4", "p": "領大徒眾，五百異學之所尊也，於此王舍城共受夏坐。…", "s": "He too is spending the rains retreat here in Rājagaha."}, {"key": "ma207:10.5", "p": "向者亦論沙門瞿曇！…", "s": "Just now we also discussed the ascetic Gotama:"}, {"key": "ma207:10.6", "p": "此沙門瞿曇名德宗主，眾人所師，有大名譽，眾所敬重，…", "s": "'This ascetic Gotama is a leader of renown, a teacher of many, of great fame, respected by all,"}, {"key": "ma207:10.7", "p": "領大比丘眾，千二百五十人之所尊也，…", "s": "leading a large community of bhikkhus, honored by one thousand two hundred and fifty."}, {"key": "ma207:10.8", "p": "亦在此王舍城共受夏坐。瞿曇！…", "s": "He too is spending the rains retreat here in Rājagaha.'"}, {"key": "ma207:10.9", "p": "我等復作是念：『今此諸尊沙門、梵志，…", "s": "Gotama, we then thought:"}, {"key": "ma207:10.10", "p": "誰為弟子所恭敬、尊重、供養奉事耶？…", "s": "'Now, among these ascetics and brahmins, who is respected, honored, venerated, and served by their disciples?"}, {"key": "ma207:10.11", "p": "非為弟子法罵所罵，亦無弟子難師，…", "s": "Who is not reviled by their disciples according to the teaching, and whose disciples do not challenge their teacher?"}, {"key": "ma207:10.12", "p": "此一向不可、不相應，不等說已，便捨而去。…", "s": "This is entirely unacceptable, improper, and after making an unequal statement, they leave.'"}, {"key": "ma207:10.13", "p": "』瞿曇！…", "s": "Gotama, we then thought:"}, {"key": "ma207:10.14", "p": "我等復作是念：『此不蘭迦葉不為弟子所恭敬、…", "s": "'This Pūraṇa Kassapa is not respected, honored, venerated, or served by his disciples;"}, {"key": "ma207:10.15", "p": "尊重、供養、奉事，…", "s": "he is reviled by his disciples according to the teaching;"}, {"key": "ma207:10.16", "p": "為弟子法罵所罵，眾多弟子難師，此不可，…", "s": "many disciples challenge their teacher."}, {"key": "ma207:10.17", "p": "此不相應，此不等說已，便捨而去。』…", "s": "This is unacceptable, this is improper, this is an unequal statement, and after making it, they leave.'\""}]}, {"id": "11", "label": "「瞿曇！", "rows": [{"key": "ma207:11.1", "p": "「瞿曇！…", "s": "\"Gotama, in the past, Pūraṇa Kassapa often raised his hand and shouted among his disciples:"}, {"key": "ma207:11.2", "p": "昔時不蘭迦葉數在弟子眾舉手大喚：『汝等可住，…", "s": "'You should stop!"}, {"key": "ma207:11.3", "p": "無有人來問汝等事，人問我事，…", "s": "No one comes to ask you about matters;"}, {"key": "ma207:11.4", "p": "汝等不能斷此事，我能斷此事。…", "s": "they ask me about matters."}, {"key": "ma207:11.5", "p": "』而弟子於其中間更論餘事，不待師說事訖。瞿曇！…", "s": "You cannot decide this matter;"}, {"key": "ma207:11.6", "p": "我等復作是念：…", "s": "I can decide this matter.'\nYet his disciples, in the meantime, discussed other matters, not waiting for the teacher to finish speaking."}, {"key": "ma207:11.7", "p": "『如是此不蘭迦葉不為弟子所恭敬、尊重、供養、…", "s": "Gotama, we then thought:"}, {"key": "ma207:11.8", "p": "奉事，為弟子法罵所罵，…", "s": "'Thus this Pūraṇa Kassapa is not respected, honored, venerated, or served by his disciples;"}, {"key": "ma207:11.9", "p": "眾多弟子難師：此不可，此不相應。…", "s": "he is reviled by his disciples according to the teaching;"}, {"key": "ma207:11.10", "p": "此不等說已，便捨而去。…", "s": "many disciples challenge their teacher:"}, {"key": "ma207:11.11", "p": "』如是摩息加利瞿舍利子、娑若鞞羅遲子、…", "s": "this is unacceptable, this is improper.\nThis is an unequal statement, and after making it, they leave.'"}, {"key": "ma207:11.12", "p": "尼揵親子、彼復迦旃、阿夷哆雞舍劍婆利。瞿曇！…", "s": "Likewise, Makkhali Gosāla, Sañjaya Belaṭṭhiputta, Nigaṇṭha Nātaputta, Pakudha Kaccāyana, and Ajita Kesakambala."}, {"key": "ma207:11.13", "p": "我等作如是念：『此阿夷哆雞舍劍婆利不為弟子所恭敬、…", "s": "Gotama, we thought:"}, {"key": "ma207:11.14", "p": "尊重、供養、奉事，…", "s": "'This Ajita Kesakambala is not respected, honored, venerated, or served by his disciples;"}, {"key": "ma207:11.15", "p": "為弟子法罵所罵，眾多弟子難師：此不可，…", "s": "he is reviled by his disciples according to the teaching;"}, {"key": "ma207:11.16", "p": "此不相應，此不等說已，便捨而去。…", "s": "many disciples challenge their teacher:"}, {"key": "ma207:11.17", "p": "』瞿曇！…", "s": "this is unacceptable, this is improper, this is an unequal statement, and after making it, they leave.'\nGotama, in the past, Ajita Kesakambala often raised his …"}, {"key": "ma207:11.18", "p": "昔時阿夷哆雞舍劍婆利數在弟子眾舉手大喚：…", "s": "'You should stop!"}, {"key": "ma207:11.19", "p": "『汝等可住，…", "s": "No one comes to ask you about matters;"}, {"key": "ma207:11.20", "p": "無有人來問汝等事，人問我事，…", "s": "they ask me about matters."}, {"key": "ma207:11.21", "p": "汝等不能斷此事，我能斷此事。…", "s": "You cannot decide this matter;"}, {"key": "ma207:11.22", "p": "』而弟子於其中間更論餘事，不待師說事訖。…", "s": "I can decide this matter.'\nYet his disciples, in the meantime, discussed other matters, not waiting for the teacher to finish speaking.\""}]}, {"id": "12", "label": "「瞿曇！", "rows": [{"key": "ma207:12.1", "p": "「瞿曇！…"}, {"key": "ma207:12.2", "p": "我等復作是念：…", "s": "\"Gotama, we then thought:"}, {"key": "ma207:12.3", "p": "『如是此阿夷哆雞舍劍婆利不為弟子所恭敬、…", "s": "'Thus this Ajita Kesakambala is not respected, honored, venerated, or served by his disciples;"}, {"key": "ma207:12.4", "p": "尊重、供養、奉事，…", "s": "he is reviled by his disciples according to the teaching;"}, {"key": "ma207:12.5", "p": "為弟子法罵所罵，眾多弟子難師：此不可，…", "s": "many disciples challenge their teacher:"}, {"key": "ma207:12.6", "p": "此不相應，此不等說已，便捨而去。』…", "s": "this is unacceptable, this is improper, this is an unequal statement, and after making it, they leave.'\""}]}, {"id": "13", "label": "「瞿曇！", "rows": [{"key": "ma207:13.1", "p": "「瞿曇！…"}, {"key": "ma207:13.2", "p": "我等復作是念：『此沙門瞿曇為弟子所恭敬、…", "s": "\"Gotama, we also thought:"}, {"key": "ma207:13.3", "p": "尊重、供養、奉事，…", "s": "'This ascetic Gotama is respected, honored, venerated, and served by his disciples;"}, {"key": "ma207:13.4", "p": "不為弟子法罵所罵，亦無弟子難師：…", "s": "he is not criticized by his disciples for his teaching, nor do his disciples challenge him, saying:"}, {"key": "ma207:13.5", "p": "此不可，此不相應，此不等說已，便捨而去。…", "s": "\"This is not acceptable, this is not appropriate, this is not rightly spoken,\" and then leave him.'"}, {"key": "ma207:13.6", "p": "』瞿曇！…", "s": "Gotama, in the past,"}, {"key": "ma207:13.7", "p": "昔時沙門瞿曇數在大眾，無量百千眾圍遶說法，…", "s": "the ascetic Gotama often taught in a large assembly surrounded by countless hundreds of thousands of people."}, {"key": "ma207:13.8", "p": "於其中有一人鼾眠作聲，…", "s": "Among them, one person snored loudly, and another said to that person:"}, {"key": "ma207:13.9", "p": "又有一人語彼人曰：『莫鼾眠作聲！…", "s": "'Do not snore loudly!"}, {"key": "ma207:13.10", "p": "汝不欲聞世尊說微妙法，如甘露耶？…", "s": "Do you not wish to hear the Blessed One teach the subtle Dharma, like ambrosia?'"}, {"key": "ma207:13.11", "p": "』彼人即便默然無聲。瞿曇！…", "s": "That person then fell silent."}, {"key": "ma207:13.12", "p": "我等復作是念：『如是此沙門瞿曇為弟子所恭敬、…", "s": "Gotama, we also thought:"}, {"key": "ma207:13.13", "p": "尊重、供養、奉事，…", "s": "'Thus this ascetic Gotama is respected, honored, venerated, and served by his disciples;"}, {"key": "ma207:13.14", "p": "不為弟子法罵所罵，亦無弟子難師：…", "s": "he is not criticized by his disciples for his teaching, nor do his disciples challenge him, saying:"}, {"key": "ma207:13.15", "p": "此不可，此不相應，此不等說已，便捨而去。』」…", "s": "\"This is not acceptable, this is not appropriate, this is not rightly spoken,\" and then leave him.'\""}]}, {"id": "14", "label": "世尊聞已，問異學箭毛曰：「優陀夷！", "rows": [{"key": "ma207:14.1", "p": "世尊聞已，問異學箭毛曰：「優陀夷！…", "s": "Having heard this, the Blessed One asked the heretic Arrow-hair:"}, {"key": "ma207:14.2", "p": "汝見我有幾法，令諸弟子恭敬、…", "s": "\"Uddāyin, do you see in me any qualities for which my disciples respect,"}, {"key": "ma207:14.3", "p": "尊重、供養、奉事我，常隨不離耶？」…", "s": "honor, venerate, and serve me, always following without leaving?\""}]}, {"id": "15", "label": "異學箭毛答曰：「瞿曇！", "rows": [{"key": "ma207:15.1", "p": "異學箭毛答曰：「瞿曇！…", "s": "The heretic Arrow-hair replied:"}, {"key": "ma207:15.2", "p": "我見瞿曇有五法，令諸弟子恭敬、…", "s": "\"Gotama, I see in Gotama five qualities for which your disciples respect,"}, {"key": "ma207:15.3", "p": "尊重、供養、奉事，常隨不離。…", "s": "honor, venerate, and serve you, always following without leaving."}, {"key": "ma207:15.4", "p": "云何為五？…", "s": "What are the five?"}, {"key": "ma207:15.5", "p": "沙門瞿曇麤衣知足，稱說麤衣知足，…", "s": "The ascetic Gotama is content with coarse robes and praises contentment with coarse robes."}, {"key": "ma207:15.6", "p": "若沙門瞿曇麤衣知足，稱說麤衣知足者，…", "s": "Since the ascetic Gotama is content with coarse robes and praises contentment with coarse robes,"}, {"key": "ma207:15.7", "p": "是謂我見沙門瞿曇有第一法，令諸弟子恭敬、…", "s": "this is the first quality I see in the ascetic Gotama for which his disciples respect,"}, {"key": "ma207:15.8", "p": "尊重、供養、奉事，常隨不離。…", "s": "honor, venerate, and serve him, always following without leaving."}, {"key": "ma207:15.9", "p": "復次，沙門瞿曇麤食知足，稱說麤食知足，…", "s": "Next, the ascetic Gotama is content with coarse food and praises contentment with coarse food."}, {"key": "ma207:15.10", "p": "若沙門瞿曇麤食知足，稱說麤食知足者，…", "s": "Since the ascetic Gotama is content with coarse food and praises contentment with coarse food,"}, {"key": "ma207:15.11", "p": "是謂我見沙門瞿曇有第二法，令諸弟子恭敬、…", "s": "this is the second quality I see in the ascetic Gotama for which his disciples respect,"}, {"key": "ma207:15.12", "p": "尊重、供養、奉事，常隨不離。…", "s": "honor, venerate, and serve him, always following without leaving.\""}]}, {"id": "16", "label": "「復次，沙門瞿曇少食，稱說少食，", "rows": [{"key": "ma207:16.1", "p": "「復次，沙門瞿曇少食，稱說少食，…", "s": "\"Next, the ascetic Gotama eats little and praises eating little."}, {"key": "ma207:16.2", "p": "若沙門瞿曇少食，稱說少食者，…", "s": "Since the ascetic Gotama eats little and praises eating little,"}, {"key": "ma207:16.3", "p": "是謂我見沙門瞿曇有第三法，令諸弟子恭敬、…", "s": "this is the third quality I see in the ascetic Gotama for which his disciples respect,"}, {"key": "ma207:16.4", "p": "尊重、供養、奉事，常隨不離。…", "s": "honor, venerate, and serve him, always following without leaving."}, {"key": "ma207:16.5", "p": "復次，沙門瞿曇麤住止床座知足，…", "s": "Next, the ascetic Gotama is content with a coarse resting place and\nseat and praises contentment with a coarse resting place and seat."}, {"key": "ma207:16.6", "p": "稱說麤住止床座知足，若沙門瞿曇麤住止床座知足，…", "s": "Since the ascetic Gotama is content with a coarse resting place and\nseat and praises contentment with a coarse resting place and seat,"}, {"key": "ma207:16.7", "p": "稱說麤住止床座知足者，是謂我見沙門瞿曇有第四法，…", "s": "this is the fourth quality I see in the ascetic Gotama for which his disciples respect,"}, {"key": "ma207:16.8", "p": "令諸弟子恭敬、尊重、供養、奉事，常隨不離。…", "s": "honor, venerate, and serve him, always following without leaving."}, {"key": "ma207:16.9", "p": "復次，沙門瞿曇燕坐，稱說燕坐，…", "s": "Next, the ascetic Gotama practices seclusion and praises seclusion."}, {"key": "ma207:16.10", "p": "若沙門瞿曇燕坐，稱說燕坐者，…", "s": "Since the ascetic Gotama practices seclusion and praises seclusion,"}, {"key": "ma207:16.11", "p": "是謂我見沙門瞿曇有第五法，令諸弟子恭敬、…", "s": "this is the fifth quality I see in the ascetic Gotama for which his disciples respect,"}, {"key": "ma207:16.12", "p": "尊重、供養、奉事，常隨不離。…", "s": "honor, venerate, and serve him, always following without leaving."}, {"key": "ma207:16.13", "p": "是謂我見沙門瞿曇有五法，令諸弟子恭敬、…", "s": "These are the five qualities I see in the ascetic Gotama for which his disciples respect,"}, {"key": "ma207:16.14", "p": "尊重、供養、奉事，常隨不離。」…", "s": "honor, venerate, and serve him, always following without leaving.\""}]}, {"id": "17", "label": "世尊告曰：「優陀夷！", "rows": [{"key": "ma207:17.1", "p": "世尊告曰：「優陀夷！…"}, {"key": "ma207:17.2", "p": "我不以此五法，令諸弟子恭敬、…", "s": "The Blessed One said:"}, {"key": "ma207:17.3", "p": "尊重、供養、奉事我，常隨不離。…", "s": "\"Uddāyin, it is not because of these five qualities that my disciples respect,"}, {"key": "ma207:17.4", "p": "優陀夷！…"}, {"key": "ma207:17.5", "p": "我所持衣，隨聖力割截，染汙惡色，如是聖衣染汙惡色。…", "s": "honor, venerate, and serve me, always following without leaving."}, {"key": "ma207:17.6", "p": "優陀夷！…", "s": "Uddāyin, the robes I wear are cut according to the noble standard,"}, {"key": "ma207:17.7", "p": "或我弟子謂盡形壽衣所棄捨糞掃之衣，…", "s": "dyed in a dirty color, such noble robes are dyed in a dirty color."}, {"key": "ma207:17.8", "p": "亦作是說：『我世尊麤衣知足，稱說麤衣知足。…"}, {"key": "ma207:17.9", "p": "』優陀夷！…", "s": "Uddāyin, some of my disciples, who for their whole lives wear discarded rag-robes, also say:"}, {"key": "ma207:17.10", "p": "若我弟子因麤衣知足故，稱說我者，彼因此處故，…", "s": "'Our Blessed One is content with coarse robes and praises contentment with coarse robes.'"}, {"key": "ma207:17.11", "p": "不恭敬、尊重、供養、奉事我，亦不相隨。…", "s": "Uddāyin, if my disciples praise me because of contentment with coarse robes, they do not,"}, {"key": "ma207:17.12", "p": "復次，優陀夷！…"}, {"key": "ma207:17.13", "p": "我食粳糧成熟，無［麩－夫＋黃］無量雜味。…", "s": "on that account, respect, honor, venerate, and serve me, nor do they follow me."}, {"key": "ma207:17.14", "p": "優陀夷！…", "s": "Next, Uddāyin, I eat cooked fine rice, without husks, with countless mixed flavors."}, {"key": "ma207:17.15", "p": "或我弟子盡其形壽而行乞食所棄捨食，…", "s": "Uddāyin, some of my disciples, who for their whole lives eat discarded almsfood, also say:"}, {"key": "ma207:17.16", "p": "亦作是說：『我世尊麤食知足，稱說麤食知足。…"}, {"key": "ma207:17.17", "p": "』優陀夷！…", "s": "'Our Blessed One is content with coarse food and praises contentment with coarse food.'"}, {"key": "ma207:17.18", "p": "若我弟子因麤食知足故，稱說我者，彼因此處故，…", "s": "Uddāyin, if my disciples praise me because of contentment with coarse food, they do not,"}, {"key": "ma207:17.19", "p": "不恭敬、尊重、供養、奉事我，亦不相隨。…", "s": "on that account, respect, honor, venerate, and serve me, nor do they follow me.\""}]}, {"id": "18", "label": "「復次，優陀夷！", "rows": [{"key": "ma207:18.1", "p": "「復次，優陀夷！…"}, {"key": "ma207:18.2", "p": "我食如一鞞羅食，或如半鞞羅，優陀夷！…", "s": "\"Next, Uddāyin, I eat as much as one bowl of food, or half a bowl."}, {"key": "ma207:18.3", "p": "或我弟子食如一拘拖，或如半拘拖，…", "s": "Uddāyin, some of my disciples eat as much as one small bowl, or half a small bowl, and also say:"}, {"key": "ma207:18.4", "p": "亦作是說：『我世尊少食，稱說少食。…"}, {"key": "ma207:18.5", "p": "』優陀夷！…", "s": "'Our Blessed One eats little and praises eating little.'"}, {"key": "ma207:18.6", "p": "若我弟子因少食故，稱說我者，彼因此處故，…", "s": "Uddāyin, if my disciples praise me because of eating little, they do not,"}, {"key": "ma207:18.7", "p": "不恭敬、尊重、供養、奉事我，亦不相隨。…"}, {"key": "ma207:18.8", "p": "復次，優陀夷！…", "s": "on that account, respect, honor, venerate, and serve me, nor do they follow me."}, {"key": "ma207:18.9", "p": "我或住高樓，或住棚閣。…", "s": "Next, Uddāyin, I sometimes live in a high building, sometimes in a pavilion."}, {"key": "ma207:18.10", "p": "優陀夷！…"}, {"key": "ma207:18.11", "p": "或我弟子彼過九月、十月，一夜於覆處宿，亦作是說：…", "s": "Uddāyin, some of my disciples, who for nine or ten months spend a night in a sheltered place, also say:"}, {"key": "ma207:18.12", "p": "『我世尊麤住止床座知足，稱說麁住止床座知足。…", "s": "'Our Blessed One is content with a coarse resting place and seat\nand praises contentment with a coarse resting place and seat.'"}, {"key": "ma207:18.13", "p": "』優陀夷！…"}, {"key": "ma207:18.14", "p": "若我弟子因麤住止床座知足故，稱說我者，…", "s": "Uddāyin, if my disciples praise me because of contentment with a coarse resting place and seat,"}, {"key": "ma207:18.15", "p": "彼因此處故，不恭敬、尊重、供養、奉事我，亦不相隨。…", "s": "they do not, on that account, respect, honor, venerate, and serve me, nor do they follow me.\""}]}, {"id": "19", "label": "「復次，優陀夷！", "rows": [{"key": "ma207:19.1", "p": "「復次，優陀夷！…"}, {"key": "ma207:19.2", "p": "我常作閙比丘、比丘尼、優婆塞、…", "s": "\"Furthermore, Udāyin, I often have monks, nuns, laymen, and laywomen who are noisy,"}, {"key": "ma207:19.3", "p": "優婆夷，或我弟子過半月一入眾，…", "s": "or my disciples who enter the assembly once every half month for the sake of purity of the Dharma, and I also say this:"}, {"key": "ma207:19.4", "p": "為法清淨故，亦作是說：『我世尊燕坐，稱說燕坐。…"}, {"key": "ma207:19.5", "p": "』優陀夷！…", "s": "'The Blessed One sits in seclusion and praises seclusion.'"}, {"key": "ma207:19.6", "p": "若我弟子因燕坐故，稱說我者，彼因此處故，…", "s": "Udāyin, if my disciples praise me because of seclusion,"}, {"key": "ma207:19.7", "p": "不恭敬、尊重、供養、奉事我，亦不相隨。…"}, {"key": "ma207:19.8", "p": "優陀夷！…", "s": "then for that reason they do not revere, respect, venerate, or serve me, nor do they follow me."}, {"key": "ma207:19.9", "p": "我無此五法，令諸弟子恭敬、…", "s": "Udāyin, I do not have these five qualities that cause my disciples to revere,"}, {"key": "ma207:19.10", "p": "尊重、供養、奉事我，常隨不離。…", "s": "respect, venerate, serve me, and always follow without leaving."}]}, {"id": "20", "label": "「優陀夷！", "rows": [{"key": "ma207:20.1", "p": "「優陀夷！…"}, {"key": "ma207:20.2", "p": "我更有五法，令諸弟子恭敬、…", "s": "\"Udāyin, I have five other qualities that cause my disciples to revere,"}, {"key": "ma207:20.3", "p": "尊重、供養、奉事我，常隨不離。…", "s": "respect, venerate, serve me, and always follow without leaving."}, {"key": "ma207:20.4", "p": "云何為五？…", "s": "What are the five?"}, {"key": "ma207:20.5", "p": "優陀夷！…"}, {"key": "ma207:20.6", "p": "我有弟子，謂無上戒稱說我：『世尊行戒大戒，…", "s": "Udāyin, I have disciples who praise me for supreme virtuous behavior, saying:"}, {"key": "ma207:20.7", "p": "如所說所作亦然，如所作所說亦然。…", "s": "'The Blessed One practices virtuous behavior, great virtuous behavior;"}, {"key": "ma207:20.8", "p": "』優陀夷！…", "s": "as he speaks, so he acts, and as he acts, so he speaks.'"}, {"key": "ma207:20.9", "p": "若我弟子因無上戒稱說我者，彼因此處，…", "s": "Udāyin, if my disciples praise me for supreme virtuous behavior,"}, {"key": "ma207:20.10", "p": "恭敬、尊重、供養、奉事我，常隨不離。…"}, {"key": "ma207:20.11", "p": "復次，優陀夷！…", "s": "then for that reason they revere, respect, venerate, serve me, and always follow without leaving."}, {"key": "ma207:20.12", "p": "我有弟子，謂無上智慧稱說我：…", "s": "Furthermore, Udāyin, I have disciples who praise me for supreme wisdom, saying:"}, {"key": "ma207:20.13", "p": "『世尊行智慧，極大智慧。…", "s": "'The Blessed One practices wisdom, great wisdom."}, {"key": "ma207:20.14", "p": "若有談論來相對者，必能伏之，…"}, {"key": "ma207:20.15", "p": "謂於正法、律不可說，於自所說不可得說。…", "s": "If any debaters come to confront him, he is surely able to subdue them, meaning that in the true Dharma and discipline,"}, {"key": "ma207:20.16", "p": "』優陀夷！…", "s": "nothing can be said against it, and in his own teaching, nothing can be said to refute it.'"}, {"key": "ma207:20.17", "p": "若我弟子因無上智慧故，稱說我者，彼因此處，…", "s": "Udāyin, if my disciples praise me for supreme wisdom, then for that reason they revere,"}, {"key": "ma207:20.18", "p": "恭敬、尊重、供養、奉事我，常隨不離。…", "s": "respect, venerate, serve me, and always follow without leaving."}]}, {"id": "21", "label": "「復次，優陀夷！", "rows": [{"key": "ma207:21.1", "p": "「復次，優陀夷！…", "s": "\"Furthermore, Udāyin, I have disciples who praise me for supreme knowledge and vision, saying:"}, {"key": "ma207:21.2", "p": "我有弟子，謂無上知見稱說我：…", "s": "'The Blessed One knows what is to be known, not what is not to be known;"}, {"key": "ma207:21.3", "p": "『世尊遊知非不知，遊見非不見，…", "s": "he sees what is to be seen, not what is not to be seen."}, {"key": "ma207:21.4", "p": "彼為弟子說法，有因非無因，…", "s": "He teaches the Dharma to his disciples with a cause, not without a cause;"}, {"key": "ma207:21.5", "p": "有緣非無緣，可答非不可答，有離非無離。…", "s": "with a condition, not without a condition;"}, {"key": "ma207:21.6", "p": "』優陀夷！…", "s": "with what can be answered, not with what cannot be answered;"}, {"key": "ma207:21.7", "p": "若我弟子因無上知見故，稱說我者，彼因此處，…", "s": "with what leads to release, not with what does not lead to release.'"}, {"key": "ma207:21.8", "p": "恭敬、尊重、供養、奉事我，常隨不離。…", "s": "Udāyin, if my disciples praise me for supreme knowledge and vision,"}, {"key": "ma207:21.9", "p": "復次，優陀夷！…", "s": "then for that reason they revere, respect, venerate, serve me, and always follow without leaving."}, {"key": "ma207:21.10", "p": "我有弟子，謂厭愛箭而來問我：…", "s": "Furthermore, Udāyin, I have disciples who, tormented by the arrow of craving and aversion, come to ask me:"}, {"key": "ma207:21.11", "p": "『苦是苦，習是習，滅是滅，道是道。…", "s": "'Suffering is suffering, the origin is the origin, cessation is cessation, the path is the path.'"}, {"key": "ma207:21.12", "p": "』我即答彼：『苦是苦，習是習，滅是滅，道是道。…", "s": "I then answer them:"}, {"key": "ma207:21.13", "p": "』優陀夷！…", "s": "'Suffering is suffering, the origin is the origin, cessation is cessation, the path is the path.'"}, {"key": "ma207:21.14", "p": "若我弟子而來問我，我答可意令歡喜者，…", "s": "Udāyin, if my disciples come to ask me and I answer in a way that is agreeable and makes them happy,"}, {"key": "ma207:21.15", "p": "彼因此處，恭敬、尊重、供養、奉事我，常隨不離。…", "s": "then for that reason they revere, respect, venerate, serve me, and always follow without leaving."}]}, {"id": "22", "label": "「復次，優陀夷！", "rows": [{"key": "ma207:22.1", "p": "「復次，優陀夷！…"}, {"key": "ma207:22.2", "p": "我為弟子，或說宿命智通作證明達，…", "s": "\"Furthermore, Udāyin,"}, {"key": "ma207:22.3", "p": "或說漏盡智通作證明達。…", "s": "for my disciples I either teach the direct knowledge of the recollection of past lives as realization and attainment,"}, {"key": "ma207:22.4", "p": "優陀夷！…", "s": "or I teach the direct knowledge of the destruction of taints as realization and attainment."}, {"key": "ma207:22.5", "p": "若我弟子於此正法、律中得受得度，…", "s": "Udāyin, if my disciples, in this true Dharma and discipline, gain acceptance,"}, {"key": "ma207:22.6", "p": "得至彼岸，無疑無惑，…"}, {"key": "ma207:22.7", "p": "於善法中無有猶豫者，彼因此處，…", "s": "gain crossing over, reach the far shore, are without doubt or confusion,"}, {"key": "ma207:22.8", "p": "恭敬、尊重、供養、奉事我，常隨不離。…", "s": "and have no hesitation regarding wholesome qualities, then for that reason they revere,"}, {"key": "ma207:22.9", "p": "優陀夷！…", "s": "respect, venerate, serve me, and always follow without leaving."}, {"key": "ma207:22.10", "p": "是謂我更有五法，令諸弟子恭敬、…", "s": "Udāyin, these are the five other qualities that cause my disciples to revere,"}, {"key": "ma207:22.11", "p": "尊重、供養、奉事我，常隨不離。」…", "s": "respect, venerate, serve me, and always follow without leaving.\""}]}, {"id": "23", "label": "於是，異學箭毛即從坐起，", "rows": [{"key": "ma207:23.1", "p": "於是，異學箭毛即從坐起，…", "s": "Then the wanderer Arrow-hair rose from his seat, arranged his robe over one shoulder,"}, {"key": "ma207:23.2", "p": "偏袒著衣，叉手向佛，白曰：「瞿曇！甚奇！甚特！…", "s": "raised his joined hands toward the Buddha, and said:"}, {"key": "ma207:23.3", "p": "善說妙事，潤澤我體，猶如甘露。瞿曇！…", "s": "\"Gotama, it is wonderful!"}, {"key": "ma207:23.4", "p": "猶如大雨，此地高下，普得潤澤。…", "s": "It is extraordinary!"}, {"key": "ma207:23.5", "p": "如是，沙門瞿曇為我等善說妙事，潤澤我體，猶如甘露。世尊！…", "s": "You have well spoken of marvelous matters, moistening my body as if with nectar.\nGotama, just as a great rain thoroughly moistens all the high and low places of…"}, {"key": "ma207:23.6", "p": "我已解。善逝！…", "s": "so too has the ascetic Gotama well spoken of marvelous matters for us, moistening my body as if with nectar."}, {"key": "ma207:23.7", "p": "我已知。世尊！…", "s": "Blessed One, I have understood."}, {"key": "ma207:23.8", "p": "我今自歸於佛、法及比丘眾，唯願世尊受我為優婆塞，…", "s": "Well-gone One, I have known."}, {"key": "ma207:23.9", "p": "從今日始，終身自歸，乃至命盡。」…", "s": "Blessed One, from today I go for refuge to the Buddha, the Dharma, and the community of monks.\nMay the Blessed One accept me as a lay follower, from today until…"}]}, {"id": "24", "label": "佛說如是。", "rows": [{"key": "ma207:24.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma207:24.2", "p": "異學箭毛聞佛所說，歡喜奉行。…", "s": "The wanderer Arrow-hair, having heard what the Buddha said, rejoiced and practiced it."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

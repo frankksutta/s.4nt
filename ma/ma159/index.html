@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma159:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma159:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada's Park."}]}, {"id": "3", "label": "爾時，阿伽羅訶那梵志中後彷徉，往詣佛所，", "rows": [{"key": "ma159:3.1", "p": "爾時，阿伽羅訶那梵志中後彷徉，往詣佛所，…", "s": "At that time, the brāhmaṇa Aggalohana, wandering about in the afternoon,"}, {"key": "ma159:3.2", "p": "共相問訊，却坐一面，白曰：「瞿曇！…", "s": "approached the Buddha, exchanged greetings, sat down to one side, and said:"}, {"key": "ma159:3.3", "p": "欲有所問，聽乃敢陳？」…", "s": "'Gotama, I wish to ask a question.\nMay I speak only if you permit?'"}]}, {"id": "4", "label": "世尊告曰：「恣汝所問。」", "rows": [{"key": "ma159:4.1", "p": "世尊告曰：「恣汝所問。」…", "s": "The Blessed One replied:\n'Ask whatever you wish.'"}]}, {"id": "5", "label": "梵志即便問曰：「瞿曇！", "rows": [{"key": "ma159:5.1", "p": "梵志即便問曰：「瞿曇！…", "s": "The brāhmaṇa then asked:"}, {"key": "ma159:5.2", "p": "梵志經典何所依住？」…", "s": "'Gotama, on what do the brāhmaṇa scriptures rely?'"}]}, {"id": "6", "label": "世尊答曰：「梵志經典依於人住。」", "rows": [{"key": "ma159:6.1", "p": "世尊答曰：「梵志經典依於人住。」…", "s": "The Blessed One answered:\n'The brāhmaṇa scriptures rely on people.'"}]}, {"id": "7", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:7.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:7.2", "p": "人何所依住？」…", "s": "'Gotama, what do people rely on to dwell?'"}]}, {"id": "8", "label": "世尊答曰：「人依稻麥住。」", "rows": [{"key": "ma159:8.1", "p": "世尊答曰：「人依稻麥住。」…", "s": "The Blessed One replied:\n'People dwell relying on rice and barley.'"}]}, {"id": "9", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:9.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:9.2", "p": "稻麥何所依住？」…", "s": "'Gotama, what do rice and barley rely on to dwell?'"}]}, {"id": "10", "label": "世尊答曰：「稻麥依地住。」", "rows": [{"key": "ma159:10.1", "p": "世尊答曰：「稻麥依地住。」…", "s": "The Blessed One replied:\n'Rice and barley dwell relying on the earth.'"}]}, {"id": "11", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:11.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:11.2", "p": "地何所依住？」…", "s": "'Gotama, what does the earth rely on to dwell?'"}]}, {"id": "12", "label": "世尊答曰：「地依水住。」", "rows": [{"key": "ma159:12.1", "p": "世尊答曰：「地依水住。」…", "s": "The Blessed One replied:\n'The earth dwells relying on water.'"}]}, {"id": "13", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:13.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:13.2", "p": "水何所依住？」…", "s": "'Gotama, what does water rely on to abide?'"}]}, {"id": "14", "label": "世尊答曰：「水依風住。」", "rows": [{"key": "ma159:14.1", "p": "世尊答曰：「水依風住。」…", "s": "The Blessed One replied:\n'Water relies on wind to abide.'"}]}, {"id": "15", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:15.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:15.2", "p": "風何所依住？」…", "s": "'Gotama, what does wind rely on to abide?'"}]}, {"id": "16", "label": "世尊答曰：「風依空住。」", "rows": [{"key": "ma159:16.1", "p": "世尊答曰：「風依空住。」…", "s": "The Blessed One replied:\n'Wind relies on space to abide.'"}]}, {"id": "17", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:17.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:17.2", "p": "空何所依住？」…", "s": "'Gotama, what does space rely on to abide?'"}]}, {"id": "18", "label": "世尊答曰：「空無所依，但因日月，故有虛空。」", "rows": [{"key": "ma159:18.1", "p": "世尊答曰：「空無所依，但因日月，故有虛空。」…", "s": "The Blessed One replied:\n'Space relies on nothing, but because of the sun and moon, there is empty space.'"}]}, {"id": "19", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:19.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:19.2", "p": "日月何所依住？」…", "s": "'Gotama, what do the sun and moon rely on for their abode?'"}]}, {"id": "20", "label": "世尊答曰：「日月依於四王天住。」", "rows": [{"key": "ma159:20.1", "p": "世尊答曰：「日月依於四王天住。」…", "s": "The Blessed One replied:\n'The sun and moon rely on the realm of the Four Great Kings for their abode.'"}]}, {"id": "21", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:21.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:21.2", "p": "四王天何所依住？」…", "s": "'Gotama, what do the Four Great Kings rely on for their abode?'"}]}, {"id": "22", "label": "世尊答曰：「四王天依三十三天住。」", "rows": [{"key": "ma159:22.1", "p": "世尊答曰：「四王天依三十三天住。」…", "s": "The Blessed One replied:\n'The Four Great Kings rely on the realm of the Thirty-three Devas for their abode.'"}]}, {"id": "23", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:23.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:23.2", "p": "三十三天何所依住？」…", "s": "'Gotama, what do the Thirty-three Devas rely on for their abode?'"}]}, {"id": "24", "label": "世尊答曰：「三十三天依［火＊僉］摩天住。」", "rows": [{"key": "ma159:24.1", "p": "世尊答曰：「三十三天依［火＊僉］摩天住。」…", "s": "The Blessed One replied:\n'The Thirty-three Devas rely on the Yāma Devas for their abode.'"}]}, {"id": "25", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:25.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:25.2", "p": "［火＊僉］摩天何所依住？」…", "s": "'Gotama, what does the Yama heaven rely on for its abode?'"}]}, {"id": "26", "label": "世尊答曰：「［火＊僉］摩天依兜瑟哆天住。」", "rows": [{"key": "ma159:26.1", "p": "世尊答曰：「［火＊僉］摩天依兜瑟哆天住。」…", "s": "The Blessed One replied:\n'The Yama heaven relies on the Tusita heaven for its abode.'"}]}, {"id": "27", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:27.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:27.2", "p": "兜瑟哆天何所依住？」…", "s": "'Gotama, what does the Tusita heaven rely on for its abode?'"}]}, {"id": "28", "label": "世尊答曰：「兜瑟哆天依化樂天住。」", "rows": [{"key": "ma159:28.1", "p": "世尊答曰：「兜瑟哆天依化樂天住。」…", "s": "The Blessed One replied:\n'The Tusita heaven relies on the Nimmānaratī heaven for its abode.'"}]}, {"id": "29", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:29.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:29.2", "p": "化樂天何所依住？」…", "s": "'Gotama, what does the Nimmānaratī heaven rely on for its abode?'"}]}, {"id": "30", "label": "世尊答曰：「化樂天依他化樂天住。」", "rows": [{"key": "ma159:30.1", "p": "世尊答曰：「化樂天依他化樂天住。」…", "s": "The Blessed One replied:\n'The Nimmānaratī heaven relies on the Paranimmitavasavattī heaven for its abode.'"}]}, {"id": "31", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:31.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:31.2", "p": "他化樂天何所依住？」…", "s": "'Gotama, what does the Heaven of Delighting in Others' Creations rely on for its abode?'"}]}, {"id": "32", "label": "世尊答曰：「他化樂天依梵世住。」", "rows": [{"key": "ma159:32.1", "p": "世尊答曰：「他化樂天依梵世住。」…", "s": "The Blessed One replied:\n'The Heaven of Delighting in Others' Creations relies on the Brahma-world for its abode.'"}]}, {"id": "33", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:33.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:33.2", "p": "梵世何所依住？」…", "s": "'Gotama, what does the Brahma-world rely on for its abode?'"}]}, {"id": "34", "label": "世尊答曰：「梵世依於大梵住。」", "rows": [{"key": "ma159:34.1", "p": "世尊答曰：「梵世依於大梵住。」…", "s": "The Blessed One replied:\n'The Brahma-world relies on the Great Brahmā for its abode.'"}]}, {"id": "35", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:35.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:35.2", "p": "大梵何所依住？」…", "s": "'Gotama, what does the Great Brahmā rely on for his abode?'"}]}, {"id": "36", "label": "世尊答曰：「大梵依於忍辱溫良住。」", "rows": [{"key": "ma159:36.1", "p": "世尊答曰：「大梵依於忍辱溫良住。」…", "s": "The Blessed One replied:\n'The Great Brahmā relies on forbearance and gentleness for his abode.'"}]}, {"id": "37", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:37.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:37.2", "p": "忍辱溫良何所依住？」…", "s": "'Gotama, what does patience and gentleness rely on?'"}]}, {"id": "38", "label": "世尊答曰：「忍辱溫良依涅槃住。」", "rows": [{"key": "ma159:38.1", "p": "世尊答曰：「忍辱溫良依涅槃住。」…", "s": "The Blessed One replied:\n'Patience and gentleness rely on Nibbāna.'"}]}, {"id": "39", "label": "梵志即復問曰：「瞿曇！", "rows": [{"key": "ma159:39.1", "p": "梵志即復問曰：「瞿曇！…", "s": "The brahmin then asked again:"}, {"key": "ma159:39.2", "p": "涅槃何所依住？」…", "s": "'Gotama, what does Nibbāna rely on?'"}]}, {"id": "40", "label": "世尊告曰：「梵志意欲依無窮事，汝今從我受問無邊，", "rows": [{"key": "ma159:40.1", "p": "世尊告曰：「梵志意欲依無窮事，汝今從我受問無邊，…", "s": "The Blessed One said:"}, {"key": "ma159:40.2", "p": "然涅槃者無所依住，但涅槃滅訖，涅槃為最。梵志！…", "s": "'Brahmin, you intend to rely on endless things, and now you ask me about the boundless.\nYet Nibbāna has no support;"}, {"key": "ma159:40.3", "p": "以此義故，從我行梵行。」…", "s": "it is the cessation of all, the ultimate.\nBrahmin, for this reason, I practice the holy life.'"}]}, {"id": "41", "label": "梵志白曰：「世尊！", "rows": [{"key": "ma159:41.1", "p": "梵志白曰：「世尊！…", "s": "The brahmin said:"}, {"key": "ma159:41.2", "p": "我已知。善逝！…", "s": "'World-Honored One, I understand."}, {"key": "ma159:41.3", "p": "我已解。世尊！…", "s": "Well-Gone One, I have comprehended."}, {"key": "ma159:41.4", "p": "我今自歸於佛、法及比丘眾，唯願世尊受我為優婆塞，…", "s": "World-Honored One, I now take refuge in the Buddha, the Dharma, and the community of monks."}, {"key": "ma159:41.5", "p": "從今日始，終身自歸，乃至命盡。」…", "s": "May the World-Honored One accept me as a lay follower, from today onward, for life, until the end of my life.'"}]}, {"id": "42", "label": "佛說如是。", "rows": [{"key": "ma159:42.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma159:42.2", "p": "阿伽羅訶那梵志聞佛所說，歡喜奉行。…", "s": "The brahmin Aggāḷahāna, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

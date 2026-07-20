@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma52:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma52:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, in Anāthapiṇḍada’s Park."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「有愛者，其本際不可知，", "rows": [{"key": "ma52:3.1", "p": "爾時，世尊告諸比丘：「有愛者，其本際不可知，…", "s": "At that time, the Blessed One said to the monks:"}, {"key": "ma52:3.2", "p": "本無有愛，然今生有愛，便可得知，所因有愛。…", "s": "“Craving has a beginning that cannot be known."}, {"key": "ma52:3.3", "p": "有愛者，則有食，非無食。…", "s": "Originally there was no craving, yet now craving arises, and it can be known that craving has a cause.\nCraving has a nutriment, not no nutriment."}, {"key": "ma52:3.4", "p": "何謂有愛食？…", "s": "What is the nutriment of craving?"}, {"key": "ma52:3.5", "p": "答曰無明為食。…", "s": "The answer is:"}, {"key": "ma52:3.6", "p": "無明亦有食，非無食。…", "s": "ignorance is the nutriment.\nIgnorance also has a nutriment, not no nutriment."}, {"key": "ma52:3.7", "p": "何謂無明食？…", "s": "What is the nutriment of ignorance?"}, {"key": "ma52:3.8", "p": "答曰五蓋為食。…", "s": "The answer is:"}, {"key": "ma52:3.9", "p": "五蓋亦有食，非無食。…", "s": "the five hindrances are the nutriment.\nThe five hindrances also have a nutriment, not no nutriment."}, {"key": "ma52:3.10", "p": "何謂五蓋食？…", "s": "What is the nutriment of the five hindrances?"}, {"key": "ma52:3.11", "p": "答曰三惡行為食。…", "s": "The answer is:"}, {"key": "ma52:3.12", "p": "三惡行亦有食，非無食。…", "s": "the three unwholesome deeds are the nutriment.\nThe three unwholesome deeds also have a nutriment, not no nutriment."}, {"key": "ma52:3.13", "p": "何謂三惡行食？…", "s": "What is the nutriment of the three unwholesome deeds?"}, {"key": "ma52:3.14", "p": "答曰不護諸根為食。…", "s": "The answer is:"}, {"key": "ma52:3.15", "p": "不護諸根亦有食，非無食。…", "s": "not guarding the sense faculties is the nutriment.\nNot guarding the sense faculties also has a nutriment, not no nutriment."}, {"key": "ma52:3.16", "p": "何謂不護諸根食？…", "s": "What is the nutriment of not guarding the sense faculties?"}, {"key": "ma52:3.17", "p": "答曰不正念、不正智為食。…", "s": "The answer is:"}, {"key": "ma52:3.18", "p": "不正念、不正智亦有食，非無食。…", "s": "wrong mindfulness and wrong knowledge are the nutriment.\nWrong mindfulness and wrong knowledge also have a nutriment, not no nutriment."}, {"key": "ma52:3.19", "p": "何謂不正念、不正智食？…", "s": "What is the nutriment of wrong mindfulness and wrong knowledge?"}, {"key": "ma52:3.20", "p": "答曰不正思惟為食。…", "s": "The answer is:"}, {"key": "ma52:3.21", "p": "不正思惟亦有食，非無食。…", "s": "wrong thinking is the nutriment.\nWrong thinking also has a nutriment, not no nutriment."}, {"key": "ma52:3.22", "p": "何謂不正思惟食？…", "s": "What is the nutriment of wrong thinking?"}, {"key": "ma52:3.23", "p": "答曰不信為食。…", "s": "The answer is:"}, {"key": "ma52:3.24", "p": "不信亦有食，非無食。…", "s": "lack of faith is the nutriment.\nLack of faith also has a nutriment, not no nutriment."}, {"key": "ma52:3.25", "p": "何謂不信食？…", "s": "What is the nutriment of lack of faith?"}, {"key": "ma52:3.26", "p": "答曰聞惡法為食。…", "s": "The answer is:"}, {"key": "ma52:3.27", "p": "聞惡法亦有食，非無食。…", "s": "hearing bad teachings is the nutriment.\nHearing bad teachings also has a nutriment, not no nutriment."}, {"key": "ma52:3.28", "p": "何謂聞惡法食？…", "s": "What is the nutriment of hearing bad teachings?"}, {"key": "ma52:3.29", "p": "答曰親近惡知識為食。…", "s": "The answer is:"}, {"key": "ma52:3.30", "p": "親近惡知識亦有食，非無食。…", "s": "associating with bad friends is the nutriment.\nAssociating with bad friends also has a nutriment, not no nutriment."}, {"key": "ma52:3.31", "p": "何謂親近惡知識食？…", "s": "What is the nutriment of associating with bad friends?"}, {"key": "ma52:3.32", "p": "答曰惡人為食。…", "s": "The answer is:\nbad people are the nutriment."}]}, {"id": "4", "label": "「是為具惡人已，便具親近惡知識。", "rows": [{"key": "ma52:4.1", "p": "「是為具惡人已，便具親近惡知識。…", "s": "“Thus, when bad people are fully present, then association with bad friends is fully present."}, {"key": "ma52:4.2", "p": "具親近惡知識已，便具聞惡法。…", "s": "When association with bad friends is fully present, then hearing bad teachings is fully present."}, {"key": "ma52:4.3", "p": "具聞惡法已，便具生不信。…", "s": "When hearing bad teachings is fully present, then lack of faith arises fully."}, {"key": "ma52:4.4", "p": "具生不信已，便具不正思惟。…", "s": "When lack of faith arises fully, then wrong thinking is fully present."}, {"key": "ma52:4.5", "p": "具不正思惟已，便具不正念、不正智。…", "s": "When wrong thinking is fully present, then wrong mindfulness and wrong knowledge are fully present."}, {"key": "ma52:4.6", "p": "具不正念、不正智已，便具不護諸根。…", "s": "When wrong mindfulness and wrong knowledge are fully present, then not guarding the sense faculties is fully present."}, {"key": "ma52:4.7", "p": "具不護諸根已，便具三惡行。…", "s": "When not guarding the sense faculties is fully present, then the three unwholesome deeds are fully present."}, {"key": "ma52:4.8", "p": "具三惡行已，便具五葢。…", "s": "When the three unwholesome deeds are fully present, then the five hindrances are fully present."}, {"key": "ma52:4.9", "p": "具五葢已，便具無明。…", "s": "When the five hindrances are fully present, then ignorance is fully present."}, {"key": "ma52:4.10", "p": "具無明已，便具有愛。…", "s": "When ignorance is fully present, then craving is fully present."}, {"key": "ma52:4.11", "p": "如是此有愛展轉具成。…", "s": "Thus this craving is gradually and fully developed."}]}, {"id": "5", "label": "「大海亦有食，非無食。", "rows": [{"key": "ma52:5.1", "p": "「大海亦有食，非無食。…", "s": "“The great ocean also has a nutriment, not no nutriment."}, {"key": "ma52:5.2", "p": "何謂大海食？…", "s": "What is the nutriment of the great ocean?"}, {"key": "ma52:5.3", "p": "答曰大河為食。…", "s": "The answer is:"}, {"key": "ma52:5.4", "p": "大河亦有食，非無食。…", "s": "the great rivers are the nutriment.\nThe great rivers also have a nutriment, not no nutriment."}, {"key": "ma52:5.5", "p": "何謂大河食？…", "s": "What is the nutriment of the great rivers?"}, {"key": "ma52:5.6", "p": "答曰小河為食。…", "s": "The answer is:"}, {"key": "ma52:5.7", "p": "小河亦有食，非無食。…", "s": "the small rivers are the nutriment."}, {"key": "ma52:5.8", "p": "何謂小河食？…", "s": "The small rivers also have a nutriment, not no nutriment.\nWhat is the nutriment of the small rivers?"}, {"key": "ma52:5.9", "p": "答曰大川為食。…", "s": "The answer is:"}, {"key": "ma52:5.10", "p": "大川亦有食，非無食。…", "s": "the large streams are the nutriment."}, {"key": "ma52:5.11", "p": "何謂大川食？…", "s": "The large streams also have a nutriment, not no nutriment.\nWhat is the nutriment of the large streams?"}, {"key": "ma52:5.12", "p": "答曰小川為食。…", "s": "The answer is:"}, {"key": "ma52:5.13", "p": "小川亦有食，非無食。…", "s": "the small streams are the nutriment."}, {"key": "ma52:5.14", "p": "何謂小川食？…", "s": "The small streams also have a nutriment, not no nutriment."}, {"key": "ma52:5.15", "p": "答曰山巖溪澗、平澤為食。…", "s": "What is the nutriment of the small streams?\nThe answer is:"}, {"key": "ma52:5.16", "p": "山巖溪澗、平澤亦有食，非無食。…", "s": "mountain ravines, streams, and plains are the nutriment."}, {"key": "ma52:5.17", "p": "何謂山巖溪澗、平澤食？…", "s": "Mountain ravines, streams, and plains also have a nutriment, not no nutriment."}, {"key": "ma52:5.18", "p": "答曰雨為食。…", "s": "What is the nutriment of mountain ravines, streams, and plains?\nThe answer is:"}, {"key": "ma52:5.19", "p": "有時大雨，大雨已，則山巖溪澗、平澤水滿。…", "s": "rain is the nutriment."}, {"key": "ma52:5.20", "p": "山巖溪澗、平澤水滿已，則小川滿。…", "s": "Sometimes there is a great rain."}, {"key": "ma52:5.21", "p": "小川滿已，則大川滿。…", "s": "When the great rain has fallen, then the mountain ravines, streams, and plains are full of water."}, {"key": "ma52:5.22", "p": "大川滿已，則小河滿。…", "s": "When the mountain ravines, streams, and plains are full of water, then the small streams are full.\nWhen the small streams are full, then the large streams are f…"}, {"key": "ma52:5.23", "p": "小河滿已，則大河滿。…", "s": "When the large streams are full, then the small rivers are full."}, {"key": "ma52:5.24", "p": "大河滿已，則大海滿。…", "s": "When the small rivers are full, then the great rivers are full."}, {"key": "ma52:5.25", "p": "如是彼大海展轉成滿。…", "s": "When the great rivers are full, then the great ocean is full.\nThus that great ocean is gradually and fully filled."}]}, {"id": "6", "label": "「如是有愛亦有食，非無食。", "rows": [{"key": "ma52:6.1", "p": "「如是有愛亦有食，非無食。…", "s": "“In the same way, craving also has a nutriment, not no nutriment."}, {"key": "ma52:6.2", "p": "何謂有愛食？…", "s": "What is the nutriment of craving?"}, {"key": "ma52:6.3", "p": "答曰無明為食。…", "s": "The answer is:\nignorance is the nutriment."}, {"key": "ma52:6.4", "p": "無明亦有食，非無食。…", "s": "Ignorance also has a nutriment, not no nutriment."}, {"key": "ma52:6.5", "p": "何謂無明食？…", "s": "What is the nutriment of ignorance?"}, {"key": "ma52:6.6", "p": "答曰五蓋為食。…", "s": "The answer is:\nthe five hindrances are the nutriment."}, {"key": "ma52:6.7", "p": "五蓋亦有食，非無食。…", "s": "The five hindrances also have a nutriment, not no nutriment."}, {"key": "ma52:6.8", "p": "何謂五蓋食？…", "s": "What is the nutriment of the five hindrances?"}, {"key": "ma52:6.9", "p": "答曰三惡行為食。…", "s": "The answer is:\nthe three unwholesome deeds are the nutriment."}, {"key": "ma52:6.10", "p": "三惡行亦有食，非無食。…", "s": "The three unwholesome deeds also have a nutriment, not no nutriment."}, {"key": "ma52:6.11", "p": "何謂三惡行食？…", "s": "What is the nutriment of the three unwholesome deeds?"}, {"key": "ma52:6.12", "p": "答曰不護諸根為食。…", "s": "The answer is:\nnot guarding the sense faculties is the nutriment."}, {"key": "ma52:6.13", "p": "不護諸根亦有食，非無食。…", "s": "Not guarding the sense faculties also has a nutriment, not no nutriment."}, {"key": "ma52:6.14", "p": "何謂不護諸根食？…", "s": "What is the nutriment of not guarding the sense faculties?"}, {"key": "ma52:6.15", "p": "答曰不正念、不正智為食。…", "s": "The answer is:\nwrong mindfulness and wrong knowledge are the nutriment."}, {"key": "ma52:6.16", "p": "不正念、不正智亦有食，非無食。…", "s": "Wrong mindfulness and wrong knowledge also have a nutriment, not no nutriment."}, {"key": "ma52:6.17", "p": "何謂不正念、不正智食？…", "s": "What is the nutriment of wrong mindfulness and wrong knowledge?"}, {"key": "ma52:6.18", "p": "答曰不正思惟為食。…", "s": "The answer is:\nwrong thinking is the nutriment."}, {"key": "ma52:6.19", "p": "不正思惟亦有食，非無食。…", "s": "Wrong thinking also has a nutriment, not no nutriment."}, {"key": "ma52:6.20", "p": "何謂不正思惟食？…", "s": "What is the nutriment of wrong thinking?"}, {"key": "ma52:6.21", "p": "答曰不信為食。…", "s": "The answer is:\nlack of faith is the nutriment."}, {"key": "ma52:6.22", "p": "不信亦有食，非無食。…", "s": "Lack of faith also has a nutriment, not no nutriment."}, {"key": "ma52:6.23", "p": "何謂不信食？…", "s": "What is the nutriment of lack of faith?"}, {"key": "ma52:6.24", "p": "答曰聞惡法為食。…", "s": "The answer is:\nhearing bad teachings is the nutriment."}, {"key": "ma52:6.25", "p": "聞惡法亦有食，非無食。…", "s": "Hearing bad teachings also has a nutriment, not no nutriment."}, {"key": "ma52:6.26", "p": "何謂聞惡法食？…", "s": "What is the nutriment of hearing bad teachings?"}, {"key": "ma52:6.27", "p": "答曰親近惡知識為食。…", "s": "The answer is:\nassociating with bad friends is the nutriment."}, {"key": "ma52:6.28", "p": "親近惡知識亦有食，非無食。…", "s": "Associating with bad friends also has a nutriment, not no nutriment."}, {"key": "ma52:6.29", "p": "何謂親近惡知識食？…", "s": "What is the nutriment of associating with bad friends?"}, {"key": "ma52:6.30", "p": "答曰惡人為食。…", "s": "The answer is:\nbad people are the nutriment."}]}, {"id": "7", "label": "「是為具惡人已，便具親近惡知識。", "rows": [{"key": "ma52:7.1", "p": "「是為具惡人已，便具親近惡知識。…", "s": "Thus, when one has an evil person, one then associates with evil friends."}, {"key": "ma52:7.2", "p": "具親近惡知識已，便具聞惡法。…", "s": "Having associated with evil friends, one then hears evil teachings."}, {"key": "ma52:7.3", "p": "具聞惡法已，便具生不信。…", "s": "Having heard evil teachings, one then gives rise to lack of faith."}, {"key": "ma52:7.4", "p": "具生不信已，便具不正思惟。…", "s": "Having given rise to lack of faith, one then has improper reflection."}, {"key": "ma52:7.5", "p": "具不正思惟已，便具不正念、不正智。…", "s": "Having improper reflection, one then has wrong mindfulness and wrong wisdom."}, {"key": "ma52:7.6", "p": "具不正念、不正智已，便具不護諸根。…", "s": "Having wrong mindfulness and wrong wisdom, one then fails to guard the sense faculties."}, {"key": "ma52:7.7", "p": "具不護諸根已，便具三惡行。…", "s": "Having failed to guard the sense faculties, one then engages in three evil deeds."}, {"key": "ma52:7.8", "p": "具三惡行已，便具五蓋。…", "s": "Having engaged in three evil deeds, one then has the five hindrances."}, {"key": "ma52:7.9", "p": "具五蓋已，便具無明。…", "s": "Having the five hindrances, one then has ignorance."}, {"key": "ma52:7.10", "p": "具無明已，便具有愛。…", "s": "Having ignorance, one then has craving for existence."}, {"key": "ma52:7.11", "p": "如是此有愛展轉具成。…", "s": "Thus, this craving for existence is gradually brought to completion."}]}, {"id": "8", "label": "「明、解脫亦有食，非無食。", "rows": [{"key": "ma52:8.1", "p": "「明、解脫亦有食，非無食。…", "s": "Knowledge and liberation also have a nutriment, not no nutriment."}, {"key": "ma52:8.2", "p": "何謂明、解脫食？…", "s": "What is the nutriment of knowledge and liberation?"}, {"key": "ma52:8.3", "p": "答曰七覺支為食。…", "s": "The answer is:\nthe seven factors of enlightenment are the nutriment."}, {"key": "ma52:8.4", "p": "七覺支亦有食，非無食。…", "s": "The seven factors of enlightenment also have a nutriment, not no nutriment."}, {"key": "ma52:8.5", "p": "何謂七覺支食？…", "s": "What is the nutriment of the seven factors of enlightenment?"}, {"key": "ma52:8.6", "p": "答曰四念處為食。…", "s": "The answer is:\nthe four establishments of mindfulness are the nutriment."}, {"key": "ma52:8.7", "p": "四念處亦有食，非無食。…", "s": "The four establishments of mindfulness also have a nutriment, not no nutriment."}, {"key": "ma52:8.8", "p": "何謂四念處食？…", "s": "What is the nutriment of the four establishments of mindfulness?"}, {"key": "ma52:8.9", "p": "答曰三妙行為食。…", "s": "The answer is:\nthe three good deeds are the nutriment."}, {"key": "ma52:8.10", "p": "三妙行亦有食，非無食。…", "s": "The three good deeds also have a nutriment, not no nutriment."}, {"key": "ma52:8.11", "p": "何謂三妙行食？…", "s": "What is the nutriment of the three good deeds?"}, {"key": "ma52:8.12", "p": "答曰護諸根為食。…", "s": "The answer is:\nguarding the sense faculties is the nutriment."}, {"key": "ma52:8.13", "p": "護諸根亦有食，非無食。…", "s": "Guarding the sense faculties also has a nutriment, not no nutriment."}, {"key": "ma52:8.14", "p": "何謂護諸根食？…", "s": "What is the nutriment of guarding the sense faculties?"}, {"key": "ma52:8.15", "p": "答曰正念、正智為食。…", "s": "The answer is:\nright mindfulness and right wisdom are the nutriment."}, {"key": "ma52:8.16", "p": "正念、正智亦有食，非無食。…", "s": "Right mindfulness and right wisdom also have a nutriment, not no nutriment."}, {"key": "ma52:8.17", "p": "何謂正念、正智食？…", "s": "What is the nutriment of right mindfulness and right wisdom?"}, {"key": "ma52:8.18", "p": "答曰正思惟為食。…", "s": "The answer is:\nright reflection is the nutriment."}, {"key": "ma52:8.19", "p": "正思惟亦有食，非無食。…", "s": "Right reflection also has a nutriment, not no nutriment."}, {"key": "ma52:8.20", "p": "何謂正思惟食？…", "s": "What is the nutriment of right reflection?"}, {"key": "ma52:8.21", "p": "答曰信為食。…", "s": "The answer is:\nfaith is the nutriment."}, {"key": "ma52:8.22", "p": "信亦有食，非無食。…", "s": "Faith also has a nutriment, not no nutriment."}, {"key": "ma52:8.23", "p": "何謂信食？…", "s": "What is the nutriment of faith?"}, {"key": "ma52:8.24", "p": "答曰聞善法為食。…", "s": "The answer is:\nhearing the good teaching is the nutriment."}, {"key": "ma52:8.25", "p": "聞善法亦有食，非無食。…", "s": "Hearing the good teaching also has a nutriment, not no nutriment."}, {"key": "ma52:8.26", "p": "何謂聞善法食？…", "s": "What is the nutriment of hearing the good teaching?"}, {"key": "ma52:8.27", "p": "答曰親近善知識為食。…", "s": "The answer is:\nassociating with good friends is the nutriment."}, {"key": "ma52:8.28", "p": "親近善知識亦有食，非無食。…", "s": "Associating with good friends also has a nutriment, not no nutriment."}, {"key": "ma52:8.29", "p": "何謂親近善知識食？…", "s": "What is the nutriment of associating with good friends?"}, {"key": "ma52:8.30", "p": "答曰善人為食。…", "s": "The answer is:\na good person is the nutriment."}]}, {"id": "9", "label": "「是為具善人已，便具親近善知識。", "rows": [{"key": "ma52:9.1", "p": "「是為具善人已，便具親近善知識。…", "s": "Thus, when one has a good person, one then associates with good friends."}, {"key": "ma52:9.2", "p": "具親近善知識已，便具聞善法。…", "s": "Having associated with good friends, one then hears the good teaching."}, {"key": "ma52:9.3", "p": "具聞善法已，便具生信。…", "s": "Having heard the good teaching, one then gives rise to faith."}, {"key": "ma52:9.4", "p": "具生信已，便具正思惟。…", "s": "Having given rise to faith, one then has right reflection."}, {"key": "ma52:9.5", "p": "具正思惟已，便具正念、正智。…", "s": "Having right reflection, one then has right mindfulness and right wisdom."}, {"key": "ma52:9.6", "p": "具正念、正智已，便具護諸根。…", "s": "Having right mindfulness and right wisdom, one then guards the sense faculties."}, {"key": "ma52:9.7", "p": "具護諸根已，便具三妙行。…", "s": "Having guarded the sense faculties, one then has the three good deeds."}, {"key": "ma52:9.8", "p": "具三妙行已，便具四念處。…", "s": "Having the three good deeds, one then has the four establishments of mindfulness."}, {"key": "ma52:9.9", "p": "具四念處已，便具七覺支。…", "s": "Having the four establishments of mindfulness, one then has the seven factors of enlightenment."}, {"key": "ma52:9.10", "p": "具七覺支已，便具明、解脫。…", "s": "Having the seven factors of enlightenment, one then has knowledge and liberation."}, {"key": "ma52:9.11", "p": "如是此明、解脫展轉具成。…", "s": "Thus, this knowledge and liberation is gradually brought to completion."}]}, {"id": "10", "label": "「大海亦有食，非無食。", "rows": [{"key": "ma52:10.1", "p": "「大海亦有食，非無食。…", "s": "The great ocean also has a nutriment, not no nutriment."}, {"key": "ma52:10.2", "p": "何謂大海食？…", "s": "What is the nutriment of the great ocean?"}, {"key": "ma52:10.3", "p": "答曰大河為食。…", "s": "The answer is:"}, {"key": "ma52:10.4", "p": "大河亦有食，非無食。…", "s": "the great rivers are the nutriment.\nThe great rivers also have a nutriment, not no nutriment."}, {"key": "ma52:10.5", "p": "何謂大河食？…", "s": "What is the nutriment of the great rivers?"}, {"key": "ma52:10.6", "p": "答曰小河為食。…", "s": "The answer is:"}, {"key": "ma52:10.7", "p": "小河亦有食，非無食。…", "s": "the small rivers are the nutriment."}, {"key": "ma52:10.8", "p": "何謂小河食？…", "s": "The small rivers also have a nutriment, not no nutriment.\nWhat is the nutriment of the small rivers?"}, {"key": "ma52:10.9", "p": "答曰大川為食。…", "s": "The answer is:"}, {"key": "ma52:10.10", "p": "大川亦有食，非無食。…", "s": "the large streams are the nutriment."}, {"key": "ma52:10.11", "p": "何謂大川食？…", "s": "The large streams also have a nutriment, not no nutriment.\nWhat is the nutriment of the large streams?"}, {"key": "ma52:10.12", "p": "答曰小川為食。…", "s": "The answer is:"}, {"key": "ma52:10.13", "p": "小川亦有食，非無食。…", "s": "the small streams are the nutriment."}, {"key": "ma52:10.14", "p": "何謂小川食？…", "s": "The small streams also have a nutriment, not no nutriment."}, {"key": "ma52:10.15", "p": "答曰山巖溪澗、平澤為食。…", "s": "What is the nutriment of the small streams?\nThe answer is:"}, {"key": "ma52:10.16", "p": "山巖溪澗、平澤亦有食，非無食。…", "s": "mountain ravines, streams, and plains are the nutriment."}, {"key": "ma52:10.17", "p": "何謂山巖溪澗、平澤食？…", "s": "Mountain ravines, streams, and plains also have a nutriment, not no nutriment."}, {"key": "ma52:10.18", "p": "答曰雨為食。…", "s": "What is the nutriment of mountain ravines, streams, and plains?\nThe answer is:"}, {"key": "ma52:10.19", "p": "有時大雨，大雨已，則山巖溪澗、平澤水滿。…", "s": "rain is the nutriment."}, {"key": "ma52:10.20", "p": "山巖溪澗、平澤水滿已，則小川滿。…", "s": "Sometimes there is a great rain;"}, {"key": "ma52:10.21", "p": "小川滿已，則大川滿。…", "s": "after the great rain, the mountain ravines, streams, and plains are full of water."}, {"key": "ma52:10.22", "p": "大川滿已，則小河滿。…", "s": "After the mountain ravines, streams, and plains are full of water, then the small streams are full.\nAfter the small streams are full, then the large streams are…"}, {"key": "ma52:10.23", "p": "小河滿已，則大河滿。…", "s": "After the large streams are full, then the small rivers are full."}, {"key": "ma52:10.24", "p": "大河滿已，則大海滿。…", "s": "After the small rivers are full, then the great rivers are full."}, {"key": "ma52:10.25", "p": "如是彼大海展轉成滿。…", "s": "After the great rivers are full, then the great ocean is full.\nThus, that great ocean is gradually brought to fullness."}]}, {"id": "11", "label": "「如是明、解脫亦有食，非無食。", "rows": [{"key": "ma52:11.1", "p": "「如是明、解脫亦有食，非無食。…", "s": "Thus, knowledge and liberation also have a nutriment, not no nutriment."}, {"key": "ma52:11.2", "p": "何謂明、解脫食？…", "s": "What is the nutriment of knowledge and liberation?"}, {"key": "ma52:11.3", "p": "答曰七覺支為食。…", "s": "The answer is:\nthe seven factors of enlightenment are the nutriment."}, {"key": "ma52:11.4", "p": "七覺支亦有食，非無食。…", "s": "The seven factors of enlightenment also have a nutriment, not no nutriment."}, {"key": "ma52:11.5", "p": "何謂七覺支食？…", "s": "What is the nutriment of the seven factors of enlightenment?"}, {"key": "ma52:11.6", "p": "答曰四念處為食。…", "s": "The answer is:\nthe four establishments of mindfulness are the nutriment."}, {"key": "ma52:11.7", "p": "四念處亦有食，非無食。…", "s": "The four establishments of mindfulness also have a nutriment, not no nutriment."}, {"key": "ma52:11.8", "p": "何謂四念處食？…", "s": "What is the nutriment of the four establishments of mindfulness?"}, {"key": "ma52:11.9", "p": "答曰三妙行為食。…", "s": "The answer is:\nthe three good deeds are the nutriment."}, {"key": "ma52:11.10", "p": "三妙行亦有食，非無食。…", "s": "The three good deeds also have a nutriment, not no nutriment."}, {"key": "ma52:11.11", "p": "何謂三妙行食？…", "s": "What is the nutriment of the three good deeds?"}, {"key": "ma52:11.12", "p": "答曰護諸根為食。…", "s": "The answer is:\nguarding the sense faculties is the nutriment."}, {"key": "ma52:11.13", "p": "護諸根亦有食，非無食。…", "s": "Guarding the sense faculties also has a nutriment, not no nutriment."}, {"key": "ma52:11.14", "p": "何謂護諸根食？…", "s": "What is the nutriment of guarding the sense faculties?"}, {"key": "ma52:11.15", "p": "答曰正念、正智為食。…", "s": "The answer is:\nright mindfulness and right wisdom are the nutriment."}, {"key": "ma52:11.16", "p": "正念、正智亦有食，非無食。…", "s": "Right mindfulness and right wisdom also have a nutriment, not no nutriment."}, {"key": "ma52:11.17", "p": "何謂正念、正智食？…", "s": "What is the nutriment of right mindfulness and right wisdom?"}, {"key": "ma52:11.18", "p": "答曰正思惟為食。…", "s": "The answer is:\nright reflection is the nutriment."}, {"key": "ma52:11.19", "p": "正思惟亦有食，非無食。…", "s": "Right reflection also has a nutriment, not no nutriment."}, {"key": "ma52:11.20", "p": "何謂正思惟食？…", "s": "What is the nutriment of right reflection?"}, {"key": "ma52:11.21", "p": "答曰信為食。…", "s": "The answer is:\nfaith is the nutriment."}, {"key": "ma52:11.22", "p": "信亦有食，非無食。…", "s": "Faith also has a nutriment, not no nutriment."}, {"key": "ma52:11.23", "p": "何謂信食？…", "s": "What is the nutriment of faith?"}, {"key": "ma52:11.24", "p": "答曰聞善法為食。…", "s": "The answer is:\nhearing the good teaching is the nutriment."}, {"key": "ma52:11.25", "p": "聞善法亦有食，非無食。…", "s": "Hearing the good teaching also has a nutriment, not no nutriment."}, {"key": "ma52:11.26", "p": "何謂聞善法食？…", "s": "What is the nutriment of hearing the good teaching?"}, {"key": "ma52:11.27", "p": "答曰親近善知識為食。…", "s": "The answer is:\nassociating with good friends is the nutriment."}, {"key": "ma52:11.28", "p": "親近善知識亦有食，非無食。…", "s": "Associating with good friends also has a nutriment, not no nutriment."}, {"key": "ma52:11.29", "p": "何謂親近善知識食？…", "s": "What is the nutriment of associating with good friends?"}, {"key": "ma52:11.30", "p": "答曰善人為食。…", "s": "The answer is:\na good person is the nutriment."}]}, {"id": "12", "label": "「是為具善人已，便具親近善知識。", "rows": [{"key": "ma52:12.1", "p": "「是為具善人已，便具親近善知識。…", "s": "Thus, when one has a good person, one then associates with good friends."}, {"key": "ma52:12.2", "p": "具親近善知識已，便具聞善法。…", "s": "Having associated with good friends, one then hears the good teaching."}, {"key": "ma52:12.3", "p": "具聞善法已，便具生信。…", "s": "Having heard the good teaching, one then gives rise to faith."}, {"key": "ma52:12.4", "p": "具生信已，便具正思惟。…", "s": "Having given rise to faith, one then has right reflection."}, {"key": "ma52:12.5", "p": "具正思惟已，便具正念、正智。…", "s": "Having right reflection, one then has right mindfulness and right wisdom."}, {"key": "ma52:12.6", "p": "具正念、正智已，便具護諸根。…", "s": "Having right mindfulness and right wisdom, one then guards the sense faculties."}, {"key": "ma52:12.7", "p": "具護諸根已，便具三妙行。…", "s": "Having guarded the sense faculties, one then has the three good deeds."}, {"key": "ma52:12.8", "p": "具三妙行已，便具四念處。…", "s": "Having the three good deeds, one then has the four establishments of mindfulness."}, {"key": "ma52:12.9", "p": "具四念處已，便具七覺支。…", "s": "Having the four establishments of mindfulness, one then has the seven factors of enlightenment."}, {"key": "ma52:12.10", "p": "具七覺支已，便具明、解脫。…", "s": "Having the seven factors of enlightenment, one then has knowledge and liberation."}, {"key": "ma52:12.11", "p": "如是此明、解脫展轉具成。」…", "s": "Thus, this knowledge and liberation is gradually brought to completion."}]}, {"id": "13", "label": "佛說如是。", "rows": [{"key": "ma52:13.1", "p": "佛說如是。…", "s": "The Buddha spoke thus."}, {"key": "ma52:13.2", "p": "彼諸比丘聞佛所說，歡喜奉行。…", "s": "Those monks, having heard what the Buddha said, were delighted and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

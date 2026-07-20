@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma17:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊那難陀園，在墻村捺林。", "rows": [{"key": "ma17:2.1", "p": "一時，佛遊那難陀園，在墻村捺林。…", "s": "At one time, the Buddha was traveling in the Nalanda garden, in the Jambu grove of the village of Jambu."}]}, {"id": "3", "label": "爾時，阿私羅天有子名伽彌尼，色像巍巍，光耀煒曄，", "rows": [{"key": "ma17:3.1", "p": "爾時，阿私羅天有子名伽彌尼，色像巍巍，光耀煒曄，…", "s": "At that time, the Asura deva had a son named Gāmini, whose appearance was majestic and radiant, shining brightly."}, {"key": "ma17:3.2", "p": "夜將向旦，往詣佛所，稽首佛足，却住一面。…", "s": "As the night was about to give way to dawn, he approached the Buddha,\nbowed his head at the Buddha's feet, and stood to one side."}]}, {"id": "4", "label": "阿私羅天子伽彌尼白曰：「世尊！", "rows": [{"key": "ma17:4.1", "p": "阿私羅天子伽彌尼白曰：「世尊！…", "s": "The Asura deva's son Gāmini said:"}, {"key": "ma17:4.2", "p": "梵志自高，事若干天，…", "s": "\"World-Honored One!"}, {"key": "ma17:4.3", "p": "若眾生命終者，彼能令自在往來善處，…", "s": "Brahmins exalt themselves and serve various devas.\nWhen people die, they can make them freely go to a good place and be reborn among the devas."}, {"key": "ma17:4.4", "p": "生於天上，世尊為法主，…", "s": "The World-Honored One is the master of the Dharma."}, {"key": "ma17:4.5", "p": "唯願世尊使眾生命終得至善處，生於天中。」…", "s": "I only wish that the World-Honored One would cause people,\nwhen they die, to reach a good place and be reborn among the devas.\""}]}, {"id": "5", "label": "世尊告曰：「伽彌尼！", "rows": [{"key": "ma17:5.1", "p": "世尊告曰：「伽彌尼！…", "s": "The World-Honored One said:"}, {"key": "ma17:5.2", "p": "我今問汝，隨所解答。…", "s": "\"Gāmini!"}, {"key": "ma17:5.3", "p": "伽彌尼！…", "s": "I now ask you a question;"}, {"key": "ma17:5.4", "p": "於意云何？…", "s": "answer as you see fit."}, {"key": "ma17:5.5", "p": "若村邑中或有男女，懈不精進，…", "s": "Gāmini, what do you think?"}, {"key": "ma17:5.6", "p": "而行惡法，成就十種不善業道，殺生、…", "s": "If in a village there are men or women who are lazy and not diligent, and who practice evil deeds,"}, {"key": "ma17:5.7", "p": "不與取、邪婬、妄言，乃至邪見，…", "s": "completing the ten unwholesome courses of action—killing, taking what is not given,"}, {"key": "ma17:5.8", "p": "彼命終時，若眾人來，各叉手向稱歎求索，…", "s": "sexual misconduct, false speech, and so on up to wrong view—and when they die,"}, {"key": "ma17:5.9", "p": "作如是語：『汝等男女，懈不精進，…", "s": "if many people come, each with palms together, praising and beseeching, saying:"}, {"key": "ma17:5.10", "p": "而行惡法，成就十種不善業道，殺生、…", "s": "'You men and women, lazy and not diligent, practicing evil deeds,"}, {"key": "ma17:5.11", "p": "不與取、邪婬、妄言，乃至邪見，…", "s": "completing the ten unwholesome courses of action—killing, taking what is not given, sexual misconduct,"}, {"key": "ma17:5.12", "p": "汝等因此緣此，身壞命終，必至善處，乃生天上。…", "s": "false speech, and so on up to wrong view—by this cause and condition,"}, {"key": "ma17:5.13", "p": "』如是，伽彌尼！…", "s": "after the body breaks up and life ends, you will surely go to a good place, even be reborn among the devas.'"}, {"key": "ma17:5.14", "p": "彼男女等，懈不精進，而行惡法，…", "s": "In this way, Gāmini, would those men or women, lazy and not diligent, practicing evil deeds,"}, {"key": "ma17:5.15", "p": "成就十種不善業道，殺生、不與取、邪婬、妄言，…", "s": "completing the ten unwholesome courses of action—killing, taking what is not given,"}, {"key": "ma17:5.16", "p": "乃至邪見，寧為眾人各叉手向稱歎求索，…", "s": "sexual misconduct, false speech, and so on up to wrong view—by this cause and condition,"}, {"key": "ma17:5.17", "p": "因此緣此，身壞命終，得至善處，生天上耶？」…", "s": "after the body breaks up and life ends, reach a good place and be reborn among the devas?\""}]}, {"id": "6", "label": "伽彌尼答曰：「不也。世尊！」", "rows": [{"key": "ma17:6.1", "p": "伽彌尼答曰：「不也。世尊！」…", "s": "Gāmini replied:\n\"No, World-Honored One.\""}]}, {"id": "7", "label": "世尊歎曰：「善哉！", "rows": [{"key": "ma17:7.1", "p": "世尊歎曰：「善哉！…", "s": "The Blessed One praised him, saying:"}, {"key": "ma17:7.2", "p": "伽彌尼！…", "s": "\"Good, Gāminī!"}, {"key": "ma17:7.3", "p": "所以者何？…", "s": "Why is that?"}, {"key": "ma17:7.4", "p": "彼男女等，懈不精進，而行惡法，成就十種不善業道，…", "s": "Those men and women who are lazy and not diligent,"}, {"key": "ma17:7.5", "p": "殺生、不與取、邪婬、妄言，乃至邪見，…", "s": "who practice evil deeds and accomplish the ten kinds of unwholesome courses of action—killing,\ntaking what is not given, sexual misconduct, false speech, and so…"}, {"key": "ma17:7.6", "p": "若為眾人各叉手向稱歎求索，因此緣此，…", "s": "if many people, with palms together, were to praise and beseech them, saying,"}, {"key": "ma17:7.7", "p": "身壞命終，得至善處，乃生天上者，是處不然。…", "s": "'Through this, because of this, may they, after the body breaks up and life ends,"}, {"key": "ma17:7.8", "p": "伽彌尼！…", "s": "reach a good place and be reborn among the devas,' that is impossible."}, {"key": "ma17:7.9", "p": "猶去村不遠有深水淵，於彼有人以大重石擲著水中，…", "s": "Gāminī!"}, {"key": "ma17:7.10", "p": "若眾人來，各叉手向稱歎求索，作如是語：『願石浮出。…", "s": "It is like a deep pool of water not far from the village.\nIf someone were to throw a large heavy stone into the water,"}, {"key": "ma17:7.11", "p": "』伽彌尼！…", "s": "and many people came, with palms together, praising and beseeching, saying,"}, {"key": "ma17:7.12", "p": "於意云何？…", "s": "'May the stone float up!'"}, {"key": "ma17:7.13", "p": "此大重石寧為眾人各叉手向稱歎求索，…", "s": "Gāminī, what do you think?"}, {"key": "ma17:7.14", "p": "因此緣此，而當出耶？」…", "s": "Would that large heavy stone, because of the many people with palms together praising and beseeching,\nthrough this, because of this, float up?\""}]}, {"id": "8", "label": "伽彌尼答曰：「不也。世尊！」", "rows": [{"key": "ma17:8.1", "p": "伽彌尼答曰：「不也。世尊！」…", "s": "Gāminī replied:\n\"No, Blessed One.\""}]}, {"id": "9", "label": "「如是。", "rows": [{"key": "ma17:9.1", "p": "「如是。…", "s": "\"So too, Gāminī, those men and women who are lazy and not diligent,"}, {"key": "ma17:9.2", "p": "伽彌尼！…", "s": "who practice evil deeds and accomplish the ten kinds of unwholesome courses of action—killing,"}, {"key": "ma17:9.3", "p": "彼男女等，懈不精進，而行惡法，成就十種不善業道，…", "s": "taking what is not given, sexual misconduct, false speech, and so forth up to wrong view—"}, {"key": "ma17:9.4", "p": "殺生、不與取、邪婬、妄言，乃至邪見，…", "s": "if many people, with palms together, were to praise and beseech them, saying,"}, {"key": "ma17:9.5", "p": "若為眾人各叉手向稱歎求索，因此緣此，…", "s": "'Through this, because of this, may they, after the body breaks up and life ends,"}, {"key": "ma17:9.6", "p": "身壞命終，得至善處，生天上者，是處不然。…", "s": "reach a good place and be reborn among the devas,' that is impossible."}, {"key": "ma17:9.7", "p": "所以者何？…", "s": "Why is that?"}, {"key": "ma17:9.8", "p": "謂此十種不善業道，黑有黑報，自然趣下，必至惡處。…", "s": "Because these ten kinds of unwholesome courses of action are dark with a dark result,\nnaturally leading downward, and must reach a bad place."}]}, {"id": "10", "label": "「伽彌尼！", "rows": [{"key": "ma17:10.1", "p": "「伽彌尼！…", "s": "\"Gāminī, what do you think?"}, {"key": "ma17:10.2", "p": "於意云何？…", "s": "If in a village there are men or women who are diligent and practice well,"}, {"key": "ma17:10.3", "p": "若村邑中或有男女，精進勤修，而行妙法，…", "s": "accomplishing the ten kinds of wholesome courses of action—abstaining from killing, having abandoned killing;"}, {"key": "ma17:10.4", "p": "成十善業道，離殺、斷殺、不與取、邪婬、…", "s": "abstaining from taking what is not given, sexual misconduct,\nfalse speech, and so forth up to abstaining from wrong view,"}, {"key": "ma17:10.5", "p": "妄言，乃至離邪見，斷邪見，得正見，…", "s": "having abandoned wrong view, and attaining right view—when they die,"}, {"key": "ma17:10.6", "p": "彼命終時，若眾人來，各叉手向稱歎求索，…", "s": "if many people, with palms together, were to praise and beseech them, saying,"}, {"key": "ma17:10.7", "p": "作如是語：『汝男女等，精進勤修，而行妙法，…", "s": "'You men and women, diligent and practicing well,"}, {"key": "ma17:10.8", "p": "成十善業道，離殺、斷殺、不與取、邪婬、…", "s": "accomplishing the ten kinds of wholesome courses of action—abstaining from killing, having abandoned killing;\nabstaining from taking what is not given, sexual m…"}, {"key": "ma17:10.9", "p": "妄言，乃至離邪見，斷邪見，得正見，…", "s": "and so forth up to abstaining from wrong view, having abandoned wrong view,"}, {"key": "ma17:10.10", "p": "汝等因此緣此，身壞命終，當至惡處，生地獄中。…", "s": "and attaining right view—through this, because of this, may you,"}, {"key": "ma17:10.11", "p": "』伽彌尼！…", "s": "after the body breaks up and life ends, reach a bad place and be reborn in hell!'"}, {"key": "ma17:10.12", "p": "於意云何？…", "s": "Gāminī, what do you think?\nWould those men or women, diligent and practicing well,"}, {"key": "ma17:10.13", "p": "彼男女等，精進勤修，而行妙法，成十善業道，…", "s": "accomplishing the ten kinds of wholesome courses of action—abstaining from killing, having abandoned killing;"}, {"key": "ma17:10.14", "p": "離殺、斷殺、不與取、邪婬、妄言，乃至離邪見，…", "s": "abstaining from taking what is not given, sexual misconduct, false speech,"}, {"key": "ma17:10.15", "p": "斷邪見，得正見，寧為眾人各叉手向稱歎求索，…", "s": "and so forth up to abstaining from wrong view, having abandoned wrong view, and attaining right view—"}, {"key": "ma17:10.16", "p": "因此緣此，身壞命終，得至惡處，生地獄中耶？」…", "s": "because of the many people with palms together praising and beseeching, through this,\nbecause of this, after the body breaks up and life ends, reach a bad place…"}]}, {"id": "11", "label": "伽彌尼答曰：「不也。世尊！」", "rows": [{"key": "ma17:11.1", "p": "伽彌尼答曰：「不也。世尊！」…", "s": "Gāminī replied:\n\"No, Blessed One.\""}]}, {"id": "12", "label": "世尊歎曰：「善哉！", "rows": [{"key": "ma17:12.1", "p": "世尊歎曰：「善哉！…", "s": "The Blessed One praised him, saying:"}, {"key": "ma17:12.2", "p": "伽彌尼！…", "s": "\"Good, Gāminī!"}, {"key": "ma17:12.3", "p": "所以者何？…", "s": "Why is that?"}, {"key": "ma17:12.4", "p": "伽彌尼！…", "s": "Gāminī, those men or women who are diligent and practice well,"}, {"key": "ma17:12.5", "p": "彼男女等，精進勤修，而行妙法，成十善業道，…", "s": "accomplishing the ten kinds of wholesome courses of action—abstaining from killing, having abandoned killing;"}, {"key": "ma17:12.6", "p": "離殺、斷殺、不與取、邪婬、妄言，乃至離邪見，…", "s": "abstaining from taking what is not given, sexual misconduct,"}, {"key": "ma17:12.7", "p": "斷邪見，得正見，若為眾人各叉手向稱歎求索，…", "s": "false speech, and so forth up to abstaining from wrong view,"}, {"key": "ma17:12.8", "p": "因此緣此，身壞命終，得生惡處，…", "s": "having abandoned wrong view, and attaining right view—if many people,"}, {"key": "ma17:12.9", "p": "生地獄中者，是處不然。…", "s": "with palms together, were to praise and beseech them, saying,"}, {"key": "ma17:12.10", "p": "所以者何？…", "s": "'Through this, because of this, may they, after the body breaks up and life ends,"}, {"key": "ma17:12.11", "p": "伽彌尼！…", "s": "be reborn in a bad place, in hell,' that is impossible."}, {"key": "ma17:12.12", "p": "謂此十善業道，白有白報，自然昇上，必至善處。…", "s": "Why is that?"}, {"key": "ma17:12.13", "p": "伽彌尼！…", "s": "Gāminī, because these ten kinds of wholesome courses of action are bright with a bright result,"}, {"key": "ma17:12.14", "p": "猶去村不遠有深水淵，…", "s": "naturally ascending, and must reach a good place."}, {"key": "ma17:12.15", "p": "於彼有人以酥油瓶投水而破，滓瓦沈下，酥油浮上。…", "s": "Gāminī, it is like a deep pool of water not far from the village."}, {"key": "ma17:12.16", "p": "如是，伽彌尼！…", "s": "If someone were to throw a pot of ghee or oil into the water and it breaks,"}, {"key": "ma17:12.17", "p": "彼男女等，精進勤修，而行妙法，成十善業道，離殺、…", "s": "the dregs and shards sink down, while the ghee or oil floats up."}, {"key": "ma17:12.18", "p": "斷殺、不與取，邪婬、…", "s": "So too, Gāminī, those men or women who are diligent and practice well,"}, {"key": "ma17:12.19", "p": "妾言乃至離邪見，斷邪見，得正見。…", "s": "accomplishing the ten kinds of wholesome courses of action—abstaining from killing, having abandoned killing;"}, {"key": "ma17:12.20", "p": "彼命終時，謂身麤色四大之種從父母生，…", "s": "abstaining from taking what is not given, sexual misconduct, false speech,"}, {"key": "ma17:12.21", "p": "衣食長養，坐臥按摩，…", "s": "and so forth up to abstaining from wrong view, having abandoned wrong view, and attaining right view."}, {"key": "ma17:12.22", "p": "澡浴強忍，是破壞法，是滅盡法，…", "s": "When they die, the coarse physical body, composed of the four great elements,"}, {"key": "ma17:12.23", "p": "離散之法；彼命終後，或烏鳥啄，…", "s": "born from mother and father, sustained by food and clothing, maintained by sitting,"}, {"key": "ma17:12.24", "p": "或虎狼食，或燒或埋，盡為粉塵，…", "s": "lying down, massage, bathing, and endurance—this is a thing subject to destruction,"}, {"key": "ma17:12.25", "p": "彼心、意、識常為信所熏，…", "s": "a thing subject to ending, a thing subject to dissolution."}, {"key": "ma17:12.26", "p": "為精進、多聞、布施、智慧所熏，…", "s": "After death, it may be pecked by crows, eaten by tigers or wolves, burned or buried, and reduced to dust."}, {"key": "ma17:12.27", "p": "彼因此緣此，自然昇上，生於善處。…", "s": "But their mind, thought, and consciousness are constantly permeated by faith,"}, {"key": "ma17:12.28", "p": "伽彌尼！…", "s": "permeated by diligence, learning, generosity, and wisdom."}, {"key": "ma17:12.29", "p": "彼殺生者，離殺、斷殺，…", "s": "Through this, because of this, they naturally ascend and are reborn in a good place."}, {"key": "ma17:12.30", "p": "園觀之道、昇進之道、善處之道。…", "s": "Gāminī, for one who kills, abstaining from killing, having abandoned killing,"}, {"key": "ma17:12.31", "p": "伽彌尼！…", "s": "is the path of the park, the path of advancement, the path to a good place."}, {"key": "ma17:12.32", "p": "不與取、邪婬、妄言，乃至邪見者，離邪見，…", "s": "Gāminī, for one who takes what is not given, engages in sexual misconduct,"}, {"key": "ma17:12.33", "p": "得正見，園觀之道、昇進之道、善處之道。…", "s": "speaks falsely, and so forth up to wrong view,"}, {"key": "ma17:12.34", "p": "伽彌尼！…", "s": "abstaining from wrong view and attaining right view is the path of the park,"}, {"key": "ma17:12.35", "p": "復有園觀之道、昇進之道、善處之道。…", "s": "the path of advancement, the path to a good place."}, {"key": "ma17:12.36", "p": "伽彌尼！…", "s": "Gāminī, there is also another path of the park, another path of advancement, another path to a good place."}, {"key": "ma17:12.37", "p": "云何復有園觀之道、昇進之道、善處之道？…", "s": "Gāminī, what is that other path of the park, that other path of advancement, that other path to a good place?"}, {"key": "ma17:12.38", "p": "謂八支聖道，正見乃至正定，是為八。…", "s": "It is the noble eightfold path:"}, {"key": "ma17:12.39", "p": "伽彌尼！…", "s": "right view up to right concentration—these are the eight."}, {"key": "ma17:12.40", "p": "是謂復有園觀之道、昇進之道、善處之道。」…", "s": "Gāminī, this is called the other path of the park, the other path of advancement, the other path to a good place.\""}]}, {"id": "13", "label": "佛說如是。", "rows": [{"key": "ma17:13.1", "p": "佛說如是。…", "s": "The Buddha spoke thus."}, {"key": "ma17:13.2", "p": "伽彌尼及諸比丘，聞佛所說，歡喜奉行。…", "s": "Gāminī and the monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

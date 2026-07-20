@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma143:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma143:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada’s Park."}]}, {"id": "3", "label": "爾時，傷歌邏摩納中後彷徉，往詣佛所，", "rows": [{"key": "ma143:3.1", "p": "爾時，傷歌邏摩納中後彷徉，往詣佛所，…", "s": "At that time, the brāhmaṇa Śaṅkhagotta was wandering about in the afternoon and came to the Buddha."}, {"key": "ma143:3.2", "p": "共相問訊，却坐一面，白曰：「瞿曇！…", "s": "After exchanging greetings, he sat down to one side and said,"}, {"key": "ma143:3.3", "p": "我欲有所問，聽乃敢陳。」…", "s": "“Gotama, I wish to ask something, but only if you permit me.”"}]}, {"id": "4", "label": "世尊告曰：「摩納！", "rows": [{"key": "ma143:4.1", "p": "世尊告曰：「摩納！…", "s": "The Blessed One replied,"}, {"key": "ma143:4.2", "p": "若有疑者，恣汝所問。」…", "s": "“Brāhmaṇa, if you have any doubts, ask as you please.”"}]}, {"id": "5", "label": "傷歌邏摩納即便問曰：「瞿曇！", "rows": [{"key": "ma143:5.1", "p": "傷歌邏摩納即便問曰：「瞿曇！…", "s": "Then the brāhmaṇa Śaṅkhagotta asked,"}, {"key": "ma143:5.2", "p": "梵志如法行乞財物，或自作齋，或教作齋。瞿曇！…", "s": "“Gotama, brāhmaṇas who lawfully beg for wealth and property\neither perform a sacrifice themselves or have others perform it."}, {"key": "ma143:5.3", "p": "若自作齋，教作齋者，彼一切行無量福跡。…", "s": "Gotama, whether they perform it themselves or have others do it, all such actions produce countless meritorious results."}, {"key": "ma143:5.4", "p": "以因齋故，沙門瞿曇弟子隨族剃除鬚髮，著袈裟衣，…", "s": "Because of such sacrifices, the disciples of the ascetic Gotama,\nfrom various families, shave off their hair and beard, put on the monastic robe,"}, {"key": "ma143:5.5", "p": "至信、捨家、無家、學道，自調御，自息止，自滅訖。…", "s": "and with faith go forth from home to homelessness, training themselves,"}, {"key": "ma143:5.6", "p": "如是沙門瞿曇弟子隨族行一福跡，…", "s": "calming themselves, and attaining complete cessation."}, {"key": "ma143:5.7", "p": "不行無量福跡，因學道故。」…", "s": "In this way, the disciples of the ascetic Gotama, from various families,\npractice one meritorious path, not countless meritorious paths, because of their traini…"}]}, {"id": "6", "label": "爾時，尊者阿難執拂侍佛。", "rows": [{"key": "ma143:6.1", "p": "爾時，尊者阿難執拂侍佛。…", "s": "At that time, the venerable Ānanda was standing behind the Buddha, fanning him."}, {"key": "ma143:6.2", "p": "於是，尊者阿難問曰：「摩納！…", "s": "Then the venerable Ānanda asked,"}, {"key": "ma143:6.3", "p": "此二道跡，何者最上、最妙、最勝耶？」…", "s": "“Brāhmaṇa, of these two paths, which is the foremost, the best, and the supreme?”"}]}, {"id": "7", "label": "傷歌邏摩納語曰：「阿難！", "rows": [{"key": "ma143:7.1", "p": "傷歌邏摩納語曰：「阿難！…", "s": "The brahmin student Saṅgārava said:"}, {"key": "ma143:7.2", "p": "沙門瞿曇及阿難，我俱恭敬、尊重、奉祠。」…", "s": "'Ānanda, I revere, respect, and venerate both the ascetic Gotama and Ānanda.'"}]}, {"id": "8", "label": "尊者阿難復語曰：「摩納！", "rows": [{"key": "ma143:8.1", "p": "尊者阿難復語曰：「摩納！…", "s": "The venerable Ānanda then said:"}, {"key": "ma143:8.2", "p": "我不問汝恭敬、尊重、奉祠誰；…", "s": "'Brahmin student, I am not asking you whom you revere, respect, and venerate;"}, {"key": "ma143:8.3", "p": "我但問汝此二道跡，何者最上、最妙、最勝耶？」…", "s": "I am only asking you, of these two paths, which is the highest, the most excellent, and the supreme?'"}]}, {"id": "9", "label": "尊者阿難至再三問曰：「摩納！", "rows": [{"key": "ma143:9.1", "p": "尊者阿難至再三問曰：「摩納！…", "s": "The venerable Ānanda asked a third time:"}, {"key": "ma143:9.2", "p": "此二道跡，何者最上、最妙、最勝耶？」…", "s": "'Brahmin student, of these two paths, which is the highest, the most excellent, and the supreme?'"}]}, {"id": "10", "label": "傷歌邏摩納亦再三語曰：「阿難！", "rows": [{"key": "ma143:10.1", "p": "傷歌邏摩納亦再三語曰：「阿難！…", "s": "The brahmin student Saṅgārava also said a third time:"}, {"key": "ma143:10.2", "p": "沙門瞿曇及阿難，我俱恭敬、尊重、奉祠。」…", "s": "'Ānanda, I revere, respect, and venerate both the ascetic Gotama and Ānanda.'"}]}, {"id": "11", "label": "尊者阿難復語曰：「摩納！", "rows": [{"key": "ma143:11.1", "p": "尊者阿難復語曰：「摩納！…", "s": "The venerable Ānanda then said:"}, {"key": "ma143:11.2", "p": "我不問汝恭敬、尊重、奉祠誰；…", "s": "'Brahmin student, I am not asking you whom you revere, respect, and venerate;"}, {"key": "ma143:11.3", "p": "我但問汝此二道跡，何者最上、最妙、最勝耶？」…", "s": "I am only asking you, of these two paths, which is the highest, the most excellent, and the supreme?'"}]}, {"id": "12", "label": "於是，世尊便作是念：", "rows": [{"key": "ma143:12.1", "p": "於是，世尊便作是念：…", "s": "Then the Blessed One thought:"}, {"key": "ma143:12.2", "p": "「此傷歌邏摩納為阿難所屈，我寧可救彼。」…", "s": "'This brahmin student Saṅgārava has been put to shame by Ānanda;\nperhaps I should rescue him.'"}]}, {"id": "13", "label": "世尊知已，告曰：「摩納！", "rows": [{"key": "ma143:13.1", "p": "世尊知已，告曰：「摩納！…", "s": "The Blessed One, knowing this, said:"}, {"key": "ma143:13.2", "p": "昔日王及群臣普集大會，共論何事？…", "s": "\"Young man!"}, {"key": "ma143:13.3", "p": "以何事故共集會耶？」…", "s": "In the past, when the king and his ministers gathered in a great assembly, what matters did they discuss?\nFor what reason did they assemble?\""}]}, {"id": "14", "label": "傷歌邏摩納答曰：「瞿曇！", "rows": [{"key": "ma143:14.1", "p": "傷歌邏摩納答曰：「瞿曇！…", "s": "Saṅgārava the young man replied:"}, {"key": "ma143:14.2", "p": "昔日王及群臣普集大會，共論如此事：『何因何緣，…", "s": "\"Gotama!\nIn the past, when the king and his ministers gathered in a great assembly, they discussed this matter:"}, {"key": "ma143:14.3", "p": "昔沙門瞿曇施設少戒，然諸比丘多得道者？…", "s": "'What is the cause, what is the condition,\nthat in the past the ascetic Gotama established few precepts, yet many bhikkhus attained the path?"}, {"key": "ma143:14.4", "p": "何因何緣，今沙門瞿曇施設多戒，然諸比丘少得道耶？…", "s": "What is the cause, what is the condition,"}, {"key": "ma143:14.5", "p": "』瞿曇！…", "s": "that now the ascetic Gotama establishes many precepts, yet few bhikkhus attain the path?'\nGotama!"}, {"key": "ma143:14.6", "p": "昔日王及群臣普集大會，共論此事，以此事故共集會耳。」…", "s": "In the past, when the king and his ministers gathered in a great assembly,\nthey discussed this matter, and for this reason they assembled.\""}]}, {"id": "15", "label": "爾時，世尊告曰：「摩納！", "rows": [{"key": "ma143:15.1", "p": "爾時，世尊告曰：「摩納！…", "s": "At that time, the Blessed One said:"}, {"key": "ma143:15.2", "p": "我今問汝，隨所解答。…", "s": "\"Young man!"}, {"key": "ma143:15.3", "p": "於意云何？…", "s": "I now ask you, answer as you see fit."}, {"key": "ma143:15.4", "p": "若使有一沙門梵志自行如是道、如是跡，…", "s": "What do you think?"}, {"key": "ma143:15.5", "p": "行此道、行此跡已，諸漏已盡，得無漏，心解脫、…", "s": "If there were an ascetic or brahmin who himself practiced such a path,\nsuch a practice, and having practiced this path and this practice,"}, {"key": "ma143:15.6", "p": "慧解脫，自知自覺，自作證成就遊，生已盡，…", "s": "had exhausted the taints, attained the taintless, liberation of mind and liberation by wisdom,"}, {"key": "ma143:15.7", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "known and realized for himself, attained and abided in the accomplishment, with birth exhausted,"}, {"key": "ma143:15.8", "p": "彼為他說，我自行如是道、如是跡，行此道、…", "s": "the holy life established, what had to be done done, no further existence, knowing it as it really is."}, {"key": "ma143:15.9", "p": "行此跡已，諸漏已盡，得無漏，心解脫、…", "s": "He teaches others:"}, {"key": "ma143:15.10", "p": "慧解脫，自知自覺，自作證成就遊，生已盡，…", "s": "'I myself have practiced such a path, such a practice, and having practiced this path and this practice,\nhave exhausted the taints, attained the taintless, libe…"}, {"key": "ma143:15.11", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "known and realized for myself, attained and abided in the accomplishment, with birth exhausted,"}, {"key": "ma143:15.12", "p": "汝等共來亦自行如是道、如是跡，行此道、…", "s": "the holy life established, what had to be done done, no further existence, knowing it as it really is."}, {"key": "ma143:15.13", "p": "行此跡已，諸漏已盡，得無漏，心解脫、…", "s": "You too, come and practice such a path, such a practice, and having practiced this path and this practice,"}, {"key": "ma143:15.14", "p": "慧解脫，自知自覺，自作證成就遊，生已盡，…", "s": "will exhaust the taints, attain the taintless, liberation of mind and liberation by wisdom,\nknow and realize for yourselves, attain and abide in the accomplishm…"}, {"key": "ma143:15.15", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "the holy life established, what had to be done done, no further existence, knowing it as it really is.'"}, {"key": "ma143:15.16", "p": "彼亦自行如是道、如是跡，行此道、行此跡已，…", "s": "He himself practices such a path, such a practice, and having practiced this path and this practice,"}, {"key": "ma143:15.17", "p": "諸漏已盡，得無漏，心解脫、慧解脫，…", "s": "has exhausted the taints, attained the taintless, liberation of mind and liberation by wisdom,"}, {"key": "ma143:15.18", "p": "自知自覺，自作證成就遊，生已盡，…", "s": "known and realized for himself, attained and abided in the accomplishment, with birth exhausted,"}, {"key": "ma143:15.19", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "the holy life established, what had to be done done, no further existence, knowing it as it really is.\nHe teaches others, and others teach others, thus spreadin…"}, {"key": "ma143:15.20", "p": "彼為他說，他為他說，如是展轉無量百千。…", "s": "What do you think, young man?"}, {"key": "ma143:15.21", "p": "於摩納意云何？…", "s": "Do my disciples, from various families, shave off their hair and beard,"}, {"key": "ma143:15.22", "p": "我弟子隨族剃除鬚髮，著袈裟衣，至信、捨家、…", "s": "put on the monastic robe, go forth with faith, leaving home for the homeless life,"}, {"key": "ma143:15.23", "p": "無家、學道，行一福跡，不行無量福跡，因學道故耶？」…", "s": "and train in the path, practicing one meritorious practice,\nnot practicing countless meritorious practices, because of training in the path?\""}]}, {"id": "16", "label": "傷歌邏摩納答曰：「瞿曇！", "rows": [{"key": "ma143:16.1", "p": "傷歌邏摩納答曰：「瞿曇！…", "s": "Saṅgārava the young man replied:"}, {"key": "ma143:16.2", "p": "如我解沙門瞿曇所說義，…", "s": "\"Gotama!"}, {"key": "ma143:16.3", "p": "彼沙門瞿曇弟子隨族剃除鬚髮，著袈裟衣，…", "s": "As I understand the meaning of what the ascetic Gotama has said, the disciples of the ascetic Gotama,"}, {"key": "ma143:16.4", "p": "至信、捨家、無家、學道、…", "s": "from various families, shave off their hair and beard, put on the monastic robe,"}, {"key": "ma143:16.5", "p": "行無量福跡，不行一福跡，因學道故。」…", "s": "go forth with faith, leaving home for the homeless life, and train in the path,\npracticing countless meritorious practices, not practicing one meritorious pract…"}]}, {"id": "17", "label": "世尊復告傷歌邏曰：「有三示現：", "rows": [{"key": "ma143:17.1", "p": "世尊復告傷歌邏曰：「有三示現：…", "s": "The Blessed One further said to Saṅgārava:"}, {"key": "ma143:17.2", "p": "如意足示現、占念示現、教訓示現。摩納！…", "s": "\"There are three demonstrations:\nthe demonstration of psychic power, the demonstration of mind-reading, and the demonstration of instruction."}, {"key": "ma143:17.3", "p": "云何如意足示現？…", "s": "Young man!"}, {"key": "ma143:17.4", "p": "有一沙門梵志，有大如意足，有大威德，…", "s": "What is the demonstration of psychic power?\nThere is an ascetic or brahmin who has great psychic power, great majesty, great merit, great spiritual might,"}, {"key": "ma143:17.5", "p": "有大福祐，有大威神，於如意足心得自在，…", "s": "who has attained mastery of mind over psychic power, and practices countless psychic powers, such as:\nbeing one, he becomes many;"}, {"key": "ma143:17.6", "p": "行無量如意足之功德，謂分一為眾，合眾為一，…", "s": "being many, he becomes one;"}, {"key": "ma143:17.7", "p": "一則住一，有知有見，不礙石壁，猶如行空。…", "s": "he appears and disappears;\nhe passes through walls and mountains as if through space;"}, {"key": "ma143:17.8", "p": "沒地如水，履水如地，結加趺坐，上昇虛空，猶如鳥翔。…", "s": "he dives into the earth as if into water;\nhe walks on water as if on earth;"}, {"key": "ma143:17.9", "p": "今此日月有大如意足，有大威德，…", "s": "he sits cross-legged and travels through the sky like a bird;"}, {"key": "ma143:17.10", "p": "有大福祐，有大威神，以手捫摸，身至梵天。摩納！…", "s": "he touches and strokes the sun and moon, which have great psychic power, great majesty,\ngreat merit, great spiritual might, with his hand, and his body reaches …"}, {"key": "ma143:17.11", "p": "是謂如意足示現。…", "s": "Young man!\nThis is called the demonstration of psychic power."}]}, {"id": "18", "label": "「摩納！", "rows": [{"key": "ma143:18.1", "p": "「摩納！…", "s": "\"Young man!"}, {"key": "ma143:18.2", "p": "云何占念示現？…", "s": "What is the demonstration of mind-reading?"}, {"key": "ma143:18.3", "p": "有一沙門梵志，以他相占他意，有是意、如是意、…", "s": "There is an ascetic or brahmin who reads the minds of others by means of signs:"}, {"key": "ma143:18.4", "p": "實有是意，無量占不少占，彼一切真諦而無有虛設。…", "s": "'This is the mind, such is the mind, it is truly this mind.'"}, {"key": "ma143:18.5", "p": "不以他相占他意者，…", "s": "He reads countless minds, not a few, and all of it is true and not false."}, {"key": "ma143:18.6", "p": "但以聞天聲及非人聲而占他意，有是意、…", "s": "If he does not read minds by means of signs,"}, {"key": "ma143:18.7", "p": "如是意、實有是意，無量占不少占，…", "s": "he reads the minds of others by hearing the voices of devas or non-human beings:"}, {"key": "ma143:18.8", "p": "彼一切真諦而無有虛設。…", "s": "'This is the mind, such is the mind, it is truly this mind.'"}, {"key": "ma143:18.9", "p": "不以他相占他意，亦不聞天聲及非人聲占他意者，…", "s": "He reads countless minds, not a few, and all of it is true and not false."}, {"key": "ma143:18.10", "p": "但以他念、他思、他說，聞聲已，…", "s": "If he does not read minds by means of signs, nor by hearing the voices of devas or non-human beings,"}, {"key": "ma143:18.11", "p": "占他意，有是意、如是意、實有是意，…", "s": "he reads the minds of others by hearing their thoughts, reflections, and speech:\n'This is the mind, such is the mind, it is truly this mind.'"}, {"key": "ma143:18.12", "p": "無量占不少占，彼一切真諦而無有虛設。…", "s": "He reads countless minds, not a few, and all of it is true and not false."}, {"key": "ma143:18.13", "p": "不以他相占他意，亦不以聞天聲及非人聲占他意，…", "s": "If he does not read minds by means of signs,"}, {"key": "ma143:18.14", "p": "亦不以他念、他思、他說，…", "s": "nor by hearing the voices of devas or non-human beings, nor by hearing their thoughts,"}, {"key": "ma143:18.15", "p": "聞聲已占他意者，但以見他入無覺無觀定，…", "s": "reflections, and speech, he sees another person entering a concentration without thought or examination,"}, {"key": "ma143:18.16", "p": "見已，作是念：『如此賢者不念不思，如意所願。…", "s": "and having seen this, he thinks:"}, {"key": "ma143:18.17", "p": "』彼賢者從此定寤，如是念。…", "s": "'This venerable one, without thinking or reflecting, has his mind as he wishes.'"}, {"key": "ma143:18.18", "p": "彼從此定寤即如是如是念，…", "s": "That venerable one, upon emerging from that concentration, thinks thus."}, {"key": "ma143:18.19", "p": "彼亦占過去，亦占未來，亦占現在，…", "s": "He, upon emerging from that concentration, thinks just so."}, {"key": "ma143:18.20", "p": "久所作、久所說，亦占安靜處、…", "s": "He also reads the past, also reads the future, also reads the present, what was done long ago,"}, {"key": "ma143:18.21", "p": "住安靜處，亦占至心、心所有法。摩納！…", "s": "what was said long ago, also reads the state of calm, the abiding in calm, also reads the mind and mental factors."}, {"key": "ma143:18.22", "p": "是謂占念示現。…", "s": "Young man!\nThis is called the demonstration of mind-reading.\""}]}, {"id": "19", "label": "「摩納！", "rows": [{"key": "ma143:19.1", "p": "「摩納！…", "s": "“Young man, what is the teaching demonstration?"}, {"key": "ma143:19.2", "p": "云何教訓示現？…", "s": "There is a ascetic or brahmin who himself practices such a path, such a practice;"}, {"key": "ma143:19.3", "p": "有一沙門梵志自行如是道、如是跡，行此道、…", "s": "having practiced this path and this practice, the taints are exhausted, he attains the taintless,"}, {"key": "ma143:19.4", "p": "行此跡已，諸漏已盡，得無漏，心解脫、…", "s": "liberation of mind and liberation by wisdom, he knows and realizes for himself, he abides having personally attained it:\nbirth is exhausted, the holy life has b…"}, {"key": "ma143:19.5", "p": "慧解脫，自知自覺，自作證成就遊，生已盡，…", "s": "there is no further state of existence, he knows it as it really is."}, {"key": "ma143:19.6", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "He teaches others:"}, {"key": "ma143:19.7", "p": "彼為他說：『我自行如是道、如是跡，行此道、…", "s": "‘I myself practice such a path, such a practice;\nhaving practiced this path and this practice, the taints are exhausted, I attain the taintless,"}, {"key": "ma143:19.8", "p": "行此跡已，諸漏已盡，得無漏，心解脫、…", "s": "liberation of mind and liberation by wisdom, I know and realize for myself, I abide having personally attained it:"}, {"key": "ma143:19.9", "p": "慧解脫，自知自覺，自作證成就遊，生已盡，…", "s": "birth is exhausted, the holy life has been established, what had to be done has been done,"}, {"key": "ma143:19.10", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "there is no further state of existence, I know it as it really is."}, {"key": "ma143:19.11", "p": "汝等共來，亦自行如是道、如是跡，行此道、…", "s": "Come, all of you, also practice such a path, such a practice;\nhaving practiced this path and this practice, the taints will be exhausted, you will attain the ta…"}, {"key": "ma143:19.12", "p": "行此跡已，諸漏已盡，得無漏，心解脫、…", "s": "liberation of mind and liberation by wisdom,"}, {"key": "ma143:19.13", "p": "慧解脫，自知自覺，自作證成就遊，生已盡，…", "s": "you will know and realize for yourselves, you will abide having personally attained it:"}, {"key": "ma143:19.14", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "birth will be exhausted, the holy life will be established, what had to be done will be done,\nthere will be no further state of existence, you will know it as i…"}, {"key": "ma143:19.15", "p": "』彼亦自行如是道、如是跡，行此道、…", "s": "He himself practices such a path, such a practice;"}, {"key": "ma143:19.16", "p": "行此跡已，諸漏已盡，得無漏心解脫、慧解脫，…", "s": "having practiced this path and this practice, the taints are exhausted,"}, {"key": "ma143:19.17", "p": "自知自覺，自作證成就遊，生已盡，…", "s": "he attains the taintless liberation of mind and liberation by wisdom,"}, {"key": "ma143:19.18", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "he knows and realizes for himself, he abides having personally attained it:\nbirth is exhausted, the holy life has been established, what had to be done has been…"}, {"key": "ma143:19.19", "p": "彼為他說，他為他說，如是展轉無量百千。摩納！…", "s": "there is no further state of existence, he knows it as it really is."}, {"key": "ma143:19.20", "p": "是謂教訓示現。…", "s": "He teaches others, and others teach others, and so it spreads in succession to countless hundreds and thousands."}, {"key": "ma143:19.21", "p": "此三示現，何者示現最上、最妙、最勝耶？」…", "s": "Young man, this is called the teaching demonstration.\nAmong these three demonstrations, which demonstration is the highest, the most excellent, the supreme?”"}]}, {"id": "20", "label": "傷歌邏摩納答曰：「瞿曇！", "rows": [{"key": "ma143:20.1", "p": "傷歌邏摩納答曰：「瞿曇！…", "s": "The young man Saṅgārava replied:"}, {"key": "ma143:20.2", "p": "若有沙門、梵志有大如意足，有大威德，有大福祐，…", "s": "“Gotama, if there is an ascetic or brahmin who has great psychic power, great majesty,"}, {"key": "ma143:20.3", "p": "有大威神，於如意足心得自在，乃及身至梵天者，瞿曇！…", "s": "great merit, great spiritual might, who has attained mastery of mind over psychic powers,"}, {"key": "ma143:20.4", "p": "此自作自有，自受其報。瞿曇！…", "s": "even to the extent of reaching the Brahmā world with his body — Gotama,"}, {"key": "ma143:20.5", "p": "於諸示現，此示現大法。瞿曇！…", "s": "this is his own doing, his own experience, he receives the result himself.\nGotama, among demonstrations, this demonstration is a great thing."}, {"key": "ma143:20.6", "p": "若有沙門、梵志以他相占他意，乃至占心、心所有法者。瞿曇！…", "s": "Gotama, if there is an ascetic or brahmin who, by means of another’s signs, discerns another’s mind,"}, {"key": "ma143:20.7", "p": "此亦自作自有，自受其報。瞿曇！…", "s": "even to discerning the mind and mental factors — Gotama,"}, {"key": "ma143:20.8", "p": "於諸示現，此亦示現大法。瞿曇！…", "s": "this too is his own doing, his own experience, he receives the result himself."}, {"key": "ma143:20.9", "p": "若有沙門、梵志自行如是道、如是跡，行此道、…", "s": "Gotama, among demonstrations, this demonstration too is a great thing."}, {"key": "ma143:20.10", "p": "行此跡已，諸漏已盡，得無漏，心解脫、…", "s": "Gotama, if there is an ascetic or brahmin who himself practices such a path, such a practice;\nhaving practiced this path and this practice, the taints are exhau…"}, {"key": "ma143:20.11", "p": "慧解脫，自知自覺，自作證成就遊，生已盡，…", "s": "liberation of mind and liberation by wisdom, he knows and realizes for himself, he abides having personally attained it:"}, {"key": "ma143:20.12", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "birth is exhausted, the holy life has been established, what had to be done has been done,"}, {"key": "ma143:20.13", "p": "彼為他說，他為他說，如是展轉無量百千者。瞿曇！…", "s": "there is no further state of existence, he knows it as it really is."}, {"key": "ma143:20.14", "p": "於三示現，此示現最上、最妙、最勝。」…", "s": "He teaches others, and others teach others, and so it spreads in succession to countless hundreds and thousands.\nGotama, among the three demonstrations, this de…"}]}, {"id": "21", "label": "世尊復問傷歌邏曰：「於三示現，稱歎何示現？」", "rows": [{"key": "ma143:21.1", "p": "世尊復問傷歌邏曰：「於三示現，稱歎何示現？」…", "s": "The Blessed One further asked Saṅgārava:\n“Among the three demonstrations, which demonstration do you praise?”"}]}, {"id": "22", "label": "傷歌邏摩納答曰：「瞿曇！", "rows": [{"key": "ma143:22.1", "p": "傷歌邏摩納答曰：「瞿曇！…", "s": "The young man Saṅgārava replied:"}, {"key": "ma143:22.2", "p": "於三示現，我稱說沙門瞿曇。…", "s": "“Gotama, among the three demonstrations, I praise the ascetic Gotama."}, {"key": "ma143:22.3", "p": "所以者何？…", "s": "Why is that?"}, {"key": "ma143:22.4", "p": "沙門瞿曇有大如意足，有大威德，有大福祐，…", "s": "The ascetic Gotama has great psychic power, great majesty, great merit, great spiritual might,"}, {"key": "ma143:22.5", "p": "有大威神，心得自在，乃及身至梵天；…", "s": "he has attained mastery of mind over psychic powers, even to the extent of reaching the Brahmā world with his body;"}, {"key": "ma143:22.6", "p": "沙門瞿曇以他相占他意，乃至占心、…", "s": "the ascetic Gotama, by means of another’s signs,"}, {"key": "ma143:22.7", "p": "心所有法；沙門瞿曇示現如是道、…", "s": "discerns another’s mind, even to discerning the mind and mental factors;\nthe ascetic Gotama demonstrates such a path, such a practice;"}, {"key": "ma143:22.8", "p": "如是跡，行此道、行此跡已，…", "s": "having practiced this path and this practice, the taints are exhausted, he attains the taintless,"}, {"key": "ma143:22.9", "p": "諸漏已盡，得無漏，心解脫、慧解脫，…", "s": "liberation of mind and liberation by wisdom, he knows and realizes for himself, he abides having personally attained it:"}, {"key": "ma143:22.10", "p": "自知自覺，自作證成就遊，生已盡，…", "s": "birth is exhausted, the holy life has been established, what had to be done has been done,"}, {"key": "ma143:22.11", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "there is no further state of existence, he knows it as it really is."}, {"key": "ma143:22.12", "p": "沙門瞿曇為他說，他為他說，如是展轉無量百千。瞿曇！…", "s": "The ascetic Gotama teaches others, and others teach others,"}, {"key": "ma143:22.13", "p": "是故於三示現，我稱歎沙門瞿曇！」…", "s": "and so it spreads in succession to countless hundreds and thousands.\nGotama, therefore, among the three demonstrations, I praise the ascetic Gotama!”"}]}, {"id": "23", "label": "於是，世尊告曰：「摩納！", "rows": [{"key": "ma143:23.1", "p": "於是，世尊告曰：「摩納！…", "s": "Thereupon, the Blessed One said:"}, {"key": "ma143:23.2", "p": "汝善達此論。…", "s": "“Young man, you have well understood this matter."}, {"key": "ma143:23.3", "p": "所以者何？…", "s": "Why is that?"}, {"key": "ma143:23.4", "p": "我有大如意足，有大威德，有大福祐，…", "s": "I have great psychic power, great majesty, great merit, great spiritual might,"}, {"key": "ma143:23.5", "p": "有大威神，於如意足心得自在，乃及身至梵天。摩納！…", "s": "I have attained mastery of mind over psychic powers, even to the extent of reaching the Brahmā world with my body."}, {"key": "ma143:23.6", "p": "我以他相占他意，乃至占心、心所有法。摩納！…", "s": "Young man, I, by means of another’s signs, discern another’s mind, even to discerning the mind and mental factors."}, {"key": "ma143:23.7", "p": "我自行如是道、如是跡，行此道、行此跡已，…", "s": "Young man, I myself practice such a path, such a practice;\nhaving practiced this path and this practice, the taints are exhausted, I attain the taintless,"}, {"key": "ma143:23.8", "p": "諸漏已盡，得無漏，心解脫、慧解脫，…", "s": "liberation of mind and liberation by wisdom, I know and realize for myself, I abide having personally attained it:"}, {"key": "ma143:23.9", "p": "自知自覺，自作證成就遊，生已盡，…", "s": "birth is exhausted, the holy life has been established, what had to be done has been done,"}, {"key": "ma143:23.10", "p": "梵行已立，所作已辦，不更受有，知如真。…", "s": "there is no further state of existence, I know it as it really is."}, {"key": "ma143:23.11", "p": "我為他說，他為他說，如是展轉無量百千。摩納！…", "s": "I teach others, and others teach others, and so it spreads in succession to countless hundreds and thousands."}, {"key": "ma143:23.12", "p": "是故汝善達此論，汝當如是善受善持。…", "s": "Young man, therefore you have well understood this matter;"}, {"key": "ma143:23.13", "p": "所以者何？…", "s": "you should well receive and well hold it."}, {"key": "ma143:23.14", "p": "此所說義，應當如是。」…", "s": "Why is that?\nThe meaning that has been spoken should be thus.”"}]}, {"id": "24", "label": "於是，傷歌邏摩納白曰：「世尊！", "rows": [{"key": "ma143:24.1", "p": "於是，傷歌邏摩納白曰：「世尊！…", "s": "Thereupon, the young man Saṅgārava said:"}, {"key": "ma143:24.2", "p": "我已知。善逝！…", "s": "“World-Honored One, I have understood."}, {"key": "ma143:24.3", "p": "我已解。世尊！…", "s": "Well-Gone One, I have comprehended."}, {"key": "ma143:24.4", "p": "我今自歸於佛、法及比丘眾，唯願世尊受我為優婆塞，…", "s": "World-Honored One, I now go for refuge to the Buddha, the Dharma, and the community of monks."}, {"key": "ma143:24.5", "p": "從今日始，終身自歸，乃至命盡。」…", "s": "May the World-Honored One please accept me as a lay follower,\nfrom today onward, for life, going for refuge, even until the end of my life.”"}]}, {"id": "25", "label": "佛說如是。", "rows": [{"key": "ma143:25.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma143:25.2", "p": "傷歌邏摩納、尊者阿難及諸比丘，聞佛所說，歡喜奉行。…", "s": "The brahmin student Saṅgārava, the venerable Ānanda, and the monks,\nhaving heard what the Buddha said, were delighted and put it into practice."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

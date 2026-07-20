@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../../help.html">Help</a><a href="../../../help.html#about">About</a><a href="../../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:47 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../../help.html">Help</a><a href="../../../help.html#about">About</a><a href="../../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:43 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -967,7 +1026,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "2", "label": "¶ 31. Aṅgā nāma jana·padino rāja·kumārā, tesaṃ…", "rows": [{"key": "mn-t54:2.1", "p": "¶ 31.\nAṅgā nāma jana·padino rāja·kumārā,\ntesaṃ niv…", "s": "The princes of the country named Aṅgā, their dwelling place is also a country;\nby common usage it is just called Aṅgā.\nTherefore it is said:\n'That country is in…"}, {"key": "mn-t54:2.2", "p": "Mahiyā panassa uttarena yā āpoti\nmahiyā nadiyā yā …", "s": "But to the north of the Mahī, whatever water there is of the Mahī River, that is to the north of that country."}, {"key": "mn-t54:2.3", "p": "Tāsaṃ a·vidūrattā so jana·pado uttar·āpoti vuccati.…", "s": "Because it is not far from that water, that district is called Uttara."}, {"key": "mn-t54:2.4", "p": "Sā pana mahī katthaci katthaci bhijj·itvā gatāti\nā…", "s": "Now that earth, having broken apart here and there, had gone, so he said:\n'On which earth, to the north, is the water?'"}, {"key": "mn-t54:2.5", "p": "Tatthāti tassā mahiyā āgamanato paṭṭhāya ayaṃ āvib…", "s": "Therein:\nfrom the arrival of that earth, this is a story of manifestation."}, {"key": "mn-t54:2.6", "p": "Yasmā (a. ni. ṭī. 3.8.19) lokiyā jambu·dīpo himavā…", "s": "Since the mundane Jambudīpa, Himavā, the ocean, lakes, mountains, and rivers —\nwhatever among these is not within the range of human beings —\nthere, being thems…"}, {"key": "mn-t54:2.7", "p": "Dasa·sahassa·yojana·pari·māṇo āyāmato ca vitthārat…", "s": "The meaning is:\n'of a measure of ten thousand yojanas in length and breadth.'"}, {"key": "mn-t54:2.8", "p": "Tenāha ‘‘tatthā’’tiādi.…", "s": "Therefore he said:\n'therein' and so forth."}, {"key": "mn-t54:2.9", "p": "Udakena ajjh·otthaṭo tad·upabhogi·sa·t·tānaṃ puñña…", "s": "Immersed in water, for beings who enjoy it, by the exhaustion of merit."}]}, {"id": "3", "label": "¶ Sundara·dassanaṃ kūṭanti su·dassana·kūṭaṃ, yaṃ loke ‘‘hema·kūṭa’’nti…", "rows": [{"key": "mn-t54:3.1", "p": "¶ Sundara·dassanaṃ kūṭanti\nsu·dassana·kūṭaṃ, yaṃ l…", "s": "Beautiful to see is the peak, thus it is called Sudassana Peak, which in the world is spoken of as 'Golden Peak'."}, {"key": "mn-t54:3.2", "p": "Mūla·gandho kāḷā·nusāriy·ādi.…", "s": "Root-perfume, such as black aloe-wood and so forth."}, {"key": "mn-t54:3.3", "p": "Sāra·gandho canda·nādi.…", "s": "The fragrance of the heartwood is sandalwood and so forth."}, {"key": "mn-t54:3.4", "p": "Pheggu·gandho salalādi.…", "s": "The fragrance of the sapwood is the sal tree and so forth."}, {"key": "mn-t54:3.5", "p": "Taca·gandho lavaṅg·ādi.…", "s": "The fragrance of the bark is clove and so forth."}, {"key": "mn-t54:3.6", "p": "Papaṭika·gandho kabitthādi.…", "s": "The fragrance of bark is that of the kabittha fruit and so forth."}, {"key": "mn-t54:3.7", "p": "Rasa·gandho sajj·ādi, patta·gandho tamāla·hiriver·…", "s": "The fragrance of resin is that of gum and so forth;\nthe fragrance of leaves is that of the tamāla tree, the hrivera plant, and so forth."}, {"key": "mn-t54:3.8", "p": "Puppha·gandho nāga·kuṅkum·ādi.…", "s": "The fragrance of flowers is that of the nāga flower, saffron, and so forth."}, {"key": "mn-t54:3.9", "p": "Phala·gandho jātiphal·ādi.…", "s": "The fragrance of fruit is the fragrance of the fruit and so forth."}, {"key": "mn-t54:3.10", "p": "Gandha·gandho sabb·esaṃ gandhānaṃ gandho.…", "s": "The fragrance of scent is the scent of all scents."}, {"key": "mn-t54:3.11", "p": "Yassa hi rukkhassa sabb·esampi mūlā·dīnaṃ gandho a…", "s": "For whatever tree has the scent of all its roots and so forth, that is here called scent."}, {"key": "mn-t54:3.12", "p": "Tassa gandhassa gandho gandha·gandho.…", "s": "The scent of that scent is a scent of scent."}, {"key": "mn-t54:3.13", "p": "Sabbāni puthulato paññāsa·yojanāni, āyāmato pana u…", "s": "All are fifty leagues in width, but in length and height they say they are two hundred leagues."}]}, {"id": "4", "label": "¶ Mano·hara·silā·talānīti otaraṇ·atthāya manuñña·sopāna·silā·talāni.", "rows": [{"key": "mn-t54:4.1", "p": "¶ Mano·hara·silā·talānīti otaraṇ·atthāya manuñña·s…", "s": "‘Delightful stone slabs’ means delightful stone slabs of stairs for descending."}, {"key": "mn-t54:4.2", "p": "Supaṭiyattānīti tad·upabhogi·sa·t·tānaṃ sādhāraṇa·…", "s": "Well-prepared:\nthey are well-prepared, well-produced, by the common result of kamma of beings who enjoy them."}, {"key": "mn-t54:4.3", "p": "Macchakacchap·ādayo udakaṃ malinaṃ karonti,\ntad·a·…", "s": "Fish, turtles, and so forth make the water dirty;\nbecause of their absence, the waters are crystal-like, stainless."}, {"key": "mn-t54:4.4", "p": "Tiriyato dīghaṃ uggata·kūṭanti ‘‘tiracchāna·pabbat…", "s": "A mountain that has risen crosswise, long, with a peak extending horizontally — he said,\n'a transverse mountain.'"}]}, {"id": "5", "label": "¶ Āpaṇā·ni eva vohārassa mukha·bhūtānīti āha ‘‘āpaṇamukhasahassānī’’ti.", "rows": [{"key": "mn-t54:5.1", "p": "¶ Āpaṇā·ni eva vohārassa mukha·bhūtānīti āha\n‘‘āpa…", "s": "He said,\n'thousands of market-fronts,' meaning that markets are indeed the foremost of trade."}, {"key": "mn-t54:5.2", "p": "Vibhattānīti vavatthitāni añña·maññā·sambhinnāni.…", "s": "They are divided, that is, they are distinguished, not intermingled with one another."}, {"key": "mn-t54:5.3", "p": "Vasana·ṭ·ṭhānanti attano yathā·phāsukaṃ vasitabba·…", "s": "A dwelling place means a place where one can live comfortably according to one's own convenience."}, {"key": "mn-t54:5.4", "p": "Āsati etthāti āsanaṃ, nisīd·itabba·ṭ·ṭhānāni.…", "s": "Because one sits there, it is a seat;\nit is a place where one should sit."}]}, {"id": "6", "label": "¶ A·sāruppaṃ paṭicca uppajjanakassa chād·a·nato cha·n·naṃ anu·c·chavikaṃ,…", "rows": [{"key": "mn-t54:6.1", "p": "¶ A·sāruppaṃ paṭicca uppajjanakassa chād·a·nato ch…", "s": "What is unsuitable, because it conceals that which arises in dependence on it, is suitable for that which is covered;\nit makes manifest the accomplishment of th…"}, {"key": "mn-t54:6.2", "p": "Tenāha ‘‘nappatirūpa’’nti.…", "s": "Therefore it is said:\n\"unsuitable.\""}, {"key": "mn-t54:6.3", "p": "Kāraṇave·vacanānīti ñāpaka·kāraṇave·vacanāni.…", "s": "The expressions of cause are the expressions of cause that make known."}, {"key": "mn-t54:6.4", "p": "Ñāpakañhi kāraṇaṃ adhi·p·petaṃ.…", "s": "For the cause that makes known is intended."}, {"key": "mn-t54:6.5", "p": "Atthaṃ ākaroti pakāse·tīti ākāro, tameva līnaṃ guḷ…", "s": "‘Ākāra’ means it digs up and reveals the meaning;\n‘liṅga’ means it makes that same hidden, secret meaning understood;\n‘nimitta’ means it is marked by that, thus…"}, {"key": "mn-t54:6.6", "p": "Idāni tameva·t·thaṃ vivarituṃ ‘‘dīgha·dasa·vattha……", "s": "Now, in order to elucidate that same meaning, he said:\n'The long, the ten, the object … are called the sign.'"}, {"key": "mn-t54:6.7", "p": "Teti ākārā·dayo.…", "s": "Those are the modes, etc."}, {"key": "mn-t54:6.8", "p": "Tathā hi pana meti·ādinā potaliyo gaha·pati ‘‘pari…", "s": "For indeed, by the phrase 'I am' and so on, the householder Potaliya says:\n'I live by the rule of a wanderer, therefore I am not a householder.'"}, {"key": "mn-t54:6.9", "p": "Ovadantoti anu·sāsanto.…", "s": "‘Admonishing’ means instructing."}, {"key": "mn-t54:6.10", "p": "Upavada·ntoti pari·bhāsanto.…", "s": "‘Criticizing’ means reviling."}]}, {"id": "7", "label": "¶ 32.Gedha·bhūto lobhoti gijjh·anas·a·bhāvo lobho.", "rows": [{"key": "mn-t54:7.1", "p": "¶ 32.Gedha·bhūto lobhoti\ngijjh·anas·a·bhāvo lobho.…", "s": "32.\nGreed that has become attachment:\ngreed is the state of being intent on seeking."}, {"key": "mn-t54:7.2", "p": "Agijjhanalakkhaṇo na lobho, an·indā·bhūtaṃ aghaṭṭa…", "s": "Non-greed has the characteristic of not coveting;\nthe non-oppression of others, which is the opposite of blame, is non-oppression."}, {"key": "mn-t54:7.3", "p": "Nindā·ghaṭṭanāti nindā·vasena paresaṃ ghaṭṭanā akk…", "s": "Blame-oppression means oppressing others by way of blame, that is, insulting."}, {"key": "mn-t54:7.4", "p": "Byavahāra·vohāro·pīti kaya·vikkaya·lakkhaṇo sa·byo…", "s": "Dealings and transactions, characterized by buying and selling,\nand also the giving and receiving of gifts, are transactions."}, {"key": "mn-t54:7.5", "p": "‘‘Datto tisso’’ tiādinā vohara·ṇaṃ paññāpananti pa…", "s": "Designation, expression:\nthe making known, the proclaiming, by such phrases as 'He is called Tissa.'"}, {"key": "mn-t54:7.6", "p": "Yathā·dhippetassa atthassa vohara·ṇaṃ kathanaṃ bod…", "s": "Expression, speech:\nthe making known, the telling, the making understood, of the intended meaning."}, {"key": "mn-t54:7.7", "p": "Yāthāvato a·yāthāvato ca voharati\netenāti vohāro, …", "s": "Expression, volition:\nthat by which one expresses rightly or wrongly."}, {"key": "mn-t54:7.8", "p": "Ayam·idhā·dhippetoti ayaṃ cetanā·lakkhaṇo vohāro i…", "s": "The expression intended here is the usage characterized by volition;\nit is intended in this meaning, and that indeed is blameworthy because cutting off is desir…"}, {"key": "mn-t54:7.9", "p": "Idāni catu·b·bidhassapi vohārassa idha sambhavaṃ\nd…", "s": "Now, to show the origin here of the fourfold usage, it is said:\n“Or because” and so forth."}, {"key": "mn-t54:7.10", "p": "Gihīti cetanā natthīti\nahaṃ gihīti cetanā·pavatti …", "s": "“As a layperson there is no volition”:\nI say that as a layperson there is no occurrence of volition."}, {"key": "mn-t54:7.11", "p": "Gihīti vacanaṃ natthīti\ngihīti attano paresañca va…", "s": "There is no such thing as a 'householder' in the sense of a designation;\nthere is no occurrence of the term 'householder' for oneself or for others."}, {"key": "mn-t54:7.12", "p": "Gihīti paṇṇatti natthīti\ngihīti samaññā natthi.…", "s": "There is no such thing as a 'householder' in the sense of a concept;\nthere is no appellation 'householder'."}, {"key": "mn-t54:7.13", "p": "Gihīti by·avahāro natthīti samudācāro natthi.…", "s": "There is no such thing as a 'householder' in the sense of a conventional expression;\nthere is no usage of the term."}]}, {"id": "8", "label": "¶ 33.Pāṇā·tipātova saṃyoj·anaṃ.", "rows": [{"key": "mn-t54:8.1", "p": "¶ 33.Pāṇā·tipātova saṃyoj·anaṃ.…", "s": "The taking of life itself is a fetter."}, {"key": "mn-t54:8.2", "p": "Kasmā?…", "s": "Why?"}, {"key": "mn-t54:8.3", "p": "Bandhana·bhāvena pavattanato nissarituṃ a·p·padāna…", "s": "Because it occurs as a binding and does not allow one to escape."}, {"key": "mn-t54:8.4", "p": "Pāṇā·tipātassa atthitāya so puggalo ‘‘pāṇā·tipātī’…", "s": "Because of the existence of the destruction of life, that person is called 'one who destroys life' — thus he said:\n'The destruction of life … exists.'"}, {"key": "mn-t54:8.5", "p": "Yañhi yassa atthi, tena so apadissa·tīti.…", "s": "For what is present in someone, by that he is designated."}, {"key": "mn-t54:8.6", "p": "Bahutāyāti acakkhuk·ādi·bhedena bahu·bhāvato.…", "s": "'Because of multiplicity' means because of the manifold state, divided into blindness and so forth."}, {"key": "mn-t54:8.7", "p": "Pāṇā·tipātassa paṭi·pakkho a·pāṇā·tipāto.…", "s": "The opposite of the destruction of life is abstention from the destruction of life."}, {"key": "mn-t54:8.8", "p": "So pana atthato kāya·dvāriko sīla·saṃvaroti āha\n‘‘…", "s": "But that, in meaning, is virtuous restraint through the door of the body;\nthus he says:\n'by bodily virtuous restraint.'"}, {"key": "mn-t54:8.9", "p": "Attāpi maṃ upavade·y·yāti·ādi pāṇā·tipāte ādīnava·…", "s": "The passage beginning 'One might reproach oneself' is the seeing of danger in the destruction of life."}, {"key": "mn-t54:8.10", "p": "Ādīnava·dassino hi tato orama·ṇaṃ.…", "s": "For one who sees danger, there is a descending from that."}, {"key": "mn-t54:8.11", "p": "Desanā·vase·nāti aññattha\nsutte abhi·dhamme ca das…", "s": "By way of exposition, elsewhere in the suttas and in the Abhidhamma, among the ten fetters and the five hindrances,\nby way of exposition, what is not included i…"}, {"key": "mn-t54:8.12", "p": "Kasmā?…", "s": "Why?"}, {"key": "mn-t54:8.13", "p": "Tad·attha·sambhavato.…", "s": "Because it originates from that purpose."}, {"key": "mn-t54:8.14", "p": "Tenāha – ‘‘vaṭṭa·bandha·naṭṭhena hita·p·paṭi·c·chā…", "s": "Therefore it is said:\n'Because of the meaning of binding to the round and because of the meaning of concealing benefit,' for the\ntaking of life arises only whil…"}, {"key": "mn-t54:8.15", "p": "Eko a·vijjā·savoti idaṃ saha·jāta·vasena vuttaṃ,\nu…", "s": "'One is the taint of ignorance' — this is said with reference to co-arising;\nbut with reference to the condition of proximity,\nthe origination of the other tain…"}, {"key": "mn-t54:8.16", "p": "Pāṇā·tipātī hi puggalo ‘‘tappa·c·cayaṃ atthaṃ kari…", "s": "For a person who destroys life, desiring pleasures, thinks:\n'I will accomplish the purpose that has that as its condition.'"}, {"key": "mn-t54:8.17", "p": "Diṭṭhiṃ gaṇhāti, bhava·visesaṃ pacc·āsīsati.…", "s": "He grasps a view, he hopes for a particular mode of existence."}, {"key": "mn-t54:8.18", "p": "Tattha uppannaṃ vihanati\nbādhatīti vighāto, dukkha…", "s": "There, what arises and afflicts is vexation;\nsuffering;\nburning;\ntorment by way of the arising of harm is fever;\nthis is the distinction among these."}, {"key": "mn-t54:8.19", "p": "Sabba·t·thāti sabbesu vāre·su.…", "s": "In every case:\nin all instances."}, {"key": "mn-t54:8.20", "p": "Iminā upāyenāti ati·desena pana pari·g·gahito atth…", "s": "By this method:\nthe meaning taken up by way of extension will come later."}]}, {"id": "9", "label": "¶ 34-40.Imasmiṃ padeti etena sattasupi vāre·su tathā…", "rows": [{"key": "mn-t54:9.1", "p": "¶ 34-40.Imasmiṃ padeti\netena sattasupi vāre·su tat…", "s": "34-40.\nIn this phrase:\nthe word that has come thus in all seven instances is taken generically."}, {"key": "mn-t54:9.2", "p": "Tenāha ‘‘iminā’’tiādi.…", "s": "Therefore it is said:\n'by this' and so forth."}, {"key": "mn-t54:9.3", "p": "Rosanaṃ kāyikaṃ vācasikañcāti\ntappaṭipakkho a·roso…", "s": "Anger is bodily and verbal;\nits opposite, non-anger, is also twofold thus it is said 'by bodily and verbal restraint'."}, {"key": "mn-t54:9.4", "p": "Yathā abhijjhā lobho, an·abhijjhā a·lobho, evaṃ a·…", "s": "As covetousness is greed, non-covetousness is non-greed, so non-anger and non-despair are non-ill will;\nin restraint, it is to be seen as good restraint;\nbut no…"}, {"key": "mn-t54:9.5", "p": "Imesu pana padesu evaṃ sabba·vāre·su yojanā kātabb…", "s": "But in these passages, in all the sections, the connection should be made thus:\nthe exposition is to be done."}]}, {"id": "10", "label": "¶ Evaṃ āsav·uppatti veditabbāti ettha vuttassapi ekajjhaṃ…", "rows": [{"key": "mn-t54:10.1", "p": "¶ Evaṃ āsav·uppatti veditabbāti\nettha vuttassapi e…", "s": "Thus the origin of the taints is to be understood.\nHere, because what has been spoken is also spoken collectively, it is said:\n'This is the brief determination.…"}, {"key": "mn-t54:10.2", "p": "A·sammoha·t·thaṃ āramma·ṇassa.…", "s": "For the purpose of non-confusion regarding the object."}, {"key": "mn-t54:10.3", "p": "Purimesu tāva catūsu vāre·su viramituṃ na sakko·mī…", "s": "First, regarding the four sections, one should say:\n'I am not able to abstain.'"}, {"key": "mn-t54:10.4", "p": "‘‘Attāpi maṃ upavadeyyā’’ti etassa padassa attha·v…", "s": "In the explanation of the meaning of the phrase 'Conscience might reprove me,' one should say 'I am not able';\nin the explanation of the meaning of the phrase '…"}, {"key": "mn-t54:10.5", "p": "Ati·māne bhavāsavāvijjāsavāti vuttaṃ mānena saha\nd…", "s": "In the case of arrogance, it is said 'taint of existence,\ntaint of ignorance' because view does not arise together with conceit;\nbut arrogance also arises with …"}, {"key": "mn-t54:10.6", "p": "Pāti·mokkha·saṃvara·sīlaṃ kathitaṃ ādito catūhi ch…", "s": "The virtuous behavior of restraint by the Pātimokkha has been\nspoken of at the beginning by means of four or five occasions,\nand for a bhikkhu established in th…"}, {"key": "mn-t54:10.7", "p": "Tattha sabba·t·tha vattaṃ\n‘‘idañcidañca mayhaṃ kāt…", "s": "Therein, in all cases, non-performance and abandoning by way of reflection, thinking,\n'This and that are not suitable for me to do,' is abandonment through refl…"}]}, {"id": "11", "label": "Explanation of the discourse on the danger in sensual pleasures · Kāmādīnava·kathā·vaṇṇanā", "children": [{"id": "12", "label": "¶ 42.Upasumbhe·y·yāti ettha upa-saddo samīpa·t·tho, sumbhanaṃ vikkhepanaṃ.", "rows": [{"key": "mn-t54:12.1", "p": "¶ 42.Upasumbhe·y·yāti ettha upa-saddo samīpa·t·tho…", "s": "42.\n'One should throw nearby':\nhere the prefix 'upa-' has the meaning of proximity,\n'sumbhana' means scattering."}, {"key": "mn-t54:12.2", "p": "Teneva tamenanti bhumma·t·the upayoga·vacananti āh…", "s": "'By that very one, by that very one' — because the accusative case is used in the sense of the locative, he says:\n'One should throw near it,' meaning:\none shoul…"}, {"key": "mn-t54:12.3", "p": "Nimmaṃsattā kaṅka·lanti vucca·tīti iminā vigata·ma…", "s": "'Because it is without flesh, it is called a skeleton' —\nby this he shows that the word 'skeleton' is established in reference to a skull,\nor a backbone, or a s…"}, {"key": "mn-t54:12.4", "p": "Su·ni·k·kantanti nillikhitaṃ katvāva nibbisesaṃ li…", "s": "Having made it well scraped out, it is written without distinction."}]}, {"id": "13", "label": "¶ Ekatt·upaṭṭhānassa ajjhupekkhana·vasena pavattiyā ekattā.", "rows": [{"key": "mn-t54:13.1", "p": "¶ Ekatt·upaṭṭhānassa ajjhupekkhana·vasena pavattiy…", "s": "Because of the occurrence through the mode of looking on with\nequanimity toward the manifestation of oneness, there is oneness."}, {"key": "mn-t54:13.2", "p": "Tenāha ‘‘catu·t·tha·jhān·upekkhā’’ti.…", "s": "Therefore it is said:\n'the equanimity of the fourth jhāna.'"}, {"key": "mn-t54:13.3", "p": "Yasmā panassa āramma·ṇampi eka·sa·bhāva·meva, tasm…", "s": "But because its object is also of a single nature, therefore he says:\n'That indeed' and so forth."}, {"key": "mn-t54:13.4", "p": "Lokāmisa·saṅkhātāti a·pari·ñ·ñāta·vatthunā lokena …", "s": "The expression 'what is reckoned as worldly bait' means:\nbecause it is to be grasped by the world which has not fully understood the basis,\nor because in the wo…"}, {"key": "mn-t54:13.5", "p": "Kāmaguṇ·āmisāti kāma·guṇe chanda·rāgā.…", "s": "'Bait of sense pleasures' means:\ndesire and lust for sense pleasures."}, {"key": "mn-t54:13.6", "p": "Gahaṇa·ṭ·ṭhena bhusaṃ ādāna·ṭ·ṭhena.…", "s": "By the meaning of seizing, by the meaning of strongly taking."}]}, {"id": "14", "label": "¶ 43. Ḍayanaṃ ākāsena gamananti āha ‘‘uppatitvā…", "rows": [{"key": "mn-t54:14.1", "p": "¶ 43.\nḌayanaṃ ākāsena gamananti\nāha ‘‘uppatitvā ga…", "s": "43.\nFlight is going through the sky, therefore it is said:\n'Having risen up, they would go.'"}, {"key": "mn-t54:14.2", "p": "Gijjh·ādīnaṃ vāsi·pharasu na hotīti\nāha – ‘‘mukha·…", "s": "Vultures and so forth do not have an adze or an axe, therefore it is said:\n'Biting with their beaks, they would strip off the bark.'"}, {"key": "mn-t54:14.3", "p": "Vi·s·sajje·y·yunti ettha ‘‘vissajjana’’nti ākaḍḍha…", "s": "‘He would pull out’ — here, by ‘pulling out’ is meant dragging;\nbecause of the multiple meanings of roots, and having followed along with dragging, he throws do…"}]}, {"id": "15", "label": "¶ 47. Purisassa ārohanayogyaṃ poriseyyaṃ.", "rows": [{"key": "mn-t54:15.1", "p": "¶ 47.\nPurisassa ārohanayogyaṃ poriseyyaṃ.…", "s": "47.\nFit for a man to ascend, that which is manly."}]}, {"id": "16", "label": "¶ 48. Sampannaṃ sundaraṃ phalam·assāti sampanna·phalaṃ.", "rows": [{"key": "mn-t54:16.1", "p": "¶ 48.\nSampannaṃ sundaraṃ phalam·assāti sampanna·ph…", "s": "48.\n‘Having excellent fruit’ — one whose fruit is excellent, thus ‘having excellent fruit.’"}, {"key": "mn-t54:16.2", "p": "Phalūpapannanti phalehi upetanti\nāha ‘‘bahu·phala’…", "s": "‘Endowed with fruits’ means possessed of fruits, thus it is said ‘having many fruits.’"}]}, {"id": "17", "label": "¶ 50.Suvidūra·vidūreti ariyassa vinaye vohāra·samucchedato su·ṭ·ṭhu vidūra·bhūte…", "rows": [{"key": "mn-t54:17.1", "p": "¶ 50.Suvidūra·vidūreti ariyassa vinaye\nvohāra·samu…", "s": "50.\n‘Very far and far’:\nin the discipline of the noble one, because of the cutting off of worldly usage,\nI stand indeed in what is very far and far."}, {"key": "mn-t54:17.2", "p": "Kassaci nāma atthassapi a·jānanato na ājāna·ntīti …", "s": "‘They do not understand’ because of not knowing even some meaning,\nthus ‘not thoroughbreds’—showing that as an agent-noun,\nhe says ‘not knowing’ by way of the h…"}, {"key": "mn-t54:17.3", "p": "Sesaṃ suviññeyya·meva.…", "s": "The remainder is just very easy to understand."}]}, {"id": "18", "label": "¶ Potaliya·sutta·vaṇṇanāya līna·t·tha·p·pakāsanā samattā.", "rows": [{"key": "mn-t54:18.1", "p": "¶ Potaliya·sutta·vaṇṇanāya līna·t·tha·p·pakāsanā s…", "s": "The elucidation of the hidden meaning in the commentary on the Potaliya Sutta is completed."}]}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — Late Buddhist Text — post-canonical Theravāda subcommentary (ṭīkā), centuries later than the suttas"}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — AI rendering of a post-canonical subcommentary (ṭīkā)"}];
+const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — Late Buddhist Text — post-canonical Theravāda subcommentary (ṭīkā), centuries later than the suttas", "group": "Root: Pāli", "tip": "Root Pāli (SuttaCentral / Mahāsaṅgīti edition)"}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "⛔ LBT — AI rendering of a post-canonical subcommentary (ṭīkā)", "group": "English", "tip": "AI-generated from the Pāli, in Bhikkhu Bodhi's style"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2064,8 +2123,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2105,30 +2317,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

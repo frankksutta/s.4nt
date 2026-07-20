@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma183:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊鴦騎國，與大比丘眾俱，", "rows": [{"key": "ma183:2.1", "p": "一時，佛遊鴦騎國，與大比丘眾俱，…", "s": "At one time, the Buddha was traveling in the country of Aṅga together with a large community of bhikkhus."}, {"key": "ma183:2.2", "p": "往至馬邑，住馬林寺，及比丘眾。…", "s": "They arrived at the city of Assapura and stayed in the Assapura Forest Monastery,\ntogether with the community of bhikkhus."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「人見汝等沙門，", "rows": [{"key": "ma183:3.1", "p": "爾時，世尊告諸比丘：「人見汝等沙門，…", "s": "At that time, the Blessed One addressed the bhikkhus:"}, {"key": "ma183:3.2", "p": "是沙門，人問汝等沙門，汝自稱沙門耶？」…", "s": "\"People see you ascetics as ascetics, and when they ask you,\n'Are you ascetics?' you yourselves claim to be ascetics, do you not?\""}]}, {"id": "4", "label": "諸比丘白曰：「爾也。世尊！」", "rows": [{"key": "ma183:4.1", "p": "諸比丘白曰：「爾也。世尊！」…", "s": "The bhikkhus replied:\n\"Yes, Blessed One.\""}]}, {"id": "5", "label": "佛復告曰：「是以汝等以此，", "rows": [{"key": "ma183:5.1", "p": "佛復告曰：「是以汝等以此，…", "s": "The Buddha further said:"}, {"key": "ma183:5.2", "p": "要以此沙門，當學沙門道跡，…", "s": "\"Therefore, with this in mind, you should train in the path of an ascetic, being a true ascetic, not a false one."}, {"key": "ma183:5.3", "p": "莫非沙門；學沙門道跡已，要是真諦沙門、不虛沙門，…", "s": "Having trained in the path of an ascetic, you should be a true ascetic, not a false ascetic."}, {"key": "ma183:5.4", "p": "若受衣被、飲食、床榻、…", "s": "Then, when you receive robes, almsfood, lodgings, medicines, and various kinds of necessities,"}, {"key": "ma183:5.5", "p": "湯藥及若干種諸生活具者，彼所供給，…", "s": "those who provide them will gain great merit, great fruit, great virtue, and great reward."}, {"key": "ma183:5.6", "p": "得大福，得大果，得大功德，得大廣報，汝等當學如是。…", "s": "You should train in this way."}]}, {"id": "6", "label": "「云何非沙門道跡，非沙門？", "rows": [{"key": "ma183:6.1", "p": "「云何非沙門道跡，非沙門？…", "s": "\"What is not the path of an ascetic, not being an ascetic?"}, {"key": "ma183:6.2", "p": "若有貪伺不息貪伺，有恚不息恚，…", "s": "If one has covetousness and does not abandon covetousness, has ill will and does not abandon ill will,"}, {"key": "ma183:6.3", "p": "有瞋不息瞋，有不語不息不語，…", "s": "has anger and does not abandon anger, has sullen silence and does not abandon sullen silence,"}, {"key": "ma183:6.4", "p": "有結不息結，有慳不息慳，有嫉不息嫉，…", "s": "has bondage and does not abandon bondage, has stinginess and does not abandon stinginess,"}, {"key": "ma183:6.5", "p": "有諛諂不息諛諂，有欺誑不息欺誑，…", "s": "has envy and does not abandon envy, has flattery and does not abandon flattery,\nhas deceit and does not abandon deceit, has shamelessness and does not abandon s…"}, {"key": "ma183:6.6", "p": "有無慙不息無慙，有無愧不息無愧，…", "s": "has lack of moral dread and does not abandon lack of moral dread, has evil desires and does not abandon evil desires,"}, {"key": "ma183:6.7", "p": "有惡欲不息惡欲，有邪見不息邪見，此沙門垢、…", "s": "has wrong view and does not abandon wrong view — these are the stains of an ascetic,"}, {"key": "ma183:6.8", "p": "沙門諛諂、沙門詐偽、沙門曲，…", "s": "the flattery of an ascetic, the fraud of an ascetic, the crookedness of an ascetic."}, {"key": "ma183:6.9", "p": "趣至惡處未盡已，學非沙門道跡，非沙門。…", "s": "They go to a bad destination without having purified themselves,\ntraining in what is not the path of an ascetic, not being an ascetic."}]}, {"id": "7", "label": "「猶如鉞斧，新作極利，有頭有刃，", "rows": [{"key": "ma183:7.1", "p": "「猶如鉞斧，新作極利，有頭有刃，…", "s": "\"It is like a newly made axe, extremely sharp, with a head and a blade, wrapped in a monastic robe."}, {"key": "ma183:7.2", "p": "僧伽梨所裹，我說彼癡學沙門道亦復如是。…", "s": "I say that the path of that foolish learner monk is just the same."}, {"key": "ma183:7.3", "p": "謂有貪伺不息貪伺，有恚不息恚，有瞋不息瞋，…", "s": "That is, if one has covetousness and does not stop covetousness,\nhas aversion and does not stop aversion, has anger and does not stop anger,"}, {"key": "ma183:7.4", "p": "有不語不息不語，有結不息結，…", "s": "has silence and does not stop silence, has bondage and does not stop bondage,"}, {"key": "ma183:7.5", "p": "有慳不息慳，有嫉不息嫉，…", "s": "has stinginess and does not stop stinginess, has envy and does not stop envy,"}, {"key": "ma183:7.6", "p": "有諛諂不息諛諂，有無慙不息無慙，有無愧不息無愧，…", "s": "has flattery and does not stop flattery, has shamelessness and does not stop shamelessness,\nhas fearlessness and does not stop fearlessness,"}, {"key": "ma183:7.7", "p": "有惡欲不息惡欲，有邪見不息邪見，…", "s": "has evil desires and does not stop evil desires, has wrong view and does not stop wrong view,"}, {"key": "ma183:7.8", "p": "持僧伽梨，我不說是沙門。…", "s": "while wearing the monastic robe, I do not call that one a monk."}, {"key": "ma183:7.9", "p": "若持僧伽梨者，有貪伺息貪伺，有恚息恚，有瞋息瞋，…", "s": "If one wears the monastic robe, and has covetousness and stops covetousness,\nhas aversion and stops aversion, has anger and stops anger,"}, {"key": "ma183:7.10", "p": "有不語息不語，有結息結，有慳息慳，有嫉息嫉，…", "s": "has silence and stops silence, has bondage and stops bondage,"}, {"key": "ma183:7.11", "p": "有諛諂息諛諂，有無慙息無慙，…", "s": "has stinginess and stops stinginess, has envy and stops envy,"}, {"key": "ma183:7.12", "p": "有無愧息無愧，有惡欲息惡欲，…", "s": "has flattery and stops flattery, has shamelessness and stops shamelessness, has fearlessness and stops fearlessness,\nhas evil desires and stops evil desires, ha…"}, {"key": "ma183:7.13", "p": "有邪見息邪見者，彼諸親親朋友往詣而作是說：『賢人！…", "s": "then those close relatives and friends go to him and say:"}, {"key": "ma183:7.14", "p": "汝當學持僧伽梨。賢！…", "s": "'Virtuous one!"}, {"key": "ma183:7.15", "p": "汝學持僧伽梨，有貪伺息貪伺，有恚息恚，…", "s": "You should learn to wear the monastic robe.\nVirtuous one!"}, {"key": "ma183:7.16", "p": "有瞋息瞋，有不語息不語，有結息結，有慳息慳，…", "s": "You learn to wear the monastic robe, and have covetousness and stop covetousness, have aversion and stop aversion,"}, {"key": "ma183:7.17", "p": "有嫉息嫉，有諛諂息諛諂，有無慙息無慙，…", "s": "have anger and stop anger, have silence and stop silence,"}, {"key": "ma183:7.18", "p": "有無愧息無愧，有惡欲息惡欲，有邪見息邪見。…", "s": "have bondage and stop bondage, have stinginess and stop stinginess, have envy and stop envy,\nhave flattery and stop flattery, have shamelessness and stop shamel…"}, {"key": "ma183:7.19", "p": "』若以我見持僧伽梨，有貪伺、恚、瞋、不語、結、慳、…", "s": "have fearlessness and stop fearlessness, have evil desires and stop evil desires, have wrong view and stop wrong view.'"}, {"key": "ma183:7.20", "p": "嫉、諛諂、無慙、無愧、惡欲、邪見，是以我持僧伽梨。…", "s": "If, based on self-view, one wears the monastic robe, and has covetousness, aversion, anger, silence, bondage,"}, {"key": "ma183:7.21", "p": "我說非是沙門。…", "s": "stinginess, envy, flattery, shamelessness, fearlessness, evil desires, wrong view, therefore I wear the monastic robe.\nI say that one is not a monk.\""}]}, {"id": "8", "label": "「如是無衣、編髮、不坐、一食、", "rows": [{"key": "ma183:8.1", "p": "「如是無衣、編髮、不坐、一食、…", "s": "\"In the same way, with nakedness, matted hair, not sitting, eating once a day,"}, {"key": "ma183:8.2", "p": "常揚水、持水，持水者，我說非是沙門。…", "s": "always sprinkling water, carrying water — one who carries water, I say, is not a monk."}, {"key": "ma183:8.3", "p": "若持水，有貪伺息貪伺，有恚息恚，…", "s": "If one carries water, and has covetousness and stops covetousness,"}, {"key": "ma183:8.4", "p": "有瞋息瞋，有不語息不語，…", "s": "has aversion and stops aversion, has anger and stops anger,"}, {"key": "ma183:8.5", "p": "有結息結，有慳息慳，有嫉息嫉，有諛諂息諛諂，…", "s": "has silence and stops silence, has bondage and stops bondage,"}, {"key": "ma183:8.6", "p": "有無慙息無慙，有無愧息無愧，有惡欲息惡欲，…", "s": "has stinginess and stops stinginess, has envy and stops envy, has flattery and stops flattery,\nhas shamelessness and stops shamelessness, has fearlessness and s…"}, {"key": "ma183:8.7", "p": "有邪見息邪見，彼諸親親朋友往詣而作是說：『賢！…", "s": "has evil desires and stops evil desires, has wrong view and stops wrong view,"}, {"key": "ma183:8.8", "p": "汝當持水。…", "s": "then those close relatives and friends go to him and say:"}, {"key": "ma183:8.9", "p": "持水已，有貪伺息貪伺，有恚息恚，有瞋息瞋，…", "s": "'Virtuous one!"}, {"key": "ma183:8.10", "p": "有不語息不語，有結息結，有慳息慳，…", "s": "You should carry water."}, {"key": "ma183:8.11", "p": "有嫉息嫉，有諛諂息諛諂，有無慙息無慙，…", "s": "Having carried water, you have covetousness and stop covetousness, have aversion and stop aversion,"}, {"key": "ma183:8.12", "p": "有無愧息無愧，有惡欲息惡欲，有邪見息邪見。…", "s": "have anger and stop anger, have silence and stop silence,\nhave bondage and stop bondage, have stinginess and stop stinginess,"}, {"key": "ma183:8.13", "p": "』若以我見持水，貪伺、恚、…", "s": "have envy and stop envy, have flattery and stop flattery, have shamelessness and stop shamelessness,"}, {"key": "ma183:8.14", "p": "瞋、不語、結、慳、嫉、諛諂、…", "s": "have fearlessness and stop fearlessness, have evil desires and stop evil desires, have wrong view and stop wrong view.'"}, {"key": "ma183:8.15", "p": "無慙、無愧、有惡欲、有邪見、…", "s": "If, based on self-view, one carries water, and has covetousness, aversion, anger, silence, bondage, stinginess, envy,"}, {"key": "ma183:8.16", "p": "是以持水者，我說不是沙門。…", "s": "flattery, shamelessness, fearlessness, evil desires, wrong view,"}, {"key": "ma183:8.17", "p": "是謂非沙門道跡，非是沙門。…", "s": "therefore one carries water, I say that one is not a monk.\nThis is called the non-monastic path, not a monk.\""}]}, {"id": "9", "label": "「云何沙門道跡，非不沙門？", "rows": [{"key": "ma183:9.1", "p": "「云何沙門道跡，非不沙門？…", "s": "\"What is the monastic path, and not non-monastic?"}, {"key": "ma183:9.2", "p": "若有貪伺息貪伺，有恚息恚，有瞋息瞋，有不語息不語，…", "s": "If one has covetousness and stops covetousness, has aversion and stops aversion,"}, {"key": "ma183:9.3", "p": "有結息結，有慳息慳，有嫉息嫉，…", "s": "has anger and stops anger, has silence and stops silence,"}, {"key": "ma183:9.4", "p": "有諛諂息諛諂，有無慙息無慙，…", "s": "has bondage and stops bondage, has stinginess and stops stinginess, has envy and stops envy,"}, {"key": "ma183:9.5", "p": "有無愧息無愧，有惡欲息惡欲，…", "s": "has flattery and stops flattery, has shamelessness and stops shamelessness,"}, {"key": "ma183:9.6", "p": "有邪見息邪見，此沙門嫉、沙門諛諂、…", "s": "has fearlessness and stops fearlessness, has evil desires and stops evil desires,"}, {"key": "ma183:9.7", "p": "沙門詐偽、沙門曲，趣至惡處盡已，…", "s": "has wrong view and stops wrong view — this monk's envy,"}, {"key": "ma183:9.8", "p": "學沙門道跡，非不沙門。…", "s": "monk's flattery, monk's deceit, monk's crookedness,"}, {"key": "ma183:9.9", "p": "是謂沙門道跡，非不沙門。…", "s": "having gone to the evil state and ceased, one learns the monastic path, not non-monastic.\nThis is called the monastic path, not non-monastic.\""}]}, {"id": "10", "label": "「彼如是成就戒，身清淨，口、意清淨，", "rows": [{"key": "ma183:10.1", "p": "「彼如是成就戒，身清淨，口、意清淨，…", "s": "\"Thus, being accomplished in virtuous behavior, pure in body, pure in speech and mind,"}, {"key": "ma183:10.2", "p": "無有貪伺，心中無恚，無有睡眠，…", "s": "without covetousness, without aversion in the mind, without drowsiness, without restlessness and arrogance,"}, {"key": "ma183:10.3", "p": "無掉憍慠，斷疑度惑，正念正智，…", "s": "having cut off doubt and crossed over perplexity, with right mindfulness and right understanding,"}, {"key": "ma183:10.4", "p": "無有愚癡，彼心與慈俱，遍滿一方成就遊。…", "s": "without ignorance, that mind, together with loving-kindness, pervades one direction and abides."}, {"key": "ma183:10.5", "p": "如是二三四方、四維上下，…", "s": "In the same way, the second, third, fourth directions, the four quarters,\nabove and below, everywhere entirely, the mind, together with loving-kindness,"}, {"key": "ma183:10.6", "p": "普周一切，心與慈俱，無結無怨，…", "s": "without bondage, without enmity, without aversion, without conflict,"}, {"key": "ma183:10.7", "p": "無恚無諍，極廣甚大，無量善修，遍滿一切世間成就遊。…", "s": "extremely vast and great, immeasurable, well-cultivated, pervades the entire world and abides."}, {"key": "ma183:10.8", "p": "如是悲、喜心與捨俱，無結無怨，無恚無諍，…", "s": "In the same way, with compassion, altruistic joy, and equanimity, without bondage, without enmity, without aversion,"}, {"key": "ma183:10.9", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。…", "s": "without conflict, extremely vast and great, immeasurable, well-cultivated, pervades the entire world and abides."}, {"key": "ma183:10.10", "p": "彼作是念：『有麤、有妙、有想，來上出要，知如真。…", "s": "That one thinks:\n'There is the coarse, there is the subtle, there is perception, and the escape beyond, known as it really is.'"}, {"key": "ma183:10.11", "p": "』彼如是知、如是見已，…", "s": "Having thus known and seen, then the mind is liberated from the taint of sensual desire,"}, {"key": "ma183:10.12", "p": "則欲漏心解脫，有漏、無明漏心解脫，…", "s": "the mind is liberated from the taint of existence and the taint of ignorance."}, {"key": "ma183:10.13", "p": "解脫已，便知解脫，生已盡，梵行已立，…", "s": "Being liberated, one knows liberation:"}, {"key": "ma183:10.14", "p": "所作已辦，不更受有，知如真。…", "s": "birth is exhausted, the holy life has been established, what had to be done has been done,\nthere is no further state of existence, and one knows it as it really…"}]}, {"id": "11", "label": "「猶去村不遠，有好浴池，", "rows": [{"key": "ma183:11.1", "p": "「猶去村不遠，有好浴池，…", "s": "\"Just as not far from a village there is a fine bathing pool, with clear springs flowing full,"}, {"key": "ma183:11.2", "p": "清泉流盈，翠草被岸，花樹四周。…", "s": "green grass covering the banks, and flowering trees all around."}, {"key": "ma183:11.3", "p": "或於東方有一人來，飢渴疲極，脫衣岸上，…", "s": "From the east a person comes, hungry, thirsty, and utterly exhausted, takes off clothes on the bank,"}, {"key": "ma183:11.4", "p": "入池快浴，去垢除熱，亦除渴乏。…", "s": "enters the pool and bathes comfortably, removing dirt and heat, and also removing thirst and fatigue."}, {"key": "ma183:11.5", "p": "如是南方、西方、北方有一人來，飢渴疲極，…", "s": "In the same way, from the south, west, and north a person comes, hungry, thirsty, and utterly exhausted,"}, {"key": "ma183:11.6", "p": "脫衣岸上，入池快浴，去垢除熱，亦除渴乏。…", "s": "takes off clothes on the bank, enters the pool and bathes comfortably,"}, {"key": "ma183:11.7", "p": "如是，剎利族姓子剃除鬚髮，…", "s": "removing dirt and heat, and also removing thirst and fatigue."}, {"key": "ma183:11.8", "p": "著袈裟衣，至信、捨家、無家、學道，…", "s": "In the same way, a son of a noble family shaves off hair and beard, puts on the monastic robe, with faith,"}, {"key": "ma183:11.9", "p": "內行止，令得內止，內止者，…", "s": "leaves home, becomes homeless, and trains in the path, internally practicing cessation, attaining internal cessation."}, {"key": "ma183:11.10", "p": "我說沙門，說梵志，說聖，說淨浴。…", "s": "One who has internal cessation, I call a monk, a brahmin, a noble one, a pure bather."}, {"key": "ma183:11.11", "p": "如是梵志、居士、工師族姓子剃除鬚髮，…", "s": "In the same way, a son of a brahmin, householder,"}, {"key": "ma183:11.12", "p": "著袈裟衣，至信、捨家、無家、…", "s": "or artisan family shaves off hair and beard, puts on the monastic robe,"}, {"key": "ma183:11.13", "p": "學道，內行止，令得內止，內止者，…", "s": "with faith, leaves home, becomes homeless, and trains in the path,"}, {"key": "ma183:11.14", "p": "我說沙門，說梵志，說聖，說淨浴。…", "s": "internally practicing cessation, attaining internal cessation.\nOne who has internal cessation, I call a monk, a brahmin, a noble one, a pure bather.\""}]}, {"id": "12", "label": "「云何沙門？", "rows": [{"key": "ma183:12.1", "p": "「云何沙門？…", "s": "\"What is a monk?"}, {"key": "ma183:12.2", "p": "謂息止諸惡不善之法、諸漏穢污，為當來有本，…", "s": "It is one who has stilled and stopped all unwholesome and unskillful states, all taints and defilements,\nwhich are the root of future existence, the result of t…"}, {"key": "ma183:12.3", "p": "煩熱苦報，生、老、病、死因，是謂沙門。…", "s": "the cause of birth, aging, sickness, and death."}, {"key": "ma183:12.4", "p": "云何梵志？…", "s": "This is called a monk.\nWhat is a brahmin?"}, {"key": "ma183:12.5", "p": "謂遠離諸惡不善之法、諸漏穢污，為當來有本，…", "s": "It is one who has abandoned all unwholesome and unskillful states, all taints and defilements,\nwhich are the root of future existence, the result of torment and…"}, {"key": "ma183:12.6", "p": "煩熱苦報，生、老、病、死因，是謂梵志。…", "s": "the cause of birth, aging, sickness, and death."}, {"key": "ma183:12.7", "p": "云何為聖？…", "s": "This is called a brahmin.\nWhat is a noble one?"}, {"key": "ma183:12.8", "p": "謂遠離諸惡不善之法、諸漏穢污，為當來有本，…", "s": "It is one who has abandoned all unwholesome and unskillful states, all taints and defilements,"}, {"key": "ma183:12.9", "p": "煩熱苦報，生、老、病、死因，是謂為聖。…", "s": "which are the root of future existence, the result of torment and suffering,\nthe cause of birth, aging, sickness, and death."}, {"key": "ma183:12.10", "p": "云何淨浴？…", "s": "This is called a noble one.\nWhat is a pure bather?"}, {"key": "ma183:12.11", "p": "謂淨浴諸惡不善之法、諸漏穢污，為當來有本，…", "s": "It is one who has cleansed all unwholesome and unskillful states, all taints and defilements,"}, {"key": "ma183:12.12", "p": "煩熱苦報，生、老、病、死因，是謂淨浴。…", "s": "which are the root of future existence, the result of torment and suffering,\nthe cause of birth, aging, sickness, and death."}, {"key": "ma183:12.13", "p": "是謂沙門，是謂梵志，是謂為聖，是謂淨浴。」…", "s": "This is called a pure bather.\nThis is called a monk, this is called a brahmin, this is called a noble one, this is called a pure bather.\""}]}, {"id": "13", "label": "佛說如是。", "rows": [{"key": "ma183:13.1", "p": "佛說如是。…", "s": "The Buddha spoke thus."}, {"key": "ma183:13.2", "p": "彼諸比丘聞佛所說，歡喜奉行。…", "s": "Those monks, having heard what the Buddha said, were delighted and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma215:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma215:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada's Park."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「若拘薩羅王波斯匿所有境界，", "rows": [{"key": "ma215:3.1", "p": "爾時，世尊告諸比丘：「若拘薩羅王波斯匿所有境界，…", "s": "At that time, the Blessed One said to the monks:"}, {"key": "ma215:3.2", "p": "教令所及，彼中拘薩羅王波斯匿最為第一。…", "s": "\"If King Pasenadi of Kosala has any territory under his command and authority,"}, {"key": "ma215:3.3", "p": "拘薩羅王波斯匿者，變易有異，…", "s": "then within that territory King Pasenadi of Kosala is foremost."}, {"key": "ma215:3.4", "p": "多聞聖弟子如是觀則厭彼，…", "s": "But King Pasenadi of Kosala is subject to change and difference."}, {"key": "ma215:3.5", "p": "厭彼已，尚不欲第一，況復下賤？…", "s": "A learned noble disciple, contemplating thus, grows disenchanted with him."}, {"key": "ma215:3.6", "p": "所謂日月境界，光明所照，所照諸方，謂千世界。…", "s": "Having grown disenchanted, he does not even desire what is foremost, still less what is inferior."}, {"key": "ma215:3.7", "p": "此千世界，有千日、千月、千弗于逮、…", "s": "What is called the realm of the sun and moon, the region illuminated by their light,"}, {"key": "ma215:3.8", "p": "千閻浮洲、千拘陀尼洲、千欝單越洲、…", "s": "the directions they illuminate — that is, the thousandfold world-system.\nThis thousandfold world-system has a thousand suns, a thousand moons, a thousand Pubbav…"}, {"key": "ma215:3.9", "p": "千須彌山、千四大王天、千四天王子、…", "s": "a thousand Jambudīpas, a thousand Aparagoyānas, a thousand Uttarakurus,"}, {"key": "ma215:3.10", "p": "千三十三天、千釋天因陀羅、…", "s": "a thousand Mount Sumerus, a thousand heavens of the Four Great Kings, a thousand sons of the Four Great Kings,"}, {"key": "ma215:3.11", "p": "千焰摩天、千須焰摩天子，…", "s": "a thousand heavens of the Thirty-three, a thousand Sakka, lord of the devas,"}, {"key": "ma215:3.12", "p": "千兜率哆天、千兜率哆天子，千化樂天、…", "s": "a thousand Yāma heavens, a thousand sons of the Yāma devas, a thousand Tusita heavens,"}, {"key": "ma215:3.13", "p": "千善化樂天子、千他化樂天、…", "s": "a thousand sons of the Tusita devas, a thousand Nimmānaratī heavens,"}, {"key": "ma215:3.14", "p": "千自在天子，千梵世界及千別梵。…", "s": "a thousand sons of the Nimmānaratī devas, a thousand Paranimmitavasavattī heavens,"}, {"key": "ma215:3.15", "p": "彼中有一梵大梵，富祐作化尊，造眾生父，已有當有。…", "s": "a thousand sons of the Paranimmitavasavattī devas, a thousand Brahmā worlds, and a thousand individual Brahmās."}, {"key": "ma215:3.16", "p": "彼大梵者，變易有異。…", "s": "Among them there is one Great Brahmā, the mighty, the prosperous,\nthe ruler, the creator, the father of all beings who have been and will be."}, {"key": "ma215:3.17", "p": "多聞聖弟子如是觀則厭彼，…", "s": "That Great Brahmā is subject to change and difference."}, {"key": "ma215:3.18", "p": "厭彼已，尚不欲第一，況復下賤？…", "s": "A learned noble disciple, contemplating thus, grows disenchanted with him."}, {"key": "ma215:3.19", "p": "後時此世敗壞，此世敗壞時，眾生生晃昱天中。…", "s": "Having grown disenchanted, he does not even desire what is foremost, still less what is inferior."}, {"key": "ma215:3.20", "p": "彼中有色乘意生，具足一切，支節不減，諸根不壞，…", "s": "Later, when this world dissolves, at the dissolution of this world, beings are reborn in the Ābhassara heaven."}, {"key": "ma215:3.21", "p": "以喜為食，形色清淨，自身光照，飛乘虛空，住彼久遠。…", "s": "There they are made of mind, feeding on joy, self-luminous, traversing the sky, abiding there for a long time."}, {"key": "ma215:3.22", "p": "晃昱天者，變易有異。…", "s": "They are complete in all their limbs, with faculties unimpaired, of pure form, and self-illuminating."}, {"key": "ma215:3.23", "p": "多聞聖弟子如是觀則厭彼，…", "s": "Those Ābhassara devas are subject to change and difference."}, {"key": "ma215:3.24", "p": "厭彼已，尚不欲第一，況復下賤？…", "s": "A learned noble disciple, contemplating thus, grows disenchanted with them.\nHaving grown disenchanted, he does not even desire what is foremost, still less what…"}]}, {"id": "4", "label": "「復次，有四想，有比丘想小、想大、想無量、", "rows": [{"key": "ma215:4.1", "p": "「復次，有四想，有比丘想小、想大、想無量、…", "s": "\"Furthermore, there are four perceptions."}, {"key": "ma215:4.2", "p": "想無所有，眾生如是樂想意解者，變易有異。…", "s": "A monk perceives the small, perceives the great, perceives the immeasurable, perceives nothingness."}, {"key": "ma215:4.3", "p": "多聞聖弟子如是觀則厭彼，…", "s": "Beings who thus delight in and resolve upon perceptions are subject to change and difference."}, {"key": "ma215:4.4", "p": "厭彼已，尚不欲第一，況復下賤？…", "s": "A learned noble disciple, contemplating thus, grows disenchanted with them."}, {"key": "ma215:4.5", "p": "復次有八除處。…", "s": "Having grown disenchanted, he does not even desire what is foremost, still less what is inferior?"}, {"key": "ma215:4.6", "p": "云何為八？…", "s": "Furthermore, there are eight bases of transcendence."}, {"key": "ma215:4.7", "p": "比丘，內有色想，外觀色，少善色惡色，…", "s": "What are the eight?"}, {"key": "ma215:4.8", "p": "彼色除已知、除已見，作如是想：『是謂第一除處。…", "s": "Monks, having internal perception of form, one sees external forms, limited, both beautiful and ugly."}, {"key": "ma215:4.9", "p": "』復次，比丘！…", "s": "Having understood and seen those forms, one perceives thus:\n'This is the first base of transcendence.'"}, {"key": "ma215:4.10", "p": "內有色想，外觀色，無量善色惡色，彼色除已知、…", "s": "Furthermore, monks, having internal perception of form, one sees external forms, unlimited, both beautiful and ugly."}, {"key": "ma215:4.11", "p": "除已見，作如是想：『是謂第二除處。…", "s": "Having understood and seen those forms, one perceives thus:"}, {"key": "ma215:4.12", "p": "』復次，比丘！…", "s": "'This is the second base of transcendence.'"}, {"key": "ma215:4.13", "p": "內無色想，外觀色，少善色惡色，彼色除已知、…", "s": "Furthermore, monks, having no internal perception of form, one sees external forms, limited, both beautiful and ugly."}, {"key": "ma215:4.14", "p": "除已見，作如是想：『是謂第三除處。…", "s": "Having understood and seen those forms, one perceives thus:"}, {"key": "ma215:4.15", "p": "』復次，比丘！…", "s": "'This is the third base of transcendence.'"}, {"key": "ma215:4.16", "p": "內無色想，外觀色，無量善色惡色，彼色除已知、…", "s": "Furthermore, monks, having no internal perception of form, one sees external forms, unlimited, both beautiful and ugly."}, {"key": "ma215:4.17", "p": "除已見，作如是想：『是謂第四除處。』…", "s": "Having understood and seen those forms, one perceives thus:\n'This is the fourth base of transcendence.'"}]}, {"id": "5", "label": "「復次，比丘！", "rows": [{"key": "ma215:5.1", "p": "「復次，比丘！…", "s": "\"Furthermore, monks, having no internal perception of form,"}, {"key": "ma215:5.2", "p": "內無色想，外觀色，青青色，青見青光。…", "s": "one sees external forms, blue, blue in color, blue in appearance, blue in radiance."}, {"key": "ma215:5.3", "p": "猶如青水華，青青色，青見青光。…", "s": "Just like a blue water-lily, blue in color, blue in appearance, blue in radiance."}, {"key": "ma215:5.4", "p": "猶如成就波羅［木＊奈］衣，熟擣磨碾，…", "s": "Just like a finished cloth from Vārāṇasī, well-pounded, well-polished,"}, {"key": "ma215:5.5", "p": "光色悅澤，青青色，青見青光。…", "s": "with a bright and glossy color, blue in color, blue in appearance, blue in radiance."}, {"key": "ma215:5.6", "p": "如是，比丘！…", "s": "So too, monks, having no internal perception of form, one sees external forms, blue, blue in color, blue in appearance,"}, {"key": "ma215:5.7", "p": "內無色想，外觀色，青青色，青見青光，…", "s": "blue in radiance, immeasurable, immeasurable, with a pure mind, a moistened mind, delighting and not loathing."}, {"key": "ma215:5.8", "p": "無量無量，淨意潤意，樂不憎惡。…", "s": "Having understood and seen those forms, one perceives thus:"}, {"key": "ma215:5.9", "p": "彼色除已知、除已見，作如是想：『是謂第五除處。…", "s": "'This is the fifth base of transcendence.'"}, {"key": "ma215:5.10", "p": "』復次，比丘！…", "s": "Furthermore, monks, having no internal perception of form, one sees external forms,"}, {"key": "ma215:5.11", "p": "內無色想，外觀色，黃黃色，黃見黃光。…", "s": "yellow, yellow in color, yellow in appearance, yellow in radiance."}, {"key": "ma215:5.12", "p": "猶如頻頭歌羅華，黃黃色，黃見黃光。…", "s": "Just like a kaṇikāra flower, yellow in color, yellow in appearance, yellow in radiance."}, {"key": "ma215:5.13", "p": "猶如成就波羅［木＊奈］衣，熟擣磨碾，…", "s": "Just like a finished cloth from Vārāṇasī, well-pounded, well-polished,"}, {"key": "ma215:5.14", "p": "光色悅澤，黃黃色，黃見黃光。…", "s": "with a bright and glossy color, yellow in color, yellow in appearance, yellow in radiance."}, {"key": "ma215:5.15", "p": "如是，比丘！…", "s": "So too, monks, having no internal perception of form,"}, {"key": "ma215:5.16", "p": "內無色想，外觀色，黃黃色，黃見黃光，…", "s": "one sees external forms, yellow, yellow in color, yellow in appearance,"}, {"key": "ma215:5.17", "p": "無量無量，淨意潤意，樂不憎惡。…", "s": "yellow in radiance, immeasurable, immeasurable, with a pure mind, a moistened mind, delighting and not loathing."}, {"key": "ma215:5.18", "p": "彼色除已知、除已見，作如是想：『是謂第六除處。』…", "s": "Having understood and seen those forms, one perceives thus:\n'This is the sixth base of transcendence.'"}]}, {"id": "6", "label": "「復次，比丘！", "rows": [{"key": "ma215:6.1", "p": "「復次，比丘！…", "s": "\"Furthermore, monks, having no internal perception of form,"}, {"key": "ma215:6.2", "p": "內無色想，外觀色，赤赤色，赤見赤光。…", "s": "one sees external forms, red, red in color, red in appearance, red in radiance."}, {"key": "ma215:6.3", "p": "猶如加尼歌羅華，赤赤色，赤見赤光。…", "s": "Just like a bandhujīvaka flower, red in color, red in appearance, red in radiance."}, {"key": "ma215:6.4", "p": "猶如成就波羅［木＊奈］衣，熟擣磨碾，…", "s": "Just like a finished cloth from Vārāṇasī, well-pounded, well-polished,"}, {"key": "ma215:6.5", "p": "光色悅澤，赤赤色，赤見赤光。…", "s": "with a bright and glossy color, red in color, red in appearance, red in radiance."}, {"key": "ma215:6.6", "p": "如是，比丘！…", "s": "So too, monks, having no internal perception of form, one sees external forms, red, red in color, red in appearance,"}, {"key": "ma215:6.7", "p": "內無色想，外觀色，赤赤色，赤見赤光，…", "s": "red in radiance, immeasurable, immeasurable, with a pure mind, a moistened mind, delighting and not loathing."}, {"key": "ma215:6.8", "p": "無量無量，淨意潤意，樂不憎惡。…", "s": "Having understood and seen those forms, one perceives thus:"}, {"key": "ma215:6.9", "p": "彼色除已知、除已見，作如是想：『是謂第七除處。…", "s": "'This is the seventh base of transcendence.'"}, {"key": "ma215:6.10", "p": "』復次，比丘！…", "s": "Furthermore, monks, having no internal perception of form, one sees external forms,"}, {"key": "ma215:6.11", "p": "內無色想，外觀色白，白色、白見、…", "s": "white, white in color, white in appearance, white in radiance."}, {"key": "ma215:6.12", "p": "白光；猶如大白，白色、白見、白光；…", "s": "Just like the morning star, white, white in color, white in appearance, white in radiance."}, {"key": "ma215:6.13", "p": "猶如成就波羅［木＊奈］衣熟擣磨碾、…", "s": "Just like a finished cloth from Vārāṇasī, well-pounded, well-polished,"}, {"key": "ma215:6.14", "p": "光色悅澤白，白色、白見、白光。…", "s": "with a bright and glossy color, white, white in color, white in appearance, white in radiance."}, {"key": "ma215:6.15", "p": "如是，比丘！…", "s": "So too, monks, having no internal perception of form,"}, {"key": "ma215:6.16", "p": "內無色想，外觀色白，白色、白見、…", "s": "one sees external forms, white, white in color, white in appearance,"}, {"key": "ma215:6.17", "p": "白光，無量無量淨意、潤意，樂不憎惡。…", "s": "white in radiance, immeasurable, immeasurable, with a pure mind, a moistened mind, delighting and not loathing."}, {"key": "ma215:6.18", "p": "彼色除已知、除已見，作如是想：『是謂第八除處。…", "s": "Having understood and seen those forms, one perceives thus:"}, {"key": "ma215:6.19", "p": "』眾生如是樂除處意解者，變易有異。…", "s": "'This is the eighth base of transcendence.'"}, {"key": "ma215:6.20", "p": "多聞聖弟子如是觀則厭彼，…", "s": "Beings who thus delight in and resolve upon the bases of transcendence are subject to change and difference."}, {"key": "ma215:6.21", "p": "厭彼已，尚不欲第一，況復下賤？…", "s": "A learned noble disciple, contemplating thus, grows disenchanted with them.\nHaving grown disenchanted, he does not even desire what is foremost, still less what…"}]}, {"id": "7", "label": "「復次，有十一切處。", "rows": [{"key": "ma215:7.1", "p": "「復次，有十一切處。…", "s": "Furthermore, there are ten total spheres."}, {"key": "ma215:7.2", "p": "云何為十？…", "s": "What are the ten?\nThere is a bhikkhu who cultivates the sphere of earth as one,"}, {"key": "ma215:7.3", "p": "有比丘無量地處修一，思惟上下諸方不二，…", "s": "contemplating above, below, and all around without duality;"}, {"key": "ma215:7.4", "p": "無量水處，無量火處，無量風處，無量青處，…", "s": "the sphere of water;\nthe sphere of fire;"}, {"key": "ma215:7.5", "p": "無量黃處，無量赤處，無量白處，無量空處，…", "s": "the sphere of wind;\nthe sphere of blue;"}, {"key": "ma215:7.6", "p": "無量識處第十修一，思惟上下諸方不二。…", "s": "the sphere of yellow;"}, {"key": "ma215:7.7", "p": "眾生如是樂一切處意解者，變易有異。…", "s": "the sphere of red;\nthe sphere of white;"}, {"key": "ma215:7.8", "p": "多聞聖弟子如是觀則厭彼，…", "s": "the sphere of infinite space;\nand the sphere of infinite consciousness as the tenth, cultivating each as one,"}, {"key": "ma215:7.9", "p": "厭彼已，尚不欲第一，況復下賤？…", "s": "contemplating above, below, and all around without duality."}, {"key": "ma215:7.10", "p": "是謂第一清淨說，施設最第一，謂我無、…", "s": "Beings who thus delight in the total spheres and attain liberation of mind may experience change and difference.\nA learned noble disciple, contemplating thus, b…"}, {"key": "ma215:7.11", "p": "我不有，及為彼證故，施設於道，…", "s": "Being disenchanted, he does not even desire the highest, let alone what is inferior."}, {"key": "ma215:7.12", "p": "是謂第一外依見處、最依見處，…", "s": "This is called the first pure teaching, the most excellent proclamation, namely:\n'I am not, I do not have,' and for the realization of that, the path is taught."}, {"key": "ma215:7.13", "p": "謂度一切色想，乃至得非有想非無想處成就遊。…", "s": "This is called the first external basis for views, the most excellent basis for views, namely:\ntranscending all perceptions of form,"}, {"key": "ma215:7.14", "p": "是謂於現法中第一，求趣至涅槃，於現法中最施設涅槃，…", "s": "up to attaining and abiding in the sphere of neither perception nor non-perception."}, {"key": "ma215:7.15", "p": "謂六更樂處生、滅、味、離、…", "s": "This is called the foremost in this present life, striving to reach Nibbāna,\nand the most excellent teaching of Nibbāna in this present life, namely:"}, {"key": "ma215:7.16", "p": "慧見如真，及為彼證故，施設於道。…", "s": "seeing the arising, cessation, gratification, danger,\nand escape regarding the six spheres of contact as they truly are, and for the realization of that, the pa…"}]}, {"id": "8", "label": "「復次，有四斷。", "rows": [{"key": "ma215:8.1", "p": "「復次，有四斷。…", "s": "Furthermore, there are four kinds of striving.\nWhat are the four?\nThere is striving that is pleasant but slow, striving that is pleasant and quick,\nstriving tha…"}, {"key": "ma215:8.2", "p": "云何為四？…", "s": "Among these, if there is striving that is pleasant and quick, because it is pleasant and quick, it is called superior.\nAmong these, if there is striving that is…"}, {"key": "ma215:8.3", "p": "有斷樂遲，有斷樂速，有斷苦遲，有斷苦速，…", "s": "and often experiences the arising of lust, experiences that arising of lust.\nHe does not, as it occurs, endure, abandon, dispel, and eliminate it.\nHe is by natu…"}, {"key": "ma215:8.4", "p": "於中若有斷樂遲者，是樂遲故，說下賤。…", "s": "and often experiences the arising of delusion, experiences that arising of delusion.\nHe does not, as it occurs, endure, abandon, dispel, and eliminate it.\nBecau…"}, {"key": "ma215:8.5", "p": "於中若有斷樂欲，若有人習此法初無厭足，…", "s": "What is striving that is pleasant and quick?\nHere, someone who is by nature dominated by lust,\nand often experiences the arising of lust, experiences that arisi…"}, {"key": "ma215:8.6", "p": "若復有人習飲酒者初無厭足，…", "s": "He, as it occurs, endures, abandons, dispels, and eliminates it.\nHe is by nature dominated by delusion,\nand often experiences the arising of delusion, experienc…"}, {"key": "ma215:8.7", "p": "若復有人修習睡眠初無厭足，…", "s": "energy, mindfulness, concentration, and wisdom—and does so with ease.\nThis is called striving that is pleasant and quick.\nWhat is striving that is painful but s…"}, {"key": "ma215:8.8", "p": "是謂比丘若人有習此三法者初無厭足，…", "s": "He is by nature not dominated by anger, and does not often experience the arising of anger,\ndoes not experience that arising of anger.\nHe is by nature not domin…"}, {"key": "ma215:8.9", "p": "亦復不能至滅盡處。…", "s": "energy, mindfulness, concentration, and wisdom—but does so with difficulty.\nThis is called striving that is painful but slow.\nWhat is striving that is painful a…"}, {"key": "ma215:8.10", "p": "是故諸比丘常當捨離此三法不親近之，…", "s": "He is by nature not dominated by anger, and does not often experience the arising of anger,\ndoes not experience that arising of anger.\nHe is by nature not domin…"}, {"key": "ma215:8.11", "p": "如是諸比丘當作是學。…", "s": "energy, mindfulness, concentration, and wisdom—and does so with ease.\nThis is called striving that is painful and quick.\nFurthermore, there are three things tha…"}, {"key": "ma215:8.12", "p": "」爾時諸比丘聞佛所說，歡喜奉行。…", "s": "If a person practices drinking alcohol, it is never enough.\nIf a person practices sleeping, it is never enough.\nThis is called, bhikkhus, if a person practices …"}]}, {"id": "9", "label": "供養、三善根 三痛、", "rows": [{"key": "ma215:9.1", "p": "供養、三善根　　三痛、…", "s": "Offerings, three wholesome roots, three pains, three coverings and disclosures,"}, {"key": "ma215:9.2", "p": "三覆露\n相法、三不覺　　愛敬、無厭足…", "s": "characteristics and phenomena, three unawarenesses, love and respect, and insatiability."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma37:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊瞻波，在恒伽池邊。", "rows": [{"key": "ma37:2.1", "p": "一時，佛遊瞻波，在恒伽池邊。…", "s": "At one time, the Buddha was traveling in Campā, staying by the bank of the Gaggarā Lotus Pond."}]}, {"id": "3", "label": "爾時，世尊月十五日說從解脫時，於比丘眾前敷座而坐。", "rows": [{"key": "ma37:3.1", "p": "爾時，世尊月十五日說從解脫時，於比丘眾前敷座而坐。…", "s": "At that time, on the fifteenth day of the month, the Blessed One was about to recite the Pātimokkha."}, {"key": "ma37:3.2", "p": "世尊坐已，即便入定，以他心智觀察眾心，…", "s": "He spread his seat and sat down before the assembly of monks."}, {"key": "ma37:3.3", "p": "觀眾心已，至初夜竟，默然而坐。…", "s": "Having sat down, he entered concentration and, with his knowledge of others' minds, surveyed the minds of the assembly.\nAfter surveying their minds, he sat in s…"}]}, {"id": "4", "label": "於是，有一比丘即從坐起，", "rows": [{"key": "ma37:4.1", "p": "於是，有一比丘即從坐起，…", "s": "Then a certain monk rose from his seat, arranged his robe over one shoulder,"}, {"key": "ma37:4.2", "p": "偏袒著衣，叉手向佛，白曰：「世尊！…", "s": "raised his joined hands toward the Buddha, and said:\n\"Blessed One, the first watch of the night has ended."}, {"key": "ma37:4.3", "p": "初夜已訖，佛及比丘眾集坐來久，唯願世尊說從解脫。…", "s": "The Buddha and the assembly of monks have been sitting together for a long time."}, {"key": "ma37:4.4", "p": "」爾時，世尊默然不答。…", "s": "May the Blessed One please recite the Pātimokkha.\"\nAt that time, the Blessed One remained silent and did not answer."}]}, {"id": "5", "label": "於是，世尊復至中夜默然而坐。", "rows": [{"key": "ma37:5.1", "p": "於是，世尊復至中夜默然而坐。…", "s": "Then the Blessed One again sat in silence until the middle watch of the night."}, {"key": "ma37:5.2", "p": "彼一比丘再從坐起，偏袒著衣，…", "s": "That same monk rose from his seat a second time, arranged his robe over one shoulder,"}, {"key": "ma37:5.3", "p": "叉手向佛，白曰：「世尊！…", "s": "raised his joined hands toward the Buddha, and said:"}, {"key": "ma37:5.4", "p": "初夜已過，中夜將訖，…", "s": "\"Blessed One, the first watch of the night has passed, and the middle watch is about to end."}, {"key": "ma37:5.5", "p": "佛及比丘眾集坐來久，唯願世尊說從解脫。…", "s": "The Buddha and the assembly of monks have been sitting together for a long time."}, {"key": "ma37:5.6", "p": "」世尊亦再默然不答。…", "s": "May the Blessed One please recite the Pātimokkha.\"\nThe Blessed One again remained silent and did not answer."}]}, {"id": "6", "label": "於是，世尊復至後夜默然而坐。", "rows": [{"key": "ma37:6.1", "p": "於是，世尊復至後夜默然而坐。…", "s": "Then the Blessed One again sat in silence until the last watch of the night."}, {"key": "ma37:6.2", "p": "彼一比丘三從坐起，偏袒著衣，…", "s": "That same monk rose from his seat a third time, arranged his robe over one shoulder,"}, {"key": "ma37:6.3", "p": "叉手向佛，白曰：「世尊！…", "s": "raised his joined hands toward the Buddha, and said:\n\"Blessed One, the first watch of the night has passed, the middle watch has ended, and the last watch is ne…"}, {"key": "ma37:6.4", "p": "初夜既過，中夜復訖，後夜垂盡，將向欲明，…", "s": "Dawn is approaching, and the sun will soon rise."}, {"key": "ma37:6.5", "p": "明出不久，佛及比丘眾集坐極久，唯願世尊說從解脫。」…", "s": "The Buddha and the assembly of monks have been sitting together for an extremely long time.\nMay the Blessed One please recite the Pātimokkha.\""}]}, {"id": "7", "label": "爾時，世尊告彼比丘：「於此眾中，有一比丘已為不淨。", "rows": [{"key": "ma37:7.1", "p": "爾時，世尊告彼比丘：「於此眾中，有一比丘已為不淨。…", "s": "At that time, the Blessed One said to that monk:"}, {"key": "ma37:7.2", "p": "」彼時尊者大目乾連亦在眾中，…", "s": "'In this assembly, there is one monk who has become impure.'"}, {"key": "ma37:7.3", "p": "於是，尊者大目乾連便作是念：…", "s": "At that time, the venerable Mahā-Moggallāna was also in the assembly."}, {"key": "ma37:7.4", "p": "「世尊為何比丘而說此眾中有一比丘已為不淨？…", "s": "Then the venerable Mahā-Moggallāna thought:"}, {"key": "ma37:7.5", "p": "我寧可入如其像定，以如其像定他心之智，觀察眾心。…", "s": "'For which monk did the Blessed One say that in this assembly there is one monk who has become impure?"}, {"key": "ma37:7.6", "p": "」尊者大目乾連即入如其像定，…", "s": "I should enter a concentration of such a kind,"}, {"key": "ma37:7.7", "p": "以如其像定他心之智，觀察眾心，…", "s": "and with the knowledge of others' minds in such a concentration, observe the minds of the assembly.'"}, {"key": "ma37:7.8", "p": "尊者大目乾連便知世尊所為比丘說，…", "s": "The venerable Mahā-Moggallāna then entered a concentration of such a kind,"}, {"key": "ma37:7.9", "p": "此眾中有一比丘已為不淨。…", "s": "and with the knowledge of others' minds in such a concentration, observed the minds of the assembly.\nThe venerable Mahā-Moggallāna then knew for which monk the …"}]}, {"id": "8", "label": "於是，尊者大目乾連即從定起，", "rows": [{"key": "ma37:8.1", "p": "於是，尊者大目乾連即從定起，…", "s": "Then the venerable Mahā-Moggallāna arose from concentration, went to that monk,"}, {"key": "ma37:8.2", "p": "至彼比丘前，牽臂將出，開門置外：…", "s": "took him by the arm and led him out, opened the door and put him outside:"}, {"key": "ma37:8.3", "p": "「癡人遠去，莫於此住，…", "s": "'Foolish person, go far away, do not stay here.\nYou will no longer be allowed to gather with the community of monks."}, {"key": "ma37:8.4", "p": "不復得與比丘眾會，從今已去，非是比丘。…", "s": "From now on, you are not a monk.'"}, {"key": "ma37:8.5", "p": "」閉門下鑰，還詣佛所，稽首佛足，却坐一面，白曰：…", "s": "He closed the door and locked it, then returned to where the Buddha was,\nbowed with his head at the Buddha's feet, sat down to one side, and said:"}, {"key": "ma37:8.6", "p": "「世尊所為比丘說，…", "s": "'The monk for whom the Blessed One said that in this assembly there is one monk who has become impure,"}, {"key": "ma37:8.7", "p": "此眾中有一比丘已為不淨，我已逐出。世尊！…", "s": "I have expelled him.\nBlessed One, the first watch of the night has passed, the middle watch is also over,"}, {"key": "ma37:8.8", "p": "初夜既過，中夜復訖，後夜垂盡，將向欲明，…", "s": "the last watch is nearly finished, dawn is about to come, the light will soon appear."}, {"key": "ma37:8.9", "p": "明出不久，佛及比丘眾集坐極久，唯願世尊說從解脫。」…", "s": "The Buddha and the community of monks have been sitting together for a very long time.\nI only ask that the Blessed One recite the Pātimokkha.'"}]}, {"id": "9", "label": "世尊告曰：「大目乾連！", "rows": [{"key": "ma37:9.1", "p": "世尊告曰：「大目乾連！…"}, {"key": "ma37:9.2", "p": "彼愚癡人當得大罪，觸嬈世尊及比丘眾。…", "s": "The Blessed One said:"}, {"key": "ma37:9.3", "p": "大目乾連，若使如來在不淨眾說從解脫者，…", "s": "'Mahā-Moggallāna, that foolish person will incur a great offense,"}, {"key": "ma37:9.4", "p": "彼人則便頭破七分。…", "s": "having disturbed the Blessed One and the community of monks."}, {"key": "ma37:9.5", "p": "是故大目乾連！…", "s": "Mahā-Moggallāna, if the Tathāgata were to recite the Pātimokkha in an impure assembly,"}, {"key": "ma37:9.6", "p": "汝等從今已後說從解脫，如來不復說從解脫。…", "s": "that person's head would split into seven pieces."}, {"key": "ma37:9.7", "p": "所以者何？…", "s": "Therefore, Mahā-Moggallāna, from now on you should recite the Pātimokkha;"}, {"key": "ma37:9.8", "p": "大目乾連！…", "s": "the Tathāgata will no longer recite the Pātimokkha."}, {"key": "ma37:9.9", "p": "如彼大海，從下至上，周迴漸廣，…", "s": "Why is that?"}, {"key": "ma37:9.10", "p": "均調轉上，以成於岸，其水常滿，未曾流出。…", "s": "Mahā-Moggallāna, just as the great ocean gradually deepens from the shore,"}, {"key": "ma37:9.11", "p": "大目乾連！…", "s": "becoming evenly deeper and forming a bank, its water always full and never overflowing."}, {"key": "ma37:9.12", "p": "我正法、律亦復如是，漸作漸學，漸盡漸教。…", "s": "Mahā-Moggallāna, my Dharma and discipline are also like this:"}, {"key": "ma37:9.13", "p": "大目乾連！…", "s": "gradual practice, gradual learning, gradual completion, gradual teaching."}, {"key": "ma37:9.14", "p": "若我正法、律漸作漸學，漸盡漸教者，…", "s": "Mahā-Moggallāna, that my Dharma and discipline involve gradual practice, gradual learning,"}, {"key": "ma37:9.15", "p": "是謂我正法、律中未曾有法。…", "s": "gradual completion, gradual teaching — this is called an unprecedented quality in my Dharma and discipline."}]}, {"id": "10", "label": "「復次，大目乾連！", "rows": [{"key": "ma37:10.1", "p": "「復次，大目乾連！…"}, {"key": "ma37:10.2", "p": "如大海潮，未曾失時。…", "s": "'Furthermore, Mahā-Moggallāna, just as the tides of the great ocean never miss their time."}, {"key": "ma37:10.3", "p": "大目乾連！…", "s": "Mahā-Moggallāna, my Dharma and discipline are also like this:"}, {"key": "ma37:10.4", "p": "我正法、律亦復如是，為比丘、比丘尼、優婆塞、…", "s": "for monks, nuns, laymen, and laywomen, I have laid down rules of restraint."}, {"key": "ma37:10.5", "p": "優婆私施設禁戒，諸族姓子乃至命盡，終不犯戒。…", "s": "The sons of good families, even until the end of their lives, never transgress these rules."}, {"key": "ma37:10.6", "p": "大目乾連！…"}, {"key": "ma37:10.7", "p": "若我正法、律為比丘、比丘尼、…", "s": "Mahā-Moggallāna, that in my Dharma and discipline, for monks, nuns, laymen,"}, {"key": "ma37:10.8", "p": "優婆塞、優婆私施設禁戒，…", "s": "and laywomen, I have laid down rules of restraint, and the sons of good families,"}, {"key": "ma37:10.9", "p": "諸族姓子乃至命盡，終不犯戒者，…", "s": "even until the end of their lives, never transgress these rules —"}, {"key": "ma37:10.10", "p": "是謂我正法、律中未曾有法。…", "s": "this is called an unprecedented quality in my Dharma and discipline."}]}, {"id": "11", "label": "「復次，大目乾連！", "rows": [{"key": "ma37:11.1", "p": "「復次，大目乾連！…"}, {"key": "ma37:11.2", "p": "如大海水，甚深無底，極廣無邊。…", "s": "'Furthermore, Mahā-Moggallāna, just as the water of the great ocean is very deep,"}, {"key": "ma37:11.3", "p": "大目乾連！…", "s": "without bottom, extremely vast and boundless."}, {"key": "ma37:11.4", "p": "我正法、律亦復如是，諸法甚深，甚深無底，極廣無邊。…", "s": "Mahā-Moggallāna, my Dharma and discipline are also like this:"}, {"key": "ma37:11.5", "p": "大目乾連！…", "s": "the teachings are very deep, without bottom, extremely vast and boundless."}, {"key": "ma37:11.6", "p": "若我正法、律諸法甚深，甚深無底，…", "s": "Mahā-Moggallāna, that in my Dharma and discipline the teachings are very deep, without bottom,"}, {"key": "ma37:11.7", "p": "極廣無邊者，是謂我正法、律中未曾有法。…", "s": "extremely vast and boundless — this is called an unprecedented quality in my Dharma and discipline."}]}, {"id": "12", "label": "「復次，大目乾連！", "rows": [{"key": "ma37:12.1", "p": "「復次，大目乾連！…"}, {"key": "ma37:12.2", "p": "如海水鹹，皆同一味。…", "s": "'Furthermore, Mahā-Moggallāna, just as the water of the sea is salty, all of one taste."}, {"key": "ma37:12.3", "p": "大目乾連！…", "s": "Mahā-Moggallāna, my Dharma and discipline are also like this:"}, {"key": "ma37:12.4", "p": "我正法、律亦復如是，無欲為味，覺味、息味及道味。…"}, {"key": "ma37:12.5", "p": "大目乾連！…", "s": "freedom from desire is the taste, the taste of awakening, the taste of peace, and the taste of the path."}, {"key": "ma37:12.6", "p": "若我正法、律無欲為味，覺味、…", "s": "Mahā-Moggallāna, that in my Dharma and discipline freedom from desire is the taste, the taste of awakening,"}, {"key": "ma37:12.7", "p": "息味及道味者，是謂我正法、律中未曾有法。…", "s": "the taste of peace, and the taste of the path — this is called an unprecedented quality in my Dharma and discipline.'"}]}, {"id": "13", "label": "「復次，大目乾連！", "rows": [{"key": "ma37:13.1", "p": "「復次，大目乾連！…", "s": "“Furthermore, Mahāmaudgalyāyana!"}, {"key": "ma37:13.2", "p": "如大海中多有珍寶，無量璝異，種種珍奇，…", "s": "Just as the great ocean contains many treasures, countless rare and precious things,"}, {"key": "ma37:13.3", "p": "充滿其中，珍寶名者，謂金、銀、水精、…", "s": "various kinds of jewels, filling it completely—the names of these treasures are gold,"}, {"key": "ma37:13.4", "p": "琉璃、摩尼、真珠、碧玉、白珂、車璩、…", "s": "silver, crystal, lapis lazuli, mani, pearls, jade, white agate,"}, {"key": "ma37:13.5", "p": "珊瑚、虎珀、馬瑙、瑇瑁、赤石、琁珠。…", "s": "conch shell, coral, amber, carnelian, tortoiseshell, red stone, and spinel."}, {"key": "ma37:13.6", "p": "大目乾連！…", "s": "Mahāmaudgalyāyana!"}, {"key": "ma37:13.7", "p": "我正法、律亦復如是，多有珍寶，…", "s": "My true Dharma and discipline are likewise, containing many treasures,"}, {"key": "ma37:13.8", "p": "無量璝異，種種珍琦，充滿其中。…", "s": "countless rare and precious things, various kinds of jewels, filling them completely.\nThe names of these treasures are the four establishments of mindfulness,"}, {"key": "ma37:13.9", "p": "珍寶名者，謂四念處、四正勤、四如意足、…", "s": "the four right efforts, the four bases of psychic power,"}, {"key": "ma37:13.10", "p": "五根、五力、七覺支、八支聖道。…", "s": "the five faculties, the five powers, the seven factors of enlightenment, and the eightfold noble path."}, {"key": "ma37:13.11", "p": "大目乾連！…", "s": "Mahāmaudgalyāyana!"}, {"key": "ma37:13.12", "p": "若我正法、律多有珍寶，無量璝異，…", "s": "If my true Dharma and discipline contain many treasures, countless rare and precious things, various kinds of jewels,"}, {"key": "ma37:13.13", "p": "種種珍奇，充滿其中，珍寶名者，謂四念處、…", "s": "filling them completely—the names of these treasures being the four establishments of mindfulness,"}, {"key": "ma37:13.14", "p": "四正勤、四如意足、五根、五力、七覺支、…", "s": "the four right efforts, the four bases of psychic power,"}, {"key": "ma37:13.15", "p": "八支聖道者，是謂我正法、律中未曾有法。…", "s": "the five faculties, the five powers, the seven factors of enlightenment,\nand the eightfold noble path—this is called an unprecedented thing in my true Dharma an…"}]}, {"id": "14", "label": "「復次，大目乾連！", "rows": [{"key": "ma37:14.1", "p": "「復次，大目乾連！…", "s": "“Furthermore, Mahāmaudgalyāyana!"}, {"key": "ma37:14.2", "p": "如大海中，大神所居，大神名者，…", "s": "Just as in the great ocean, great beings dwell—the names of these great beings are asuras, gandharvas,"}, {"key": "ma37:14.3", "p": "謂阿修羅、乾沓惒、羅剎、…", "s": "rākṣasas, makara fish, turtles, crocodiles, varuṇa fish, timiṅgala fish, timiṅgilagala fish."}, {"key": "ma37:14.4", "p": "魚摩竭、龜、鼉、婆留泥、…", "s": "Moreover, the great ocean is very wonderful and extraordinary:"}, {"key": "ma37:14.5", "p": "帝麑、帝麑伽羅、提帝麑伽羅。…", "s": "the bodies of beings there are a hundred yojanas, two hundred yojanas,"}, {"key": "ma37:14.6", "p": "復次，大海中甚奇甚特，眾生身體有百由延，…", "s": "three hundred yojanas, up to seven hundred yojanas, and they all dwell in the sea."}, {"key": "ma37:14.7", "p": "有二百由延，有三百由延，有至七百由延，身皆居海中。…", "s": "Mahāmaudgalyāyana!"}, {"key": "ma37:14.8", "p": "大目乾連！…", "s": "My true Dharma and discipline are likewise:"}, {"key": "ma37:14.9", "p": "我正法、律亦復如是，聖眾大神皆居其中。…", "s": "the great beings of the noble community all dwell within them."}, {"key": "ma37:14.10", "p": "大神名者，謂阿羅訶、向阿羅訶、阿那含、…", "s": "The names of these great beings are arahants, those on the path to arahantship,"}, {"key": "ma37:14.11", "p": "向阿那含、斯陀含、向斯陀含、須陀洹、向須陀洹。…", "s": "non-returners, those on the path to non-return,"}, {"key": "ma37:14.12", "p": "大目乾連！…", "s": "once-returners, those on the path to once-return, stream-enterers, and those on the path to stream-entry."}, {"key": "ma37:14.13", "p": "若我正法、律聖眾大神皆居其中，…", "s": "Mahāmaudgalyāyana!"}, {"key": "ma37:14.14", "p": "大神名者，謂阿羅訶、向阿羅訶、阿那含、…", "s": "If my true Dharma and discipline have the great beings of the noble community dwelling within them—"}, {"key": "ma37:14.15", "p": "向阿那含，斯陀含、向斯陀含、須陀洹、…", "s": "the names of these great beings being arahants, those on the path to arahantship, non-returners,"}, {"key": "ma37:14.16", "p": "向須陀洹者，是謂我正法、律中未曾有法。…", "s": "those on the path to non-return, once-returners, those on the path to once-return, stream-enterers,\nand those on the path to stream-entry—this is called an unpr…"}]}, {"id": "15", "label": "「復次，大目乾連！", "rows": [{"key": "ma37:15.1", "p": "「復次，大目乾連！…", "s": "“Furthermore, Mahāmaudgalyāyana!"}, {"key": "ma37:15.2", "p": "如大海清淨，不受死屍。…", "s": "Just as the great ocean is pure and does not accept a dead corpse."}, {"key": "ma37:15.3", "p": "若有命終者，過夜風便吹著岸上。…", "s": "If someone dies, after a night the wind blows it onto the shore."}, {"key": "ma37:15.4", "p": "大目乾連！…", "s": "Mahāmaudgalyāyana!"}, {"key": "ma37:15.5", "p": "我正法、律亦復如是，聖眾清淨，不受死屍。…", "s": "My true Dharma and discipline are likewise:\nthe noble community is pure and does not accept a dead corpse."}, {"key": "ma37:15.6", "p": "若有不精進人惡生，非梵行稱梵行，非沙門稱沙門，…", "s": "If there is a person who is not diligent, of evil life,"}, {"key": "ma37:15.7", "p": "彼雖隨在聖眾之中，然去聖眾遠，聖眾亦復去離彼遠。…", "s": "who claims to be a celibate though not living the celibate life, who claims to be a renunciant though not a renunciant,"}, {"key": "ma37:15.8", "p": "大目乾連！…", "s": "although he follows along in the noble community,"}, {"key": "ma37:15.9", "p": "若我正法、律聖眾清淨，不受死屍。…", "s": "yet he is far from the noble community, and the noble community is also far from him.\nMahāmaudgalyāyana!"}, {"key": "ma37:15.10", "p": "若有不精進人惡生，非梵行稱梵行，…", "s": "If my true Dharma and discipline have the noble community pure and not accepting a dead corpse—"}, {"key": "ma37:15.11", "p": "非沙門稱沙門，彼雖隨在聖眾之中，…", "s": "if there is a person who is not diligent, of evil life, who claims to be a celibate though not living the celibate life,"}, {"key": "ma37:15.12", "p": "然去聖眾遠，聖眾亦復去離彼遠者，…", "s": "who claims to be a renunciant though not a renunciant,"}, {"key": "ma37:15.13", "p": "是謂我正法、律中未曾有法。…", "s": "although he follows along in the noble community, yet he is far from the noble community,\nand the noble community is also far from him—this is called an unprece…"}]}, {"id": "16", "label": "「復次，大目乾連！", "rows": [{"key": "ma37:16.1", "p": "「復次，大目乾連！…", "s": "“Furthermore, Mahāmaudgalyāyana!"}, {"key": "ma37:16.2", "p": "如彼大海閻浮洲中有五大河，一曰恒伽，…", "s": "Just as in that great ocean, in the Jambudvīpa continent, there are five great rivers:"}, {"key": "ma37:16.3", "p": "二曰搖尤那，三曰舍牢浮，四曰阿夷羅婆提，…", "s": "first, the Ganges;"}, {"key": "ma37:16.4", "p": "五曰摩企，皆入大海，及大海中龍水從空雨墮，…", "s": "second, the Yamunā;\nthird, the Sarabhū;"}, {"key": "ma37:16.5", "p": "渧如車釧，是一切水不能令大海有增減也。…", "s": "fourth, the Aciravatī;"}, {"key": "ma37:16.6", "p": "大目乾連！…", "s": "fifth, the Mahī."}, {"key": "ma37:16.7", "p": "我正法、律亦復如是，…", "s": "They all flow into the great ocean,"}, {"key": "ma37:16.8", "p": "剎利種族姓子剃除鬚髮，著袈裟衣，…", "s": "and also the water of dragons in the great ocean falls from the sky like drops the size of a bracelet.\nAll this water cannot cause the great ocean to increase o…"}, {"key": "ma37:16.9", "p": "至信、捨家、無家、學道，…", "s": "Mahāmaudgalyāyana!"}, {"key": "ma37:16.10", "p": "不移動心解脫，自作證成就遊。…", "s": "My true Dharma and discipline are likewise:"}, {"key": "ma37:16.11", "p": "大目乾連！…", "s": "sons of good family of the kṣatriya caste shave off their hair and beard,"}, {"key": "ma37:16.12", "p": "不移動心解脫，於我正法、律中無增無減，…", "s": "put on the monastic robe, go forth out of faith from home to homelessness, and train in the path.\nThey realize and dwell in the unshakable liberation of mind, h…"}, {"key": "ma37:16.13", "p": "如是梵志種、居士種、工師種族姓子剃除鬚髮，…", "s": "Mahāmaudgalyāyana!"}, {"key": "ma37:16.14", "p": "著袈裟衣，至信、捨家、無家、…", "s": "The unshakable liberation of mind neither increases nor decreases in my true Dharma and discipline."}, {"key": "ma37:16.15", "p": "學道，不移動心解脫，自作證成就遊。…", "s": "Likewise, sons of good family of the brāhmaṇa caste,"}, {"key": "ma37:16.16", "p": "大目乾連！…", "s": "the householder caste, and the artisan caste shave off their hair and beard,\nput on the monastic robe, go forth out of faith from home to homelessness, and trai…"}, {"key": "ma37:16.17", "p": "不移動心解脫，於我正法、律中無增無減。…", "s": "They realize and dwell in the unshakable liberation of mind, having personally attained it."}, {"key": "ma37:16.18", "p": "大目乾連！…", "s": "Mahāmaudgalyāyana!"}, {"key": "ma37:16.19", "p": "若我正法、律剎利種族姓子剃除鬚髮，著袈裟衣，至信、…", "s": "The unshakable liberation of mind neither increases nor decreases in my true Dharma and discipline."}, {"key": "ma37:16.20", "p": "捨家、無家、學道，不移動心解脫，自作證成就遊。…", "s": "Mahāmaudgalyāyana!\nIf in my true Dharma and discipline,"}, {"key": "ma37:16.21", "p": "大目乾連！…", "s": "sons of good family of the kṣatriya caste shave off their hair and beard, put on the monastic robe,"}, {"key": "ma37:16.22", "p": "不移動心解脫，於我正法、律中無增無減，…", "s": "go forth out of faith from home to homelessness, and train in the path,"}, {"key": "ma37:16.23", "p": "如是梵志種、居士種、工師種族姓子剃除鬚髮，…", "s": "realizing and dwelling in the unshakable liberation of mind, having personally attained it—Mahāmaudgalyāyana!"}, {"key": "ma37:16.24", "p": "著袈裟衣，至信、捨家、無家、…", "s": "The unshakable liberation of mind neither increases nor decreases in my true Dharma and discipline.\nLikewise, sons of good family of the brāhmaṇa caste, the hou…"}, {"key": "ma37:16.25", "p": "學道，不移動心解脫，自作證成就遊。…", "s": "and the artisan caste shave off their hair and beard, put on the monastic robe,"}, {"key": "ma37:16.26", "p": "大目乾連！…", "s": "go forth out of faith from home to homelessness, and train in the path,"}, {"key": "ma37:16.27", "p": "不移動心解脫，於我正法、律中無增無減者，…", "s": "realizing and dwelling in the unshakable liberation of mind, having personally attained it—Mahāmaudgalyāyana!"}, {"key": "ma37:16.28", "p": "是謂我正法、律中未曾有法。」…", "s": "The unshakable liberation of mind neither increases nor decreases in my true Dharma and discipline—\nthis is called an unprecedented thing in my true Dharma and …"}]}, {"id": "17", "label": "佛說如是。", "rows": [{"key": "ma37:17.1", "p": "佛說如是。…", "s": "The Buddha spoke thus."}, {"key": "ma37:17.2", "p": "尊者大目乾連及諸比丘聞佛所說，歡喜奉行。…", "s": "The venerable Mahāmaudgalyāyana and the monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

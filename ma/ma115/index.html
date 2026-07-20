@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma115:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊釋羇瘦，在迦維羅衛。", "rows": [{"key": "ma115:2.1", "p": "一時，佛遊釋羇瘦，在迦維羅衛。…", "s": "At one time, the Buddha was traveling among the Sakyans in the country of the Sakyans, staying at Kapilavatthu."}]}, {"id": "3", "label": "爾時，世尊過夜平旦，著衣持鉢，", "rows": [{"key": "ma115:3.1", "p": "爾時，世尊過夜平旦，著衣持鉢，…", "s": "At that time, the Blessed One, after the night had passed and it was morning,"}, {"key": "ma115:3.2", "p": "為乞食故，入迦維羅衛。…", "s": "put on his robe, took his bowl, and entered Kapilavatthu for alms."}, {"key": "ma115:3.3", "p": "食訖，中後收舉衣鉢，澡洗手足，以尼師壇著於肩上，…", "s": "After eating, when the meal was over, he put away his robe and bowl, washed his hands and feet,"}, {"key": "ma115:3.4", "p": "往詣竹林釋迦寺中，入彼大林，…", "s": "placed his sitting cloth on his shoulder, and went to the Sakyan monastery in the bamboo grove."}, {"key": "ma115:3.5", "p": "至一樹下敷尼師檀，結加趺坐。…", "s": "Entering that great grove, he spread his sitting cloth at the foot of a tree and sat down cross-legged."}]}, {"id": "4", "label": "於是，執杖釋拄杖而行，中後彷徉，往詣佛所，", "rows": [{"key": "ma115:4.1", "p": "於是，執杖釋拄杖而行，中後彷徉，往詣佛所，…", "s": "Then a Sakyan named Dandapani, leaning on a staff, was walking about after the meal."}, {"key": "ma115:4.2", "p": "共相問訊，拄杖立佛前，問世尊曰：「沙門瞿曇！…", "s": "He approached the Buddha, exchanged greetings, and, leaning on his staff, stood before the Buddha."}, {"key": "ma115:4.3", "p": "以何為宗本？…", "s": "He asked the Blessed One:"}, {"key": "ma115:4.4", "p": "說何等法？」…", "s": "'Venerable Gotama, what is your fundamental principle?\nWhat teaching do you proclaim?'"}]}, {"id": "5", "label": "世尊答曰：「釋！", "rows": [{"key": "ma115:5.1", "p": "世尊答曰：「釋！…", "s": "The Blessed One replied:"}, {"key": "ma115:5.2", "p": "若一切世間，天及魔、梵、沙門、梵志，…", "s": "'Sakyan!"}, {"key": "ma115:5.3", "p": "從人至天，使不鬪諍，修習離欲清淨梵志，…", "s": "If in all the world, with its devas, Mara, Brahma, ascetics, and brahmins,\nfrom humans to devas, one causes no quarrels, cultivates detachment,"}, {"key": "ma115:5.4", "p": "捨離諂曲，除悔，不著有、非有，…", "s": "is a pure brahmin, abandons flattery, removes remorse, does not cling to existence or non-existence,"}, {"key": "ma115:5.5", "p": "亦無想，是我宗本；說亦如是。」…", "s": "and has no perceptions—that is my fundamental principle;\nsuch is the teaching I proclaim.'"}]}, {"id": "6", "label": "於是，執杖釋聞佛所說，不是不非，執杖釋奮頭而去。", "rows": [{"key": "ma115:6.1", "p": "於是，執杖釋聞佛所說，不是不非，執杖釋奮頭而去。…", "s": "Then the Sakyan Dandapani, having heard what the Buddha said, neither approved nor disapproved.\nShaking his head, he left."}]}, {"id": "7", "label": "於是，世尊執杖釋去後不久，", "rows": [{"key": "ma115:7.1", "p": "於是，世尊執杖釋去後不久，…"}, {"key": "ma115:7.2", "p": "則於晡時，從燕坐起，往詣講堂，…", "s": "Then, not long after the staff-bearing Sakyan had left, in the afternoon, the Blessed One rose from his meditation,"}, {"key": "ma115:7.3", "p": "比丘眾前敷座而坐，告諸比丘：…"}, {"key": "ma115:7.4", "p": "「我今平旦著衣持鉢，為乞食故，入迦維羅衛。…", "s": "went to the lecture hall, spread his seat before the community of monks, and sat down."}, {"key": "ma115:7.5", "p": "食訖，中後收舉衣鉢，澡洗手足，以尼師檀著於肩上，…"}, {"key": "ma115:7.6", "p": "往詣竹林釋迦寺中，入彼大林，…", "s": "He addressed the monks:"}, {"key": "ma115:7.7", "p": "至一樹下敷尼師檀，結跏趺坐。…"}, {"key": "ma115:7.8", "p": "於是，執杖釋拄杖而行，中後彷徉，來詣我所，…", "s": "'This morning, I put on my robe, took my bowl, and entered Kapilavatthu for alms."}, {"key": "ma115:7.9", "p": "共相問訊，拄杖立我前，問我曰：『沙門瞿曇！…"}, {"key": "ma115:7.10", "p": "以何為宗本？…", "s": "After eating, I put away my robe and bowl, washed my hands and feet,"}, {"key": "ma115:7.11", "p": "說何等法？…"}, {"key": "ma115:7.12", "p": "』我答曰：『釋！…", "s": "placed my sitting cloth on my shoulder, and went to the Sakyan Bamboo Grove monastery."}, {"key": "ma115:7.13", "p": "若一切世間，天及魔、梵、沙門、梵志，…"}, {"key": "ma115:7.14", "p": "從人至天，使不鬪諍，修習離欲清淨梵志，…", "s": "Entering that great forest, I spread my sitting cloth at the foot of a tree and sat down cross-legged."}, {"key": "ma115:7.15", "p": "捨離諂曲，除悔，不著有、非有，…"}, {"key": "ma115:7.16", "p": "亦無想，是我宗本；說亦如是。…", "s": "Then the staff-bearing Sakyan, walking with a staff, came wandering by in the afternoon."}, {"key": "ma115:7.17", "p": "』彼執杖釋聞我所說，不是不非，執杖釋奮頭而去。」…", "s": "He approached me, exchanged greetings, stood before me leaning on his staff, and asked me:"}]}, {"id": "8", "label": "於是，有一比丘即從坐起，", "rows": [{"key": "ma115:8.1", "p": "於是，有一比丘即從坐起，…", "s": "Then a certain monk rose from his seat, arranged his robe over one shoulder,"}, {"key": "ma115:8.2", "p": "偏袒著衣，叉手向佛，白曰：「世尊！…", "s": "raised his hands in salutation to the Buddha, and said:"}, {"key": "ma115:8.3", "p": "云何一切世間，天及魔、梵、…", "s": "'Bhante!\nHow does one make all the world, with its devas, Māras, Brahmās,"}, {"key": "ma115:8.4", "p": "沙門、梵志，從人至天，使不鬪諍？…", "s": "ascetics, and brahmins, from humans to devas, free from conflict?"}, {"key": "ma115:8.5", "p": "云何修習離欲，得清淨梵志？…", "s": "How does one cultivate detachment and attain purity as a true brahmin?"}, {"key": "ma115:8.6", "p": "云何捨離諂曲，除悔，不著有、非有，亦無想耶？」…", "s": "How does one abandon flattery and deceit, remove remorse,\nand not cling to existence or non-existence, and be without perception?'"}]}, {"id": "9", "label": "世尊告曰：「比丘！", "rows": [{"key": "ma115:9.1", "p": "世尊告曰：「比丘！…", "s": "The Blessed One said:"}, {"key": "ma115:9.2", "p": "若人所因念，出家學道，思想修習，及過去、未來、…", "s": "'Monks!\nWhatever thoughts a person has, when they go forth into the homeless life,"}, {"key": "ma115:9.3", "p": "今現在法，不愛、不樂、不著、不住，是說苦邊欲使，…", "s": "train their mind, and cultivate—whether regarding past, future, or present phenomena—if they do not love, delight in,"}, {"key": "ma115:9.4", "p": "恚使、有使、慢使、無明使、見使、疑使、鬪諍、憎嫉、…", "s": "cling to, or dwell upon them, this is said to be the end of suffering.\nThe underlying tendencies of sensual desire, aversion, existence, conceit, ignorance, vie…"}, {"key": "ma115:9.5", "p": "諛諂、欺誑、妄言、兩舌及無量惡不善之法，是說苦邊。」…", "s": "conflict, hatred, jealousy, flattery, deceit, false speech, divisive speech,\nand countless unwholesome and evil states—this is said to be the end of suffering.'"}]}, {"id": "10", "label": "佛說如是，即從坐起，入室燕坐。", "rows": [{"key": "ma115:10.1", "p": "佛說如是，即從坐起，入室燕坐。…", "s": "Having spoken thus, the Buddha rose from his seat and entered his dwelling for meditation."}]}, {"id": "11", "label": "於是，諸比丘便作是念：「諸賢！", "rows": [{"key": "ma115:11.1", "p": "於是，諸比丘便作是念：「諸賢！…"}, {"key": "ma115:11.2", "p": "當知世尊略說此義，不廣分別，即從坐起，入室燕坐。…"}, {"key": "ma115:11.3", "p": "『若人所因念，出家學道，思想修習，及過去、未來、…"}, {"key": "ma115:11.4", "p": "今現在法，不愛、不樂、不著、不住，是說苦邊。…", "s": "Then the monks thought:"}, {"key": "ma115:11.5", "p": "欲使、恚使、有使、慢使、無明使、見使、疑使、鬪諍、…"}, {"key": "ma115:11.6", "p": "憎嫉、諛諂、欺誑、妄言、…"}, {"key": "ma115:11.7", "p": "兩舌及無量惡不善之法，是說苦邊。…", "s": "'Venerable friends!"}, {"key": "ma115:11.8", "p": "』」彼復作是念：「諸賢！…"}, {"key": "ma115:11.9", "p": "誰能廣分別世尊向所略說義？…"}, {"key": "ma115:11.10", "p": "」彼復作是念：「尊者大迦旃延常為世尊之所稱譽，…", "s": "Know that the Blessed One has taught this meaning in brief, without elaborating,"}, {"key": "ma115:11.11", "p": "及諸智梵行人，尊者大迦旃延能廣分別世尊向所略說義。諸賢！…"}, {"key": "ma115:11.12", "p": "共往詣尊者大迦旃延所，請說此義；…"}, {"key": "ma115:11.13", "p": "若尊者大迦旃延為分別者，我等當善受持。」…", "s": "and then rose from his seat and entered his dwelling for meditation:"}]}, {"id": "12", "label": "於是，諸比丘往詣尊者大迦旃延所，", "rows": [{"key": "ma115:12.1", "p": "於是，諸比丘往詣尊者大迦旃延所，…"}, {"key": "ma115:12.2", "p": "共相問訊，却坐一面，白曰：「尊者大迦旃延！…"}, {"key": "ma115:12.3", "p": "當知世尊略說此義，不廣分別。…"}, {"key": "ma115:12.4", "p": "即從坐起，入室燕坐。…", "s": "Then the monks went to the venerable Mahākaccāna, exchanged greetings, sat down to one side, and said:"}, {"key": "ma115:12.5", "p": "『比丘！…"}, {"key": "ma115:12.6", "p": "若人所因念，出家學道，思想修習，及過去、未來、…"}, {"key": "ma115:12.7", "p": "今現在法，不愛、不樂、不著、不住，是說苦邊。…"}, {"key": "ma115:12.8", "p": "欲使、恚使、有使、慢使、無明使、見使、疑使、鬪諍、…", "s": "'Venerable Mahākaccāna!"}, {"key": "ma115:12.9", "p": "憎嫉、諛諂、欺誑、妄言、…"}, {"key": "ma115:12.10", "p": "兩舌及無量惡不善之法，是說苦邊。…"}, {"key": "ma115:12.11", "p": "』我等便作是念：『諸賢！…"}, {"key": "ma115:12.12", "p": "誰能廣分別世尊向所略說義？…", "s": "Know that the Blessed One has taught this meaning in brief, without elaborating,"}, {"key": "ma115:12.13", "p": "』我等復作是念：『尊者大迦旃延常為世尊之所稱譽，…"}, {"key": "ma115:12.14", "p": "及諸智梵行人，尊者大迦旃延能廣分別世尊向所略說義。…"}, {"key": "ma115:12.15", "p": "』唯願尊者大迦旃延為慈愍故而廣說之。」…", "s": "and then rose from his seat and entered his dwelling for meditation:"}]}, {"id": "13", "label": "爾時，尊者大迦旃延告曰：「諸賢！", "rows": [{"key": "ma115:13.1", "p": "爾時，尊者大迦旃延告曰：「諸賢！…", "s": "At that time, the venerable Mahākātyāyana said:"}, {"key": "ma115:13.2", "p": "聽我說喻，慧者聞喻則解其義。諸賢！…", "s": "'Venerables, listen to my simile;"}, {"key": "ma115:13.3", "p": "猶如有人欲得求實，為求實故，…", "s": "a wise person, upon hearing a simile, understands its meaning."}, {"key": "ma115:13.4", "p": "持斧入林，彼見大樹成根、莖、…", "s": "Venerables, it is like someone who wants to obtain fruit,"}, {"key": "ma115:13.5", "p": "節、枝、葉、華、實，彼人不觸根、…", "s": "and for the sake of obtaining fruit, takes an axe and enters a forest."}, {"key": "ma115:13.6", "p": "莖、節、實，但觸枝、葉。…", "s": "He sees a great tree with roots, trunk, joints, branches, leaves, flowers, and fruit,"}, {"key": "ma115:13.7", "p": "諸賢所說亦復如是，世尊現在，捨來就我而問此義。…", "s": "but he does not touch the roots, trunk, joints, or fruit—he only touches the branches and leaves."}, {"key": "ma115:13.8", "p": "所以者何？諸賢！…", "s": "What the venerables have said is just like this:"}, {"key": "ma115:13.9", "p": "當知世尊是眼、是智、是義、是法、法主、…", "s": "the Blessed One is present, yet you have left him and come to me to ask about this meaning."}, {"key": "ma115:13.10", "p": "法將，說真諦義，現一切義由彼世尊。…", "s": "Why is that?"}, {"key": "ma115:13.11", "p": "諸賢應往詣世尊所而問此義：『世尊！…", "s": "Venerables, you should know that the Blessed One is the eye, is wisdom,"}, {"key": "ma115:13.12", "p": "此云何？…", "s": "is meaning, is the Dharma, the master of the Dharma, the general of the Dharma;"}, {"key": "ma115:13.13", "p": "此何義？…", "s": "he speaks the meaning of true reality and reveals all meanings."}, {"key": "ma115:13.14", "p": "』如世尊說者，諸賢等當善受持。」…", "s": "Therefore, venerables should go to the Blessed One and ask about this meaning:"}]}, {"id": "14", "label": "時，諸比丘白曰：「唯然。", "rows": [{"key": "ma115:14.1", "p": "時，諸比丘白曰：「唯然。…", "s": "At that time, the monks said:"}, {"key": "ma115:14.2", "p": "尊者大迦旃延！…", "s": "\"Yes, Venerable Mahākaccāyana!"}, {"key": "ma115:14.3", "p": "世尊是眼、是智、是義、是法、法主、法將，說真諦義，…", "s": "The Blessed One is the eye, is wisdom, is meaning, is the Dharma, the Lord of the Dharma,"}, {"key": "ma115:14.4", "p": "現一切義由彼世尊，…", "s": "the General of the Dharma, who speaks the truth of the ultimate meaning and reveals all meanings."}, {"key": "ma115:14.5", "p": "我等應往詣世尊所而問此義：『世尊！…", "s": "Because of the Blessed One, we should go to the Blessed One and ask about this meaning:"}, {"key": "ma115:14.6", "p": "此云何？…", "s": "'Blessed One!"}, {"key": "ma115:14.7", "p": "此何義？…", "s": "What is this?"}, {"key": "ma115:14.8", "p": "』如世尊說者，我等當善受持。…", "s": "What is its meaning?'"}, {"key": "ma115:14.9", "p": "然，尊者大迦旃延常為世尊之所稱譽，及諸智梵行人，…", "s": "As the Blessed One speaks, we will accept and uphold it well."}, {"key": "ma115:14.10", "p": "尊者大迦旃延能廣分別世尊向所略說義，…", "s": "However, Venerable Mahākaccāyana is always praised by the Blessed One and by wise and pure practitioners."}, {"key": "ma115:14.11", "p": "唯願尊者大迦旃延為慈愍故而廣說之。」…", "s": "Venerable Mahākaccāyana can extensively explain the meaning that the Blessed One briefly taught.\nWe only ask that Venerable Mahākaccāyana, out of compassion, ex…"}]}, {"id": "15", "label": "尊者大迦旃延告諸比丘：「諸賢等共聽我所說。諸賢！", "rows": [{"key": "ma115:15.1", "p": "尊者大迦旃延告諸比丘：「諸賢等共聽我所說。諸賢！…", "s": "Venerable Mahākaccāyana told the monks:"}, {"key": "ma115:15.2", "p": "緣眼及色，生眼識，三事共會，…", "s": "\"Venerables, listen together to what I say.\nVenerables, dependent on the eye and forms, eye-consciousness arises."}, {"key": "ma115:15.3", "p": "便有更觸，緣更觸便有所覺，…", "s": "When these three things come together, there is contact.\nDependent on contact, there is feeling."}, {"key": "ma115:15.4", "p": "若所覺便想，若所想便思，若所思便念，若所念便分別。…", "s": "What is felt, one perceives.\nWhat is perceived, one intends."}, {"key": "ma115:15.5", "p": "比丘者因是念出家學道，思想修習，此中過去、未來、…", "s": "What is intended, one thinks about."}, {"key": "ma115:15.6", "p": "今現在法，不愛、不樂、不著、不住，是說苦邊。…", "s": "What is thought about, one discriminates.\nA monk, because of that thought, goes forth to train in the path, cultivating reflection."}, {"key": "ma115:15.7", "p": "欲使、恚使、有使、慢使、無明使、見使、疑使、鬪諍、…", "s": "In this, regarding past, future, and present phenomena,\nhe does not love, does not delight, does not cling, does not dwell."}, {"key": "ma115:15.8", "p": "憎嫉、諛諂、欺誑、妄言、…", "s": "This is called the end of suffering.\nThe underlying tendency to sensual desire, the underlying tendency to aversion, the underlying tendency to existence,"}, {"key": "ma115:15.9", "p": "兩舌及無量惡不善之法，是說苦邊。…", "s": "the underlying tendency to conceit, the underlying tendency to ignorance, the underlying tendency to views,\nthe underlying tendency to doubt, quarrels, resentme…"}, {"key": "ma115:15.10", "p": "如是耳、鼻、舌、身緣意及法，…", "s": "and countless unwholesome and unskillful phenomena — this is called the end of suffering."}, {"key": "ma115:15.11", "p": "生意識，三事共會，便有更觸，…", "s": "Likewise, dependent on the ear, nose, tongue, body, mind and phenomena, mind-consciousness arises.\nWhen these three things come together, there is contact."}, {"key": "ma115:15.12", "p": "緣更觸便有所覺，若所覺便想，…", "s": "Dependent on contact, there is feeling.\nWhat is felt, one perceives."}, {"key": "ma115:15.13", "p": "若所想便思，若所思便念，若所念便分別。…", "s": "What is perceived, one intends.\nWhat is intended, one thinks about."}, {"key": "ma115:15.14", "p": "比丘者因是念出家學道，思想修習，此中過去、未來、…", "s": "What is thought about, one discriminates."}, {"key": "ma115:15.15", "p": "今現在法，不愛、不樂、不著、不住，是說苦邊。…", "s": "A monk, because of that thought, goes forth to train in the path, cultivating reflection.\nIn this, regarding past, future, and present phenomena,"}, {"key": "ma115:15.16", "p": "欲使、恚使、有使、慢使、無明使、見使、疑使、鬪諍、…", "s": "he does not love, does not delight, does not cling, does not dwell.\nThis is called the end of suffering."}, {"key": "ma115:15.17", "p": "憎嫉、諛諂、欺誑、妄言、…", "s": "The underlying tendency to sensual desire, the underlying tendency to aversion, the underlying tendency to existence,\nthe underlying tendency to conceit, the un…"}, {"key": "ma115:15.18", "p": "兩舌及無量惡不善之法，是說苦邊。…", "s": "the underlying tendency to doubt, quarrels, resentment, flattery, deceit, false speech, divisive speech,\nand countless unwholesome and unskillful phenomena — th…"}]}, {"id": "16", "label": "「諸賢！", "rows": [{"key": "ma115:16.1", "p": "「諸賢！…"}, {"key": "ma115:16.2", "p": "比丘者，除眼、除色、除眼識，…", "s": "\"Venerables, if a monk, apart from the eye, apart from forms, apart from eye-consciousness,"}, {"key": "ma115:16.3", "p": "有更觸施設更觸者，是處不然。…", "s": "posits contact as a designation for contact, that is not possible."}, {"key": "ma115:16.4", "p": "若不施設更觸，有覺施設覺者，是處不然。…", "s": "If, without designating contact, he posits feeling as a designation for feeling, that is not possible."}, {"key": "ma115:16.5", "p": "若不施設覺，有施設念、…", "s": "If, without designating feeling, he posits thought, going forth to train in the path,"}, {"key": "ma115:16.6", "p": "出家學道、思想修習者，是處不然。…", "s": "and cultivating reflection as designations, that is not possible."}, {"key": "ma115:16.7", "p": "如是耳、鼻、舌、身，除意、除法、…", "s": "Likewise, for the ear, nose, tongue, body, apart from the mind, apart from phenomena,"}, {"key": "ma115:16.8", "p": "除意識，有更觸施設更觸者，是處不然。…", "s": "apart from mind-consciousness, if he posits contact as a designation for contact, that is not possible."}, {"key": "ma115:16.9", "p": "若不施設更觸，有覺施設覺者，是處不然。…", "s": "If, without designating contact, he posits feeling as a designation for feeling, that is not possible."}, {"key": "ma115:16.10", "p": "若不施設覺，有施設念、…", "s": "If, without designating feeling, he posits thought, going forth to train in the path,"}, {"key": "ma115:16.11", "p": "出家學道、思想修習者，是處不然。…", "s": "and cultivating reflection as designations, that is not possible.\""}]}, {"id": "17", "label": "「諸賢！", "rows": [{"key": "ma115:17.1", "p": "「諸賢！…", "s": "\"Venerables, a monk, dependent on the eye, dependent on forms, dependent on eye-consciousness,"}, {"key": "ma115:17.2", "p": "比丘者，因眼、因色、因眼識，…", "s": "if he posits contact as a designation for contact, that is necessarily the case."}, {"key": "ma115:17.3", "p": "有更觸施設更觸者，必有此處。…", "s": "Because of designating contact, if he posits feeling as a designation for feeling, that is necessarily the case."}, {"key": "ma115:17.4", "p": "因施設更觸，有覺施設覺者，必有此處。…", "s": "Because of designating feeling, if he posits thought, going forth to train in the path,"}, {"key": "ma115:17.5", "p": "因施設覺，有施設念、出家學道、…", "s": "and cultivating reflection as designations, that is necessarily the case."}, {"key": "ma115:17.6", "p": "思想修習者，必有此處。…", "s": "Likewise, for the ear, nose, tongue, body, dependent on the mind, dependent on phenomena,"}, {"key": "ma115:17.7", "p": "如是耳、鼻、舌、身，因意、因法、…", "s": "dependent on mind-consciousness, if he posits contact as a designation for contact, that is necessarily the case.\nBecause of designating contact, if he posits f…"}, {"key": "ma115:17.8", "p": "因意識，有更觸施設更觸者，必有此處。…", "s": "Because of designating feeling, if he posits thought, going forth to train in the path,"}, {"key": "ma115:17.9", "p": "因施設更觸，有覺施設覺者，必有此處。…", "s": "and cultivating reflection as designations, that is necessarily the case."}, {"key": "ma115:17.10", "p": "因施設覺，有施設念、出家學道、…", "s": "Venerables, the Blessed One briefly taught this meaning without extensive explanation,"}, {"key": "ma115:17.11", "p": "思想修習者，必有此處。諸賢！…", "s": "then rose from his seat, entered his room, and sat in meditation."}, {"key": "ma115:17.12", "p": "謂世尊略說此義，不廣分別，即從坐起，入室燕坐。…", "s": "'Monks, whatever thought a person has, going forth to train in the path, cultivating reflection, and regarding past,"}, {"key": "ma115:17.13", "p": "『比丘！…", "s": "future, and present phenomena, not loving, not delighting,"}, {"key": "ma115:17.14", "p": "若人所因念，出家學道，思想修習，及過去、未來、…", "s": "not clinging, not dwelling — this is called the end of suffering.\nThe underlying tendency to sensual desire, the underlying tendency to aversion, the underlying…"}, {"key": "ma115:17.15", "p": "今現在法，不愛、不樂、不著、不住，是說苦邊。…", "s": "the underlying tendency to conceit, the underlying tendency to ignorance, the underlying tendency to views,"}, {"key": "ma115:17.16", "p": "欲使、恚使、有使、慢使、無明使、見使、疑使、鬪諍、…", "s": "the underlying tendency to doubt, quarrels, resentment, flattery, deceit, false speech, divisive speech,"}, {"key": "ma115:17.17", "p": "憎嫉、諛諂、欺誑、妄言、…", "s": "and countless unwholesome and unskillful phenomena — this is called the end of suffering.'"}, {"key": "ma115:17.18", "p": "兩舌及無量惡不善之法，是說苦邊。…", "s": "This is the meaning that the Blessed One briefly taught without extensive explanation."}, {"key": "ma115:17.19", "p": "』此世尊略說不廣分別義，我以此句、以此文廣說如是。諸賢！…", "s": "I have extensively explained it with these words and this passage."}, {"key": "ma115:17.20", "p": "可往向佛具陳，若如世尊所說義者，諸賢等便可受持。」…", "s": "Venerables, you may go to the Buddha and report it fully.\nIf it accords with the meaning spoken by the Blessed One, then you may accept and uphold it.\""}]}, {"id": "18", "label": "於是，諸比丘聞尊者大迦旃延所說，", "rows": [{"key": "ma115:18.1", "p": "於是，諸比丘聞尊者大迦旃延所說，…", "s": "Then the monks, having heard what Venerable Mahākaccāyana said, well accepted, upheld, and recited it."}, {"key": "ma115:18.2", "p": "善受持誦，即從坐起，…", "s": "They rose from their seats, circumambulated Venerable Mahākaccāyana three times, and departed."}, {"key": "ma115:18.3", "p": "遶尊者大迦旃延三匝而去，往詣佛所，…", "s": "They went to the Buddha, prostrated at his feet, and sat to one side."}, {"key": "ma115:18.4", "p": "稽首作禮，却坐一面，白曰：「世尊！…", "s": "They said:"}, {"key": "ma115:18.5", "p": "向世尊略說此義，不廣分別，即從坐起，…", "s": "\"Blessed One, earlier the Blessed One briefly taught this meaning without extensive explanation,"}, {"key": "ma115:18.6", "p": "入室宴坐；尊者大迦旃延以此句、以此文而廣說之。」…", "s": "then rose from his seat, entered his room, and sat in meditation.\nVenerable Mahākaccāyana has extensively explained it with these words and this passage.\""}]}, {"id": "19", "label": "世尊聞已，歎曰：「善哉！善哉！", "rows": [{"key": "ma115:19.1", "p": "世尊聞已，歎曰：「善哉！善哉！…", "s": "The Blessed One heard this and exclaimed,"}, {"key": "ma115:19.2", "p": "我弟子中有眼、有智、有法、有義。…", "s": "\"Good!"}, {"key": "ma115:19.3", "p": "所以者何？…", "s": "Good!\nAmong my disciples there are those with vision, wisdom, the Dharma, and its meaning."}, {"key": "ma115:19.4", "p": "謂師為弟子略說此義，不廣分別，…", "s": "Why is that?"}, {"key": "ma115:19.5", "p": "彼弟子以此句、以此文而廣說之。…", "s": "When a teacher briefly explains this teaching to a disciple without elaborating in detail,"}, {"key": "ma115:19.6", "p": "如迦旃延比丘所說，汝等應當如是受持。…", "s": "that disciple can then expand upon it using these words and phrases.\nAs the bhikkhu Kātyāyana has spoken, you should accept and uphold it accordingly."}, {"key": "ma115:19.7", "p": "所以者何？…", "s": "Why?"}, {"key": "ma115:19.8", "p": "以說觀義，應如是也。比丘！…", "s": "Because the meaning of contemplation should be understood in this way."}, {"key": "ma115:19.9", "p": "猶如有人因行無事處、山林樹間，忽得蜜丸，…", "s": "Bhikkhus, it is like a person who, while walking in a secluded place,\na forest, or among trees, suddenly finds a honey-ball;"}, {"key": "ma115:19.10", "p": "隨彼所食而得其味，如是族姓子於我此正法、…", "s": "wherever he eats, he tastes its sweetness."}, {"key": "ma115:19.11", "p": "律，隨彼所觀而得其味，觀眼得味，…", "s": "In the same way, a clansman, in this true Dharma and discipline,"}, {"key": "ma115:19.12", "p": "觀耳、鼻、舌、身，觀意得味。」…", "s": "wherever he contemplates, tastes its sweetness—contemplating the eye, he tastes sweetness;\ncontemplating the ear, nose, tongue, body, and mind, he tastes sweetn…"}]}, {"id": "20", "label": "爾時，尊者阿難執拂侍佛。", "rows": [{"key": "ma115:20.1", "p": "爾時，尊者阿難執拂侍佛。…", "s": "At that time, the venerable Ānanda was standing behind the Buddha, holding a fan."}, {"key": "ma115:20.2", "p": "於是，尊者阿難叉手向佛，白曰：「世尊！…", "s": "Then the venerable Ānanda, with palms together, addressed the Buddha, saying,"}, {"key": "ma115:20.3", "p": "此法名何等？…", "s": "\"Blessed One, what is the name of this teaching?"}, {"key": "ma115:20.4", "p": "我當云何奉持？」…", "s": "How should I uphold it?\""}]}, {"id": "21", "label": "世尊告曰：「阿難！", "rows": [{"key": "ma115:21.1", "p": "世尊告曰：「阿難！…", "s": "The Blessed One replied,"}, {"key": "ma115:21.2", "p": "此法名為蜜丸喻，汝當受持。」…", "s": "\"Ānanda, this teaching is called the Simile of the Honey-ball.\nYou should uphold it.\""}]}, {"id": "22", "label": "於是，世尊告諸比丘：「汝等受此蜜丸喻法，當諷誦讀。", "rows": [{"key": "ma115:22.1", "p": "於是，世尊告諸比丘：「汝等受此蜜丸喻法，當諷誦讀。…", "s": "Then the Blessed One addressed the bhikkhus,"}, {"key": "ma115:22.2", "p": "所以者何？比丘！…", "s": "\"You should accept this teaching of the Simile of the Honey-ball and recite it.\nWhy?"}, {"key": "ma115:22.3", "p": "此蜜丸喻有法有義，梵行之本，趣通趣覺，趣於涅槃。…", "s": "Bhikkhus, this Simile of the Honey-ball contains the Dharma and its meaning;"}, {"key": "ma115:22.4", "p": "若族姓子剃除鬚髮，著袈裟衣，至信、…", "s": "it is the foundation of the holy life, leading to penetration, to awakening, and to Nibbāna.\nIf a clansman shaves off his hair and beard, puts on the monastic r…"}, {"key": "ma115:22.5", "p": "捨家、無家、學道者，當善受持此蜜丸喻。」…", "s": "and with faith goes forth from the home life into homelessness to train,\nhe should well accept and uphold this Simile of the Honey-ball.\""}]}, {"id": "23", "label": "佛說如是。", "rows": [{"key": "ma115:23.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma115:23.2", "p": "尊者阿難及諸比丘聞佛所說，歡喜奉行。…", "s": "The venerable Ānanda and the bhikkhus, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

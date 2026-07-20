@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma177:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊拘樓瘦劒摩瑟曇拘樓都邑。", "rows": [{"key": "ma177:2.1", "p": "一時，佛遊拘樓瘦劒摩瑟曇拘樓都邑。…", "s": "At one time, the Buddha was traveling in the country of the Kurus, at the Kammāssadhamma market town of the Kurus."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：", "rows": [{"key": "ma177:3.1", "p": "爾時，世尊告諸比丘：…", "s": "At that time, the Blessed One said to the monks:"}, {"key": "ma177:3.2", "p": "「我今當為汝等說法，初妙、中妙、…", "s": "\"I shall now teach you the Dharma, which is good in the beginning, good in the middle,"}, {"key": "ma177:3.3", "p": "竟亦妙，有義有文，具足清淨，顯現梵行，名四種說經。…", "s": "and good in the end, with meaning and phrasing, complete and pure, revealing the holy life."}, {"key": "ma177:3.4", "p": "如四種說經分別其義。…", "s": "It is called the discourse on the four kinds of teachings."}, {"key": "ma177:3.5", "p": "諦聽，諦聽，善思念之，我今當說。」…", "s": "Listen carefully, listen carefully, and bear it well in mind.\nI shall now speak.\""}]}, {"id": "4", "label": "時，諸比丘受教而聽。", "rows": [{"key": "ma177:4.1", "p": "時，諸比丘受教而聽。…", "s": "Then the monks, having received the instruction, listened."}]}, {"id": "5", "label": "佛言：「云何四種說經分別其義？", "rows": [{"key": "ma177:5.1", "p": "佛言：「云何四種說經分別其義？…", "s": "The Buddha said:"}, {"key": "ma177:5.2", "p": "若有比丘所行、所相、所標，離欲、離惡不善之法，…", "s": "\"What are the four kinds of teachings that distinguish their meaning?\nIf a monk, by his practice, by his signs, by his marks, having abandoned desire and unwhol…"}, {"key": "ma177:5.3", "p": "有覺、有觀，離生喜、樂，得初禪成就遊。…", "s": "with thought and examination, with joy and happiness born of seclusion, attains and abides in the first jhāna,"}, {"key": "ma177:5.4", "p": "彼不受此行，不念此相、標，唯行欲樂相應念想退轉具。…", "s": "he does not accept this practice, does not think of these signs and marks,\nbut only practices thoughts and reflections connected with sensual pleasures, which a…"}, {"key": "ma177:5.5", "p": "彼比丘應當知，『我生此法，不住、不進，…", "s": "That monk should know:"}, {"key": "ma177:5.6", "p": "亦復不厭，我生此法而令我退，然我此定不得久住。…", "s": "'This state has arisen in me;\nit does not remain, does not progress, and I am not weary of it;"}, {"key": "ma177:5.7", "p": "』彼比丘應如是知。…", "s": "this state that has arisen in me causes me to regress, and this concentration of mine cannot last long.'\nThat monk should know thus."}]}, {"id": "6", "label": "「復次，比丘所行、所相、所標，離欲、離惡不善之法，", "rows": [{"key": "ma177:6.1", "p": "「復次，比丘所行、所相、所標，離欲、離惡不善之法，…", "s": "\"Furthermore, a monk, by his practice, by his signs, by his marks, having abandoned desire and unwholesome states,"}, {"key": "ma177:6.2", "p": "有覺、有觀，離生喜、樂，得初禪成就遊。…", "s": "with thought and examination, with joy and happiness born of seclusion, attains and abides in the first jhāna.\nHe accepts this practice, thinks of these signs a…"}, {"key": "ma177:6.3", "p": "彼受此行，念此相、標，立念如法，令住一意。…", "s": "establishes mindfulness according to the Dharma, and makes the mind unified."}, {"key": "ma177:6.4", "p": "彼比丘應當知，『我生此法，不退、不進，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:6.5", "p": "亦復不厭，我生此法能令我住，而我此定必得久住。…", "s": "it does not regress, does not progress, and I am not weary of it;"}, {"key": "ma177:6.6", "p": "』彼比丘應如是知。…", "s": "this state that has arisen in me enables me to remain, and this concentration of mine will surely last long.'\nThat monk should know thus."}]}, {"id": "7", "label": "「復次，比丘所行、所相、所標，離欲、離惡不善之法，", "rows": [{"key": "ma177:7.1", "p": "「復次，比丘所行、所相、所標，離欲、離惡不善之法，…", "s": "Furthermore, a bhikkhu, in his practice, his signs, and his marks, having abandoned desire and unwholesome states,"}, {"key": "ma177:7.2", "p": "有覺、有觀，離生喜、樂，得初禪成就遊。…", "s": "with directed thought and evaluation, born of seclusion,\nexperiences rapture and pleasure, and attains and abides in the first jhāna."}, {"key": "ma177:7.3", "p": "彼不受此行，不念此相、標，…", "s": "He does not cling to this practice, does not dwell on these signs and marks,"}, {"key": "ma177:7.4", "p": "唯行第二禪相應念想昇進具。…", "s": "but only practices the thoughts and perceptions corresponding to the second jhāna, which lead to progress.\nThat bhikkhu should know:"}, {"key": "ma177:7.5", "p": "彼比丘應當知，『我生此法，不退、不住，…", "s": "'This state has arisen in me;"}, {"key": "ma177:7.6", "p": "亦復不厭，我生此法令我昇進，如是不久當得第二禪。…", "s": "it does not regress, does not remain, and I am not weary of it.\nThis state that has arisen in me causes me to progress;"}, {"key": "ma177:7.7", "p": "』彼比丘應如是知。…", "s": "thus, before long, I will attain the second jhāna.'\nThat bhikkhu should know thus."}]}, {"id": "8", "label": "「復次，比丘所行、所相、所標，離欲、離惡不善之法，", "rows": [{"key": "ma177:8.1", "p": "「復次，比丘所行、所相、所標，離欲、離惡不善之法，…", "s": "Furthermore, a bhikkhu, in his practice, his signs, and his marks, having abandoned desire and unwholesome states,"}, {"key": "ma177:8.2", "p": "有覺、有觀，離生喜、樂，得初離成就遊。…", "s": "with directed thought and evaluation, born of seclusion,\nexperiences rapture and pleasure, and attains and abides in the first jhāna."}, {"key": "ma177:8.3", "p": "彼不受此行，不念此相、標，唯行滅息相應念想無欲具。…", "s": "He does not cling to this practice, does not dwell on these signs and marks,\nbut only practices the thoughts and perceptions corresponding to cessation and desi…"}, {"key": "ma177:8.4", "p": "彼比丘應當知，『我生此法，不退、不住，…", "s": "That bhikkhu should know:\n'This state has arisen in me;"}, {"key": "ma177:8.5", "p": "亦不昇進，我生此法能令我厭，如是不久當得漏盡。…", "s": "it does not regress, does not remain, and does not progress.\nThis state that has arisen in me can cause me to become disenchanted;"}, {"key": "ma177:8.6", "p": "』彼比丘應如是知。…", "s": "thus, before long, I will attain the destruction of the taints.'\nThat bhikkhu should know thus."}]}, {"id": "9", "label": "「復次，比丘所行、所相、所標，覺、觀已息，內靖、", "rows": [{"key": "ma177:9.1", "p": "「復次，比丘所行、所相、所標，覺、觀已息，內靖、…", "s": "Furthermore, a bhikkhu, in his practice, his signs, and his marks,\nwith the stilling of directed thought and evaluation, internally tranquil,"}, {"key": "ma177:9.2", "p": "一心，無覺、無觀，定生喜、樂，得第二禪成就遊。…", "s": "unified, without directed thought or evaluation, born of concentration,\nexperiences rapture and pleasure, and attains and abides in the second jhāna."}, {"key": "ma177:9.3", "p": "彼不受此行，不念此相、標，唯行初禪相應念想退轉具。…", "s": "He does not cling to this practice, does not dwell on these signs and marks,\nbut only practices the thoughts and perceptions corresponding to the first jhāna, w…"}, {"key": "ma177:9.4", "p": "彼比丘應當知，『我生此法，不住、不進，…", "s": "That bhikkhu should know:\n'This state has arisen in me;"}, {"key": "ma177:9.5", "p": "亦復不厭，我生此法而令我退，然我此定不得久住。…", "s": "it does not remain, does not progress, and I am not weary of it.\nThis state that has arisen in me causes me to regress;"}, {"key": "ma177:9.6", "p": "』彼比丘應如是知。…", "s": "moreover, this concentration of mine will not last long.'\nThat bhikkhu should know thus."}]}, {"id": "10", "label": "「復次，比丘所行、所相、所標，覺、觀已息，內靖、", "rows": [{"key": "ma177:10.1", "p": "「復次，比丘所行、所相、所標，覺、觀已息，內靖、…", "s": "Furthermore, a bhikkhu, in his practice, his signs, and his marks,\nwith the stilling of directed thought and evaluation, internally tranquil,"}, {"key": "ma177:10.2", "p": "一心，無覺、無觀，定生喜、樂，得第二禪成就遊。…", "s": "unified, without directed thought or evaluation, born of concentration,\nexperiences rapture and pleasure, and attains and abides in the second jhāna."}, {"key": "ma177:10.3", "p": "彼受此行，念此相、標，立念如法，令住一意。…", "s": "He clings to this practice, dwells on these signs and marks,\nestablishes mindfulness in accordance with the Dhamma, and makes his mind one-pointed."}, {"key": "ma177:10.4", "p": "彼比丘應當知，『我生此法，不退、不進，…", "s": "That bhikkhu should know:\n'This state has arisen in me;"}, {"key": "ma177:10.5", "p": "亦復不厭，我生此法能令我住，而我此定必得久住。…", "s": "it does not regress, does not progress, and I am not weary of it.\nThis state that has arisen in me can cause me to remain;"}, {"key": "ma177:10.6", "p": "』彼比丘應如是知。…", "s": "moreover, this concentration of mine will surely last long.'\nThat bhikkhu should know thus."}]}, {"id": "11", "label": "「復次，比丘所行、所相、所標，覺、觀已息，內靖、", "rows": [{"key": "ma177:11.1", "p": "「復次，比丘所行、所相、所標，覺、觀已息，內靖、…", "s": "Furthermore, a bhikkhu, in his practice, his signs, and his marks,"}, {"key": "ma177:11.2", "p": "一心，無覺、無觀，定生喜、樂，得第二禪成就遊。…", "s": "with the stilling of directed thought and evaluation, internally tranquil,\nunified, without directed thought or evaluation, born of concentration,"}, {"key": "ma177:11.3", "p": "彼不受此行，不念此相、標，…", "s": "experiences rapture and pleasure, and attains and abides in the second jhāna.\nHe does not cling to this practice, does not dwell on these signs and marks,"}, {"key": "ma177:11.4", "p": "唯行第三禪相應念想昇進具。…", "s": "but only practices the thoughts and perceptions corresponding to the third jhāna, which lead to progress."}, {"key": "ma177:11.5", "p": "彼比丘應當知，『我生此法，不退、不住，…", "s": "That bhikkhu should know:\n'This state has arisen in me;"}, {"key": "ma177:11.6", "p": "亦復不厭，我生此法令我昇進，如是不久當得第三禪。…", "s": "it does not regress, does not remain, and I am not weary of it.\nThis state that has arisen in me causes me to progress;"}, {"key": "ma177:11.7", "p": "』彼比丘應如是知。…", "s": "thus, before long, I will attain the third jhāna.'\nThat bhikkhu should know thus."}]}, {"id": "12", "label": "「復次，比丘所行、所相、所標，覺、觀已息，內靖、", "rows": [{"key": "ma177:12.1", "p": "「復次，比丘所行、所相、所標，覺、觀已息，內靖、…", "s": "Furthermore, a bhikkhu, in his practice, his signs, and his marks,\nwith the stilling of directed thought and evaluation, internally tranquil,"}, {"key": "ma177:12.2", "p": "一心，無覺、無觀，定生喜、樂，得第二禪成就遊。…", "s": "unified, without directed thought or evaluation, born of concentration,\nexperiences rapture and pleasure, and attains and abides in the second jhāna."}, {"key": "ma177:12.3", "p": "彼不受此行，不念此相、標，唯行滅息相應念想無欲具。…", "s": "He does not cling to this practice, does not dwell on these signs and marks,\nbut only practices the thoughts and perceptions corresponding to cessation and desi…"}, {"key": "ma177:12.4", "p": "彼比丘應當知，『我生此法，不退、不住，…", "s": "That bhikkhu should know:\n'This state has arisen in me;"}, {"key": "ma177:12.5", "p": "亦不昇進，我生此法能令我厭，如是不久當得漏盡。…", "s": "it does not regress, does not remain, and does not progress.\nThis state that has arisen in me can cause me to become disenchanted;"}, {"key": "ma177:12.6", "p": "』彼比丘應如是知。…", "s": "thus, before long, I will attain the destruction of the taints.'\nThat bhikkhu should know thus."}]}, {"id": "13", "label": "「復次，比丘所行、所相、所標，離於喜欲，捨無求遊，", "rows": [{"key": "ma177:13.1", "p": "「復次，比丘所行、所相、所標，離於喜欲，捨無求遊，…", "s": "Furthermore, a monk's practice, appearance, and sign:"}, {"key": "ma177:13.2", "p": "正念正智而身覺樂，謂聖所說、聖所捨、…", "s": "having abandoned delight and desire, he dwells with equanimity, without seeking,\nwith right mindfulness and clear comprehension, experiencing pleasure in the bo…"}, {"key": "ma177:13.3", "p": "念、樂住、空，得第三禪成就遊。…", "s": "what the noble ones describe as 'the noble one's equanimity, mindfulness,"}, {"key": "ma177:13.4", "p": "彼不受此行，不念此相、標，…", "s": "and abiding in pleasure, the emptiness'—and attains and dwells in the third jhāna.\nHe does not accept this practice, does not attend to this appearance or sign,"}, {"key": "ma177:13.5", "p": "唯行第二禪相應念想退轉具。…", "s": "but only practices the thoughts and perceptions corresponding to the second jhāna, which are the factors of regression."}, {"key": "ma177:13.6", "p": "彼比丘應當知，『我生此法，不住、不進，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:13.7", "p": "亦復不厭，我生此法而令我退，然我此定不得久住。…", "s": "it does not persist, does not progress, and I am not weary of it."}, {"key": "ma177:13.8", "p": "』彼比丘應如是知。…", "s": "This state that has arisen in me causes me to regress, and this concentration of mine will not last long.'\nThat monk should understand thus."}]}, {"id": "14", "label": "「復次，比丘所行、所相、所標，離於喜欲，捨無求遊，", "rows": [{"key": "ma177:14.1", "p": "「復次，比丘所行、所相、所標，離於喜欲，捨無求遊，…", "s": "Furthermore, a monk's practice, appearance, and sign:"}, {"key": "ma177:14.2", "p": "正念正智而身覺樂，謂聖所說、聖所捨、…", "s": "having abandoned delight and desire, he dwells with equanimity, without seeking,\nwith right mindfulness and clear comprehension, experiencing pleasure in the bo…"}, {"key": "ma177:14.3", "p": "念、樂住、空，得第三禪成就遊。…", "s": "what the noble ones describe as 'the noble one's equanimity, mindfulness,\nand abiding in pleasure, the emptiness'—and attains and dwells in the third jhāna."}, {"key": "ma177:14.4", "p": "彼受此行，念此相、標，立念如法，令住一意。…", "s": "He accepts this practice, attends to this appearance and sign,"}, {"key": "ma177:14.5", "p": "彼比丘應當知，『我生此法，不退、不進，…", "s": "establishes mindfulness in accordance with the Dhamma, and makes the mind unified.\nThat monk should know:"}, {"key": "ma177:14.6", "p": "亦復不厭，我生此法能令我住，而我此定必得久住。…", "s": "'This state has arisen in me;\nit does not regress, does not progress, and I am not weary of it."}, {"key": "ma177:14.7", "p": "』彼比丘應如是知。…", "s": "This state that has arisen in me enables me to abide, and this concentration of mine will surely last long.'\nThat monk should understand thus."}]}, {"id": "15", "label": "「復次，比丘所行、所相、所標，離於喜欲，捨無求遊，", "rows": [{"key": "ma177:15.1", "p": "「復次，比丘所行、所相、所標，離於喜欲，捨無求遊，…", "s": "Furthermore, a monk's practice, appearance, and sign:"}, {"key": "ma177:15.2", "p": "正念正智而身覺樂，謂聖所說、聖所捨、…", "s": "having abandoned delight and desire, he dwells with equanimity, without seeking,\nwith right mindfulness and clear comprehension, experiencing pleasure in the bo…"}, {"key": "ma177:15.3", "p": "念、樂住、空，得第三禪成就遊。…", "s": "what the noble ones describe as 'the noble one's equanimity, mindfulness,"}, {"key": "ma177:15.4", "p": "彼不受此行，不念此相、標，…", "s": "and abiding in pleasure, the emptiness'—and attains and dwells in the third jhāna.\nHe does not accept this practice, does not attend to this appearance or sign,"}, {"key": "ma177:15.5", "p": "唯行第四禪相應念想昇進具。…", "s": "but only practices the thoughts and perceptions corresponding to the fourth jhāna, which are the factors of advancement."}, {"key": "ma177:15.6", "p": "彼比丘應當知，『我生此法，不退、不住，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:15.7", "p": "亦復不厭，我生此法令我昇進，如是不久當得第四禪。…", "s": "it does not regress, does not persist, and I am not weary of it."}, {"key": "ma177:15.8", "p": "』彼比丘應如是知。…", "s": "This state that has arisen in me causes me to advance, and before long I will attain the fourth jhāna.'\nThat monk should understand thus."}]}, {"id": "16", "label": "「復次，比丘所行、所相，所標，離於喜欲，捨無求遊，", "rows": [{"key": "ma177:16.1", "p": "「復次，比丘所行、所相，所標，離於喜欲，捨無求遊，…", "s": "Furthermore, a monk's practice, appearance, and sign:"}, {"key": "ma177:16.2", "p": "正念正智而身覺樂，謂聖所說、聖所捨、…", "s": "having abandoned delight and desire, he dwells with equanimity, without seeking,\nwith right mindfulness and clear comprehension, experiencing pleasure in the bo…"}, {"key": "ma177:16.3", "p": "念、樂住、空，得第三禪成就遊。…", "s": "what the noble ones describe as 'the noble one's equanimity, mindfulness,\nand abiding in pleasure, the emptiness'—and attains and dwells in the third jhāna."}, {"key": "ma177:16.4", "p": "彼不受此行，不念此相、標，唯行滅息相應念想無欲具。…", "s": "He does not accept this practice, does not attend to this appearance or sign,\nbut only practices the thoughts and perceptions corresponding to cessation, which …"}, {"key": "ma177:16.5", "p": "彼比丘應當知，『我生此法，不退、不住，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:16.6", "p": "亦不昇進，我生此法能令我厭，如是不久當得漏盡。…", "s": "it does not regress, does not persist, and does not advance.\nThis state that has arisen in me causes me to become disenchanted,"}, {"key": "ma177:16.7", "p": "』彼比丘應如是知。…", "s": "and before long I will attain the destruction of the taints.'\nThat monk should understand thus."}]}, {"id": "17", "label": "「復次，比丘所行、所相、所標，樂滅、苦滅，喜、", "rows": [{"key": "ma177:17.1", "p": "「復次，比丘所行、所相、所標，樂滅、苦滅，喜、…", "s": "Furthermore, a monk's practice, appearance, and sign:"}, {"key": "ma177:17.2", "p": "憂本已滅，不苦不樂、捨、念、清淨，得第四禪成就遊。…", "s": "with the cessation of pleasure and pain, and with the previous disappearance of joy and sorrow,\nhe attains and dwells in the fourth jhāna,"}, {"key": "ma177:17.3", "p": "彼不受此行，不念此相、標，…", "s": "which is neither painful nor pleasant, with equanimity and mindfulness purified."}, {"key": "ma177:17.4", "p": "唯行第三禪相應念想退轉具。…", "s": "He does not accept this practice, does not attend to this appearance or sign,\nbut only practices the thoughts and perceptions corresponding to the third jhāna, …"}, {"key": "ma177:17.5", "p": "彼比丘應當知，『我生此法，不住、不進，…", "s": "That monk should know:"}, {"key": "ma177:17.6", "p": "亦復不厭，我生此法而令我退，然我此定不得久住。…", "s": "'This state has arisen in me;\nit does not persist, does not progress, and I am not weary of it."}, {"key": "ma177:17.7", "p": "』彼比丘應如是知。…", "s": "This state that has arisen in me causes me to regress, and this concentration of mine will not last long.'\nThat monk should understand thus."}]}, {"id": "18", "label": "「復次，比丘所行、所相、所標，樂滅、苦滅，喜、", "rows": [{"key": "ma177:18.1", "p": "「復次，比丘所行、所相、所標，樂滅、苦滅，喜、…", "s": "Furthermore, a monk's practice, appearance, and sign:"}, {"key": "ma177:18.2", "p": "憂本已滅，不苦不樂、捨、念、清淨，得第四禪成就遊。…", "s": "with the cessation of pleasure and pain, and with the previous disappearance of joy and sorrow,\nhe attains and dwells in the fourth jhāna,"}, {"key": "ma177:18.3", "p": "彼受此行，念此相、標，立念如法，令住一意。…", "s": "which is neither painful nor pleasant, with equanimity and mindfulness purified.\nHe accepts this practice, attends to this appearance and sign,"}, {"key": "ma177:18.4", "p": "彼比丘應當知，『我生此法，不退、不進，…", "s": "establishes mindfulness in accordance with the Dhamma, and makes the mind unified.\nThat monk should know:"}, {"key": "ma177:18.5", "p": "亦復不厭，我生此法能令我住，而我此定必得久住。…", "s": "'This state has arisen in me;\nit does not regress, does not progress, and I am not weary of it."}, {"key": "ma177:18.6", "p": "』彼比丘應如是知。…", "s": "This state that has arisen in me enables me to abide, and this concentration of mine will surely last long.'\nThat monk should understand thus."}]}, {"id": "19", "label": "「復次，比丘所行、所相、所標，樂滅、苦滅，喜、", "rows": [{"key": "ma177:19.1", "p": "「復次，比丘所行、所相、所標，樂滅、苦滅，喜、…", "s": "Furthermore, a monk, in his practice, signs, and marks,"}, {"key": "ma177:19.2", "p": "憂本已滅，不苦不樂、捨、念、清淨，得第四禪成就遊。…", "s": "having abandoned pleasure and pain, and with the previous disappearance of joy and grief,\nattains and abides in the fourth jhāna, which is neither painful nor p…"}, {"key": "ma177:19.3", "p": "彼不受此行，不念此相、標，…", "s": "with purity of mindfulness and equanimity.\nHe does not cling to this practice, nor does he attend to these signs and marks,"}, {"key": "ma177:19.4", "p": "唯行無量空處相應念想昇進具。…", "s": "but instead practices the mental state and contemplation that corresponds to the sphere of infinite space,\nprogressing and perfecting it."}, {"key": "ma177:19.5", "p": "彼比丘應當知，『我生此法，不退、不住，亦復不厭，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:19.6", "p": "我生此法令我昇進，如是不久當得無量空處。…", "s": "it does not regress, does not persist, and I am not weary of it.\nThis state that has arisen in me causes me to progress,"}, {"key": "ma177:19.7", "p": "』彼比丘應如是知。…", "s": "and thus before long I will attain the sphere of infinite space.'\nThat monk should understand thus."}]}, {"id": "20", "label": "「復次，比丘所行、所相、所標，樂滅、苦滅，喜、", "rows": [{"key": "ma177:20.1", "p": "「復次，比丘所行、所相、所標，樂滅、苦滅，喜、…", "s": "Furthermore, a monk, in his practice, signs, and marks,\nhaving abandoned pleasure and pain, and with the previous disappearance of joy and grief,"}, {"key": "ma177:20.2", "p": "憂本已滅，不苦不樂、捨、念、清淨，得第四禪成就遊。…", "s": "attains and abides in the fourth jhāna, which is neither painful nor pleasant,\nwith purity of mindfulness and equanimity."}, {"key": "ma177:20.3", "p": "彼不受此行，不念此相、標，唯行滅息相應念想無欲具。…", "s": "He does not cling to this practice, nor does he attend to these signs and marks,\nbut instead practices the mental state and contemplation that corresponds to ce…"}, {"key": "ma177:20.4", "p": "彼比丘應當知，『我生此法，不退、不住，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:20.5", "p": "亦不昇進，我生此法能令我厭，如是不久當得漏盡。…", "s": "it does not regress, does not persist, and does not progress.\nThis state that has arisen in me causes me to become disenchanted,"}, {"key": "ma177:20.6", "p": "』彼比丘應如是知。…", "s": "and thus before long I will attain the destruction of the taints.'\nThat monk should understand thus."}]}, {"id": "21", "label": "「復次，比丘所行、所相、所標，度一切色想，", "rows": [{"key": "ma177:21.1", "p": "「復次，比丘所行、所相、所標，度一切色想，…", "s": "Furthermore, a monk, in his practice, signs, and marks,\nby completely transcending all perceptions of form, by the cessation of perceptions of resistance,"}, {"key": "ma177:21.2", "p": "滅有對想，不念若干想，無量空，是無量空處成就遊。…", "s": "and by not attending to perceptions of diversity,\naware of 'infinite space,' attains and abides in the sphere of infinite space."}, {"key": "ma177:21.3", "p": "彼不受此行，不念此相、標，唯行色樂相應念想退轉具。…", "s": "He does not cling to this practice, nor does he attend to these signs and marks,\nbut instead practices the mental state and contemplation that corresponds to de…"}, {"key": "ma177:21.4", "p": "彼比丘應當知，『我生此法，不住、不進，…", "s": "which is a regressive factor.\nThat monk should know:"}, {"key": "ma177:21.5", "p": "亦復不厭，我生此法而令我退，然我此定不得久住。…", "s": "'This state has arisen in me;\nit does not persist, does not progress, and I am not weary of it."}, {"key": "ma177:21.6", "p": "』彼比丘應如是知。…", "s": "This state that has arisen in me causes me to regress, and indeed this concentration of mine will not last long.'\nThat monk should understand thus."}]}, {"id": "22", "label": "「復次，比丘所行、所相、所標，度一切色想，", "rows": [{"key": "ma177:22.1", "p": "「復次，比丘所行、所相、所標，度一切色想，…", "s": "Furthermore, a monk, in his practice, signs, and marks,"}, {"key": "ma177:22.2", "p": "滅有對想，不念若干想，無量空，是無量空處成就遊。…", "s": "by completely transcending all perceptions of form,\nby the cessation of perceptions of resistance, and by not attending to perceptions of diversity,"}, {"key": "ma177:22.3", "p": "彼受此行，念此相、標，立念如法，令住一意。…", "s": "aware of 'infinite space,' attains and abides in the sphere of infinite space.\nHe clings to this practice, attends to these signs and marks,"}, {"key": "ma177:22.4", "p": "彼比丘應當知，『我生此法，不退、不進，…", "s": "establishes mindfulness in accordance with the Dhamma, and makes the mind abide in one-pointedness.\nThat monk should know:"}, {"key": "ma177:22.5", "p": "亦復不厭，我生此法能令我住，而我此定必得久住。…", "s": "'This state has arisen in me;\nit does not regress, does not progress, and I am not weary of it."}, {"key": "ma177:22.6", "p": "』彼比丘應如是知。…", "s": "This state that has arisen in me causes me to abide, and indeed this concentration of mine will surely last long.'\nThat monk should understand thus."}]}, {"id": "23", "label": "「復次，比丘所行、所相、所標，度一切色想，", "rows": [{"key": "ma177:23.1", "p": "「復次，比丘所行、所相、所標，度一切色想，…", "s": "Furthermore, a monk, in his practice, signs, and marks,"}, {"key": "ma177:23.2", "p": "滅有對想，不念若干想，無量空，是無量空處成就遊。…", "s": "by completely transcending all perceptions of form,\nby the cessation of perceptions of resistance, and by not attending to perceptions of diversity,"}, {"key": "ma177:23.3", "p": "彼不受此行，不念此相、標，…", "s": "aware of 'infinite space,' attains and abides in the sphere of infinite space.\nHe does not cling to this practice, nor does he attend to these signs and marks,"}, {"key": "ma177:23.4", "p": "唯行無量識處相應念想昇進具。…", "s": "but instead practices the mental state and contemplation that corresponds to the sphere of infinite consciousness,\nprogressing and perfecting it."}, {"key": "ma177:23.5", "p": "彼比丘應當知，『我生此法，不退、不住，亦復不厭，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:23.6", "p": "我生此法令我昇進，如是不久當得無量識處。…", "s": "it does not regress, does not persist, and I am not weary of it.\nThis state that has arisen in me causes me to progress,"}, {"key": "ma177:23.7", "p": "』彼比丘應如是知。…", "s": "and thus before long I will attain the sphere of infinite consciousness.'\nThat monk should understand thus."}]}, {"id": "24", "label": "「復次，比丘所行、所相、所標，度一切色想，", "rows": [{"key": "ma177:24.1", "p": "「復次，比丘所行、所相、所標，度一切色想，…", "s": "Furthermore, a monk, in his practice, signs, and marks,\nby completely transcending all perceptions of form, by the cessation of perceptions of resistance,"}, {"key": "ma177:24.2", "p": "滅有對想，不念若干想，無量空，是無量空處成就遊。…", "s": "and by not attending to perceptions of diversity,\naware of 'infinite space,' attains and abides in the sphere of infinite space."}, {"key": "ma177:24.3", "p": "彼不受此行，不念此相、標，唯行滅息相應念想無欲具。…", "s": "He does not cling to this practice, nor does he attend to these signs and marks,\nbut instead practices the mental state and contemplation that corresponds to ce…"}, {"key": "ma177:24.4", "p": "彼比丘應當知，『我生此法，不退、不住，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:24.5", "p": "亦不昇進，我生此法能令我厭，如是不久當得漏盡。…", "s": "it does not regress, does not persist, and does not progress.\nThis state that has arisen in me causes me to become disenchanted,"}, {"key": "ma177:24.6", "p": "』彼比丘應如是知。…", "s": "and thus before long I will attain the destruction of the taints.'\nThat monk should understand thus."}]}, {"id": "25", "label": "「復次，比丘所行、所相、所標，", "rows": [{"key": "ma177:25.1", "p": "「復次，比丘所行、所相、所標，…", "s": "Furthermore, a monk's practice, perception, and sign:"}, {"key": "ma177:25.2", "p": "度一切無量空處，無量識，是無量識處成就遊。…", "s": "having completely transcended the sphere of infinite space, with infinite consciousness,\nhe dwells having attained the sphere of infinite consciousness."}, {"key": "ma177:25.3", "p": "彼不受此行，不念此相、標，…", "s": "He does not accept this practice, does not attend to this perception or sign,"}, {"key": "ma177:25.4", "p": "唯行無量空處相應念想退轉具。…", "s": "but only practices the thought and recollection corresponding to the sphere of infinite space,\nwith the quality of regression."}, {"key": "ma177:25.5", "p": "彼比丘應當知，『我生此法，不住、不進，…", "s": "That monk should know:"}, {"key": "ma177:25.6", "p": "亦復不厭，我生此法而令我退，然我此定不得久住。…", "s": "'This state has arisen in me;\nit does not abide, does not progress, and also does not bring disenchantment."}, {"key": "ma177:25.7", "p": "』彼比丘應如是知。…", "s": "This state that has arisen in me causes me to regress, and this concentration of mine cannot be maintained for long.'\nThat monk should know thus."}]}, {"id": "26", "label": "「復次，比丘所行、所相、所標，", "rows": [{"key": "ma177:26.1", "p": "「復次，比丘所行、所相、所標，…", "s": "Furthermore, a monk's practice, perception, and sign:"}, {"key": "ma177:26.2", "p": "度一切無量空處，無量識，是無量識處成就遊。…", "s": "having completely transcended the sphere of infinite space, with infinite consciousness,\nhe dwells having attained the sphere of infinite consciousness."}, {"key": "ma177:26.3", "p": "彼受此行，念此相、標，立念如法，令住一意。…", "s": "He accepts this practice, attends to this perception and sign,\nestablishes mindfulness in accordance with the Dharma, and makes it abide in one-pointedness."}, {"key": "ma177:26.4", "p": "彼比丘應當知，『我生此法，不退、不進，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:26.5", "p": "亦復不厭，我生此法能令我住，而我此定必得久住。…", "s": "it does not regress, does not progress, and also does not bring disenchantment.\nThis state that has arisen in me is able to make me abide,"}, {"key": "ma177:26.6", "p": "』彼比丘應如是知。…", "s": "and this concentration of mine will certainly be maintained for long.'\nThat monk should know thus."}]}, {"id": "27", "label": "「復次，比丘所行、所相、所標，", "rows": [{"key": "ma177:27.1", "p": "「復次，比丘所行、所相、所標，…", "s": "Furthermore, a monk's practice, perception, and sign:"}, {"key": "ma177:27.2", "p": "度一切無量空處，無量識，是無量識處成就遊。…", "s": "having completely transcended the sphere of infinite space, with infinite consciousness,\nhe dwells having attained the sphere of infinite consciousness."}, {"key": "ma177:27.3", "p": "彼不受此行，不念此相、標，…", "s": "He does not accept this practice, does not attend to this perception or sign,\nbut only practices the thought and recollection corresponding to the sphere of not…"}, {"key": "ma177:27.4", "p": "唯行無所有處相應念想昇進具。…", "s": "with the quality of advancement."}, {"key": "ma177:27.5", "p": "彼比丘應當知，『我生此法，不退、不住，亦復不厭，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:27.6", "p": "我生此法令我昇進，如是不久當得無所有處。…", "s": "it does not regress, does not abide, and also does not bring disenchantment.\nThis state that has arisen in me causes me to advance;"}, {"key": "ma177:27.7", "p": "』彼比丘應如是知。…", "s": "thus before long I will attain the sphere of nothingness.'\nThat monk should know thus."}]}, {"id": "28", "label": "「復次，比丘所行、所相、所標，", "rows": [{"key": "ma177:28.1", "p": "「復次，比丘所行、所相、所標，…", "s": "Furthermore, a monk's practice, perception, and sign:"}, {"key": "ma177:28.2", "p": "度一切無量空處，無量識，是無量識處成就遊。…", "s": "having completely transcended the sphere of infinite space, with infinite consciousness,\nhe dwells having attained the sphere of infinite consciousness."}, {"key": "ma177:28.3", "p": "彼不受此行，不念此相、標，唯行滅息相應念想無欲具。…", "s": "He does not accept this practice, does not attend to this perception or sign,\nbut only practices the thought and recollection corresponding to cessation, with t…"}, {"key": "ma177:28.4", "p": "彼比丘應當知，『我生此法，不退、不住，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:28.5", "p": "亦不昇進，我生此法能令我厭，如是不久當得漏盡。…", "s": "it does not regress, does not abide, and also does not advance.\nThis state that has arisen in me is able to bring me disenchantment;"}, {"key": "ma177:28.6", "p": "』彼比丘應如是知。…", "s": "thus before long I will attain the exhaustion of taints.'\nThat monk should know thus."}]}, {"id": "29", "label": "「復次，比丘所行、所相、所標，", "rows": [{"key": "ma177:29.1", "p": "「復次，比丘所行、所相、所標，…", "s": "Furthermore, a monk's practice, perception, and sign:"}, {"key": "ma177:29.2", "p": "度一切無量識處，無所有，是無所有處成就遊。…", "s": "having completely transcended the sphere of infinite consciousness,\nwith nothingness, he dwells having attained the sphere of nothingness."}, {"key": "ma177:29.3", "p": "彼不受此行，不念此相、標，…", "s": "He does not accept this practice, does not attend to this perception or sign,"}, {"key": "ma177:29.4", "p": "唯行無量識處相應念想退轉具。…", "s": "but only practices the thought and recollection corresponding to the sphere of infinite consciousness,\nwith the quality of regression."}, {"key": "ma177:29.5", "p": "彼比丘應當知，『我生此法，不住、不進，…", "s": "That monk should know:"}, {"key": "ma177:29.6", "p": "亦復不厭，我生此法而令我退，然我此定不得久住。…", "s": "'This state has arisen in me;\nit does not abide, does not progress, and also does not bring disenchantment."}, {"key": "ma177:29.7", "p": "』彼比丘應如是知。…", "s": "This state that has arisen in me causes me to regress, and this concentration of mine cannot be maintained for long.'\nThat monk should know thus."}]}, {"id": "30", "label": "「復次，比丘所行、所相、所標，", "rows": [{"key": "ma177:30.1", "p": "「復次，比丘所行、所相、所標，…", "s": "Furthermore, a monk's practice, perception, and sign:"}, {"key": "ma177:30.2", "p": "度一切無量識處，無所有，是無所有處成就遊。…", "s": "having completely transcended the sphere of infinite consciousness,\nwith nothingness, he dwells having attained the sphere of nothingness."}, {"key": "ma177:30.3", "p": "彼受此行，念此相、標，立念如法，令住一意。…", "s": "He accepts this practice, attends to this perception and sign,\nestablishes mindfulness in accordance with the Dharma, and makes it abide in one-pointedness."}, {"key": "ma177:30.4", "p": "彼比丘應當知，『我生此法，不退、不進，…", "s": "That monk should know:\n'This state has arisen in me;"}, {"key": "ma177:30.5", "p": "亦復不厭，我生此法能令我住，而我此定必得久住。…", "s": "it does not regress, does not progress, and also does not bring disenchantment.\nThis state that has arisen in me is able to make me abide,"}, {"key": "ma177:30.6", "p": "』彼比丘應如是知。…", "s": "and this concentration of mine will certainly be maintained for long.'\nThat monk should know thus."}]}, {"id": "31", "label": "「復次，比丘所行、所相、所標，", "rows": [{"key": "ma177:31.1", "p": "「復次，比丘所行、所相、所標，…", "s": "“Furthermore, a monk’s practice, perception, and object:"}, {"key": "ma177:31.2", "p": "度一切無量識處，無所有，是無所有處成就遊。…", "s": "having transcended the entire sphere of infinite consciousness,\nwith nothing whatsoever, he dwells having attained the sphere of nothingness."}, {"key": "ma177:31.3", "p": "彼不受此行，不念此相、標，…", "s": "He does not accept this practice, does not attend to this perception or object,"}, {"key": "ma177:31.4", "p": "唯行非有想非無想處相應念想昇進具。…", "s": "but only practices the mindfulness and thought corresponding to the sphere of neither perception nor non-perception,\nprogressing upward.\nThat monk should know:"}, {"key": "ma177:31.5", "p": "彼比丘應當知，『我生此法，不退、不住，亦復不厭，…", "s": "‘I have given rise to this state;"}, {"key": "ma177:31.6", "p": "我生此法令我昇進，如是不久當得非有想非無想處。…", "s": "it does not recede, does not remain, and also is not wearying.\nThis state I have given rise to causes me to progress upward."}, {"key": "ma177:31.7", "p": "』彼比丘應如是知。…", "s": "Thus, before long, I will attain the sphere of neither perception nor non-perception.’\nThat monk should know thus."}]}, {"id": "32", "label": "「復次，比丘所行、所相、所標，", "rows": [{"key": "ma177:32.1", "p": "「復次，比丘所行、所相、所標，…", "s": "“Furthermore, a monk’s practice, perception, and object:"}, {"key": "ma177:32.2", "p": "度一切無量識處，無所有，是無所有處成就遊。…", "s": "having transcended the entire sphere of infinite consciousness,\nwith nothing whatsoever, he dwells having attained the sphere of nothingness."}, {"key": "ma177:32.3", "p": "彼不受此行，不念此相、標，唯行厭相應念想無欲具。…", "s": "He does not accept this practice, does not attend to this perception or object,"}, {"key": "ma177:32.4", "p": "彼比丘應當知，『我生此法，不退、…", "s": "but only practices the mindfulness and thought corresponding to disenchantment, without desire.\nThat monk should know:"}, {"key": "ma177:32.5", "p": "不住，亦不昇進，我生此法能令我厭。…", "s": "‘I have given rise to this state;"}, {"key": "ma177:32.6", "p": "如是，不久當得漏盡。…", "s": "it does not recede, does not remain, and also does not progress upward.\nThis state I have given rise to causes me to become disenchanted."}, {"key": "ma177:32.7", "p": "』彼比丘應如是知。…", "s": "Thus, before long, I will attain the exhaustion of taints.’\nThat monk should know thus."}]}, {"id": "33", "label": "「有想有知，齊是得知，", "rows": [{"key": "ma177:33.1", "p": "「有想有知，齊是得知，…", "s": "“There is perception and there is knowing;"}, {"key": "ma177:33.2", "p": "乃至非有想非無想處行餘第一有，…", "s": "up to this point is knowing attained,"}, {"key": "ma177:33.3", "p": "行禪比丘者，從是起當為彼說。」…", "s": "even up to the practice of the sphere of neither perception nor non-perception, the highest existence.\nA monk who practices jhāna, having emerged from that, sho…"}]}, {"id": "34", "label": "佛說如是。", "rows": [{"key": "ma177:34.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma177:34.2", "p": "彼諸比丘聞佛所說，歡喜奉行。…", "s": "Those monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

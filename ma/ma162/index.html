@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma162:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊摩竭陀國，往詣王舍城宿。", "rows": [{"key": "ma162:2.1", "p": "一時，佛遊摩竭陀國，往詣王舍城宿。…", "s": "Once, the Buddha traveled in the land of Magadha and went to stay at the city of Rājagaha."}, {"key": "ma162:2.2", "p": "於是，世尊往至陶家，語曰：「陶師！…", "s": "Then the Blessed One went to a potter's house and said,\n\"Potter!"}, {"key": "ma162:2.3", "p": "我今欲寄陶屋一宿，汝見聽耶？」…", "s": "I wish to lodge in your pottery shed for the night.\nWill you allow it?\""}]}, {"id": "3", "label": "陶師答曰：「我無所違。", "rows": [{"key": "ma162:3.1", "p": "陶師答曰：「我無所違。…", "s": "The potter replied,\n\"I have no objection."}, {"key": "ma162:3.2", "p": "然有一比丘先已住中，若彼聽者，欲住隨意。」…", "s": "But there is already a monk staying there.\nIf he permits it, you may stay as you wish.\""}]}, {"id": "4", "label": "爾時，尊者弗迦邏娑利先已在彼住陶屋中。", "rows": [{"key": "ma162:4.1", "p": "爾時，尊者弗迦邏娑利先已在彼住陶屋中。…", "s": "At that time, the venerable Phagguna was already staying in the pottery shed."}, {"key": "ma162:4.2", "p": "於是，世尊出陶師家入彼陶屋，…", "s": "Then the Blessed One left the potter's house, entered the pottery shed, and said to the venerable Phagguna,"}, {"key": "ma162:4.3", "p": "語尊者弗迦邏娑利曰：「比丘！…", "s": "\"Monk, I wish to lodge in this pottery shed for the night."}, {"key": "ma162:4.4", "p": "我今欲寄陶屋一宿，汝見聽耶？」…", "s": "Will you allow it?\""}]}, {"id": "5", "label": "尊者弗迦邏娑利答曰：「君！", "rows": [{"key": "ma162:5.1", "p": "尊者弗迦邏娑利答曰：「君！…", "s": "The venerable Phagguna replied,"}, {"key": "ma162:5.2", "p": "我無所違。…", "s": "\"Sir, I have no objection."}, {"key": "ma162:5.3", "p": "且此陶屋草座已敷，君欲住者，自可隨意。」…", "s": "Moreover, a grass seat has already been spread in this pottery shed.\nIf you wish to stay, you may do so as you please.\""}]}, {"id": "6", "label": "爾時，世尊從彼陶屋出外洗足訖，", "rows": [{"key": "ma162:6.1", "p": "爾時，世尊從彼陶屋出外洗足訖，…", "s": "Then the Blessed One went outside the pottery shed, washed his feet, returned inside,"}, {"key": "ma162:6.2", "p": "還入內，於草座上敷尼師檀，…", "s": "spread his sitting cloth on the grass seat, sat down cross-legged,"}, {"key": "ma162:6.3", "p": "結跏趺坐，竟夜默然靖坐定意，…", "s": "and remained silently in concentration throughout the night.\nThe venerable Phagguna also remained silently in concentration throughout the night."}, {"key": "ma162:6.4", "p": "尊者弗迦邏娑利亦竟夜默然靖坐定意。…", "s": "At that time, the Blessed One thought,"}, {"key": "ma162:6.5", "p": "彼時，世尊而作是念：「此比丘住止寂靖，甚奇！甚特！…", "s": "\"This monk dwells in stillness—how wonderful!\nHow extraordinary!"}, {"key": "ma162:6.6", "p": "我今寧可問彼比丘：『汝師是誰？…", "s": "Let me ask this monk:"}, {"key": "ma162:6.7", "p": "依誰出家學道受法？』」…", "s": "'Who is your teacher?\nUnder whom did you go forth and train in the teaching?'\""}]}, {"id": "7", "label": "世尊念已，問曰：「比丘！", "rows": [{"key": "ma162:7.1", "p": "世尊念已，問曰：「比丘！…", "s": "After thinking, the Blessed One asked,"}, {"key": "ma162:7.2", "p": "汝師是誰？…", "s": "\"Bhikkhu, who is your teacher?"}, {"key": "ma162:7.3", "p": "依誰出家學道受法？」…", "s": "Under whom have you gone forth to train in the Dhamma?\""}]}, {"id": "8", "label": "尊者弗迦邏娑利答曰：「賢者！", "rows": [{"key": "ma162:8.1", "p": "尊者弗迦邏娑利答曰：「賢者！…", "s": "The venerable Pakkulasāti replied,"}, {"key": "ma162:8.2", "p": "有沙門瞿曇釋種子，捨釋宗族，…", "s": "\"Venerable sir, there is the ascetic Gotama of the Sakyan clan,"}, {"key": "ma162:8.3", "p": "剃除鬚髮，著袈裟衣，至信、…", "s": "who left the Sakyan family, shaved off his hair and beard, put on the ochre robe,\nand with complete faith went forth from the home life to homelessness to train…"}, {"key": "ma162:8.4", "p": "捨家、無家、學道，覺無上正盡覺，…", "s": "awakening to the supreme perfect enlightenment."}, {"key": "ma162:8.5", "p": "彼是我師，依彼出家學道受法。」…", "s": "He is my teacher;\nunder him I have gone forth to train in the Dhamma.\""}]}, {"id": "9", "label": "世尊即復問曰：「比丘！", "rows": [{"key": "ma162:9.1", "p": "世尊即復問曰：「比丘！…", "s": "The Blessed One then asked,"}, {"key": "ma162:9.2", "p": "曾見師耶？」…", "s": "\"Bhikkhu, have you ever seen your teacher?\""}]}, {"id": "10", "label": "尊者弗迦邏娑利答曰：「不見。」", "rows": [{"key": "ma162:10.1", "p": "尊者弗迦邏娑利答曰：「不見。」…", "s": "The venerable Pakkulasāti replied,\n\"No.\""}]}, {"id": "11", "label": "世尊問曰：「若見師者，為識不耶？」", "rows": [{"key": "ma162:11.1", "p": "世尊問曰：「若見師者，為識不耶？」…", "s": "The Blessed One asked,\n\"If you saw your teacher, would you recognize him?\""}]}, {"id": "12", "label": "尊者弗迦邏娑利答曰：「不識。", "rows": [{"key": "ma162:12.1", "p": "尊者弗迦邏娑利答曰：「不識。…", "s": "The venerable Pakkulasāti replied,"}, {"key": "ma162:12.2", "p": "然，賢者！…", "s": "\"No."}, {"key": "ma162:12.3", "p": "我聞世尊、如來、無所著、…", "s": "But, venerable sir, I have heard that the Blessed One, the Tathāgata, the Arahant,"}, {"key": "ma162:12.4", "p": "等正覺、明行成為、善逝、世間解、…", "s": "the Perfectly Enlightened One, accomplished in true knowledge and conduct,"}, {"key": "ma162:12.5", "p": "無上士、道法御、天人師，號佛、…", "s": "the Well-Gone One, the knower of the world, the unsurpassed trainer of persons to be tamed,"}, {"key": "ma162:12.6", "p": "眾祐，彼是我師，依彼出家學道受法。」…", "s": "the teacher of devas and humans, the Buddha, the Blessed One — he is my teacher;\nunder him I have gone forth to train in the Dhamma.\""}]}, {"id": "13", "label": "彼時，世尊復作是念：", "rows": [{"key": "ma162:13.1", "p": "彼時，世尊復作是念：…", "s": "At that time, the Blessed One thought:"}, {"key": "ma162:13.2", "p": "「此族姓子依我出家學道受法，我今寧可為說法耶？」…", "s": "\"This clansman has gone forth under me to study the Dharma and receive the teachings.\nShould I now teach him the Dharma?\""}]}, {"id": "14", "label": "世尊念已，語尊者弗迦邏娑利曰：「比丘！", "rows": [{"key": "ma162:14.1", "p": "世尊念已，語尊者弗迦邏娑利曰：「比丘！…", "s": "Having thought this, the Blessed One said to the venerable Phagguṇa:"}, {"key": "ma162:14.2", "p": "我為汝說法，初善、中善、竟亦善，有義有文，…", "s": "\"Bhikkhu, I will teach you the Dharma, which is good in the beginning, good in the middle, and good in the end,"}, {"key": "ma162:14.3", "p": "具足清淨，顯現梵行，…", "s": "with meaning and phrasing, complete and pure, revealing the holy life, namely the analysis of the six elements."}, {"key": "ma162:14.4", "p": "謂分別六界，汝當諦聽，善思念之。」…", "s": "Listen carefully and pay attention.\""}]}, {"id": "15", "label": "尊者弗迦邏娑利答曰：「唯然。」", "rows": [{"key": "ma162:15.1", "p": "尊者弗迦邏娑利答曰：「唯然。」…", "s": "The venerable Phagguṇa replied:\n\"Yes, venerable sir.\""}]}, {"id": "16", "label": "佛告彼曰：「比丘！", "rows": [{"key": "ma162:16.1", "p": "佛告彼曰：「比丘！…", "s": "The Buddha said to him:"}, {"key": "ma162:16.2", "p": "人有六界聚、六觸處、十八意行、四住處。…", "s": "\"Bhikkhu, a person has six collections of elements, six sense spheres, eighteen mental examinations, and four abodes."}, {"key": "ma162:16.3", "p": "若有住彼，不聞憂慼事，不聞憂慼事已，…", "s": "If one dwells in them, one does not hear of sorrowful things;"}, {"key": "ma162:16.4", "p": "意便不憎、不憂、不勞，亦不恐怖。…", "s": "having not heard of sorrowful things, the mind does not become averse, sorrowful, weary, or fearful."}, {"key": "ma162:16.5", "p": "如是有教，不放逸慧，守護真諦，長養惠施。比丘！…", "s": "Thus there is this teaching:"}, {"key": "ma162:16.6", "p": "當學最上，當學至寂，分別六界。…", "s": "heedful wisdom, guarding the truth, and nurturing generosity."}, {"key": "ma162:16.7", "p": "如是，比丘！…", "s": "Bhikkhu, you should learn the highest, you should learn the most peaceful, analyzing the six elements."}, {"key": "ma162:16.8", "p": "人有六界聚，此說何因？…", "s": "Thus, bhikkhu, a person has six collections of elements—what is the reason for this statement?"}, {"key": "ma162:16.9", "p": "謂地界、水界、火界、風界、空界、識界。比丘！…", "s": "That is, the earth element, water element, fire element, wind element, space element, and consciousness element."}, {"key": "ma162:16.10", "p": "人有六界聚者，因此故說。…", "s": "Bhikkhu, it is for this reason that it is said a person has six collections of elements.\""}]}, {"id": "17", "label": "「比丘！", "rows": [{"key": "ma162:17.1", "p": "「比丘！…", "s": "\"Bhikkhu, a person has six sense spheres—what is the reason for this statement?"}, {"key": "ma162:17.2", "p": "人有六觸處，此說何因？…", "s": "That is, the bhikkhu sees forms with the eye, hears sounds with the ear, smells odors with the nose,"}, {"key": "ma162:17.3", "p": "謂比丘眼觸見色，耳觸聞聲，鼻觸嗅香，…", "s": "tastes flavors with the tongue, feels tactile objects with the body, and knows mental phenomena with the mind."}, {"key": "ma162:17.4", "p": "舌觸嘗味，身觸覺觸，意觸知法。比丘！…", "s": "Bhikkhu, it is for this reason that it is said a person has six sense spheres."}, {"key": "ma162:17.5", "p": "人有六觸處者，因此故說。比丘！…", "s": "Bhikkhu, a person has eighteen mental examinations—what is the reason for this statement?"}, {"key": "ma162:17.6", "p": "人有十八意行，此說何因？…", "s": "That is, the bhikkhu, seeing a form with the eye, dwells in joy regarding the form,\ndwells in sorrow regarding the form, or dwells in equanimity regarding the f…"}, {"key": "ma162:17.7", "p": "謂比丘眼見色，觀色喜住，…", "s": "Likewise with the ear, nose, tongue, body, and mind:"}, {"key": "ma162:17.8", "p": "觀色憂住，觀色捨住，如是耳、…", "s": "knowing a mental phenomenon, he dwells in joy regarding it,"}, {"key": "ma162:17.9", "p": "鼻、舌、身，意知法，觀法喜住，觀法憂住，觀法捨住。比丘！…", "s": "dwells in sorrow regarding it, or dwells in equanimity regarding it."}, {"key": "ma162:17.10", "p": "此六喜觀、六憂觀、六捨觀，合已十八行。比丘！…", "s": "Bhikkhu, these six joyful examinations, six sorrowful examinations,"}, {"key": "ma162:17.11", "p": "人有十八意行者，因此故說。…", "s": "and six equanimous examinations together make eighteen examinations.\nBhikkhu, it is for this reason that it is said a person has eighteen mental examinations.\""}]}, {"id": "18", "label": "「比丘！", "rows": [{"key": "ma162:18.1", "p": "「比丘！…", "s": "\"Bhikkhu, a person has four abodes—what is the reason for this statement?"}, {"key": "ma162:18.2", "p": "人有四住處，此說何因？…", "s": "That is, the abode of truth, the abode of wisdom, the abode of generosity, and the abode of cessation."}, {"key": "ma162:18.3", "p": "謂真諦住處、慧住處、施住處、息住處。比丘！…", "s": "Bhikkhu, it is for this reason that it is said a person has four abodes."}, {"key": "ma162:18.4", "p": "人有四住處者，因此故說。…", "s": "What is a bhikkhu's heedful wisdom?"}, {"key": "ma162:18.5", "p": "云何比丘不放逸慧？…", "s": "If a bhikkhu analyzes the body's elements:"}, {"key": "ma162:18.6", "p": "若有比丘分別身界，…", "s": "'Now this body of mine has an internal earth element that has arisen through birth—what is that?'"}, {"key": "ma162:18.7", "p": "今我此身有內地界而受於生，此為云何？…", "s": "That is, hair, body hair, nails, teeth, coarse and fine skin, flesh, bones,"}, {"key": "ma162:18.8", "p": "謂髮、毛、爪、齒、麤細膚、皮、肉、骨、…", "s": "sinews, kidneys, heart, liver, lungs, spleen, large intestine, stomach, and feces."}, {"key": "ma162:18.9", "p": "筋、腎、心、肝、肺、脾、大腸、胃、糞。…", "s": "Such things as these, the rest within this body, internally included, of a solid nature,"}, {"key": "ma162:18.10", "p": "如斯之比，此身中餘在內，內所攝堅，…", "s": "solidity dwelling within, born from birth—this is called the internal earth element of a bhikkhu."}, {"key": "ma162:18.11", "p": "堅性住內，於生所受，是謂比丘內地界也。比丘！…", "s": "Bhikkhu, as for the internal earth element and the external earth element,"}, {"key": "ma162:18.12", "p": "若有內地界及外地界者，彼一切總說地界，…", "s": "all of them together are called the earth element."}, {"key": "ma162:18.13", "p": "彼一切非我有，我非彼有，亦非神也。…", "s": "None of them are mine, I am not theirs, nor are they a self."}, {"key": "ma162:18.14", "p": "如是慧觀，知其如真，…", "s": "Thus, with wisdom, one sees them as they truly are, and the mind does not cling to this earth element."}, {"key": "ma162:18.15", "p": "心不染著於此地界，是謂比丘不放逸慧。…", "s": "This is called a bhikkhu's heedful wisdom.\""}]}, {"id": "19", "label": "「復次，比丘不放逸慧。", "rows": [{"key": "ma162:19.1", "p": "「復次，比丘不放逸慧。…", "s": "“Furthermore, a bhikkhu has the wisdom of heedfulness."}, {"key": "ma162:19.2", "p": "若有比丘分別身界，…", "s": "If a bhikkhu discerns the bodily elements:"}, {"key": "ma162:19.3", "p": "今我此身有內水界而受於生，此為云何？…", "s": "‘In this body of mine, there is the internal water element that has come into being at birth."}, {"key": "ma162:19.4", "p": "謂腦膜、眼淚、汗、涕、唾、膿、血、…", "s": "What is that?"}, {"key": "ma162:19.5", "p": "肪、髓、涎、淡、小便，如斯之比，…", "s": "It is the brain membrane, tears, sweat, mucus, saliva, pus, blood, fat, marrow, saliva, phlegm, urine, and the like—"}, {"key": "ma162:19.6", "p": "此身中餘在內，內所攝水，水性潤內，…", "s": "whatever else is inside this body, included within, that is water, watery, and moist within, born of life."}, {"key": "ma162:19.7", "p": "於生所受，是謂比丘內水界也。比丘！…", "s": "This is called the internal water element of a bhikkhu."}, {"key": "ma162:19.8", "p": "若有內水界及外水界者，彼一切總說水界，…", "s": "Bhikkhu, whether it is the internal water element or the external water element,"}, {"key": "ma162:19.9", "p": "彼一切非我有，我非彼有，亦非神也。…", "s": "all of it is collectively called the water element."}, {"key": "ma162:19.10", "p": "如是慧觀，知其如真，…", "s": "All of it is not mine, I am not it, nor is it a self."}, {"key": "ma162:19.11", "p": "心不染著於此水界，是謂比丘不放逸慧。…", "s": "Thus, with wisdom, one sees it as it truly is, and the mind does not cling to this water element.\nThis is called a bhikkhu’s wisdom of heedfulness."}]}, {"id": "20", "label": "「復次，比丘不放逸慧。", "rows": [{"key": "ma162:20.1", "p": "「復次，比丘不放逸慧。…", "s": "“Furthermore, a bhikkhu has the wisdom of heedfulness."}, {"key": "ma162:20.2", "p": "若有比丘分別此身界，…", "s": "If a bhikkhu discerns the bodily elements:"}, {"key": "ma162:20.3", "p": "今我此身有內火界而受於生，此為云何？…", "s": "‘In this body of mine, there is the internal fire element that has come into being at birth."}, {"key": "ma162:20.4", "p": "謂熱身、暖身、煩悶身、溫莊身，謂消飲食，如斯之比，…", "s": "What is that?\nIt is the heat of the body, the warmth of the body,"}, {"key": "ma162:20.5", "p": "此身中餘在內，內所攝火，火性熱內，…", "s": "the fever of the body, the burning of the body, and the digestion of food—"}, {"key": "ma162:20.6", "p": "於生所受，是謂比丘內火界也。比丘！…", "s": "whatever else is inside this body, included within, that is fire, fiery, and hot within, born of life."}, {"key": "ma162:20.7", "p": "若有內火界及外火界者，彼一切總說火界，…", "s": "This is called the internal fire element of a bhikkhu.\nBhikkhu, whether it is the internal fire element or the external fire element,"}, {"key": "ma162:20.8", "p": "彼一切非我有，我非彼有，亦非神也。…", "s": "all of it is collectively called the fire element."}, {"key": "ma162:20.9", "p": "如是慧觀，知其如真，…", "s": "All of it is not mine, I am not it, nor is it a self."}, {"key": "ma162:20.10", "p": "心不染著於此火界，是謂比丘不放逸慧。…", "s": "Thus, with wisdom, one sees it as it truly is, and the mind does not cling to this fire element.\nThis is called a bhikkhu’s wisdom of heedfulness."}]}, {"id": "21", "label": "「復次，比丘不放逸慧。", "rows": [{"key": "ma162:21.1", "p": "「復次，比丘不放逸慧。…", "s": "“Furthermore, a bhikkhu has the wisdom of heedfulness."}, {"key": "ma162:21.2", "p": "若有比丘分別身界，…", "s": "If a bhikkhu discerns the bodily elements:"}, {"key": "ma162:21.3", "p": "今我此身有內風界而受於生，此為云何？…", "s": "‘In this body of mine, there is the internal wind element that has come into being at birth."}, {"key": "ma162:21.4", "p": "謂上風、下風、脇風、掣縮風、蹴風、…", "s": "What is that?\nIt is the upward wind, the downward wind, the wind in the ribs,"}, {"key": "ma162:21.5", "p": "非道風、節節風、息出風、息入風。…", "s": "the wind that contracts, the wind that pushes, the wind in the wrong path,"}, {"key": "ma162:21.6", "p": "如斯之比，此身中餘在內，內所攝風，…", "s": "the wind in the joints, the out-breath, the in-breath—whatever else is inside this body,"}, {"key": "ma162:21.7", "p": "風性動內，於生所受，是謂比丘內風界也。比丘！…", "s": "included within, that is wind, windy, and moving within, born of life."}, {"key": "ma162:21.8", "p": "若有內風界及外風界者，彼一切總說風界，…", "s": "This is called the internal wind element of a bhikkhu.\nBhikkhu, whether it is the internal wind element or the external wind element,"}, {"key": "ma162:21.9", "p": "彼一切非我有，我非彼有，亦非神也。…", "s": "all of it is collectively called the wind element."}, {"key": "ma162:21.10", "p": "如是慧觀，知其如真，…", "s": "All of it is not mine, I am not it, nor is it a self."}, {"key": "ma162:21.11", "p": "心不染著於此風界，是謂比丘不放逸慧。…", "s": "Thus, with wisdom, one sees it as it truly is, and the mind does not cling to this wind element.\nThis is called a bhikkhu’s wisdom of heedfulness."}]}, {"id": "22", "label": "「復次，比丘不放逸慧。", "rows": [{"key": "ma162:22.1", "p": "「復次，比丘不放逸慧。…", "s": "“Furthermore, a bhikkhu has the wisdom of heedfulness."}, {"key": "ma162:22.2", "p": "若有比丘分別身界，…", "s": "If a bhikkhu discerns the bodily elements:"}, {"key": "ma162:22.3", "p": "今我此身有內空界而受於生，此為云何？…", "s": "‘In this body of mine, there is the internal space element that has come into being at birth."}, {"key": "ma162:22.4", "p": "謂眼空、耳空、鼻空、口空、咽喉動搖，…", "s": "What is that?\nIt is the space of the eyes, the space of the ears, the space of the nose, the space of the mouth,"}, {"key": "ma162:22.5", "p": "謂食噉含消，安徐咽住，若下過出。…", "s": "the movement of the throat for swallowing, for eating, drinking, chewing, and tasting,"}, {"key": "ma162:22.6", "p": "如斯之比，此身中餘在內，內所攝空，…", "s": "for slowly swallowing and holding, and for passing downward and out—whatever else is inside this body,"}, {"key": "ma162:22.7", "p": "在空不為肉、皮、骨、筋所覆，是謂比丘內空界也。比丘！…", "s": "included within, that is space, not covered by flesh, skin, bones, or sinews."}, {"key": "ma162:22.8", "p": "若有內空界及外空界者，彼一切總說空界，…", "s": "This is called the internal space element of a bhikkhu.\nBhikkhu, whether it is the internal space element or the external space element,"}, {"key": "ma162:22.9", "p": "彼一切非我有，我非彼有，亦非神也。…", "s": "all of it is collectively called the space element."}, {"key": "ma162:22.10", "p": "如是慧觀，知其如真，…", "s": "All of it is not mine, I am not it, nor is it a self."}, {"key": "ma162:22.11", "p": "心不染著於此空界，是謂比丘不放逸慧。…", "s": "Thus, with wisdom, one sees it as it truly is, and the mind does not cling to this space element.\nThis is called a bhikkhu’s wisdom of heedfulness."}]}, {"id": "23", "label": "「比丘！", "rows": [{"key": "ma162:23.1", "p": "「比丘！…", "s": "“Bhikkhu, if a bhikkhu knows these five elements as they truly are, and having known them as they truly are,"}, {"key": "ma162:23.2", "p": "若有比丘於此五界知其如真，知如真已，…", "s": "his mind does not cling to them and is liberated, then there remains only consciousness."}, {"key": "ma162:23.3", "p": "心不染彼而解脫者，唯有餘識，此何等識？…", "s": "What is this consciousness?"}, {"key": "ma162:23.4", "p": "樂識、苦識、喜識、憂識、捨識。比丘！…", "s": "It is pleasant consciousness, painful consciousness, joyful consciousness,\nsorrowful consciousness, and equanimous consciousness."}, {"key": "ma162:23.5", "p": "因樂更樂故生樂覺，彼覺樂覺，覺樂覺已，即知覺樂覺。…", "s": "Bhikkhu, because of pleasant contact, a pleasant feeling arises."}, {"key": "ma162:23.6", "p": "若有比丘滅此樂更樂，滅此樂更樂已，…", "s": "He feels that pleasant feeling, and having felt it, he knows it as a pleasant feeling."}, {"key": "ma162:23.7", "p": "若有從樂更樂生樂覺者，彼亦滅息止，知已冷也。比丘！…", "s": "If a bhikkhu ceases that pleasant contact, then the pleasant feeling that arose from that pleasant contact also ceases,\nis stilled, and he knows it has become c…"}, {"key": "ma162:23.8", "p": "因苦更樂故生苦覺，彼覺苦覺，覺苦覺已，即知覺苦覺。…", "s": "Bhikkhu, because of painful contact, a painful feeling arises."}, {"key": "ma162:23.9", "p": "若有比丘滅此苦更樂，滅此苦更樂已，…", "s": "He feels that painful feeling, and having felt it, he knows it as a painful feeling."}, {"key": "ma162:23.10", "p": "若有從苦更樂生苦覺者，彼亦滅息止，知已冷也。比丘！…", "s": "If a bhikkhu ceases that painful contact, then the painful feeling that arose from that painful contact also ceases,\nis stilled, and he knows it has become cool…"}, {"key": "ma162:23.11", "p": "因喜更樂故生喜覺，彼覺喜覺，覺喜覺已，即知覺喜覺。…", "s": "Bhikkhu, because of joyful contact, a joyful feeling arises."}, {"key": "ma162:23.12", "p": "若有比丘滅此喜更樂，滅此喜更樂已，…", "s": "He feels that joyful feeling, and having felt it, he knows it as a joyful feeling."}, {"key": "ma162:23.13", "p": "若有從喜更樂生喜覺者，彼亦滅息止，知已冷也。…", "s": "If a bhikkhu ceases that joyful contact, then the joyful feeling that arose from that joyful contact also ceases,\nis stilled, and he knows it has become cool."}]}, {"id": "24", "label": "「比丘！", "rows": [{"key": "ma162:24.1", "p": "「比丘！…", "s": "“Bhikkhu, because of sorrowful contact, a sorrowful feeling arises."}, {"key": "ma162:24.2", "p": "因憂更樂故生憂覺，彼覺憂覺，覺憂覺已，即知覺憂覺。…", "s": "He feels that sorrowful feeling, and having felt it, he knows it as a sorrowful feeling."}, {"key": "ma162:24.3", "p": "若有比丘滅此憂更樂，滅此憂更樂已，…", "s": "If a bhikkhu ceases that sorrowful contact,\nthen the sorrowful feeling that arose from that sorrowful contact also ceases,"}, {"key": "ma162:24.4", "p": "若有從憂更樂生憂覺者，彼亦滅息止，知已冷也。比丘！…", "s": "is stilled, and he knows it has become cool."}, {"key": "ma162:24.5", "p": "因捨更樂故生捨覺，彼覺捨覺，覺捨覺已，即知覺捨覺。…", "s": "Bhikkhu, because of equanimous contact, an equanimous feeling arises.\nHe feels that equanimous feeling, and having felt it, he knows it as an equanimous feeling…"}, {"key": "ma162:24.6", "p": "若有比丘滅此捨更樂，滅此捨更樂已，…", "s": "If a bhikkhu ceases that equanimous contact,"}, {"key": "ma162:24.7", "p": "若有從捨更樂生捨覺者，彼亦滅息止，知已冷也。比丘！…", "s": "then the equanimous feeling that arose from that equanimous contact also ceases,"}, {"key": "ma162:24.8", "p": "彼彼更樂故生彼彼覺，滅彼彼更樂已，…", "s": "is stilled, and he knows it has become cool.\nBhikkhu, from this and that contact, this and that feeling arises;"}, {"key": "ma162:24.9", "p": "彼彼覺亦滅，彼知此覺從更樂，…", "s": "when that contact ceases, that feeling also ceases."}, {"key": "ma162:24.10", "p": "更樂本，更樂習，從更樂生，以更樂為首，依更樂行。…", "s": "He knows that this feeling arises from contact, has contact as its origin, contact as its condition,\nis born from contact, has contact as its chief, and proceed…"}]}, {"id": "25", "label": "「比丘！", "rows": [{"key": "ma162:25.1", "p": "「比丘！…", "s": "\"Monks, just as a fire arises from a fire-stick, depending on the friction and the effort of a person,"}, {"key": "ma162:25.2", "p": "猶如火母，因鑽及人方便熱相故，而生火也。比丘！…", "s": "so too, monks, when various kinds of wood are separated and scattered,"}, {"key": "ma162:25.3", "p": "彼彼眾多林木相離分散，若從彼生火，…", "s": "the fire that arises from them burns as long as its fuel lasts,"}, {"key": "ma162:25.4", "p": "火數熱於生數受，彼都滅止息，則冷樵木也。…", "s": "and then it ceases and is extinguished, becoming cold embers."}, {"key": "ma162:25.5", "p": "如是，比丘！…", "s": "In the same way, monks, from various contacts arise various feelings;"}, {"key": "ma162:25.6", "p": "彼彼更樂故生彼彼覺，…", "s": "when those contacts cease, those feelings also cease."}, {"key": "ma162:25.7", "p": "滅彼彼更樂故彼彼覺亦滅，彼知此覺從更樂，…", "s": "One understands that this feeling arises from contact, has contact as its source,"}, {"key": "ma162:25.8", "p": "更樂本，更樂習，從更樂生，以更樂為首，依更樂行。…", "s": "contact as its condition, is born from contact, has contact as its chief, and proceeds based on contact."}, {"key": "ma162:25.9", "p": "若比丘不染此三覺而解脫者，…", "s": "If a monk is not defiled by these three feelings and is liberated,"}, {"key": "ma162:25.10", "p": "彼比丘唯存於捨，極清淨也。比丘！…", "s": "that monk abides only in equanimity, which is extremely pure."}, {"key": "ma162:25.11", "p": "彼比丘作是念：『我此清淨捨，移入無量空處，…", "s": "Monks, that monk thinks:"}, {"key": "ma162:25.12", "p": "修如是心，依彼、住彼、立彼、緣彼、繫縛於彼。…", "s": "'This pure equanimity of mine, I will enter into the sphere of infinite space, cultivating such a mind,"}, {"key": "ma162:25.13", "p": "我此清淨捨，移入無量識處、…", "s": "relying on it, dwelling in it, establishing it, focusing on it, and being bound to it."}, {"key": "ma162:25.14", "p": "無所有處、非有想非無想處，…", "s": "This pure equanimity of mine, I will enter into the sphere of infinite consciousness, the sphere of nothingness,"}, {"key": "ma162:25.15", "p": "修如是心，依彼、住彼、立彼、緣彼、繫縛於彼。』…", "s": "and the sphere of neither perception nor non-perception, cultivating such a mind,\nrelying on it, dwelling in it, establishing it, focusing on it, and being boun…"}]}, {"id": "26", "label": "「比丘！", "rows": [{"key": "ma162:26.1", "p": "「比丘！…"}, {"key": "ma162:26.2", "p": "猶工煉金上妙之師，以火燒金，鍛令極薄，…", "s": "\"Monks, just as a skilled goldsmith, after heating gold in a fire, beating it very thin,"}, {"key": "ma162:26.3", "p": "又以火燷，數數足火熟煉令淨，極使柔軟而有光明。比丘！…", "s": "and repeatedly heating and refining it until it is extremely soft and lustrous,"}, {"key": "ma162:26.4", "p": "此金者，於金師以數數足火熟煉令淨，…", "s": "can then fashion it into various ornaments, such as garlands, fine garments,"}, {"key": "ma162:26.5", "p": "極使柔軟而有光明已，彼金師者，…", "s": "rings, bracelets, necklaces, and jeweled wreaths, according to his wish."}, {"key": "ma162:26.6", "p": "隨所施設，或縺繒綵，嚴飾新衣，…", "s": "In the same way, monks, that monk thinks:"}, {"key": "ma162:26.7", "p": "指鐶、臂釧、瓔珞、寶鬘，隨意所作。…"}, {"key": "ma162:26.8", "p": "如是，比丘！…", "s": "'This pure equanimity of mine, I will enter into the sphere of infinite space, cultivating such a mind,"}, {"key": "ma162:26.9", "p": "彼比丘作是念：『我此清淨捨移入無量空處，…", "s": "relying on it, dwelling in it, establishing it, focusing on it, and being bound to it."}, {"key": "ma162:26.10", "p": "修如是心，依彼、住彼、立彼、緣彼、繫縛於彼。…", "s": "This pure equanimity of mine, I will enter into the sphere of infinite consciousness, the sphere of nothingness,"}, {"key": "ma162:26.11", "p": "我此清淨捨移入無量識處、無所有處、非有想非無想處，…", "s": "and the sphere of neither perception nor non-perception, cultivating such a mind,"}, {"key": "ma162:26.12", "p": "修如是心，依彼、住彼、立彼、緣彼、繫縛於彼。』…", "s": "relying on it, dwelling in it, establishing it, focusing on it, and being bound to it.'\""}]}, {"id": "27", "label": "「彼比丘復作是念：『我此清淨捨，", "rows": [{"key": "ma162:27.1", "p": "「彼比丘復作是念：『我此清淨捨，…", "s": "\"That monk further thinks:"}, {"key": "ma162:27.2", "p": "依無量空處者，故是有為。…", "s": "'This pure equanimity of mine, which relies on the sphere of infinite space, is conditioned."}, {"key": "ma162:27.3", "p": "若有為者，則是無常，若無常者，即是苦也。…", "s": "What is conditioned is impermanent;"}, {"key": "ma162:27.4", "p": "若是苦者，便知苦，知苦已，彼此捨不復移入無量空處。…", "s": "what is impermanent is suffering."}, {"key": "ma162:27.5", "p": "我此清淨捨，依無量識處、無所有處、…", "s": "Knowing it as suffering, this equanimity no longer enters into the sphere of infinite space."}, {"key": "ma162:27.6", "p": "非有想非無想處者，故是有為。…", "s": "This pure equanimity of mine, which relies on the sphere of infinite consciousness,\nthe sphere of nothingness, and the sphere of neither perception nor non-perc…"}, {"key": "ma162:27.7", "p": "若有為者，則是無常，若無常者，即是苦也。…", "s": "What is conditioned is impermanent;"}, {"key": "ma162:27.8", "p": "若是苦者，便知苦，知苦已，…", "s": "what is impermanent is suffering."}, {"key": "ma162:27.9", "p": "彼此捨不復移入無量識處、無所有處、非有想非無想處。…", "s": "Knowing it as suffering, this equanimity no longer enters into the sphere of infinite consciousness,"}, {"key": "ma162:27.10", "p": "』比丘！…", "s": "the sphere of nothingness, or the sphere of neither perception nor non-perception.'"}, {"key": "ma162:27.11", "p": "若有比丘於此四處以慧觀之，…", "s": "Monks, if a monk, having seen these four spheres with wisdom, understands them as they truly are,\nand his mind does not become established in them nor enter int…"}, {"key": "ma162:27.12", "p": "知其如真，心不成就，不移入者。…", "s": "then at that time he has no more conditioned activity and no more mental construction,"}, {"key": "ma162:27.13", "p": "彼於爾時不復有為，亦無所思，謂有及無，…", "s": "whether of existence or non-existence."}, {"key": "ma162:27.14", "p": "彼受身最後覺，則知受身最後覺，…", "s": "He experiences the final feeling of the body, knowing it as the final feeling of the body;"}, {"key": "ma162:27.15", "p": "受命最後覺，則知受命最後覺，身壞命終，…", "s": "he experiences the final feeling of life, knowing it as the final feeling of life."}, {"key": "ma162:27.16", "p": "壽命已訖，彼所覺一切滅息止，知至冷也。…", "s": "After the body breaks up and life ends, with the lifespan exhausted,\nall his feelings cease and are extinguished, and he is known to be cool.\""}]}, {"id": "28", "label": "「比丘！", "rows": [{"key": "ma162:28.1", "p": "「比丘！…", "s": "\"Monks, just as an oil lamp burns depending on oil and wick, but if no one adds more oil or adjusts the wick,"}, {"key": "ma162:28.2", "p": "譬如燃燈，因油因炷，彼若無人更增益油，…", "s": "the lamp goes out and is not rekindled, receiving no further fuel."}, {"key": "ma162:28.3", "p": "亦不續炷，是為前已滅訖，後不相續，無所復受。…", "s": "In the same way, monks, a monk experiences the final feeling of the body, knowing it as the final feeling of the body;"}, {"key": "ma162:28.4", "p": "如是，比丘！…", "s": "he experiences the final feeling of life, knowing it as the final feeling of life."}, {"key": "ma162:28.5", "p": "受身最後覺，則知受身最後覺，…", "s": "After the body breaks up and life ends, with the lifespan exhausted,"}, {"key": "ma162:28.6", "p": "受命最後覺，則知受命最後覺，…", "s": "all his feelings cease and are extinguished, and he is known to be cool."}, {"key": "ma162:28.7", "p": "身壞命終，壽命已訖，彼所覺一切滅息止，知至冷也。比丘！…", "s": "Monks, this is called a monk's supreme right wisdom, which reaches the ultimate cessation."}, {"key": "ma162:28.8", "p": "是謂比丘第一正慧，謂至究竟滅訖，…", "s": "A monk who has exhausted the taints attains this, and abides in the state of supreme right wisdom."}, {"key": "ma162:28.9", "p": "漏盡比丘成就於彼，成就第一正慧處。比丘！…", "s": "Monks, this liberation abides in truth, unshakable."}, {"key": "ma162:28.10", "p": "此解脫住真諦，得不移動，真諦者，…", "s": "Truth means what is in accordance with the Dharma;"}, {"key": "ma162:28.11", "p": "謂如法也，妄言者，謂虛妄法。比丘！…", "s": "false speech means what is unreal."}, {"key": "ma162:28.12", "p": "成就彼第一真諦處。…", "s": "Monks, he attains that state of supreme truth.\""}]}, {"id": "29", "label": "「比丘！", "rows": [{"key": "ma162:29.1", "p": "「比丘！…", "s": "\"Monks, that monk gives up, abandons, releases, and extinguishes whatever former enmity he may have had."}, {"key": "ma162:29.2", "p": "彼比丘施說施若本必有怨家，…", "s": "Monks, this is called a monk's supreme right gift,"}, {"key": "ma162:29.3", "p": "彼於爾時放捨、吐離、解脫、滅訖。比丘！…", "s": "which is the relinquishing of all worldly things, without desire, cessation, calming, and stopping."}, {"key": "ma162:29.4", "p": "是謂比丘第一正惠施，謂捨離一切世盡，無欲、…", "s": "A monk attains this, and abides in the state of supreme right gift."}, {"key": "ma162:29.5", "p": "滅、息、止，比丘成就於彼，成就第一惠施處。比丘！…", "s": "Monks, that monk's mind is defiled by desire, aversion, and ignorance, and is not liberated."}, {"key": "ma162:29.6", "p": "彼比丘心為欲、恚、癡所穢，不得解脫。比丘！…", "s": "Monks, this is the complete ending of all lust, aversion, and ignorance,"}, {"key": "ma162:29.7", "p": "此一切婬、怒、癡盡，無欲、滅、息、止，得第一息。比丘！…", "s": "without desire, cessation, calming, and stopping, attaining supreme peace."}, {"key": "ma162:29.8", "p": "成就彼者成就第一息處。…", "s": "Monks, one who attains this attains the state of supreme peace.\""}]}, {"id": "30", "label": "「比丘！", "rows": [{"key": "ma162:30.1", "p": "「比丘！…", "s": "\"Monks, the notion 'I am' is self-conceit;"}, {"key": "ma162:30.2", "p": "我者是自舉，我當有是亦自舉，我當非有非無是亦自舉，…", "s": "'I will be' is also self-conceit;\n'I will be neither existent nor non-existent' is also self-conceit;"}, {"key": "ma162:30.3", "p": "我當色有是亦自舉，我當無色有是亦自舉，…", "s": "'I will be with form' is also self-conceit;"}, {"key": "ma162:30.4", "p": "我當非有色非無色是亦自舉，我當有想是亦自舉，…", "s": "'I will be without form' is also self-conceit;\n'I will be neither with form nor without form' is also self-conceit;"}, {"key": "ma162:30.5", "p": "我當無想是亦自舉，我當非有想非無想是亦自舉。…", "s": "'I will be with perception' is also self-conceit;\n'I will be without perception' is also self-conceit;"}, {"key": "ma162:30.6", "p": "是貢高、是憍慠、是放逸，比丘！…", "s": "'I will be neither with perception nor without perception' is also self-conceit."}, {"key": "ma162:30.7", "p": "若無此一切自舉、貢高、憍慠、放逸者，意謂之息。比丘！…", "s": "This is pride, arrogance, and heedlessness.\nMonks, if one is without all this self-conceit, pride, arrogance, and heedlessness, the mind is said to be at peace."}, {"key": "ma162:30.8", "p": "若意息者，便不憎、不憂、不勞、不怖。…", "s": "Monks, if the mind is at peace, then one does not hate, does not worry, does not tire, does not fear."}, {"key": "ma162:30.9", "p": "所以者何？…", "s": "Why is that?\nBecause that monk has attained the Dharma, and there is nothing more to be hated."}, {"key": "ma162:30.10", "p": "彼比丘成就法故，不復有可說憎者。…", "s": "Not hating, he does not worry;\nnot worrying, he does not sorrow;"}, {"key": "ma162:30.11", "p": "若不憎則不憂，不憂則不愁，不愁則不勞，不勞則不怖，…", "s": "not sorrowing, he does not tire;"}, {"key": "ma162:30.12", "p": "因不怖便當般涅槃，生已盡，梵行已立，…", "s": "not tiring, he does not fear.\nBecause of not fearing, he will attain Nibbāna:"}, {"key": "ma162:30.13", "p": "所作已辦，不更受有，知如真。」…", "s": "birth is exhausted, the holy life has been established, what had to be done has been done,\nthere is no more existence, and he knows it as it truly is.\""}]}, {"id": "31", "label": "說此法已，尊者弗迦邏娑利遠塵離垢，諸法法眼生。", "rows": [{"key": "ma162:31.1", "p": "說此法已，尊者弗迦邏娑利遠塵離垢，諸法法眼生。…", "s": "After this teaching was given, the venerable Pukkusāti,"}, {"key": "ma162:31.2", "p": "於是，尊者弗迦邏娑利見法得法，…", "s": "far removed from dust and defilement, gave rise to the Dharma-eye regarding all phenomena."}, {"key": "ma162:31.3", "p": "覺白淨法，斷疑度惑，更無餘尊，不復由他，…", "s": "Then the venerable Pukkusāti saw the Dharma, attained the Dharma,"}, {"key": "ma162:31.4", "p": "無有猶豫，已住果證，於世尊法得無所畏，…", "s": "understood the pure white Dharma, cut off doubt, crossed over perplexity,"}, {"key": "ma162:31.5", "p": "即從坐起，稽首佛足，白曰：「世尊！…", "s": "no longer relying on another, without hesitation, having established the fruit of attainment,"}, {"key": "ma162:31.6", "p": "我悔過。善逝！…", "s": "and gained fearlessness in the Blessed One's Dharma."}, {"key": "ma162:31.7", "p": "我自首。…", "s": "He then rose from his seat, bowed his head at the Blessed One's feet, and said:"}, {"key": "ma162:31.8", "p": "如愚如癡，如不定，如不善解，不識良田，不能自知。…", "s": "'Bhante, I confess my fault."}, {"key": "ma162:31.9", "p": "所以者何？…", "s": "Well-gone One, I acknowledge my transgression."}, {"key": "ma162:31.10", "p": "以我稱如來、無所著、等正覺為君也。…", "s": "I was foolish, confused, unsteady, not well-understanding, not recognizing the good field, unable to know myself."}, {"key": "ma162:31.11", "p": "唯願世尊聽我悔過，我悔過已，後不更作。」…", "s": "Why?\nBecause I addressed the Tathāgata, the Worthy One, the Perfectly Enlightened One, as"}]}, {"id": "32", "label": "世尊告曰：「比丘！", "rows": [{"key": "ma162:32.1", "p": "世尊告曰：「比丘！…"}, {"key": "ma162:32.2", "p": "汝實愚癡，汝實不定，汝不善解，…", "s": "The Blessed One said:"}, {"key": "ma162:32.3", "p": "謂稱如來、無所著、等正覺為君也。比丘！…"}, {"key": "ma162:32.4", "p": "若汝能自悔過，見已發露，護不更作者，比丘！…", "s": "'Bhikkhu, you were indeed foolish, you were indeed unsteady, you did not understand well,"}, {"key": "ma162:32.5", "p": "如是則於聖法、律中益而不損，…"}, {"key": "ma162:32.6", "p": "謂能自悔過，見已發露，護不更作。」…", "s": "in that you addressed the Tathāgata, the Worthy One, the Perfectly Enlightened One, as"}]}, {"id": "33", "label": "佛說如是。", "rows": [{"key": "ma162:33.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma162:33.2", "p": "尊者弗迦邏娑利聞佛所說，歡喜奉行。…", "s": "The venerable Pukkusāti, hearing what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

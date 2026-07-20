@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:35 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:36 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma185:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊那摩提瘦，在揵祁精舍。", "rows": [{"key": "ma185:2.1", "p": "一時，佛遊那摩提瘦，在揵祁精舍。…", "s": "At one time, the Buddha was traveling in the country of Nāmati, staying at the Khaṇḍaka hermitage."}]}, {"id": "3", "label": "爾時，世尊過夜平旦，著衣持鉢，", "rows": [{"key": "ma185:3.1", "p": "爾時，世尊過夜平旦，著衣持鉢，…", "s": "At that time, the Blessed One, after the night had passed, in the early morning,"}, {"key": "ma185:3.2", "p": "入那摩提而行乞食，食訖中後，往詣牛角娑羅林。…", "s": "put on his robe, took his bowl, and entered Nāmati for alms.\nAfter finishing his meal, in the afternoon, he went to the Cow-horn Sal Forest."}]}, {"id": "4", "label": "爾時，牛角娑羅林有三族姓子共在中住，", "rows": [{"key": "ma185:4.1", "p": "爾時，牛角娑羅林有三族姓子共在中住，…", "s": "At that time, in the Cow-horn Sal Forest, three clansmen were dwelling together:"}, {"key": "ma185:4.2", "p": "尊者阿那律陀、尊者難提、尊者金毘羅。…", "s": "the venerable Anuruddha, the venerable Nandiya, and the venerable Kimbila."}, {"key": "ma185:4.3", "p": "彼尊者等所行如是，若彼乞食有前還者，便敷床汲水，…", "s": "Their practice was as follows:"}, {"key": "ma185:4.4", "p": "出洗足器，安洗足橙及拭脚巾、水瓶、澡罐。…", "s": "if one of them returned earlier from alms, he would spread out a seat, draw water, set out the foot-washing utensils,\nplace the foot-washing stool, the towel fo…"}, {"key": "ma185:4.5", "p": "若所乞食能盡食者，便盡食之。…", "s": "If the alms he had received could be eaten completely, he would eat it all."}, {"key": "ma185:4.6", "p": "若有餘者，器盛覆舉，食訖收鉢，…", "s": "If there was any left, he would put it in a vessel, cover it, and set it aside."}, {"key": "ma185:4.7", "p": "澡洗手足，以尼師壇著於肩上，入室燕坐。…", "s": "After eating, he would put away his bowl, wash his hands and feet,"}, {"key": "ma185:4.8", "p": "若彼乞食有後還者，能盡食者亦盡食之，若不足者，…", "s": "place his sitting cloth on his shoulder, and enter his room for seated meditation.\nIf one of them returned later from alms, he would eat completely whatever he …"}, {"key": "ma185:4.9", "p": "取前餘食，足而食之，若有餘者，…", "s": "and if it was not enough, he would take the leftover food from before and eat until satisfied."}, {"key": "ma185:4.10", "p": "便瀉著淨地及無蟲水中。…", "s": "If there was any left, he would pour it out on clean ground or into water without insects."}, {"key": "ma185:4.11", "p": "取彼食器，淨洗拭已，舉著一面，收卷床席，…", "s": "He would take the food vessel, wash and wipe it clean, put it away in one place, roll up the bed and mat,"}, {"key": "ma185:4.12", "p": "拾洗足橙，收拭脚巾，舉洗足器及水瓶、…", "s": "pick up the foot-washing stool, put away the foot towel, put away the foot-washing utensils, the water pitcher,\nand the washing pot, sweep and clean the dining …"}, {"key": "ma185:4.13", "p": "澡罐，掃灑食堂，糞除淨已，收舉衣鉢，…", "s": "wash his hands and feet, place his sitting cloth on his shoulder, and enter his room for seated meditation."}, {"key": "ma185:4.14", "p": "澡洗手足，以尼師壇著於肩上，入室燕坐。…", "s": "In the afternoon, if one of them rose from seated meditation\nfirst and saw that the water pitcher and washing pot were empty,"}, {"key": "ma185:4.15", "p": "彼尊者等至於晡時，若有先從燕坐起者，…", "s": "he would go to fetch water."}, {"key": "ma185:4.16", "p": "見水瓶、澡罐空無有水，便持行取，若能勝者，…", "s": "If he could carry it alone, he would bring it and set it in one place.\nIf he could not, he would signal to one of the other monks with his hand,"}, {"key": "ma185:4.17", "p": "便舉持來，安著一面，若不能勝，則便以手招一比丘，…", "s": "and the two of them would carry it together and set it in one place,"}, {"key": "ma185:4.18", "p": "兩人共舉，持著一面，各不相語，各不相問。…", "s": "without speaking to each other or asking each other anything."}, {"key": "ma185:4.19", "p": "彼尊者等五日一集，或共說法，或聖默然。…", "s": "These venerable ones would gather once every five days,\neither to discuss the Dharma together or to observe noble silence."}]}, {"id": "5", "label": "於是，守林人遙見世尊來，逆呵止曰：「沙門！沙門！", "rows": [{"key": "ma185:5.1", "p": "於是，守林人遙見世尊來，逆呵止曰：「沙門！沙門！…", "s": "Then, the forest guardian, seeing the Blessed One coming from afar, went to stop him, saying:"}, {"key": "ma185:5.2", "p": "莫入此林。…", "s": "'Ascetic!\nAscetic!"}, {"key": "ma185:5.3", "p": "所以者何？…", "s": "Do not enter this forest."}, {"key": "ma185:5.4", "p": "今此林中有三族姓子，尊者阿那律陀、…", "s": "Why is that?\nIn this forest now dwell three clansmen:"}, {"key": "ma185:5.5", "p": "尊者難提、尊者金毘羅，彼若見汝，或有不可。」…", "s": "the venerable Anuruddha, the venerable Nandiya, and the venerable Kimbila.\nIf they see you, they might not be pleased.'"}]}, {"id": "6", "label": "世尊告曰：「汝守林人！", "rows": [{"key": "ma185:6.1", "p": "世尊告曰：「汝守林人！…", "s": "The Blessed One said:"}, {"key": "ma185:6.2", "p": "彼若見我，必可，無不可。」…", "s": "'You, forest guardian!\nIf they see me, they will certainly be pleased, not displeased.'"}]}, {"id": "7", "label": "於是，尊者阿那律陀遙見世尊來，", "rows": [{"key": "ma185:7.1", "p": "於是，尊者阿那律陀遙見世尊來，…", "s": "Then, the venerable Anuruddha, seeing the Blessed One coming from afar, immediately rebuked him:"}, {"key": "ma185:7.2", "p": "即呵彼曰：「汝守林人！…", "s": "'You forest keeper!"}, {"key": "ma185:7.3", "p": "莫呵世尊！…", "s": "Do not rebuke the Blessed One!"}, {"key": "ma185:7.4", "p": "汝守林人！…", "s": "You forest keeper!"}, {"key": "ma185:7.5", "p": "莫呵善逝！…", "s": "Do not rebuke the Well-Gone One!"}, {"key": "ma185:7.6", "p": "所以者何？…", "s": "Why is that?"}, {"key": "ma185:7.7", "p": "是我尊來，我善逝來。」…", "s": "Because it is my teacher who has come, my Well-Gone One who has come.'"}]}, {"id": "8", "label": "尊者阿那律陀出迎世尊，攝佛衣鉢，", "rows": [{"key": "ma185:8.1", "p": "尊者阿那律陀出迎世尊，攝佛衣鉢，…", "s": "The venerable Anuruddha went out to welcome the Blessed One, took the Buddha's robe and bowl;"}, {"key": "ma185:8.2", "p": "尊者難提為佛敷牀，尊者金毘羅為佛取水。…", "s": "the venerable Nandiya spread a seat for the Buddha;\nthe venerable Kimbila fetched water for the Buddha."}]}, {"id": "9", "label": "爾時，世尊洗手足已，坐彼尊者所敷之座，", "rows": [{"key": "ma185:9.1", "p": "爾時，世尊洗手足已，坐彼尊者所敷之座，…", "s": "At that time, the Blessed One, having washed his hands and feet, sat down on the seat spread by that venerable one."}, {"key": "ma185:9.2", "p": "坐已，問曰：「阿那律陀，汝常安隱，無所乏耶？」…", "s": "Having sat down, he asked:\n'Anuruddha, are you always at ease, lacking nothing?'"}]}, {"id": "10", "label": "尊者阿那律陀白曰：「世尊！", "rows": [{"key": "ma185:10.1", "p": "尊者阿那律陀白曰：「世尊！…", "s": "The venerable Anuruddha replied:"}, {"key": "ma185:10.2", "p": "我常安隱，無有所乏。」…", "s": "'Blessed One, I am always at ease, lacking nothing.'"}]}, {"id": "11", "label": "世尊復問：「阿那律陀！", "rows": [{"key": "ma185:11.1", "p": "世尊復問：「阿那律陀！…", "s": "The Blessed One further asked:"}, {"key": "ma185:11.2", "p": "云何安隱，無所乏耶？」…", "s": "'Anuruddha, how are you at ease, lacking nothing?'"}]}, {"id": "12", "label": "尊者阿那律陀白曰：「世尊！", "rows": [{"key": "ma185:12.1", "p": "尊者阿那律陀白曰：「世尊！…", "s": "The venerable Anuruddha replied:"}, {"key": "ma185:12.2", "p": "我作是念：『我有善利，…", "s": "'Blessed One, I think thus:"}, {"key": "ma185:12.3", "p": "有大功德，謂我與如是梵行共行。…", "s": "\"I have a good gain, I have great merit, in that I dwell together with such pure companions in the holy life.\"\nBlessed One, I constantly practice bodily acts of…"}, {"key": "ma185:12.4", "p": "』世尊！…", "s": "whether seen or unseen, equally without difference;"}, {"key": "ma185:12.5", "p": "我常向彼梵行行慈身業，見與不見，等無有異，…", "s": "I practice verbal acts of loving-kindness, I practice mental acts of loving-kindness,"}, {"key": "ma185:12.6", "p": "行慈口業，行慈意業，見與不見，等無有異。世尊！…", "s": "whether seen or unseen, equally without difference.\nBlessed One, I think thus:"}, {"key": "ma185:12.7", "p": "我作是念：『我今寧可自捨己心，隨彼諸賢心。…", "s": "\"Now I might rather set aside my own mind and follow the minds of those venerable ones.\""}, {"key": "ma185:12.8", "p": "』我便自捨己心，隨彼諸賢心，我未曾有一不可心。世尊！…", "s": "So I set aside my own mind and follow the minds of those venerable ones;"}, {"key": "ma185:12.9", "p": "如是我常安隱，無有所乏。」…", "s": "I have never had a single disagreeable thought.\nBlessed One, thus I am always at ease, lacking nothing.'"}]}, {"id": "13", "label": "問尊者難提，答亦如是。", "rows": [{"key": "ma185:13.1", "p": "問尊者難提，答亦如是。…", "s": "He asked the Venerable Nandiya, and the reply was the same."}, {"key": "ma185:13.2", "p": "復問尊者金毘羅曰：「汝常安隱，無所乏耶？」…", "s": "Then he asked the Venerable Kimbila:\n'Are you always at ease, lacking nothing?'"}]}, {"id": "14", "label": "尊者金毘羅白曰：「世尊！", "rows": [{"key": "ma185:14.1", "p": "尊者金毘羅白曰：「世尊！…", "s": "The Venerable Kimbila said to the Blessed One:"}, {"key": "ma185:14.2", "p": "我常安隱，無有所乏。」…", "s": "'Blessed One, I am always at ease, lacking nothing.'"}]}, {"id": "15", "label": "問曰：「金毘羅！", "rows": [{"key": "ma185:15.1", "p": "問曰：「金毘羅！…", "s": "He asked:"}, {"key": "ma185:15.2", "p": "云何安隱，無所乏耶？」…", "s": "'Kimbila, how are you at ease, lacking nothing?'"}]}, {"id": "16", "label": "尊者金毘羅白曰：「世尊！", "rows": [{"key": "ma185:16.1", "p": "尊者金毘羅白曰：「世尊！…"}, {"key": "ma185:16.2", "p": "我作是念：『我有善利，…"}, {"key": "ma185:16.3", "p": "有大功德，謂我與如是梵行共行。…"}, {"key": "ma185:16.4", "p": "』世尊！…"}, {"key": "ma185:16.5", "p": "我常向彼梵行行慈身業，見與不見，等無有異，…", "s": "The Venerable Kimbila said to the Blessed One:"}, {"key": "ma185:16.6", "p": "行慈口業，行慈意業，見與不見，等無有異。世尊！…"}, {"key": "ma185:16.7", "p": "我作是念：『我今寧可自捨己心，隨彼諸賢心。…"}, {"key": "ma185:16.8", "p": "』我便自捨己心，隨彼諸賢心，我未曾有一不可心。世尊！…"}, {"key": "ma185:16.9", "p": "如是我常安隱，無有所乏。」…", "s": "'Blessed One, I think thus:"}]}, {"id": "17", "label": "世尊歎曰：「善哉！善哉！", "rows": [{"key": "ma185:17.1", "p": "世尊歎曰：「善哉！善哉！…", "s": "The Blessed One praised:"}, {"key": "ma185:17.2", "p": "阿那律陀！…", "s": "'Good!\nGood!"}, {"key": "ma185:17.3", "p": "如是汝等常共和合，安隱無諍，一心一師，…", "s": "Anuruddha!\nSo you all constantly live in harmony, at ease and without conflict,"}, {"key": "ma185:17.4", "p": "合一水乳，頗得人上之法，而有差降安樂住止耶？」…", "s": "with one mind, one teacher, united like milk and water.\nHave you attained any superhuman states, with distinctions in peaceful abiding?'"}]}, {"id": "18", "label": "尊者阿那律陀白曰：「世尊！", "rows": [{"key": "ma185:18.1", "p": "尊者阿那律陀白曰：「世尊！…", "s": "The Venerable Anuruddha said to the Blessed One:"}, {"key": "ma185:18.2", "p": "如是我等常共和合，安隱無諍，一心一師，…", "s": "'Blessed One, thus we all constantly live in harmony, at ease and without conflict, with one mind, one teacher,"}, {"key": "ma185:18.3", "p": "合一水乳，得人上之法，而有差降安樂住止。世尊！…", "s": "united like milk and water, and we have attained superhuman states, with distinctions in peaceful abiding."}, {"key": "ma185:18.4", "p": "我等離欲、離惡不善之法，至得第四禪成就遊。世尊！…", "s": "Blessed One, we, having abandoned desire and unwholesome states, have attained and dwell in the fourth jhāna."}, {"key": "ma185:18.5", "p": "如是我等常共和合，安隱無諍，一心一師，…", "s": "Blessed One, thus we all constantly live in harmony, at ease and without conflict, with one mind, one teacher,"}, {"key": "ma185:18.6", "p": "合一水乳，得此人上之法，而有差降安樂住止。」…", "s": "united like milk and water, and we have attained these superhuman states, with distinctions in peaceful abiding.'"}]}, {"id": "19", "label": "世尊歎曰：「善哉！善哉！", "rows": [{"key": "ma185:19.1", "p": "世尊歎曰：「善哉！善哉！…", "s": "The Blessed One praised him, saying:"}, {"key": "ma185:19.2", "p": "阿那律陀！…", "s": "\"Good!\nGood!"}, {"key": "ma185:19.3", "p": "捨此住止，過此度此，…", "s": "Anuruddha!"}, {"key": "ma185:19.4", "p": "頗更有餘得人上之法，而有差降安樂住止耶？」…", "s": "Setting aside this dwelling, going beyond and transcending it,\nis there any further superior state attained by a person, with a graded sequence of peaceful abid…"}]}, {"id": "20", "label": "尊者阿那律陀白曰：「世尊！", "rows": [{"key": "ma185:20.1", "p": "尊者阿那律陀白曰：「世尊！…", "s": "The venerable Anuruddha replied:"}, {"key": "ma185:20.2", "p": "捨此住止，過此度此，…", "s": "\"Blessed One!"}, {"key": "ma185:20.3", "p": "更復有餘得人上之法，而有差降安樂住止。世尊！…", "s": "Setting aside this dwelling, going beyond and transcending it,"}, {"key": "ma185:20.4", "p": "我心與慈俱，遍滿一方成就遊。…", "s": "there is indeed a further superior state attained by a person, with a graded sequence of peaceful abidings."}, {"key": "ma185:20.5", "p": "如是二三四方、四維上下，…", "s": "Blessed One, with my mind imbued with loving-kindness, I dwell suffusing one direction,"}, {"key": "ma185:20.6", "p": "普周一切，心與慈俱，無結無怨，…", "s": "and likewise the second, third, and fourth directions, above, below, and all around,\neverywhere, pervading the entire world with loving-kindness — abundant,"}, {"key": "ma185:20.7", "p": "無恚無諍，極廣甚大，無量善修，遍滿一切世間成就遊。…", "s": "vast, immeasurable, free from hostility, free from ill will, and well cultivated."}, {"key": "ma185:20.8", "p": "如是悲、喜心與捨俱，無結無怨，無恚無諍，…", "s": "In the same way, with compassion, altruistic joy, and equanimity, I dwell suffusing the entire world —"}, {"key": "ma185:20.9", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。世尊！…", "s": "abundant, vast, immeasurable, free from hostility, free from ill will, and well cultivated."}, {"key": "ma185:20.10", "p": "捨此住止，過此度此，…", "s": "Blessed One!"}, {"key": "ma185:20.11", "p": "謂更有此餘得人上之法，而有差降安樂住止。」…", "s": "Setting aside this dwelling, going beyond and transcending it,\nthis is what is meant by a further superior state attained by a person, with a graded sequence of…"}]}, {"id": "21", "label": "世尊歎曰：「善哉！善哉！", "rows": [{"key": "ma185:21.1", "p": "世尊歎曰：「善哉！善哉！…", "s": "The Blessed One praised him, saying:"}, {"key": "ma185:21.2", "p": "阿那律陀！…", "s": "\"Good!\nGood!"}, {"key": "ma185:21.3", "p": "捨此住止，過此度此，…", "s": "Anuruddha!"}, {"key": "ma185:21.4", "p": "頗更有餘得人上之法，而有差降安樂住止耶？」…", "s": "Setting aside this dwelling, going beyond and transcending it,\nis there any further superior state attained by a person, with a graded sequence of peaceful abid…"}]}, {"id": "22", "label": "尊者阿那律陀白曰：「世尊！", "rows": [{"key": "ma185:22.1", "p": "尊者阿那律陀白曰：「世尊！…", "s": "The venerable Anuruddha replied:"}, {"key": "ma185:22.2", "p": "捨此住止，過此度此，…", "s": "\"Blessed One!\nSetting aside this dwelling, going beyond and transcending it,"}, {"key": "ma185:22.3", "p": "更復有餘得人上之法，而有差降安樂住止。世尊！…", "s": "there is indeed a further superior state attained by a person, with a graded sequence of peaceful abidings."}, {"key": "ma185:22.4", "p": "我等度一切色想，至得非有想非無想處成就遊。世尊！…", "s": "Blessed One, having transcended all perceptions of form,\nI attain and dwell in the sphere of neither perception nor non-perception."}, {"key": "ma185:22.5", "p": "捨此住止，過此度此，…", "s": "Blessed One!"}, {"key": "ma185:22.6", "p": "謂更有此餘得人上之法，而有差降安樂住止。」…", "s": "Setting aside this dwelling, going beyond and transcending it,\nthis is what is meant by a further superior state attained by a person, with a graded sequence of…"}]}, {"id": "23", "label": "世尊歎曰：「善哉！善哉！", "rows": [{"key": "ma185:23.1", "p": "世尊歎曰：「善哉！善哉！…", "s": "The Blessed One praised him, saying:"}, {"key": "ma185:23.2", "p": "阿那律陀！…", "s": "\"Good!\nGood!"}, {"key": "ma185:23.3", "p": "捨此住止，過此度此，…", "s": "Anuruddha!"}, {"key": "ma185:23.4", "p": "頗更有餘得人上之法，而有差降安樂住止耶？」…", "s": "Setting aside this dwelling, going beyond and transcending it,\nis there any further superior state attained by a person, with a graded sequence of peaceful abid…"}]}, {"id": "24", "label": "尊者阿那律陀白曰：「世尊！", "rows": [{"key": "ma185:24.1", "p": "尊者阿那律陀白曰：「世尊！…", "s": "The venerable Anuruddha replied:"}, {"key": "ma185:24.2", "p": "捨此住止，過此度此，…", "s": "\"Blessed One!"}, {"key": "ma185:24.3", "p": "更復有餘得人上之法，而有差降安樂住止。世尊！…", "s": "Setting aside this dwelling, going beyond and transcending it,\nthere is indeed a further superior state attained by a person, with a graded sequence of peaceful…"}, {"key": "ma185:24.4", "p": "我等得如意足、天耳智、他心智、宿命智、…", "s": "Blessed One, I have attained the psychic power, the divine ear, the knowledge of others' minds,"}, {"key": "ma185:24.5", "p": "生死智，諸漏已盡，得無漏，心解脫、慧解脫，…", "s": "the knowledge of past lives, and the knowledge of death and rebirth.\nThe taints are exhausted, I have attained the taintless liberation of mind and liberation b…"}, {"key": "ma185:24.6", "p": "於現法中自知自覺，自作證成就遊，生已盡，…", "s": "In this very life, I know and realize for myself, having directly witnessed it:"}, {"key": "ma185:24.7", "p": "梵行已立，所作已辦，不更受有，知如真。世尊！…", "s": "birth is destroyed, the holy life has been lived, what had to be done has been done,\nthere is no more coming to any state of existence — I know it as it really …"}, {"key": "ma185:24.8", "p": "捨此住止，過此度此，…", "s": "Blessed One!"}, {"key": "ma185:24.9", "p": "謂更有此餘得人上之法，而有差降安樂住止。」…", "s": "Setting aside this dwelling, going beyond and transcending it,\nthis is what is meant by a further superior state attained by a person, with a graded sequence of…"}]}, {"id": "25", "label": "世尊歎曰：「善哉！善哉！", "rows": [{"key": "ma185:25.1", "p": "世尊歎曰：「善哉！善哉！…", "s": "The Blessed One praised, saying:"}, {"key": "ma185:25.2", "p": "阿那律陀！…", "s": "\"Good!\nGood!"}, {"key": "ma185:25.3", "p": "捨此住止，過此度此，…", "s": "Anuruddha!"}, {"key": "ma185:25.4", "p": "頗更有餘得人上之法，而有差降安樂住止耶？」…", "s": "Having abandoned this dwelling, gone beyond it and transcended it,\nis there still any other method for attaining the superhuman state, with distinctions and lev…"}]}, {"id": "26", "label": "尊者阿那律陀白曰：「世尊！", "rows": [{"key": "ma185:26.1", "p": "尊者阿那律陀白曰：「世尊！…", "s": "The venerable Anuruddha replied:"}, {"key": "ma185:26.2", "p": "捨此住止，過此度此，…", "s": "\"Blessed One!"}, {"key": "ma185:26.3", "p": "更無有餘得人上之法，而有差降安樂住止。」…", "s": "Having abandoned this dwelling, gone beyond it and transcended it,\nthere is no other method for attaining the superhuman state, with distinctions and levels of …"}]}, {"id": "27", "label": "於是，世尊便作是念：「此族姓子之所遊行，", "rows": [{"key": "ma185:27.1", "p": "於是，世尊便作是念：「此族姓子之所遊行，…", "s": "Then the Blessed One thought:"}, {"key": "ma185:27.2", "p": "安隱快樂，我今寧可為彼說法。…", "s": "\"This clansman dwells in peace and happiness."}, {"key": "ma185:27.3", "p": "」世尊作是念已，即為尊者阿那律陀、…", "s": "Now I should teach him the Dharma.\""}, {"key": "ma185:27.4", "p": "尊者難提、尊者金毘羅說法，…", "s": "Having thought thus, the Blessed One taught the Dharma to the venerable Anuruddha, the venerable Nandiya,"}, {"key": "ma185:27.5", "p": "勸發渴仰，成就歡喜，無量方便為彼說法，…", "s": "and the venerable Kimbila, inspiring them, arousing their longing, and bringing them to joy."}, {"key": "ma185:27.6", "p": "勸發渴仰，成就歡喜已，從坐起去。…", "s": "After teaching them the Dharma with countless skillful means, inspiring them,"}, {"key": "ma185:27.7", "p": "於是，尊者阿那律陀、難提、…", "s": "arousing their longing, and bringing them to joy, he rose from his seat and departed."}, {"key": "ma185:27.8", "p": "金毘羅送世尊，隨其近遠，便還所住。…", "s": "Then the venerable Anuruddha, Nandiya,\nand Kimbila accompanied the Blessed One for a certain distance and then returned to their dwelling."}]}, {"id": "28", "label": "尊者難提、尊者金毘羅歎尊者阿那律陀曰：「善哉！善哉！", "rows": [{"key": "ma185:28.1", "p": "尊者難提、尊者金毘羅歎尊者阿那律陀曰：「善哉！善哉！…", "s": "The venerable Nandiya and the venerable Kimbila praised the venerable Anuruddha, saying:"}, {"key": "ma185:28.2", "p": "尊者阿那律陀！…", "s": "\"Good!"}, {"key": "ma185:28.3", "p": "我等初不聞尊者阿那律陀說如是義，…", "s": "Good!"}, {"key": "ma185:28.4", "p": "我等如是有大如意足，有大威德，…", "s": "Venerable Anuruddha!"}, {"key": "ma185:28.5", "p": "有大福祐，有大威神，…", "s": "We have never before heard the venerable Anuruddha speak such words."}, {"key": "ma185:28.6", "p": "然尊者阿那律陀盡向世尊極稱譽我等。」…", "s": "We indeed have such great psychic power, such great majesty, such great merit,\nsuch great spiritual might, yet the venerable Anuruddha has fully praised us to t…"}]}, {"id": "29", "label": "尊者阿那律陀歎尊者難提、金毘羅曰：「善哉！善哉！尊者！", "rows": [{"key": "ma185:29.1", "p": "尊者阿那律陀歎尊者難提、金毘羅曰：「善哉！善哉！尊者！…", "s": "The venerable Anuruddha praised the venerable Nandiya and Kimbila, saying:"}, {"key": "ma185:29.2", "p": "我亦初未曾從諸賢等聞，尊者如是有大如意足，…", "s": "\"Good!\nGood!"}, {"key": "ma185:29.3", "p": "有大威德，有大福祐，有大威神。…", "s": "Venerable ones!\nI too have never before heard from you, venerable ones, that you have such great psychic power,"}, {"key": "ma185:29.4", "p": "然我長夜以心知尊者心，尊者有大如意足，有大威德，…", "s": "such great majesty, such great merit, such great spiritual might.\nYet I have long known your minds with my mind:"}, {"key": "ma185:29.5", "p": "有大福祐，有大威神，是故我向世尊如是如是說。」…", "s": "you have great psychic power, great majesty, great merit, great spiritual might.\nTherefore I spoke thus to the Blessed One.\""}]}, {"id": "30", "label": "於是，長鬼天形體極妙，光明巍巍，夜將向旦，", "rows": [{"key": "ma185:30.1", "p": "於是，長鬼天形體極妙，光明巍巍，夜將向旦，…", "s": "Then a deva of the long-lived kind,"}, {"key": "ma185:30.2", "p": "往詣佛所，稽首佛足，却住一面，白世尊曰：「大仙人！…", "s": "with an extremely beautiful body and brilliant radiance, as night was about to turn to dawn,\napproached the Buddha, bowed with his head at the Buddha's feet, st…"}, {"key": "ma185:30.3", "p": "諸跋耆人得大善利，謂現有世尊及三族姓子，…", "s": "\"Great Sage!"}, {"key": "ma185:30.4", "p": "尊者阿那律陀、尊者難提、尊者金毘羅。」…", "s": "The Vajjians have gained great benefit, in that the Blessed One and these three clansmen—\nthe venerable Anuruddha, the venerable Nandiya, and the venerable Kimb…"}]}, {"id": "31", "label": "地神從長鬼天聞所說，放高大音聲：「大仙人！", "rows": [{"key": "ma185:31.1", "p": "地神從長鬼天聞所說，放高大音聲：「大仙人！…", "s": "The earth deity, having heard what the Long Ghost Deva said, emitted a loud and lofty sound:"}, {"key": "ma185:31.2", "p": "諸跋耆人得大善利，謂現有世尊及三族姓子，…", "s": "'Great sage!"}, {"key": "ma185:31.3", "p": "尊者阿那律陀、難提、金毘羅。」…", "s": "The Vajjians have gained a great benefit, namely that the World-Honored One and the three clansmen—\nthe venerable Anuruddha, Nandiya, and Kimbila—are now presen…"}]}, {"id": "32", "label": "從地神聞聲，虛空天、四王天、", "rows": [{"key": "ma185:32.1", "p": "從地神聞聲，虛空天、四王天、…", "s": "Hearing the sound from the earth deity, the space deities, the Four Great Kings, the Thirty-Three Devas, the Yama Devas,"}, {"key": "ma185:32.2", "p": "三十三天、［火＊僉］摩天、…", "s": "the Tusita Devas, the Nirmāṇarati Devas, and the Paranirmita-vaśavartin Devas,"}, {"key": "ma185:32.3", "p": "兜率哆天、化樂天、他化樂天，…", "s": "in an instant the sound reached up to the Brahma Deva:"}, {"key": "ma185:32.4", "p": "須臾聲徹至于梵天：「大仙人！…", "s": "'Great sage!"}, {"key": "ma185:32.5", "p": "諸跋耆人得大善利，謂現有世尊及三族姓子，…", "s": "The Vajjians have gained a great benefit, namely that the World-Honored One and the three clansmen—"}, {"key": "ma185:32.6", "p": "尊者阿那律陀、難提、金毘羅。」…", "s": "the venerable Anuruddha, Nandiya, and Kimbila—are now present.'"}]}, {"id": "33", "label": "世尊告曰：「如是，如是。", "rows": [{"key": "ma185:33.1", "p": "世尊告曰：「如是，如是。…"}, {"key": "ma185:33.2", "p": "長鬼天！…", "s": "The Blessed One said:"}, {"key": "ma185:33.3", "p": "諸跋耆人得大善利，謂現有世尊及三族姓子，…", "s": "'So it is, so it is, Long Ghost Deva."}, {"key": "ma185:33.4", "p": "尊者阿那律陀、難提、金毘羅。…", "s": "The Vajjians have gained a great benefit, namely that the World-Honored One and the three clansmen—"}, {"key": "ma185:33.5", "p": "長鬼天！…", "s": "the venerable Anuruddha, Nandiya, and Kimbila—are now present."}, {"key": "ma185:33.6", "p": "地神聞汝聲已，便放高大音聲：『大仙人！…", "s": "Long Ghost Deva, having heard your words, the earth deity emitted a loud and lofty sound:"}, {"key": "ma185:33.7", "p": "諸跋耆人得大善利，謂現有世尊及三族姓子，…", "s": "\"Great sage!"}, {"key": "ma185:33.8", "p": "尊者阿那律陀、難提、金毘羅。…", "s": "The Vajjians have gained a great benefit, namely that the World-Honored One and the three clansmen—"}, {"key": "ma185:33.9", "p": "』從地神聞聲，虛空天、…", "s": "the venerable Anuruddha, Nandiya, and Kimbila—are now present.\""}, {"key": "ma185:33.10", "p": "四天王天三十三天、［火＊僉］摩天、…", "s": "Hearing that sound from the earth deity, the space deities,"}, {"key": "ma185:33.11", "p": "兜率哆天、化樂天、他化樂天，…", "s": "the Four Great Kings, the Thirty-Three Devas, the Yama Devas,"}, {"key": "ma185:33.12", "p": "須臾聲徹至于梵天：『大仙人！…", "s": "the Tusita Devas, the Nirmāṇarati Devas, and the Paranirmita-vaśavartin Devas,"}, {"key": "ma185:33.13", "p": "諸跋耆人得大善利，謂現有世尊及三族姓子，…", "s": "in an instant the sound reached up to the Brahma Deva:"}, {"key": "ma185:33.14", "p": "尊者阿那律陀、難提、金毘羅。…", "s": "\"Great sage!"}, {"key": "ma185:33.15", "p": "』長鬼天！…", "s": "The Vajjians have gained a great benefit, namely that the World-Honored One and the three clansmen—"}, {"key": "ma185:33.16", "p": "若彼三族家，此三族姓子剃除鬚髮，…", "s": "the venerable Anuruddha, Nandiya, and Kimbila—are now present.\""}, {"key": "ma185:33.17", "p": "著袈裟衣，至信、捨家、無家、學道，…", "s": "Long Ghost Deva, if those three families—"}, {"key": "ma185:33.18", "p": "彼三族家憶此三族姓子所因、所行者，…", "s": "the families of these three clansmen who have shaved off their hair and beard, donned the monastic robe,"}, {"key": "ma185:33.19", "p": "彼亦長夜得大善利，安隱快樂。…", "s": "and with faith gone forth from home to homelessness to train in the path—"}, {"key": "ma185:33.20", "p": "若彼村邑及天、魔、梵、沙門、梵志，從人至天，…", "s": "remember the reasons and the practices of these three clansmen,"}, {"key": "ma185:33.21", "p": "憶此三族姓子所因、所行者，…", "s": "they too will gain great benefit and peaceful happiness for a long time."}, {"key": "ma185:33.22", "p": "彼亦長夜得利饒益，安隱快樂。…", "s": "If those villages, as well as devas, Māras, Brahmās, ascetics, brahmins, and beings from humans to devas,"}, {"key": "ma185:33.23", "p": "長鬼天！…", "s": "remember the reasons and the practices of these three clansmen,"}, {"key": "ma185:33.24", "p": "此三族姓子如是有大如意足，…", "s": "they too will gain benefit and advantage, peaceful happiness for a long time."}, {"key": "ma185:33.25", "p": "有大威德，有大福祐，有大威神。」…", "s": "Long Ghost Deva, these three clansmen have such great psychic power, great majesty, great merit, and great might.'"}]}, {"id": "34", "label": "佛說如是。", "rows": [{"key": "ma185:34.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma185:34.2", "p": "此三族姓子及長鬼天，聞佛所說，歡喜奉行。…", "s": "These three clansmen and the Long Ghost Deva, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma54:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊拘樓瘦，在劍摩瑟曇拘樓都邑。", "rows": [{"key": "ma54:2.1", "p": "一時，佛遊拘樓瘦，在劍摩瑟曇拘樓都邑。…", "s": "At one time, the Buddha was traveling in the country of the Kurus, at the Kammāssadhamma market town of the Kurus."}]}, {"id": "3", "label": "爾時，世尊告諸比丘：「有知有見者，", "rows": [{"key": "ma54:3.1", "p": "爾時，世尊告諸比丘：「有知有見者，…", "s": "At that time, the Blessed One said to the monks:"}, {"key": "ma54:3.2", "p": "便得漏盡，非不知，非不見。…", "s": "\"One who knows and sees attains the destruction of the taints, not one who does not know or see."}, {"key": "ma54:3.3", "p": "云何知見便得漏盡？…", "s": "How does one who knows and see attain the destruction of the taints?\nThat is, knowing and seeing suffering as it really is, one attains the destruction of the t…"}, {"key": "ma54:3.4", "p": "謂知見苦如真，便得漏盡。…", "s": "Knowing and seeing the origin of suffering, knowing and seeing the cessation of suffering,"}, {"key": "ma54:3.5", "p": "知見苦習、知見苦滅、知見苦滅道如真，便得漏盡。…", "s": "and knowing and seeing the path leading to the cessation of suffering as they really are,"}, {"key": "ma54:3.6", "p": "盡智有習，非無習。…", "s": "one attains the destruction of the taints.\nThe knowledge of destruction has a condition, it is not without a condition."}, {"key": "ma54:3.7", "p": "何謂盡智習？…", "s": "What is the condition for the knowledge of destruction?"}, {"key": "ma54:3.8", "p": "答曰解脫為習。…", "s": "The answer is:"}, {"key": "ma54:3.9", "p": "解脫亦有習，非無習。…", "s": "liberation is the condition.\nLiberation also has a condition, it is not without a condition."}, {"key": "ma54:3.10", "p": "何謂解脫習？…", "s": "What is the condition for liberation?"}, {"key": "ma54:3.11", "p": "答曰無欲為習。…", "s": "The answer is:"}, {"key": "ma54:3.12", "p": "無欲亦有習，非無習。…", "s": "dispassion is the condition.\nDispassion also has a condition, it is not without a condition."}, {"key": "ma54:3.13", "p": "何謂無欲習？…", "s": "What is the condition for dispassion?"}, {"key": "ma54:3.14", "p": "答曰厭為習。…", "s": "The answer is:"}, {"key": "ma54:3.15", "p": "厭亦有習，非無習。…", "s": "disenchantment is the condition.\nDisenchantment also has a condition, it is not without a condition."}, {"key": "ma54:3.16", "p": "何謂厭習？…", "s": "What is the condition for disenchantment?"}, {"key": "ma54:3.17", "p": "答曰見如實、知如真為習。…", "s": "The answer is:"}, {"key": "ma54:3.18", "p": "見如實、知如真亦有習，非無習。…", "s": "seeing things as they really are and knowing them as they really are is the condition.\nSeeing things as they really are and knowing them as they really are also…"}, {"key": "ma54:3.19", "p": "何謂見如實、知如真習？…", "s": "it is not without a condition."}, {"key": "ma54:3.20", "p": "答曰定為習。…", "s": "What is the condition for seeing things as they really are and knowing them as they really are?\nThe answer is:"}, {"key": "ma54:3.21", "p": "定亦有習，非無習。…", "s": "concentration is the condition."}, {"key": "ma54:3.22", "p": "何謂定習？…", "s": "Concentration also has a condition, it is not without a condition."}, {"key": "ma54:3.23", "p": "答曰樂為習。…", "s": "What is the condition for concentration?\nThe answer is:"}, {"key": "ma54:3.24", "p": "樂亦有習，非無習？…", "s": "happiness is the condition."}, {"key": "ma54:3.25", "p": "何謂樂習？…", "s": "Happiness also has a condition, it is not without a condition."}, {"key": "ma54:3.26", "p": "答曰止為習。…", "s": "What is the condition for happiness?\nThe answer is:"}, {"key": "ma54:3.27", "p": "止亦有習，非無習。…", "s": "tranquility is the condition."}, {"key": "ma54:3.28", "p": "何謂止習？…", "s": "Tranquility also has a condition, it is not without a condition."}, {"key": "ma54:3.29", "p": "答曰喜為習。…", "s": "What is the condition for tranquility?\nThe answer is:"}, {"key": "ma54:3.30", "p": "喜亦有習，非無習。…", "s": "joy is the condition."}, {"key": "ma54:3.31", "p": "何謂喜習？…", "s": "Joy also has a condition, it is not without a condition."}, {"key": "ma54:3.32", "p": "答曰歡悅為習。…", "s": "What is the condition for joy?\nThe answer is:"}, {"key": "ma54:3.33", "p": "歡悅亦有習，非無習。…", "s": "delight is the condition."}, {"key": "ma54:3.34", "p": "何謂歡悅習？…", "s": "Delight also has a condition, it is not without a condition."}, {"key": "ma54:3.35", "p": "答曰不悔為習。…", "s": "What is the condition for delight?\nThe answer is:"}, {"key": "ma54:3.36", "p": "不悔亦有習，非無習。…", "s": "absence of remorse is the condition."}, {"key": "ma54:3.37", "p": "何謂不悔習？…", "s": "Absence of remorse also has a condition, it is not without a condition.\nWhat is the condition for absence of remorse?"}, {"key": "ma54:3.38", "p": "答曰護戒為習。…", "s": "The answer is:"}, {"key": "ma54:3.39", "p": "護戒亦有習，非無習。…", "s": "guarding virtuous behavior is the condition."}, {"key": "ma54:3.40", "p": "何謂護戒習？…", "s": "Guarding virtuous behavior also has a condition, it is not without a condition.\nWhat is the condition for guarding virtuous behavior?"}, {"key": "ma54:3.41", "p": "答曰護諸根為習。…", "s": "The answer is:"}, {"key": "ma54:3.42", "p": "護諸根亦有習，非無習。…", "s": "guarding the sense faculties is the condition."}, {"key": "ma54:3.43", "p": "何謂護諸根習？…", "s": "Guarding the sense faculties also has a condition, it is not without a condition.\nWhat is the condition for guarding the sense faculties?"}, {"key": "ma54:3.44", "p": "答曰正念、正智為習。…", "s": "The answer is:"}, {"key": "ma54:3.45", "p": "正念、正智亦有習，非無習。…", "s": "right mindfulness and right knowledge are the condition."}, {"key": "ma54:3.46", "p": "何謂正念、正智習？…", "s": "Right mindfulness and right knowledge also have a condition, they are not without a condition.\nWhat is the condition for right mindfulness and right knowledge?"}, {"key": "ma54:3.47", "p": "答曰正思惟為習。…", "s": "The answer is:"}, {"key": "ma54:3.48", "p": "正思惟亦有習，非無習。…", "s": "right thinking is the condition."}, {"key": "ma54:3.49", "p": "何謂正思惟習？…", "s": "Right thinking also has a condition, it is not without a condition.\nWhat is the condition for right thinking?"}, {"key": "ma54:3.50", "p": "答曰信為習。…", "s": "The answer is:"}, {"key": "ma54:3.51", "p": "信亦有習，非無習。…", "s": "faith is the condition."}, {"key": "ma54:3.52", "p": "何謂信習？…", "s": "Faith also has a condition, it is not without a condition.\nWhat is the condition for faith?"}, {"key": "ma54:3.53", "p": "答曰觀法忍為習。…", "s": "The answer is:"}, {"key": "ma54:3.54", "p": "觀法忍亦有習，非無習。…", "s": "patient acceptance of the teachings is the condition."}, {"key": "ma54:3.55", "p": "何謂觀法忍習？…", "s": "Patient acceptance of the teachings also has a condition, it is not without a condition.\nWhat is the condition for patient acceptance of the teachings?"}, {"key": "ma54:3.56", "p": "答曰翫誦法為習。…", "s": "The answer is:"}, {"key": "ma54:3.57", "p": "翫誦法亦有習，非無習。…", "s": "reciting the teachings is the condition.\nReciting the teachings also has a condition, it is not without a condition."}, {"key": "ma54:3.58", "p": "何謂翫誦法習？…", "s": "What is the condition for reciting the teachings?"}, {"key": "ma54:3.59", "p": "答曰受持法為習。…", "s": "The answer is:"}, {"key": "ma54:3.60", "p": "受持法亦有習，非無習。…", "s": "memorizing the teachings is the condition.\nMemorizing the teachings also has a condition, it is not without a condition."}, {"key": "ma54:3.61", "p": "何謂受持法習？…", "s": "What is the condition for memorizing the teachings?"}, {"key": "ma54:3.62", "p": "答曰觀法義為習。…", "s": "The answer is:"}, {"key": "ma54:3.63", "p": "觀法義亦有習，非無習。…", "s": "examining the meaning of the teachings is the condition.\nExamining the meaning of the teachings also has a condition, it is not without a condition."}, {"key": "ma54:3.64", "p": "何謂觀法義習？…", "s": "What is the condition for examining the meaning of the teachings?"}, {"key": "ma54:3.65", "p": "答曰耳界為習。…", "s": "The answer is:"}, {"key": "ma54:3.66", "p": "耳界亦有習，非無習。…", "s": "the ear faculty is the condition.\nThe ear faculty also has a condition, it is not without a condition."}, {"key": "ma54:3.67", "p": "何謂耳界習？…", "s": "What is the condition for the ear faculty?"}, {"key": "ma54:3.68", "p": "答曰聞善法為習。…", "s": "The answer is:"}, {"key": "ma54:3.69", "p": "聞善法亦有習，非無習。…", "s": "hearing the good teachings is the condition.\nHearing the good teachings also has a condition, it is not without a condition."}, {"key": "ma54:3.70", "p": "何謂聞善法習？…", "s": "What is the condition for hearing the good teachings?"}, {"key": "ma54:3.71", "p": "答曰往詣為習。…", "s": "The answer is:"}, {"key": "ma54:3.72", "p": "往詣亦有習，非無習。…", "s": "approaching (a teacher) is the condition.\nApproaching also has a condition, it is not without a condition."}, {"key": "ma54:3.73", "p": "何謂往詣習？…", "s": "What is the condition for approaching?"}, {"key": "ma54:3.74", "p": "答曰奉事為習。…", "s": "The answer is:\nattending upon (the teacher) is the condition.\""}]}, {"id": "4", "label": "「若有奉事善知識者，未聞便聞，已聞便利，", "rows": [{"key": "ma54:4.1", "p": "「若有奉事善知識者，未聞便聞，已聞便利，…", "s": "\"If one attends upon a good spiritual friend, what has not been heard is heard, and what has been heard becomes clear."}, {"key": "ma54:4.2", "p": "如是善知識若不奉事者，便害奉事習。…", "s": "Thus, if one does not attend upon a good spiritual friend, the condition of attending upon is harmed."}, {"key": "ma54:4.3", "p": "若無奉事，便害往詣習。…", "s": "If there is no attending upon, the condition of approaching is harmed."}, {"key": "ma54:4.4", "p": "若無往詣，便害聞善法習。…", "s": "If there is no approaching, the condition of hearing the good teachings is harmed."}, {"key": "ma54:4.5", "p": "若不聞善法，便害耳界習。…", "s": "If one does not hear the good teachings, the condition of the ear faculty is harmed."}, {"key": "ma54:4.6", "p": "若無耳界，便害觀法義習。…", "s": "If there is no ear faculty, the condition of examining the meaning of the teachings is harmed."}, {"key": "ma54:4.7", "p": "若無觀法義，便害受持法習。…", "s": "If there is no examining the meaning of the teachings, the condition of memorizing the teachings is harmed."}, {"key": "ma54:4.8", "p": "若無受持法，便害翫誦法習。…", "s": "If there is no memorizing the teachings, the condition of reciting the teachings is harmed.\nIf there is no reciting the teachings, the condition of patient acce…"}, {"key": "ma54:4.9", "p": "若無翫誦法，便害觀法忍習。…", "s": "If there is no patient acceptance of the teachings, the condition of faith is harmed."}, {"key": "ma54:4.10", "p": "若無觀法忍，便害信習。…", "s": "If there is no faith, the condition of right thinking is harmed."}, {"key": "ma54:4.11", "p": "若無信，便害正思惟習。…", "s": "If there is no right thinking, the condition of right mindfulness and right knowledge is harmed."}, {"key": "ma54:4.12", "p": "若無正思惟，便害正念、正智習。…", "s": "If there is no right mindfulness and right knowledge, the conditions of guarding the sense faculties,"}, {"key": "ma54:4.13", "p": "若無正念、正智，便害護諸根、護戒、不悔、歡悅、…", "s": "guarding virtuous behavior, absence of remorse, delight, joy,"}, {"key": "ma54:4.14", "p": "喜、止、樂、定、見如實、知如真、厭、無欲、解脫習。…", "s": "tranquility, happiness, concentration, seeing things as they really are,"}, {"key": "ma54:4.15", "p": "若無解脫，便害盡智習。…", "s": "knowing them as they really are, disenchantment, dispassion, and liberation are harmed.\nIf there is no liberation, the condition of the knowledge of destruction…"}]}, {"id": "5", "label": "「若奉事善知識者，未聞便聞，已聞便利，", "rows": [{"key": "ma54:5.1", "p": "「若奉事善知識者，未聞便聞，已聞便利，…", "s": "\"If one attends upon a good spiritual friend, what has not been heard is heard, and what has been heard becomes clear."}, {"key": "ma54:5.2", "p": "如是善知識，若奉事者，便習奉事。…", "s": "Thus, if one attends upon a good spiritual friend, one practices attending upon."}, {"key": "ma54:5.3", "p": "若有奉事，便習往詣。…", "s": "If there is attending upon, one practices approaching."}, {"key": "ma54:5.4", "p": "若有往詣，便習聞善法。…", "s": "If there is approaching, one practices hearing the good teachings."}, {"key": "ma54:5.5", "p": "若有聞善法，便習耳界。…", "s": "If there is hearing the good teachings, one practices the ear faculty."}, {"key": "ma54:5.6", "p": "若有耳界，便習觀法義。…", "s": "If there is the ear faculty, one practices examining the meaning of the teachings."}, {"key": "ma54:5.7", "p": "若有觀法義，便習受持法。…", "s": "If there is examining the meaning of the teachings, one practices memorizing the teachings."}, {"key": "ma54:5.8", "p": "若有受持法，便習翫誦法。…", "s": "If there is memorizing the teachings, one practices reciting the teachings.\nIf there is reciting the teachings, one practices patient acceptance of the teaching…"}, {"key": "ma54:5.9", "p": "若有翫誦法，便習觀法忍。…", "s": "If there is patient acceptance of the teachings, one practices faith."}, {"key": "ma54:5.10", "p": "若有觀法忍，便習信。…", "s": "If there is faith, one practices right thinking."}, {"key": "ma54:5.11", "p": "若有信，便習正思惟。…", "s": "If there is right thinking, one practices right mindfulness and right knowledge."}, {"key": "ma54:5.12", "p": "若有正思惟，便習正念、正智。…", "s": "If there is right mindfulness and right knowledge, one practices guarding the sense faculties,"}, {"key": "ma54:5.13", "p": "若有正念、正智，便習護諸根、護戒、不悔、歡悅、…", "s": "guarding virtuous behavior, absence of remorse, delight,"}, {"key": "ma54:5.14", "p": "喜、止、樂、定、見如實、知如真、厭、無欲、解脫。…", "s": "joy, tranquility, happiness, concentration, seeing things as they really are,"}, {"key": "ma54:5.15", "p": "若有解脫，便習盡智。」…", "s": "knowing them as they really are, disenchantment, dispassion, and liberation.\nIf there is liberation, one practices the knowledge of destruction.\""}]}, {"id": "6", "label": "佛說如是。", "rows": [{"key": "ma54:6.1", "p": "佛說如是。…", "s": "The Buddha spoke thus."}, {"key": "ma54:6.2", "p": "彼諸比丘聞佛所說，歡喜奉行。…", "s": "Those monks, having heard what the Buddha said, rejoiced and practiced accordingly."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

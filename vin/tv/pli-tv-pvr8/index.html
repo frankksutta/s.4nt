@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../../help.html">Help</a><a href="../../../help.html#about">About</a><a href="../../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:32 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../../index.html" title="s.4nt.org — home"><img src="../../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../../help.html">Help</a><a href="../../../help.html#about">About</a><a href="../../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:34 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -966,12 +1025,14 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 <script type="application/json" id="tx-bodhi-esque">["The Parivāra", "8.\nQuestions and Answers on the Uposatha, etc.", "1.\nQuestions on Beginning, Middle, and End", "Of the Uposatha act, what is the beginning, what is the middle, what is the conclusion?", "Of the Pavāraṇā act, what is the beginning, what is the middle, what is the conclusion?", "Of the act of censure, what is the beginning, what is the middle, what is the conclusion?", "Of the act of suspension …", "Of the act of banishment …", "Of the act of reconciliation …", "Of the act of suspension …", "Of the granting of probation …", "Of the sending back to the beginning …", "Of the granting of penance …", "Of the rehabilitation …", "Of the act of ordination, what is the beginning, what is the middle, what is the conclusion?", "For the calming of the act of censure, what is the beginning, what is the middle, what is the end?", "For the calming of the act of dependence, what is the beginning, what is the middle, what is the end?", "For the calming of the act of banishment, what is the beginning, what is the middle, what is the end?", "For the calming of the act of reconciliation, what is the beginning, what is the middle, what is the end?", "For the calming of the act of suspension, what is the beginning, what is the middle, what is the end?", "For the verdict of innocence, what is the beginning, what is the middle, what is the end?", "For the verdict of past insanity, what is the beginning, what is the middle, what is the end?", "For the further penalty, what is the beginning, what is the middle, what is the end?", "For the covering over as with grass, what is the beginning, what is the middle, what is the end?", "For the authorization as an adviser of bhikkhunīs, what is the beginning, what is the middle, what is the end?", "For the authorization to be without the triple robe, what is the beginning, what is the middle, what is the end?", "For the authorization for a rug, what is the beginning, what is the middle, what is the end?", "For the authorization to dispose of money, what is the beginning, what is the middle, what is the end?", "For the authorizations for a robe-receiver, what is the beginning, what is the middle, what is the end?", "For the authorization for a bowl-receiver, what is the beginning, what is the middle, what is the end?", "Of the agreement on punishment, what is the beginning, what is the middle, what is the end?", "Of the agreement on training, what is the beginning, what is the middle, what is the end?", "Of the agreement on punishment and training, what is the beginning, what is the middle, what is the end?", "2.\nExplanation of the beginning, middle, and end", "Of the uposatha act, what is the beginning, what is the middle, what is the end?", "Of the uposatha act, unity is the beginning, the performance is the middle, the completion is the end.", "Of the pavāraṇā act, what is the beginning, what is the middle, what is the end?", "Of the pavāraṇā act, unity is the beginning, the performance is the middle, the completion is the end.", "Of the censure act, what is the beginning, what is the middle, what is the end?", "Of the censure act, the basis and the person are the beginning,\nthe motion is the middle, the announcement of the act is the end.", "Of the act of subordination …", "Of the act of banishment …", "Of the act of reconciliation …", "Of the act of suspension …", "Of the granting of probation …", "Of the reinstatement to the root …", "Of the giving of mānatta …", "Of the rehabilitation:\nwhat is the beginning, what is the middle, what is the end?", "Of the rehabilitation:\nthe basis and the person are the beginning, the motion is the middle, the formal announcement is the end.", "Of the act of full ordination:\nwhat is the beginning, what is the middle, what is the end?", "Of the act of full ordination:\nthe person is the beginning, the motion is the middle, the formal announcement is the end.", "Of the rescinding of the act of censure:\nwhat is the beginning, what is the middle, what is the end?", "Of the rescinding of the act of censure:\nproper conduct is the beginning, the motion is the middle, the formal announcement is the end.", "Of the act of dependence …", "Of the act of banishment …", "Of the act of reconciliation …", "Of the rescinding of the act of suspension:\nwhat is the beginning, what is the middle, what is the end?", "Of the rescinding of the act of suspension:\nproper conduct is the beginning, the motion is the middle, the formal announcement is the end.", "Of the resolution by mindfulness:\nwhat is the beginning, what is the middle, what is the end?", "Of the resolution by mindfulness:\nthe basis and the person are the beginning, the motion is the middle, the formal announcement is the end.", "For the settlement by innocence …", "For the settlement by the penalty of depravity …", "For the settlement by covering with grass …", "For the consent to be an instructor of bhikkhunīs …", "For the consent to be without separation from the triple robe …", "For the consent for a rug …", "For the consent to be a disposer of money …", "For the consent to be a receiver of a robe …", "For the consent to be a receiver of a bowl …", "For the consent for punishment …", "For the consent for training …", "For the consent for punishment and training, what is the beginning, what the middle, what the end?", "Of the consent for punishment and training, the basis and the person are the beginning,\nthe motion is the middle, the announcement of the deed is the end.", "The questions and answers on the beginning of the Uposatha are finished."]</script>
 <script type="application/json" id="tx-pali_myanmar">["", "", "", "ဥပေါသထကမ္မဿ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "ပဝါရဏာကမ္မဿ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "တဇ္ဇနီယကမ္မဿ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ? နိယဿကမ္မဿ။ပေ.။ ပဗ္ဗာဇနီယကမ္မဿ။ပေ.။\nပဋိသာရဏီယကမ္မဿ။ပေ.။ ဥက္ခေပနီယကမ္မဿ။ပေ.။ ပရိဝါသဒာနဿ။ပေ.။ မူလာယပဋိကဿနာယ။ပေ.။ မာနတ္တဒာနဿ။ပေ.။ အဗ္ဘာနဿ။ပေ.။", "", "", "", "", "", "", "", "", "ဥပသမ္ပဒာကမ္မဿ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "တဇ္ဇနီယကမ္မဿ ပဋိပ္ပဿဒ္ဓိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "နိယဿကမ္မဿ ပဋိပ္ပဿဒ္ဓိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "ပဗ္ဗာဇနီယကမ္မဿ ပဋိပ္ပဿဒ္ဓိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "ပဋိသာရဏီယကမ္မဿ ပဋိပ္ပဿဒ္ဓိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "ဥက္ခေပနီယကမ္မဿ ပဋိပ္ပဿဒ္ဓိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "သတိဝိနယဿ ကော အာဒိ၊ ကိံ မဇ္ဇေ၊ ကိံ ပရိယောသာနံ?", "အမူဠှဝိနယဿ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "တဿပါပိယသိကာယ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "တိဏဝတ္ထာရကဿ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "ဘိက္ခုနောဝါဒကသမ္မုတိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "တိစီဝရေန အဝိပ္ပဝါသသမ္မုတိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "သန္ထတသမ္မုတိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "ရူပိယဆဍ္ဍကသမ္မုတိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "သာဋိယဂ္ဂါဟာပကသမ္မုတိယော ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "ပတ္တဂ္ဂါဟာပကသမ္မုတိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "ဒဏ္ဍသမ္မုတိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "သိက္ကာသမ္မုတိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "ဒဏ္ဍသိက္ကာသမ္မုတိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနံ?", "", "ဥပေါသထကမ္မဿ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနန္တိ?", "ဥပေါသထကမ္မဿ သာမဂ္ဂီ အာဒိ၊ ကိရိယာ မဇ္ဈေ၊ နိဋ္ဌာနံ ပရိယောသာနံ။", "ပဝါရဏာကမ္မဿ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနန္တိ?", "ပဝါရဏာကမ္မဿ သာမဂ္ဂီ အာဒိ၊ ကိရိယာ မဇ္ဈေ၊ နိဋ္ဌာနံ ပရိယောသာနံ။", "တဇ္ဇနီယကမ္မဿ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနန္တိ?", "တဇ္ဇနီယကမ္မဿ ဝတ္ထု စ ပုဂ္ဂလော စ အာဒိ၊ ဉတ္တိ မဇ္ဈေ၊ ကမ္မဝါစာ ပရိယောသာနံ။ နိယဿကမ္မဿ။ပေ.။ ပဗ္ဗာဇနီယကမ္မဿ။ပေ.။\nပဋိသာရဏီယကမ္မဿ။ပေ.။ ဥက္ခေပနီယကမ္မဿ။ပေ.။ ပရိဝါသဒာနဿ။ပေ.။ မူလာယပဋိကဿနာယ။ပေ.။ မာနတ္တဒာနဿ။ပေ.။", "", "", "", "", "", "", "", "အဗ္ဘာနဿ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနန္တိ?", "အဗ္ဘာနဿ ဝတ္ထု စ ပုဂ္ဂလော စ အာဒိ၊ ဉတ္တိ မဇ္ဈေ၊ ကမ္မဝါစာ ပရိယောသာနံ။", "ဥပသမ္ပဒာကမ္မဿ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနန္တိ?", "ဥပသမ္ပဒာကမ္မဿ ပုဂ္ဂလော အာဒိ၊ ဉတ္တိ မဇ္ဈေ၊ ကမ္မဝါစာ ပရိယောသာနံ။", "တဇ္ဇနီယကမ္မဿ ပဋိပ္ပဿဒ္ဓိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနန္တိ?", "တဇ္ဇနီယကမ္မဿ ပဋိပ္ပဿဒ္ဓိယာ သမ္မာဝတ္တနာ အာဒိ၊ ဉတ္တိ မဇ္ဈေ၊ ကမ္မဝါစာ\nပရိယောသာနံ။ နိယဿကမ္မဿ။ပေ.။ ပဗ္ဗာဇနီယကမ္မဿ။ပေ.။ ပဋိသာရဏီယကမ္မဿ။ပေ.။", "", "", "", "ဥက္ခေပနီယကမ္မဿ ပဋိပ္ပဿဒ္ဓိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနန္တိ?", "ဥက္ခေပနီယကမ္မဿ ပဋိပ္ပဿဒ္ဓိယာ သမ္မာဝတ္တနာ အာဒိ၊ ဉတ္တိ မဇ္ဈေ၊ ကမ္မဝါစာ ပရိယောသာနံ။", "သတိဝိနယဿ ကော အာဒိ ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနန္တိ?", "သတိဝိနယဿ ဝတ္ထု စ ပုဂ္ဂလော စ အာဒိ၊ ဉတ္တိ မဇ္ဈေ၊ ကမ္မဝါစာ ပရိယောသာနံ။", "အမူဠှဝိနယဿ ။ပေ.။ တဿပါပိယသိကာယ။ပေ.။ တိဏဝတ္ထာရကဿ။ပေ.။ ဘိက္ခုနောဝါဒကသမ္မုတိယာ။ပေ.။", "", "", "", "တိစီဝရေန အဝိပ္ပဝါသသမ္မုတိယာ။ပေ.။ သန္ထတသမ္မုတိယာ။ပေ.။ ရူပိယဆဍ္ဍကသမ္မုတိယာ။ပေ.။\nသာဋိယဂ္ဂါဟာပကသမ္မုတိယာ။ပေ.။ ပတ္တဂ္ဂါဟာပကသမ္မုတိယာ။ပေ.။ ဒဏ္ဍသမ္မုတိယာ။ပေ.။ သိက္ကာသမ္မုတိယာ။ပေ.။", "", "", "", "", "", "", "ဒဏ္ဍသိက္ကာသမ္မုတိယာ ကော အာဒိ၊ ကိံ မဇ္ဈေ၊ ကိံ ပရိယောသာနန္တိ?", "ဒဏ္ဍသိက္ကာသမ္မုတိယာ ဝတ္ထု စ ပုဂ္ဂလော စ အာဒိ၊ ဉတ္တိ မဇ္ဈေ၊ ကမ္မဝါစာ ပရိယောသာနံ။", ""]</script>
 <script type="application/json" id="tx-pali_myanmar_iast">["", "", "", "uposathakammassa ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "pavāraṇākammassa ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "tajjanīyakammassa ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ? niyassakammassa..pe...\npabbājanīyakammassa..pe... paṭisāraṇīyakammassa..pe...\nukkhepanīyakammassa..pe... parivāsadānassa..pe... mūlāyapaṭikassanāya..pe... mānattadānassa..pe... abbhānassa..pe...", "", "", "", "", "", "", "", "", "upasampadākammassa ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "tajjanīyakammassa paṭippassaddhiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "niyassakammassa paṭippassaddhiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "pabbājanīyakammassa paṭippassaddhiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "paṭisāraṇīyakammassa paṭippassaddhiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "ukkhepanīyakammassa paṭippassaddhiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "sativinayassa ko ādi. kiṃ majje. kiṃ pariyosānaṃ?", "amūl̤havinayassa ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "tassapāpiyasikāya ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "tiṇavatthārakassa ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "bhikkhunovādakasammutiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "ticīvarena avippavāsasammutiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "santhatasammutiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "rūpiyachaḍḍakasammutiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "sāṭiyaggāhāpakasammutiyo ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "pattaggāhāpakasammutiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "daṇḍasammutiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "sikkāsammutiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "daṇḍasikkāsammutiyā ko ādi. kiṃ majjhe. kiṃ pariyosānaṃ?", "", "uposathakammassa ko ādi. kiṃ majjhe. kiṃ pariyosānanti?", "uposathakammassa sāmaggī ādi. kiriyā majjhe. niṭṭhānaṃ pariyosānaṃ..", "pavāraṇākammassa ko ādi. kiṃ majjhe. kiṃ pariyosānanti?", "pavāraṇākammassa sāmaggī ādi. kiriyā majjhe. niṭṭhānaṃ pariyosānaṃ..", "tajjanīyakammassa ko ādi. kiṃ majjhe. kiṃ pariyosānanti?", "tajjanīyakammassa vatthu ca puggalo ca ādi. ñatti majjhe.\nkammavācā pariyosānaṃ.. niyassakammassa..pe... pabbājanīyakammassa..pe...\npaṭisāraṇīyakammassa..pe... ukkhepanīyakammassa..pe...\nparivāsadānassa..pe... mūlāyapaṭikassanāya..pe... mānattadānassa..pe...", "", "", "", "", "", "", "", "abbhānassa ko ādi. kiṃ majjhe. kiṃ pariyosānanti?", "abbhānassa vatthu ca puggalo ca ādi. ñatti majjhe. kammavācā pariyosānaṃ..", "upasampadākammassa ko ādi. kiṃ majjhe. kiṃ pariyosānanti?", "upasampadākammassa puggalo ādi. ñatti majjhe. kammavācā pariyosānaṃ..", "tajjanīyakammassa paṭippassaddhiyā ko ādi. kiṃ majjhe. kiṃ pariyosānanti?", "tajjanīyakammassa paṭippassaddhiyā sammāvattanā ādi. ñatti majjhe. kammavācā pariyosānaṃ..\nniyassakammassa..pe... pabbājanīyakammassa..pe... paṭisāraṇīyakammassa..pe...", "", "", "", "ukkhepanīyakammassa paṭippassaddhiyā ko ādi. kiṃ majjhe. kiṃ pariyosānanti?", "ukkhepanīyakammassa paṭippassaddhiyā sammāvattanā ādi. ñatti majjhe. kammavācā pariyosānaṃ..", "sativinayassa ko ādi . kiṃ majjhe. kiṃ pariyosānanti?", "sativinayassa vatthu ca puggalo ca ādi. ñatti majjhe. kammavācā pariyosānaṃ..", "amūl̤havinayassa ..pe... tassapāpiyasikāya..pe... tiṇavatthārakassa..pe... bhikkhunovādakasammutiyā..pe...", "", "", "", "ticīvarena avippavāsasammutiyā..pe... santhatasammutiyā..pe... rūpiyachaḍḍakasammutiyā..pe...\nsāṭiyaggāhāpakasammutiyā..pe... pattaggāhāpakasammutiyā..pe... daṇḍasammutiyā..pe... sikkāsammutiyā..pe...", "", "", "", "", "", "", "daṇḍasikkāsammutiyā ko ādi. kiṃ majjhe. kiṃ pariyosānanti?", "daṇḍasikkāsammutiyā vatthu ca puggalo ca ādi. ñatti majjhe. kammavācā pariyosānaṃ..", ""]</script>
+<script type="application/json" id="tx-pali_bjt">["", "", "", "උපොසථකම්මස්ස කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානං. පවාරණස්ස කම්මස්ස", "කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානං.", "තජ්ජනීයකම්මස්ස කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානං,", "නියස්සකම්මස්ස -පෙ-", "පබ්බාජනීයකම්මස්ස -පෙ-", "පටිසාරණීයකම්මස්ස -පෙ-", "උක්ඛෙපනීයකම්මස්ස -පෙ-", "පරිවාසදානස්ස -පෙ-", "මූලායපටිකස්සනාය -පෙ-", "මානත්තදානස්ස -පෙ-", "අබ්භානස්ස -පෙ-", "උපසම්පදාකම්මස්ස කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානං :", "තජ්ජනීයකම්මස්ස පටිප්පස්සද්ධියා කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානං,", "නියස්සකම්මස්ස පටිප්පස්සද්ධියා -පෙ-", "පබ්බාජනීයකම්මස්ස පටිප්පස්සද්ධියා -පෙ-", "පටිසාරණීයකම්මස්ස පටිප්පස්සද්ධියා -පෙ-", "උක්ඛෙපනීයකම්මස්ස පටිප්පස්සද්ධියා කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානං.", "සතිවිනයස්ස කො ආදි, කිං", "මජ්ඣෙ, කිං පරියොසානං. අමූළ්හවිනයස්ස -පෙ- තස්සපාපිය්යසිකාය -පෙ-", "", "තිණවත්ථාරකස්ස -පෙ-", "භික්ඛුනොවාදකසම්මුතියා -පෙ-", "තිචීවරෙන අවිප්පවාසසම්මුතියා -පෙ-", "සන්ථතසම්මුතියා -පෙ-", "රූපියඡඩ්ඩකසම්මුතියා -පෙ- සාටියගාහාපකසම්මුතියා -පෙ-", "", "පත්තග්ගාහාපකසම්මුතියා -පෙ-", "දණ්ඩසම්මුතියා -පෙ-", "සික්කාසම්මුතියා -පෙ-", "දණ්ඩසික්කාසම්මුතියා කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානං.", "", "උපොසථකම්මස්ස කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානන්ති :", "උපොසථකම්මස්ස සාමග්ගී ආදි, කිරියා මජ්ඣෙ, නිට්ඨානං පරියොසානං.", "පවාරණාකම්මස්ස කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානන්ති :", "පවාරණාකම්මස්ස සාමග්ගී ආදි, කිරියා මජ්ඣෙ, නිට්ඨානං පරියොසානං.", "තජ්ජනීයකම්මස්ස කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානන්ති :", "තජ්ජනීයකම්මස්ස වත්ථු ච පුග්ගලො ච ආදි, ඤත්ති මජ්ඣෙ, කම්මවාචා පරියොසානං.", "නියස්සකම්මස්ස -පෙ-", "පබ්බාජනීයකම්මස්ස -පෙ-", "පටිසාරණීයකම්මස්ස -පෙ-", "උක්ඛෙපනීයකම්මස්ස -පෙ-", "පරිවාසදානස්ස -පෙ-", "මූලායපටිකස්සනාය -පෙ-", "මානත්තදානස්ස -පෙ-", "අබ්භානස්ස -පෙ-.", "", "උපසම්පදාකම්මස්ස කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානන්ති :", "උපසම්පදාකම්මස්ස පුග්ගලො ආදි, ඤත්ති මජ්ඣෙ, කම්මවාචා පරියොසානං.", "තජ්ජනීයකම්මස්ස පටිප්පස්සද්ධියා කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානන්ති :", "තජ්ජනීයකම්මස්ස පටිප්පස්සද්ධියා සම්මාවත්තනා ආදි, ඤත්ති මජ්ඣෙ, කම්මවාචා පරියොසානං.", "නියස්සකම්මස්ස -පෙ-", "පබ්බාජනීයකම්මස්ස -පෙ-", "පටිසාරණීයකම්මස්ස -පෙ-", "උක්ඛෙපනීයකම්මස්ස පටිප්පස්සද්ධියා කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානන්ති :", "උක්ඛෙපනීයකම්මස්ස පටිප්පස්සද්ධියා සම්මා වත්තනා ආදි, ඤත්ති මජ්ඣෙ, කම්මවාචා පරියොසානං.", "සතිවිනයස්ස කො ආදි , කිං මජ්ඣෙ, කිං පරියොසානන්ති :", "සතිවිනයස්ස වත්ථු ච පුග්ගලො ච ආදි, ඤත්ති මජ්ඣෙ, කම්මවාචා පරියොසානං.", "අමූළ්හවිනයස්ස -පෙ- තස්ස පාපිය්යසිකාය", "-පෙ-", "තිණවත්ථාරකස්ස -පෙ-", "භික්ඛුනොවාදකසම්මුතියා -පෙ-", "තිචීවරෙන අවිප්පවාසසම්මුතියා -පෙ-", "සන්ථතසම්මුතියා -පෙ-", "රූපියඡඩ්ඩකසම්මුතියා -පෙ- සාටියගාහාපකසම්මුතියා", "-පෙ- පත්තගාහාපකසම්මුතියා", "-පෙ-", "දණ්ඩසම්මුතියා -පෙ-", "සික්කාසම්මුතියා -පෙ-", "දණ්ඩසික්කාසම්මුතියා කො ආදි, කිං මජ්ඣෙ, කිං පරියොසානන්ති :", "දණ්ඩසික්කාසම්මුතියා වත්ථු ච පුග්ගලො ච ආදි, ඤත්ති මජ්ඣෙ, කම්මවාචා පරියොසානං.", ""]</script>
+<script type="application/json" id="tx-pali_bjt_iast">["", "", "", "uposathakammassa ko ādi, kiṃ majjhe, kiṃ pariyosānaṃ. pavāraṇassa kammassa", "ko ādi, kiṃ majjhe, kiṃ pariyosānaṃ.", "tajjanīyakammassa ko ādi, kiṃ majjhe, kiṃ pariyosānaṃ,", "niyassakammassa -pe-", "pabbājanīyakammassa -pe-", "paṭisāraṇīyakammassa -pe-", "ukkhepanīyakammassa -pe-", "parivāsadānassa -pe-", "mūlāyapaṭikassanāya -pe-", "mānattadānassa -pe-", "abbhānassa -pe-", "upasampadākammassa ko ādi, kiṃ majjhe, kiṃ pariyosānaṃ :", "tajjanīyakammassa paṭippassaddhiyā ko ādi, kiṃ majjhe, kiṃ pariyosānaṃ,", "niyassakammassa paṭippassaddhiyā -pe-", "pabbājanīyakammassa paṭippassaddhiyā -pe-", "paṭisāraṇīyakammassa paṭippassaddhiyā -pe-", "ukkhepanīyakammassa paṭippassaddhiyā ko ādi, kiṃ majjhe, kiṃ pariyosānaṃ.", "sativinayassa ko ādi, kiṃ", "majjhe, kiṃ pariyosānaṃ. amūl̤havinayassa -pe- tassapāpiyyasikāya -pe-", "", "tiṇavatthārakassa -pe-", "bhikkhunovādakasammutiyā -pe-", "ticīvarena avippavāsasammutiyā -pe-", "santhatasammutiyā -pe-", "rūpiyachaḍḍakasammutiyā -pe- sāṭiyagāhāpakasammutiyā -pe-", "", "pattaggāhāpakasammutiyā -pe-", "daṇḍasammutiyā -pe-", "sikkāsammutiyā -pe-", "daṇḍasikkāsammutiyā ko ādi, kiṃ majjhe, kiṃ pariyosānaṃ.", "", "uposathakammassa ko ādi, kiṃ majjhe, kiṃ pariyosānanti :", "uposathakammassa sāmaggī ādi, kiriyā majjhe, niṭṭhānaṃ pariyosānaṃ.", "pavāraṇākammassa ko ādi, kiṃ majjhe, kiṃ pariyosānanti :", "pavāraṇākammassa sāmaggī ādi, kiriyā majjhe, niṭṭhānaṃ pariyosānaṃ.", "tajjanīyakammassa ko ādi, kiṃ majjhe, kiṃ pariyosānanti :", "tajjanīyakammassa vatthu ca puggalo ca ādi, ñatti majjhe, kammavācā pariyosānaṃ.", "niyassakammassa -pe-", "pabbājanīyakammassa -pe-", "paṭisāraṇīyakammassa -pe-", "ukkhepanīyakammassa -pe-", "parivāsadānassa -pe-", "mūlāyapaṭikassanāya -pe-", "mānattadānassa -pe-", "abbhānassa -pe-.", "", "upasampadākammassa ko ādi, kiṃ majjhe, kiṃ pariyosānanti :", "upasampadākammassa puggalo ādi, ñatti majjhe, kammavācā pariyosānaṃ.", "tajjanīyakammassa paṭippassaddhiyā ko ādi, kiṃ majjhe, kiṃ pariyosānanti :", "tajjanīyakammassa paṭippassaddhiyā sammāvattanā ādi, ñatti majjhe, kammavācā pariyosānaṃ.", "niyassakammassa -pe-", "pabbājanīyakammassa -pe-", "paṭisāraṇīyakammassa -pe-", "ukkhepanīyakammassa paṭippassaddhiyā ko ādi, kiṃ majjhe, kiṃ pariyosānanti :", "ukkhepanīyakammassa paṭippassaddhiyā sammā vattanā ādi, ñatti majjhe, kammavācā pariyosānaṃ.", "sativinayassa ko ādi , kiṃ majjhe, kiṃ pariyosānanti :", "sativinayassa vatthu ca puggalo ca ādi, ñatti majjhe, kammavācā pariyosānaṃ.", "amūl̤havinayassa -pe- tassa pāpiyyasikāya", "-pe-", "tiṇavatthārakassa -pe-", "bhikkhunovādakasammutiyā -pe-", "ticīvarena avippavāsasammutiyā -pe-", "santhatasammutiyā -pe-", "rūpiyachaḍḍakasammutiyā -pe- sāṭiyagāhāpakasammutiyā", "-pe- pattagāhāpakasammutiyā", "-pe-", "daṇḍasammutiyā -pe-", "sikkāsammutiyā -pe-", "daṇḍasikkāsammutiyā ko ādi, kiṃ majjhe, kiṃ pariyosānanti :", "daṇḍasikkāsammutiyā vatthu ca puggalo ca ādi, ñatti majjhe, kammavācā pariyosānaṃ.", ""]</script>
 <script type="application/json" id="nt-brahmali-corrected">{"pli-tv-pvr8:1.24": ["For an explanation of the rendering “blanket” for \u003ci>santhata\u003c/i>, see Appendix of Technical Terms. "]}</script>
 <script>
 const TREE=[{"id": "pli-tv-pvr8/0", "label": "Pari·vāra", "rows": [{"key": "pli-tv-pvr8:0.1", "p": "Pari·vāra…", "s": "The Compendium"}, {"key": "pli-tv-pvr8:0.2", "p": "8.\nUposath·ādi·pucchā·vissajjanā…", "s": "Aspects of the legal procedures"}, {"key": "pli-tv-pvr8:0.3", "p": "1 Ādi·majjh·anta·pucchana…", "s": "1.\nQuestions on the beginning, the middle, and the end"}]}, {"id": "pli-tv-pvr8/1", "label": "Uposatha·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānaṁ?", "rows": [{"key": "pli-tv-pvr8:1.1", "p": "Uposatha·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yos…", "s": "What is the beginning, the middle, and the end of the observance-day procedure?"}, {"key": "pli-tv-pvr8:1.2", "p": "Pavā·raṇā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yo…", "s": "What is the beginning, the middle, and the end of the invitation procedure?"}, {"key": "pli-tv-pvr8:1.3", "p": "Tajjanīya·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yo…", "s": "What is the beginning, the middle, and the end of a legal procedure of condemnation?"}, {"key": "pli-tv-pvr8:1.4", "p": "Niyassa·kammassa …pe……", "s": "What is the beginning, the middle, and the end of a legal procedure of demotion?"}, {"key": "pli-tv-pvr8:1.5", "p": "pabbājanīya·kammassa …pe……", "s": "What is the beginning, the middle, and the end of a legal procedure of banishment?"}, {"key": "pli-tv-pvr8:1.6", "p": "paṭisā·raṇīya·kammassa …pe……", "s": "What is the beginning, the middle, and the end of a legal procedure of reconciliation?"}, {"key": "pli-tv-pvr8:1.7", "p": "ukkhepanīya·kammassa …pe……", "s": "What is the beginning, the middle, and the end of a legal procedure of ejection?"}, {"key": "pli-tv-pvr8:1.8", "p": "pari·vāsa·dānassa …pe……", "s": "What is the beginning, the middle, and the end of giving probation?"}, {"key": "pli-tv-pvr8:1.9", "p": "mūlāya·paṭi·kassa·nāya …pe……", "s": "What is the beginning, the middle, and the end of sending back to the beginning?"}, {"key": "pli-tv-pvr8:1.10", "p": "mānatta·dānassa …pe……", "s": "What is the beginning, the middle, and the end of giving the trial period?"}, {"key": "pli-tv-pvr8:1.11", "p": "abbhānassa …pe……", "s": "What is the beginning, the middle, and the end of rehabilitation?"}, {"key": "pli-tv-pvr8:1.12", "p": "upasampadā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·y…", "s": "What is the beginning, the middle, and the end of an ordination procedure?"}, {"key": "pli-tv-pvr8:1.13", "p": "Tajjanīya·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ …", "s": "What is the beginning, the middle, and the end of the lifting of a legal procedure of condemnation?"}, {"key": "pli-tv-pvr8:1.14", "p": "Niyassa·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ ma…", "s": "What is the beginning, the middle, and the end of the lifting of a legal procedure of demotion?"}, {"key": "pli-tv-pvr8:1.15", "p": "Pabbājanīya·kammassa paṭi·p·passaddhiyā ko ādi, ki…", "s": "What is the beginning, the middle, and the end of the lifting of a legal procedure of banishment?"}, {"key": "pli-tv-pvr8:1.16", "p": "Paṭisā·raṇīya·kammassa paṭi·p·passaddhiyā ko ādi, …", "s": "What is the beginning, the middle, and the end of the lifting of a legal procedure of reconciliation?"}, {"key": "pli-tv-pvr8:1.17", "p": "Ukkhepanīya·kammassa paṭi·p·passaddhiyā ko ādi, ki…", "s": "What is the beginning, the middle, and the end of the lifting of a legal procedure of ejection?"}, {"key": "pli-tv-pvr8:1.18", "p": "Sati·vinayassa ko ādi, kiṁ majje, kiṁ pari·yosānaṁ?…", "s": "What is the beginning, the middle, and the end of resolution through recollection?"}, {"key": "pli-tv-pvr8:1.19", "p": "A·mūḷha·vinayassa ko ādi, kiṁ majjhe, kiṁ pari·yos…", "s": "What is the beginning, the middle, and the end of resolution because of past insanity?"}, {"key": "pli-tv-pvr8:1.20", "p": "Tassapāpiyasikāya ko ādi, kiṁ majjhe, kiṁ pari·yos…", "s": "What is the beginning, the middle, and the end of a further penalty?"}, {"key": "pli-tv-pvr8:1.21", "p": "Tiṇa·vatthārakassa ko ādi, kiṁ majjhe, kiṁ pari·yo…", "s": "What is the beginning, the middle, and the end of covering over as if with grass?"}, {"key": "pli-tv-pvr8:1.22", "p": "Bhikkhun·ovādaka·sammutiyā ko ādi, kiṁ majjhe, kiṁ…", "s": "What is the beginning, the middle, and the end of appointing an instructor of the nuns?"}, {"key": "pli-tv-pvr8:1.23", "p": "Ticīvarena a·vippa·vāsa·sammutiyā ko ādi, kiṁ majj…", "s": "What is the beginning, the middle, and the end of the permission to stay apart from one’s three robes?"}, {"key": "pli-tv-pvr8:1.24", "p": "Santhata·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yo…", "s": "What is the beginning, the middle, and the end of a permission to make a blanket?"}, {"key": "pli-tv-pvr8:1.25", "p": "Rūpiya·chaḍḍaka·sammutiyā ko ādi, kiṁ majjhe, kiṁ …", "s": "What is the beginning, the middle, and the end of appointing a money discarder?"}, {"key": "pli-tv-pvr8:1.26", "p": "Sāṭiya·g·gāhā·paka·sammutiyo ko ādi, kiṁ majjhe, k…", "s": "What is the beginning, the middle, and the end of appointing a distributor of rainy-season bathing cloths?"}, {"key": "pli-tv-pvr8:1.27", "p": "Patta·g·gāhā·paka·sammutiyā ko ādi, kiṁ majjhe, ki…", "s": "What is the beginning, the middle, and the end of appointing a distributor of almsbowls?"}, {"key": "pli-tv-pvr8:1.28", "p": "Daṇḍa·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yosān…", "s": "What is the beginning, the middle, and the end of the permission to use a staff?"}, {"key": "pli-tv-pvr8:1.29", "p": "Sikkā·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari·yosān…", "s": "What is the beginning, the middle, and the end of the permission to use a carrying net?"}, {"key": "pli-tv-pvr8:1.30", "p": "Daṇḍa·sikkā·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari…", "s": "What is the beginning, the middle, and the end of the permission to use a staff and a carrying net?"}]}, {"id": "pli-tv-pvr8/2", "label": "2 Ādi·majjh·anta·vissajjanā", "rows": [{"key": "pli-tv-pvr8:2.0", "p": "2 Ādi·majjh·anta·vissajjanā…", "s": "2.\nReplies on the beginning, the middle, and the end"}, {"key": "pli-tv-pvr8:2.1", "p": "Uposatha·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yos…", "s": "What is the beginning, the middle, and the end of the observance-day procedure?"}, {"key": "pli-tv-pvr8:2.2", "p": "Uposatha·kammassa sām·aggī ādi, kiriyā majjhe, niṭ…", "s": "A complete assembly is the beginning of an observance-day procedure,\ncarrying it out is the middle, and concluding it is the end."}]}, {"id": "pli-tv-pvr8/3", "label": "Pavā·raṇā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "rows": [{"key": "pli-tv-pvr8:3.1", "p": "Pavā·raṇā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yo…", "s": "What is the beginning, the middle, and the end of the invitation procedure?"}, {"key": "pli-tv-pvr8:3.2", "p": "Pavā·raṇā·kammassa sām·aggī ādi, kiriyā majjhe, ni…", "s": "A complete assembly is the beginning of an invitation procedure,\ncarrying it out is the middle, and concluding it is the end."}]}, {"id": "pli-tv-pvr8/4", "label": "Tajjanīya·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "rows": [{"key": "pli-tv-pvr8:4.1", "p": "Tajjanīya·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yo…", "s": "What is the beginning, the middle, and the end of a legal procedure of condemnation?"}, {"key": "pli-tv-pvr8:4.2", "p": "Tajjanīya·kammassa vatthu ca puggalo ca ādi, ñatti…", "s": "The action that is the basis for the offense and the person who\nhas done it are the beginning of a procedure of condemnation,\nthe motion is the middle, and the …"}]}, {"id": "pli-tv-pvr8/5", "label": "Niyassa·kammassa …pe…", "rows": [{"key": "pli-tv-pvr8:5.1", "p": "Niyassa·kammassa …pe……", "s": "What is the beginning, the middle, and the end of a legal procedure of demotion? …"}, {"key": "pli-tv-pvr8:5.2", "p": "pabbājanīya·kammassa …pe……", "s": "of a legal procedure of banishment? …"}, {"key": "pli-tv-pvr8:5.3", "p": "paṭisā·raṇīya·kammassa …pe……", "s": "of a legal procedure of reconciliation? …"}, {"key": "pli-tv-pvr8:5.4", "p": "ukkhepanīya·kammassa …pe……", "s": "of a legal procedure of ejection? …"}, {"key": "pli-tv-pvr8:5.5", "p": "pari·vāsa·dānassa …pe……", "s": "of giving probation? …"}, {"key": "pli-tv-pvr8:5.6", "p": "mūlāya·paṭi·kassa·nāya …pe……", "s": "of sending back to the beginning? …"}, {"key": "pli-tv-pvr8:5.7", "p": "mānatta·dānassa …pe……", "s": "of giving the trial period? …"}, {"key": "pli-tv-pvr8:5.8", "p": "abbhānassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?…", "s": "of rehabilitation?"}, {"key": "pli-tv-pvr8:5.9", "p": "Abbhānassa vatthu ca puggalo ca ādi, ñatti majjhe,…", "s": "The action that is the basis for the offense and the person who has done it are the beginning of rehabilitation,\nthe motion is the middle, and the announcement …"}]}, {"id": "pli-tv-pvr8/6", "label": "Upasampadā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "rows": [{"key": "pli-tv-pvr8:6.1", "p": "Upasampadā·kammassa ko ādi, kiṁ majjhe, kiṁ pari·y…", "s": "What is the beginning, the middle, and the end of an ordination procedure?"}, {"key": "pli-tv-pvr8:6.2", "p": "Upasampadā·kammassa puggalo ādi, ñatti majjhe, kam…", "s": "The person is the beginning of the ordination procedure, the motion is the middle, and the announcement is the end."}]}, {"id": "pli-tv-pvr8/7", "label": "Tajjanīya·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ majjhe, kiṁ…", "rows": [{"key": "pli-tv-pvr8:7.1", "p": "Tajjanīya·kammassa paṭi·p·passaddhiyā ko ādi, kiṁ …", "s": "What is the beginning, the middle, and the end of the lifting of a legal procedure of condemnation?"}, {"key": "pli-tv-pvr8:7.2", "p": "Tajjanīya·kammassa paṭi·p·passaddhiyā sammā·vattan…", "s": "Proper conduct is the beginning of the lifting of a legal procedure of condemnation,\nthe motion is the middle, and the announcement is the end."}]}, {"id": "pli-tv-pvr8/8", "label": "Niyassa·kammassa …pe…", "rows": [{"key": "pli-tv-pvr8:8.1", "p": "Niyassa·kammassa …pe……", "s": "What is the beginning, the middle, and the end of the lifting of a legal procedure of demotion? …"}, {"key": "pli-tv-pvr8:8.2", "p": "pabbājanīya·kammassa …pe……", "s": "of a legal procedure of banishment? …"}, {"key": "pli-tv-pvr8:8.3", "p": "paṭisā·raṇīya·kammassa …pe……", "s": "of a legal procedure of reconciliation? …"}, {"key": "pli-tv-pvr8:8.4", "p": "ukkhepanīya·kammassa paṭi·p·passaddhiyā ko ādi, ki…", "s": "of a legal procedure of ejection?"}, {"key": "pli-tv-pvr8:8.5", "p": "Ukkhepanīya·kammassa paṭi·p·passaddhiyā sammā·vatt…", "s": "Proper conduct is the beginning of the lifting of a legal procedure of ejection,\nthe motion is the middle, and the announcement is the end."}]}, {"id": "pli-tv-pvr8/9", "label": "Sati·vinayassa ko ādi, kiṁ majjhe, kiṁ pari·yosānanti?", "rows": [{"key": "pli-tv-pvr8:9.1", "p": "Sati·vinayassa ko ādi, kiṁ majjhe, kiṁ pari·yosāna…", "s": "What is the beginning, the middle, and the end of resolution through recollection?"}, {"key": "pli-tv-pvr8:9.2", "p": "Sati·vinayassa vatthu ca puggalo ca ādi, ñatti maj…", "s": "The action that is the basis for the offense and the person who\nhas done it are the beginning of resolution through recollection,\nthe motion is the middle, and …"}]}, {"id": "pli-tv-pvr8/10", "label": "A·mūḷha·vinayassa …pe…", "rows": [{"key": "pli-tv-pvr8:10.1", "p": "A·mūḷha·vinayassa …pe……", "s": "What is the beginning, the middle, and the end of resolution because of past insanity? …"}, {"key": "pli-tv-pvr8:10.2", "p": "tassapāpiyasikāya …pe……", "s": "of a further penalty? …"}, {"key": "pli-tv-pvr8:10.3", "p": "tiṇa·vatthārakassa …pe……", "s": "of covering over as if with grass? …"}, {"key": "pli-tv-pvr8:10.4", "p": "bhikkhun·ovādaka·sammutiyā …pe……", "s": "of appointing an instructor of the nuns? …"}, {"key": "pli-tv-pvr8:10.5", "p": "ticīvarena a·vippa·vāsa·sammutiyā …pe……", "s": "of the permission to stay apart from one’s three robes? …"}, {"key": "pli-tv-pvr8:10.6", "p": "santhata·sammutiyā …pe……", "s": "of a permission to make a blanket? …"}, {"key": "pli-tv-pvr8:10.7", "p": "rūpiya·chaḍḍaka·sammutiyā …pe……", "s": "of appointing a money discarder? …"}, {"key": "pli-tv-pvr8:10.8", "p": "sāṭiya·g·gāhā·paka·sammutiyā …pe……", "s": "of appointing a distributor of rainy-season bathing cloths? …"}, {"key": "pli-tv-pvr8:10.9", "p": "patta·g·gāhā·paka·sammutiyā …pe……", "s": "of appointing a distributor of almsbowls? …"}, {"key": "pli-tv-pvr8:10.10", "p": "daṇḍa·sammutiyā …pe……", "s": "of the permission to use a staff? …"}, {"key": "pli-tv-pvr8:10.11", "p": "sikkā·sammutiyā …pe……", "s": "of the permission to use a carrying net? …"}, {"key": "pli-tv-pvr8:10.12", "p": "daṇḍa·sikkā·sammutiyā ko ādi, kiṁ majjhe, kiṁ pari…", "s": "of the permission to use a staff and a carrying net?"}, {"key": "pli-tv-pvr8:10.13", "p": "Daṇḍa·sikkā·sammutiyā vatthu ca puggalo ca ādi, ña…", "s": "The topic and the person are the beginning of the permission to use a staff and a carrying net,\nthe motion is the middle, and the announcement is the end."}]}, {"id": "pli-tv-pvr8/11", "label": "Uposath·ādi·pucchā·vissajjanā niṭṭhitā.", "rows": [{"key": "pli-tv-pvr8:11.1", "p": "Uposath·ādi·pucchā·vissajjanā niṭṭhitā.…", "s": "The aspects of the legal procedures are finished."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "brahmali-corrected", "label": "Brahmali (Corrected)", "dot": "#7a9c4a", "light": {"bg": "#f1f5e6", "text": "#1c2b0a"}, "dark": {"bg": "#181f0e", "text": "#bcd498"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "pali_myanmar", "label": "Myanmar (မြန်မာ)", "dot": "#5b6ee1", "light": {"bg": "#ecedfb", "text": "#10163a"}, "dark": {"bg": "#12142a", "text": "#b7c0f0"}, "italic": false, "font_scale": 1.15, "font_family": "'Noto Sans Myanmar','Padauk','Myanmar Text','Myanmar3',sans-serif", "rtl": false, "warn": ""}, {"key": "pali_myanmar_iast", "label": "Myanmar (IAST)", "dot": "#8a97ee", "light": {"bg": "#f0f1fc", "text": "#14183a"}, "dark": {"bg": "#14162b", "text": "#c7cff5"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Root Pāli (SuttaCentral / Mahāsaṅgīti edition)"}, {"key": "brahmali-corrected", "label": "Brahmali (Corrected)", "dot": "#7a9c4a", "light": {"bg": "#f1f5e6", "text": "#1c2b0a"}, "dark": {"bg": "#181f0e", "text": "#bcd498"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Brahmali with lucid24 glossary corrections applied"}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI-generated from the Pāli, in Bhikkhu Bodhi's style"}, {"key": "pali_myanmar", "label": "Myanmar (မြန်မာ)", "dot": "#5b6ee1", "light": {"bg": "#ecedfb", "text": "#10163a"}, "dark": {"bg": "#12142a", "text": "#b7c0f0"}, "italic": false, "font_scale": 1.15, "font_family": "'Noto Sans Myanmar','Padauk','Myanmar Text','Myanmar3',sans-serif", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Same canonical Pāli in Burmese script (CST, Sixth Council)"}, {"key": "pali_myanmar_iast", "label": "Myanmar (IAST)", "dot": "#8a97ee", "light": {"bg": "#f0f1fc", "text": "#14183a"}, "dark": {"bg": "#14162b", "text": "#c7cff5"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "CST (Sixth Council) Pāli, romanised (IAST)"}, {"key": "pali_bjt", "label": "BJT (සිංහල)", "dot": "#b5468f", "light": {"bg": "#f8ecf4", "text": "#330f2a"}, "dark": {"bg": "#251223", "text": "#eab7dc"}, "italic": false, "font_scale": 1.1, "font_family": "'Noto Sans Sinhala','Noto Serif Sinhala','Iskoola Pota','Nirmala UI',sans-serif", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Same canonical Pāli in Sinhala script (Buddha Jayanti Tipiṭaka)"}, {"key": "pali_bjt_iast", "label": "BJT (IAST)", "dot": "#d072b3", "light": {"bg": "#fbf0f8", "text": "#3a1230"}, "dark": {"bg": "#271424", "text": "#f0c7e5"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Buddha Jayanti (BJT) Pāli, romanised (IAST)"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2068,8 +2129,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2109,30 +2323,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

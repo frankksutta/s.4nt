@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:24 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:30 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -972,12 +1031,14 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 <script type="application/json" id="tx-pali_royal_iast">["", "", "sutaṃ .", "ekaṃ samayaṃ bhagavā kosambiyaṃ viharati ghositārāme . athakho", "dve pabbajitā maṇḍiyo", "ca paribbājako jāliyo ca dārupattikantevāsī yena bhagavā tenupasaṅkamiṃsu upasaṅkamitvā bhagavatā saddhiṃ sammodiṃsu", "sammodanīyaṃ kathaṃ sārāṇīyaṃ vītisāretvā ekamantaṃ aṭṭhaṃsu .\nekamantaṃ ṭhitā kho te dve pabbajitā bhagavantaṃ etadavocaca kinnu", "kho āvuso bho gotama taṃ jīvaṃ taṃ sarīraṃ udāhu aññaṃ jīvaṃ aññaṃ sarīranti . tenahāvuso", "suṇātha sādhukaṃ manasikarotha bhāsissāmīti . evamāvusoti", "kho te dve pabbajitā bhagavato paccassosuṃ .", "bhagavā etadavoca idha āvuso", "tathāgato loke uppajjati arahaṃ sammāsambuddho .pe.\n(yathā sāmaññaphale evaṃ vitthāretabbaṃ) .pe.", "evaṃ kho āvuso bhikkhu sīlasampanno hoti .", "", "paṭhamaṃ jhānaṃ upasampajja viharati .", "yo nu kho āvuso bhikkhu evaṃ jānāti evaṃ passati kallannu kho tassetaṃ vacanāya", "taṃ jīvaṃ taṃ sarīranti vā aññaṃ jīvaṃ aññaṃ sarīranti vāti .", "yo so āvuso bhikkhu evaṃ jānāti evaṃ passati na kallaṃ tassetaṃ vacanāya .pe.", "", "ahaṃ kho panetaṃ āvuso evaṃ jānāmi evaṃ passāmi", "atha ca panāhaṃ na vadāmi", "taṃ jīvaṃ taṃ sarīranti vā aññaṃ jīvaṃ aññaṃ sarīranti vāti .", "dutiyaṃ jhānaṃ .", "tatiyaṃ jhānaṃ .", "catutthaṃ jhānaṃ upasampajja viharati . yo", "nu kho āvuso bhikkhu evaṃ jānāti evaṃ passati kallaṃ nu kho tassetaṃ\nvacanāya taṃ jīvaṃ taṃ sarīranti vā aññaṃ jīvaṃ aññaṃ sarīranti vāti .", "", "yo so āvuso bhikkhu evaṃ jānāti evaṃ passati na kallaṃ tassetaṃ\nvacanāya taṃ jīvaṃ taṃ sarīranti vā aññaṃ jīvaṃ aññaṃ sarīranti vā .", "", "ahaṃ kho panetaṃ āvuso evaṃ jānāmi evaṃ passāmi", "atha ca panāhaṃ na vadāmi", "taṃ jīvaṃ taṃ sarīranti vā aññaṃ jīvaṃ aññaṃ sarīranti vāti .", "ñāṇadassanāya cittaṃ abhinīharati abhininnāmeti . yo", "nu kho", "", "āvuso bhikkhu", "", "", "", "", ".pe. nāparaṃ itthattāyāti pajānāti . yo", "nu kho āvuso bhikkhu evaṃ jānāti evaṃ passati kallaṃ nu kho tassetaṃ\nvacanāya taṃ jīvaṃ taṃ sarīranti vā aññaṃ jīvaṃ aññaṃ sarīranti vāti .", "", "yo so āvuso bhikkhu evaṃ jānāti evaṃ passati na kallaṃ tassetaṃ vacanāya", "taṃ jīvaṃ taṃ sarīranti vā aññaṃ jīvaṃ aññaṃ sarīranti vāti .", "ahaṃ kho panetaṃ āvuso evaṃ jānāmi evaṃ passāmi", "atha ca panāhaṃ na vadāmi", "taṃ jīvaṃ taṃ sarīranti vā aññaṃ jīvaṃ aññaṃ sarīranti vāti .", "idamavoca bhagavā .", "attamanā te dve pabbajitā bhagavato bhāsitaṃ abhinandunti", ""]</script>
 <script type="application/json" id="tx-pali_myanmar">["", "", "ဧဝံ မေ သုတံ –", "ဧကံ သမယံ ဘဂဝါ ကောသမ္ဗိယံ ဝိဟရတိ ဃောသိတာရာမေ။", "တေန ခေါ ပန သမယေန ဒွေ ပဗ္ဗဇိတာ –", "မုဏ္ဍိယော စ ပရိဗ္ဗာဇကော ဇာလိယော စ ဒာရုပတ္တိကန္တေဝါသီ ယေန ဘဂဝါ တေနုပသင်္ကမိံသု;\nဥပသင်္ကမိတွာ ဘဂဝတာ သဒ္ဓိံ သမ္မောဒိံသု။", "သမ္မောဒနီယံ ကထံ သာရဏီယံ ဝီတိသာရေတွာ ဧကမန္တံ အဋ္ဌံသု။ ဧကမန္တံ ဌိတာ ခေါ တေ ဒွေ ပဗ္ဗဇိတာ ဘဂဝန္တံ ဧတဒဝေါစုံ –", "‘‘ကိံ နု ခေါ၊ အာဝုသော ဂေါတမ၊ တံ ဇီဝံ တံ သရီရံ၊ ဥဒာဟု အညံ ဇီဝံ အညံ သရီရ’’န္တိ?", "‘‘တေန ဟာဝုသော၊ သုဏာထ သာဓုကံ မနသိ ကရောထ;\nဘာသိဿာမီ’’တိ။ ‘‘ဧဝမာဝုသော’’တိ", "ခေါ တေ ဒွေ ပဗ္ဗဇိတာ ဘဂဝတော ပစ္စဿောသုံ။", "ဘဂဝါ ဧတဒဝေါစ –", "‘‘ဣဓာဝုသော၊ တထာဂတော လောကေ ဥပ္ပဇ္ဇတိ အရဟံ၊ သမ္မာသမ္ဗုဒ္ဓေါ။ပေ.။ (ယထာ ၁၉၀-၂၁၂ အနုစ္ဆေဒေသု ဧဝံ ဝိတ္ထာရေတဗ္ဗံ)။", "ဧဝံ ခေါ၊ အာဝုသော၊ ဘိက္ခု သီလသမ္ပန္နော ဟောတိ။ပေ.။", "", "ပဌမံ ဈာနံ ဥပသမ္ပဇ္ဇ ဝိဟရတိ။", "ယော ခေါ၊ အာဝုသော၊ ဘိက္ခု ဧဝံ ဇာနာတိ ဧဝံ ပဿတိ ၊ ကလ္လံ နု ခေါ တဿေတံ ဝစနာယ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါတိ။", "ယော သော၊ အာဝုသော၊ ဘိက္ခု ဧဝံ ဇာနာတိ ဧဝံ ပဿတိ၊ ကလ္လံ တဿေတံ ဝစနာယ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါတိ။", "အဟံ ခေါ ပနေတံ၊ အာဝုသော၊ ဧဝံ ဇာနာမိ ဧဝံ ပဿာမိ။", "အထ စ ပနာဟံ န ဝဒာမိ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါ။ပေ.။", "ဒုတိယံ ဈာနံ။ပေ.။", "တတိယံ ဈာနံ။ပေ.။", "စတုတ္ထံ ဈာနံ ဥပသမ္ပဇ္ဇ ဝိဟရတိ။", "ယော ခေါ၊ အာဝုသော၊ ဘိက္ခု ဧဝံ ဇာနာတိ ဧဝံ ပဿတိ၊ ကလ္လံ နု ခေါ တဿေတံ ဝစနာယ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါတိ?", "ယော သော၊ အာဝုသော၊ ဘိက္ခု ဧဝံ ဇာနာတိ ဧဝံ ပဿတိ ကလ္လံ၊ တဿေတံ ဝစနာယ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါတိ။", "အဟံ ခေါ ပနေတံ၊ အာဝုသော၊ ဧဝံ ဇာနာမိ ဧဝံ ပဿာမိ။", "အထ စ ပနာဟံ န ဝဒာမိ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါ။ပေ.။", "ဉာဏဒဿနာယ စိတ္တံ အဘိနီဟရတိ အဘိနိန္နာမေတိ။ပေ.။", "ယော ခေါ၊ အာဝုသော၊ ဘိက္ခု ဧဝံ ဇာနာတိ ဧဝံ ပဿတိ၊ ကလ္လံ နု ခေါ တဿေတံ ဝစနာယ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါတိ။", "ယော သော၊ အာဝုသော၊ ဘိက္ခု ဧဝံ ဇာနာတိ ဧဝံ ပဿတိ ကလ္လံ တဿေတံ ဝစနာယ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါတိ။", "အဟံ ခေါ ပနေတံ၊ အာဝုသော၊ ဧဝံ ဇာနာမိ ဧဝံ ပဿာမိ။", "အထ စ ပနာဟံ န ဝဒာမိ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါ။ပေ.။။", "။ပေ.။ နာပရံ ဣတ္ထတ္တာယာတိ ပဇာနာတိ။", "ယော ခေါ၊ အာဝုသော၊ ဘိက္ခု ဧဝံ ဇာနာတိ ဧဝံ ပဿတိ၊ ကလ္လံ နု ခေါ တဿေတံ ဝစနာယ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါတိ?", "ယော သော၊ အာဝုသော၊ ဘိက္ခု ဧဝံ ဇာနာတိ ဧဝံ ပဿတိ၊ န ကလ္လံ တဿေတံ ဝစနာယ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါတိ။", "အဟံ ခေါ ပနေတံ၊ အာဝုသော၊ ဧဝံ ဇာနာမိ ဧဝံ ပဿာမိ။", "အထ စ ပနာဟံ န ဝဒာမိ –", "‘တံ ဇီဝံ တံ သရီရ’န္တိ ဝါ ‘အညံ ဇီဝံ အညံ သရီရ’န္တိ ဝါ’’တိ။", "ဣဒမဝေါစ ဘဂဝါ။", "အတ္တမနာ တေ ဒွေ ပဗ္ဗဇိတာ ဘဂဝတော ဘာသိတံ အဘိနန္ဒုန္တိ။", ""]</script>
 <script type="application/json" id="tx-pali_myanmar_iast">["", "", "evaṃ me sutaṃ –", "ekaṃ samayaṃ bhagavā kosambiyaṃ viharati ghositārāme..", "tena kho pana samayena dve pabbajitā –", "muṇḍiyo ca paribbājako jāliyo ca dārupattikantevāsī yena bhagavā tenupasaṅkamiṃsu;\nupasaṅkamitvā bhagavatā saddhiṃ sammodiṃsu..", "sammodanīyaṃ kathaṃ sāraṇīyaṃ vītisāretvā ekamantaṃ aṭṭhaṃsu..\nekamantaṃ ṭhitā kho te dve pabbajitā bhagavantaṃ etadavocuṃ –", "‘‘kiṃ nu kho. āvuso gotama. taṃ jīvaṃ taṃ sarīraṃ. udāhu aññaṃ jīvaṃ aññaṃ sarīra’’nti?", "‘‘tena hāvuso. suṇātha sādhukaṃ manasi karotha;\nbhāsissāmī’’ti..\n‘‘evamāvuso’’ti", "kho te dve pabbajitā bhagavato paccassosuṃ..", "bhagavā etadavoca –", "‘‘idhāvuso. tathāgato loke uppajjati arahaṃ. sammāsambuddho..pe...\n(yathā 190-212 anucchedesu evaṃ vitthāretabbaṃ)..", "evaṃ kho. āvuso. bhikkhu sīlasampanno hoti..pe...", "", "paṭhamaṃ jhānaṃ upasampajja viharati..", "yo kho. āvuso. bhikkhu evaṃ jānāti evaṃ passati . kallaṃ nu kho tassetaṃ vacanāya –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vāti..", "yo so. āvuso. bhikkhu evaṃ jānāti evaṃ passati. kallaṃ tassetaṃ vacanāya –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vāti..", "ahaṃ kho panetaṃ. āvuso. evaṃ jānāmi evaṃ passāmi..", "atha ca panāhaṃ na vadāmi –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vā..pe...", "dutiyaṃ jhānaṃ..pe...", "tatiyaṃ jhānaṃ..pe...", "catutthaṃ jhānaṃ upasampajja viharati..", "yo kho. āvuso. bhikkhu evaṃ jānāti evaṃ passati. kallaṃ nu kho tassetaṃ vacanāya –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vāti?", "yo so. āvuso. bhikkhu evaṃ jānāti evaṃ passati kallaṃ. tassetaṃ vacanāya –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vāti..", "ahaṃ kho panetaṃ. āvuso. evaṃ jānāmi evaṃ passāmi..", "atha ca panāhaṃ na vadāmi –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vā..pe...", "ñāṇadassanāya cittaṃ abhinīharati abhininnāmeti..pe...", "yo kho. āvuso. bhikkhu evaṃ jānāti evaṃ passati. kallaṃ nu kho tassetaṃ vacanāya –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vāti..", "yo so. āvuso. bhikkhu evaṃ jānāti evaṃ passati kallaṃ tassetaṃ vacanāya –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vāti..", "ahaṃ kho panetaṃ. āvuso. evaṃ jānāmi evaṃ passāmi..", "atha ca panāhaṃ na vadāmi –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vā..pe.....", "..pe... nāparaṃ itthattāyāti pajānāti..", "yo kho. āvuso. bhikkhu evaṃ jānāti evaṃ passati. kallaṃ nu kho tassetaṃ vacanāya –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vāti?", "yo so. āvuso. bhikkhu evaṃ jānāti evaṃ passati. na kallaṃ tassetaṃ vacanāya –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vāti..", "ahaṃ kho panetaṃ. āvuso. evaṃ jānāmi evaṃ passāmi..", "atha ca panāhaṃ na vadāmi –", "‘taṃ jīvaṃ taṃ sarīra’nti vā ‘aññaṃ jīvaṃ aññaṃ sarīra’nti vā’’ti..", "idamavoca bhagavā..", "attamanā te dve pabbajitā bhagavato bhāsitaṃ abhinandunti..", ""]</script>
+<script type="application/json" id="tx-pali_bjt">["", "", "එවං මෙ සුතං:", "එකං සමයං භගවා කොසම්බියං විහරති ඝොසිතාරාමෙ.", "තෙන ඛො පන සමයෙන ද්වෙ පබ්බජිතා මණ්ඩිස්සො", "ච පරිබ්බාජකො ජාලියො ච දාරුපත්තිකන්තෙවාසී යෙන භගවා තෙනුපසඞ්කමිංසු. උපසඞ්කමිත්වා භගවතා සද්ධිං සම්මොදිංසු.", "සම්මොදනීයං කථං සාරාණීයං වීතිසාරෙත්වා එකමන්තං අට්ඨංසු. එකමන්තං ඨිතා ඛො තෙ ද්වෙ පබ්බජිතා භගවන්තං එතදවොචුං:\n“කින්නු", "ඛො ආවුසො ගොතම තං ජීවං තං සරීරං? උදාහු අඤ්ඤං ජීවං අඤ්ඤං සරීරං?”ති.", "තෙන හාවුසො සුණාථ. සාධුකං මනසි කරොථ. භාසිස්සාමී’ති.\n‘එවමාවුසො’ති", "ඛො තෙ ද්වෙ පබ්බජිතා භගවතො පච්චස්සොසුං.", "භගවා එතදවොච:", "ඉධාවුසො, තථාගතො ලොකෙ උප්පජ්ජති අරහං සම්මාසම්බුද්ධො -පෙ- යථා සාමඤ්ඤඵලෙ එවං විත්ථාරෙතබ්බං", "එවං ඛො ආවුසො භික්ඛු සීලසම්පන්නො හොති. කථං ච ආවුසො,\nභික්ඛු ඉන්ද්රියෙසු ගුත්තද්වාරො හොති? ඉධාවුසො භික්ඛු චක්ඛුනා රූපං දිස්වා න\nනිමිත්තග්ගාහී හොති -පෙ- එවං ඛො ආවුසො භික්ඛු ඉන්ද්රියෙසු ගුත්තද්වාරො හොති.\nකථං ච ආවුසො, භික්ඛු සතිසම්පජඤ්ඤෙන සමන්නාගතො හොති? ඉධාවුසො භික්ඛු අභික්කන්තෙ පටික්කන්තෙ සම්පජානකාරී හොති.\nආලොකිතෙ විලොකිතෙ -පෙ- එවං ඛො ආවුසො භික්ඛු සති සම්පජඤ්ඤෙන සමන්නාගතො හොති. කථඤ්ච ආවුසො,\nභික්ඛු සන්තුට්ඨො හොති? ඉධාවුසො භික්ඛු සන්තුට්ඨො හොති කායපාරිහාරිකෙන චීවරෙන -පෙ- එවං ඛො ආවුසො භික්ඛු සන්තුට්ඨො හොති.\nසො ඉමිනා ච අරියෙන සීලක්ඛන්ධෙන සමන්නාගතො -පෙ- පරිමුඛං සතිං උපට්ඨපෙත්වා,\n-පෙ- සො අභිජ්ඣං ලොකෙ පහාය -පෙ- විචිකිච්ඡාය චිත්තං පරිසොධෙති. සෙය්යථාපි ආවුසො,\nපුරිසො ඉණං ආදාය කම්මන්තෙ පයොජෙය්ය -පෙ- සෙය්යථාපි ආවුසො පුරිසො ආබාධිකො අස්ස -පෙ- සෙය්යථාපි ආවුසො පුරිසො\nබන්ධනාගාරෙ බද්ධො අස්ස -පෙ- සෙය්යථාපි ආවුසො පුරිසො දාසො අස්ස අනත්තාධීනො -පෙ- සෙය්යථාපි ආවුසො පුරිසො\nසධනො සභොගො කන්තාරද්ධානමග්ගං පටිපජ්ජෙය්ය -පෙ- ඉමෙ පංචනීවරණෙ අප්පහීණෙ අත්තනි සමනුපස්සෙය්ය -පෙ- සො\nඅපරෙන සමයෙන තං කන්තාරං නිත්ථරෙය්ය -පෙ- එවමෙව ඛො භික්ඛු ඉමෙ පංචනීවරණෙ පහීණෙ අත්තනි සමනුපස්සති -පෙ-.\nතස්සිමෙ පංචනීවරණෙ පහීණෙ අත්තනි සමනුපස්සතො -පෙ- චිත්තං සමාධියති. සො විවිච්චෙව කාමෙහි", "-පෙ-", "පඨමං ඣානං උපසම්පජ්ජ විහරති. -පෙ- නාස්ස කිඤ්චි සබ්බාවතො කායස්ස විවෙකජෙන පීතිසුඛෙන අප්ඵුටං හොති.", "යො නු ඛො ආවුසො, එවං ජානාති එවං පස්සති, කල්ලන්නු ඛො තස්සෙතං වචනාය", "‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා?ති.", "“යො සො ආවුසො, භික්ඛු එවං ජානාති එවං පස්සති, කල්ලං තස්සෙතං වචනාය", "‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා”ති.", "අහං ඛො පනෙතං ආවුසො, එවං ජානාමි එවං පස්සාමි.", "අථ ච පනාහං න වදාමි", "‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වාති. පුන චපරං ආවුසො, භික්ඛු විතක්කවිචාරානං වූපසමා -පෙ-", "දුතියං ඣානං", "", "උපසම්පජ්ජ විහරති. -පෙ- නාස්ස කිඤ්චි සබ්බාවතො කායස්ස සමාධිජෙන පීතිසුඛෙන අප්ඵුටං හොති.", "යො නු ඛො", "", "ආවුසො, භික්ඛු එවං ජානාති එවං පස්සති, කල්ලං තස්සෙතං වචනාය", "‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා?ති.", "", "", "", "", "", "", "“යො සො ආවුසො, භික්ඛු එවං ජානාති එවං පස්සති, කල්ලං තස්සෙතං වචනාය", "‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා”ති.", "අහං ඛො පනෙතං ආවුසො, එවං ජානාමි එවං පස්සාමි.", "අථ ච පනාහං න වදාමි", "‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වාති. පුන චපරං ආවුසො,\nභික්ඛු පීතියා ච විරාගා -පෙ- තතියං ඣානං උපසම්පජ්ජ විහරති.", "-පෙ- නාස්ස කිඤ්චි සබ්බාවතො කායස්ස නිප්පීතිකෙන සුඛෙන අප්ඵුටං හොති.", "යො නු ඛො ආවුසො, භික්ඛු එවං ජානාති එවං පස්සති, කල්ලං නු ඛො තස්සෙතං වචනාය", "‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා?ති.", "“යො සො ආවුසො, භික්ඛු එවං ජානාති එවං පස්සති, කල්ලං තස්සෙතං වචනාය", "‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා”ති.", "අහං ඛො පනෙතං ආවුසො, එවං ජානාමි එවං පස්සාමි.", "අථ ච පනාහං න වදාමි", "‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වාති. පුන චපරං ආවුසො,\nභික්ඛු සුඛස්ස ච පහානා දුක්ඛස්ස ච පහානා -පෙ- චතුත්ථං ඣානං උපසම්පජ්ජ විහරති.\n-පෙ- නාස්ස කිඤ්චි සබ්බාවතො කායස්ස පරිසුද්ධෙන චෙතසා පරියොදාතෙන අප්ඵුටං හොති. යො නු ඛො ආවුසො,\nභික්ඛු එවං ජානාති එවං පස්සති, කල්ලං නු ඛො තස්සෙතං වචනාය ‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා?ති.\n“යො සො ආවුසො, භික්ඛු එවං ජානාති එවං පස්සති,\nකල්ලං තස්සෙතං වචනාය ‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා”ති.\nඅහං ඛො පනෙතං ආවුසො, එවං ජානාමි එවං පස්සාමි.\nඅථ ච පනාහං න වදාමි ‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වාති.\nපුන චපරං ආවුසො, භික්ඛු එවං සමාහිතෙ චිත්තෙ -පෙ- ඤාණදස්සනාය චිත්තං අභිනීහරති අභිනින්නාමෙති.\nසො එවං පජානාති ‘අයං ඛො මෙ කායො රූපී චාතුම්මහාභූතිකො -පෙ- භෙදනවිද්ධංසනධම්මො.\nඉදං ච පන මෙ විඤ්ඤාණං එත්ථ සිතං එත්ථ පටිබද්ධන්ති.\nසෙය්යථාපි ආවුසො මණි වෙළුරියො -පෙ- තත්රස්ස සුත්තං ‘අයං ඛො මණි\nවෙළුරියො -පෙ- තත්රිදං සුත්තං ආවුතං නීලං වා -පෙ- පණ්ඩුසුත්තං වා’ති.\nඑවමෙව ඛො ආවුසො භික්ඛු එවං සමාහිතෙ චිත්තෙ -පෙ- ඤාණදස්සනාය චිත්තං අභිනීහරති අභිනින්නාමෙති. සො එවං පජානාති.\nඅයං ඛො මෙ කායො රූපි -පෙ- ඉදං ච පන මෙ විඤ්ඤාණං එත්ථ සිතං එත්ථ පටිබද්ධන්ති.\n-පෙ- යථා පුබ්බෙ එවං විත්ථාරෙ තබ්බං පුන චපරං ආවුසො,\n-පෙ- එවං සමාහිතෙ චිත්තෙ -පෙ- මනොමයං කායං අභිනිම්මිනනාය චිත්තං අභිනීහරති අභිනින්නාමෙති -පෙ- පුන චපරං ආවුසො,\nභික්ඛු -පෙ- එවං සමාහිතෙ චිත්තෙ -පෙ- ඉද්ධිවිධාය චිත්තං අභිනීහරති -පෙ- යාව බ්රහ්මලොකාපි කායෙන වසං වත්තෙති.\n-පෙ- පුන චපරං ආවුසො,\nභික්ඛු එවං සමාහිතෙ චිත්තෙ -පෙ- දිබ්බාය සොතධාතුයා -පෙ- චෙතොපරියඤාණාය -පෙ-\nපුබ්බෙනිවාසානුස්සතිඤාණාය -පෙ- යථා මහාලිසුත්තෙ එවං විත්ථාරෙතබ්බං . පුන චපරං ආවුසො,\nභික්ඛු එවං සමාහිතෙ චිත්තෙ -පෙ- සත්තානං චුතූපපාතඤාණාය චිත්තං අභිනීහරති -පෙ- යථා කම්මූපගෙ සත්තෙ පජානාති. යො ඛො ආවුසො,\nභික්ඛු එවං ජානාති එවං පස්සති, කල්ලං නු ඛො තස්සෙතං වචනාය ‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා?”ති.\n“යො සො ආවුසො, භික්ඛු එවං ජානාති එවං පස්සති,\nකල්ලං තස්සෙතං වචනාය ‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා”ති.\nඅහං ඛො පනෙතං ආවුසො, එවං ජානාමි එවං පස්සාමි.\nඅථ ච පනාහං න වදාමි ‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වාති. පුන චපරං ආවුසො,\nභික්ඛු එවං සමාහිතෙ චිත්තෙ -පෙ- ආසවානං ඛයඤාණාය චිත්තං අභිනීහරති අභිනින්නාමෙති.\nසො ඉදං දුක්ඛන්ති යථාභූතං පජානාති. -පෙ- ඛීණා ජාති වුසිතං බ්රහ්මචරියං කතං කරණීයං නාපරං ඉත්ථත්තායාති පජානාති.\nයො නු ඛො ආවුසො, භික්ඛු එවං ජානාති එවං පස්සති,\nකල්ලං නු ඛො තස්සෙතං වචනාය ‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා?ති.\n“යො සො ආවුසො, භික්ඛු එවං ජානාති එවං පස්සති,\nන කල්ලං තස්සෙතං වචනාය ‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා”ති.\nඅහං ඛො පනෙතං ආවුසො, එවං ජානාමි එවං පස්සාමි. අථ ච පනාහං න වදාමි ‘තං ජීවං තං සරීරන්ති’වා ‘අඤ්ඤං ජීවං අඤ්ඤං සරීරන්ති’වා’ති.", "ඉදමවොච භගවා.", "අත්තමනා තෙ ද්වෙ පබ්බජිතා භගවතො භාසිතං අභිනන්දුන්ති.", ""]</script>
+<script type="application/json" id="tx-pali_bjt_iast">["", "", "evaṃ me sutaṃ:", "ekaṃ samayaṃ bhagavā kosambiyaṃ viharati ghositārāme.", "tena kho pana samayena dve pabbajitā maṇḍisso", "ca paribbājako jāliyo ca dārupattikantevāsī yena bhagavā tenupasaṅkamiṃsu. upasaṅkamitvā bhagavatā saddhiṃ sammodiṃsu.", "sammodanīyaṃ kathaṃ sārāṇīyaṃ vītisāretvā ekamantaṃ aṭṭhaṃsu.\nekamantaṃ ṭhitā kho te dve pabbajitā bhagavantaṃ etadavocuṃ:\n“kinnu", "kho āvuso gotama taṃ jīvaṃ taṃ sarīraṃ? udāhu aññaṃ jīvaṃ aññaṃ sarīraṃ?”ti.", "tena hāvuso suṇātha. sādhukaṃ manasi karotha. bhāsissāmī’ti.\n‘evamāvuso’ti", "kho te dve pabbajitā bhagavato paccassosuṃ.", "bhagavā etadavoca:", "idhāvuso, tathāgato loke uppajjati arahaṃ sammāsambuddho -pe- yathā sāmaññaphale evaṃ vitthāretabbaṃ", "evaṃ kho āvuso bhikkhu sīlasampanno hoti. kathaṃ ca āvuso,\nbhikkhu indriyesu guttadvāro hoti? idhāvuso bhikkhu cakkhunā rūpaṃ disvā na\nnimittaggāhī hoti -pe- evaṃ kho āvuso bhikkhu indriyesu guttadvāro hoti.\nkathaṃ ca āvuso, bhikkhu satisampajaññena samannāgato hoti? idhāvuso bhikkhu abhikkante paṭikkante sampajānakārī hoti.\nālokite vilokite -pe- evaṃ kho āvuso bhikkhu sati sampajaññena samannāgato hoti. kathañca āvuso,\nbhikkhu santuṭṭho hoti? idhāvuso bhikkhu santuṭṭho hoti\nkāyapārihārikena cīvarena -pe- evaṃ kho āvuso bhikkhu santuṭṭho hoti.\nso iminā ca ariyena sīlakkhandhena samannāgato -pe- parimukhaṃ satiṃ upaṭṭhapetvā,\n-pe- so abhijjhaṃ loke pahāya -pe- vicikicchāya cittaṃ parisodheti. seyyathāpi āvuso,\npuriso iṇaṃ ādāya kammante payojeyya -pe- seyyathāpi āvuso puriso ābādhiko assa -pe- seyyathāpi āvuso puriso\nbandhanāgāre baddho assa -pe- seyyathāpi āvuso puriso dāso assa anattādhīno -pe- seyyathāpi āvuso puriso sadhano\nsabhogo kantāraddhānamaggaṃ paṭipajjeyya -pe- ime paṃcanīvaraṇe appahīṇe attani samanupasseyya -pe- so aparena\nsamayena taṃ kantāraṃ nitthareyya -pe- evameva kho bhikkhu ime paṃcanīvaraṇe pahīṇe attani samanupassati -pe-.\ntassime paṃcanīvaraṇe pahīṇe attani samanupassato -pe- cittaṃ samādhiyati. so vivicceva kāmehi", "-pe-", "paṭhamaṃ jhānaṃ upasampajja viharati. -pe- nāssa kiñci sabbāvato kāyassa vivekajena pītisukhena apphuṭaṃ hoti.", "yo nu kho āvuso, evaṃ jānāti evaṃ passati, kallannu kho tassetaṃ vacanāya", "‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā?ti.", "“yo so āvuso, bhikkhu evaṃ jānāti evaṃ passati, kallaṃ tassetaṃ vacanāya", "‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā”ti.", "ahaṃ kho panetaṃ āvuso, evaṃ jānāmi evaṃ passāmi.", "atha ca panāhaṃ na vadāmi", "‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vāti.\npuna caparaṃ āvuso, bhikkhu vitakkavicārānaṃ vūpasamā -pe-", "dutiyaṃ jhānaṃ", "", "upasampajja viharati. -pe- nāssa kiñci sabbāvato kāyassa samādhijena pītisukhena apphuṭaṃ hoti.", "yo nu kho", "", "āvuso, bhikkhu evaṃ jānāti evaṃ passati, kallaṃ tassetaṃ vacanāya", "‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā?ti.", "", "", "", "", "", "", "“yo so āvuso, bhikkhu evaṃ jānāti evaṃ passati, kallaṃ tassetaṃ vacanāya", "‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā”ti.", "ahaṃ kho panetaṃ āvuso, evaṃ jānāmi evaṃ passāmi.", "atha ca panāhaṃ na vadāmi", "‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vāti. puna caparaṃ āvuso,\nbhikkhu pītiyā ca virāgā -pe- tatiyaṃ jhānaṃ upasampajja viharati.", "-pe- nāssa kiñci sabbāvato kāyassa nippītikena sukhena apphuṭaṃ hoti.", "yo nu kho āvuso, bhikkhu evaṃ jānāti evaṃ passati, kallaṃ nu kho tassetaṃ vacanāya", "‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā?ti.", "“yo so āvuso, bhikkhu evaṃ jānāti evaṃ passati, kallaṃ tassetaṃ vacanāya", "‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā”ti.", "ahaṃ kho panetaṃ āvuso, evaṃ jānāmi evaṃ passāmi.", "atha ca panāhaṃ na vadāmi", "‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vāti. puna caparaṃ āvuso,\nbhikkhu sukhassa ca pahānā dukkhassa ca pahānā -pe- catutthaṃ jhānaṃ upasampajja viharati.\n-pe- nāssa kiñci sabbāvato kāyassa parisuddhena cetasā pariyodātena apphuṭaṃ hoti. yo nu kho āvuso,\nbhikkhu evaṃ jānāti evaṃ passati,\nkallaṃ nu kho tassetaṃ vacanāya ‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā?ti.\n“yo so āvuso, bhikkhu evaṃ jānāti evaṃ passati,\nkallaṃ tassetaṃ vacanāya ‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā”ti.\nahaṃ kho panetaṃ āvuso, evaṃ jānāmi evaṃ passāmi.\natha ca panāhaṃ na vadāmi ‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vāti.\npuna caparaṃ āvuso, bhikkhu evaṃ samāhite citte -pe- ñāṇadassanāya cittaṃ abhinīharati abhininnāmeti.\nso evaṃ pajānāti ‘ayaṃ kho me kāyo rūpī cātummahābhūtiko -pe- bhedanaviddhaṃsanadhammo.\nidaṃ ca pana me viññāṇaṃ ettha sitaṃ ettha paṭibaddhanti.\nseyyathāpi āvuso maṇi vel̤uriyo -pe- tatrassa suttaṃ ‘ayaṃ kho maṇi\nvel̤uriyo -pe- tatridaṃ suttaṃ āvutaṃ nīlaṃ vā -pe- paṇḍusuttaṃ vā’ti.\nevameva kho āvuso bhikkhu evaṃ samāhite citte -pe- ñāṇadassanāya cittaṃ abhinīharati abhininnāmeti. so evaṃ pajānāti.\nayaṃ kho me kāyo rūpi -pe- idaṃ ca pana me viññāṇaṃ ettha sitaṃ ettha paṭibaddhanti.\n-pe- yathā pubbe evaṃ vitthāre tabbaṃ puna caparaṃ āvuso,\n-pe- evaṃ samāhite citte -pe- manomayaṃ kāyaṃ abhinimminanāya cittaṃ abhinīharati abhininnāmeti -pe- puna caparaṃ āvuso,\nbhikkhu -pe- evaṃ samāhite citte -pe- iddhividhāya cittaṃ abhinīharati -pe- yāva brahmalokāpi kāyena vasaṃ vatteti.\n-pe- puna caparaṃ āvuso,\nbhikkhu evaṃ samāhite citte -pe- dibbāya sotadhātuyā -pe- cetopariyañāṇāya\n-pe- pubbenivāsānussatiñāṇāya -pe- yathā mahālisutte evaṃ vitthāretabbaṃ .\npuna caparaṃ āvuso,\nbhikkhu evaṃ samāhite citte -pe- sattānaṃ cutūpapātañāṇāya cittaṃ\nabhinīharati -pe- yathā kammūpage satte pajānāti. yo kho āvuso,\nbhikkhu evaṃ jānāti evaṃ passati,\nkallaṃ nu kho tassetaṃ vacanāya ‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā?”ti.\n“yo so āvuso, bhikkhu evaṃ jānāti evaṃ passati,\nkallaṃ tassetaṃ vacanāya ‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā”ti.\nahaṃ kho panetaṃ āvuso, evaṃ jānāmi evaṃ passāmi.\natha ca panāhaṃ na vadāmi ‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vāti. puna caparaṃ āvuso,\nbhikkhu evaṃ samāhite citte -pe- āsavānaṃ khayañāṇāya cittaṃ abhinīharati abhininnāmeti.\nso idaṃ dukkhanti yathābhūtaṃ pajānāti.\n-pe- khīṇā jāti vusitaṃ brahmacariyaṃ kataṃ karaṇīyaṃ nāparaṃ itthattāyāti pajānāti.\nyo nu kho āvuso, bhikkhu evaṃ jānāti evaṃ passati,\nkallaṃ nu kho tassetaṃ vacanāya ‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā?ti.\n“yo so āvuso, bhikkhu evaṃ jānāti evaṃ passati,\nna kallaṃ tassetaṃ vacanāya ‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā”ti.\nahaṃ kho panetaṃ āvuso, evaṃ jānāmi evaṃ passāmi.\natha ca panāhaṃ na vadāmi ‘taṃ jīvaṃ taṃ sarīranti’vā ‘aññaṃ jīvaṃ aññaṃ sarīranti’vā’ti.", "idamavoca bhagavā.", "attamanā te dve pabbajitā bhagavato bhāsitaṃ abhinandunti.", ""]</script>
 <script type="application/json" id="nt-sujato-corrected">{"dn7:1.2": ["This sutta depicts the events that were subsequently related by the Buddha in the previous sutta, \u003ca class=\"xref\" data-ref=\"dn6\" href=\"https://suttacentral.net/dn6/en/sujato\" target=\"_blank\" rel=\"noopener\">DN 6\u003c/a>. "]}</script>
 <script>
 const TREE=[{"id": "0", "label": "Dīgha Nikāya 7", "rows": [{"key": "dn7:0.1", "p": "Dīgha Nikāya 7…", "s": "Long Discourses 7"}, {"key": "dn7:0.2", "p": "Jāliya·sutta…", "s": "With Jāliya"}]}, {"id": "1", "label": "Evaṁ me sutaṁ—", "rows": [{"key": "dn7:1.1", "p": "Evaṁ me sutaṁ—…", "s": "So I have heard."}, {"key": "dn7:1.2", "p": "ekaṁ samayaṁ bhagavā kosambiyaṁ viharati ghosit·ār…", "s": "At one time the Buddha was staying near Kosambī, in Ghosita’s Monastery."}, {"key": "dn7:1.3", "p": "Tena kho pana samayena dve pabbajitā—…", "s": "Now at that time two renunciates—"}, {"key": "dn7:1.4", "p": "muṇḍiyo ca pari·b·bājako jāliyo ca dāru·pattika·nt…", "s": "the wanderer Muṇḍiya and Jāliya, the pupil of the wood-bowl ascetic—came to the Buddha and exchanged greetings with him."}, {"key": "dn7:1.5", "p": "Sammodanīyaṁ kathaṁ sā·raṇīyaṁ vīti·sāretvā ekam·a…", "s": "When the greetings and polite conversation were over, they stood to one side and said to the Buddha,"}, {"key": "dn7:1.6", "p": "“kiṁ nu kho, āvuso gotama, taṁ jīvaṁ\ntaṁ sarīraṁ, …", "s": "“Reverend Gotama, are the soul and the body one and the same, or is the soul one thing, the body another?”"}, {"key": "dn7:1.7", "p": "“Tena hāvuso, suṇātha\nsādhukaṁ manasi karotha, bhā…", "s": "“Well then, reverends, listen and apply your mind well, I will speak.”"}, {"key": "dn7:1.8", "p": "“Evam·āvuso”ti kho te dve pabbajitā bhagavato pacc…", "s": "“Yes, reverend,” they replied."}, {"key": "dn7:1.9", "p": "Bhagavā etadavoca:…", "s": "The Buddha said this:"}]}, {"id": "2", "label": "“idhāvuso, tathā·gato loke uppajjati a·rahaṁ, sammā·sambuddho …pe…", "rows": [{"key": "dn7:2.1", "p": "“idhāvuso, tathā·gato loke uppajjati\na·rahaṁ, samm…", "s": "“Take the case when a Realized One arises in the world, perfected, a fully awakened Buddha …"}, {"key": "dn7:2.2", "p": "Evaṁ kho, āvuso, bhikkhu sīla·sampanno hoti.…", "s": "That’s how a mendicant is accomplished in ethics. …"}, {"key": "dn7:2.3", "p": "…pe……"}, {"key": "dn7:2.4", "p": "Paṭhamaṁ jhānaṁ upasampajja viharati.…", "s": "They enter and remain in the first jhāna …"}, {"key": "dn7:2.5", "p": "Yo kho, āvuso, bhikkhu evaṁ jānāti\nevaṁ passati, k…", "s": "When a mendicant knows and sees like this, would it be appropriate to say of them:"}, {"key": "dn7:2.6", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…", "s": "‘The soul and the body are one and the same’ or ‘The soul is one thing, the body another’?”"}, {"key": "dn7:2.7", "p": "Yo so, āvuso, bhikkhu evaṁ jānāti\nevaṁ passati, ka…", "s": "“It would, reverend.”"}, {"key": "dn7:2.8", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…"}, {"key": "dn7:2.9", "p": "Ahaṁ kho panetaṁ, āvuso, evaṁ jānāmi evaṁ passāmi.…", "s": "“But reverends, I know and see like this."}, {"key": "dn7:2.10", "p": "Atha ca panāhaṁ na vadāmi:…", "s": "Nevertheless, I do not say:"}, {"key": "dn7:2.11", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…", "s": "‘The soul and the body are one and the same’ or ‘The soul is one thing, the body another’. …"}]}, {"id": "3", "label": "dutiyaṁ jhānaṁ …", "rows": [{"key": "dn7:3.1", "p": "dutiyaṁ jhānaṁ ……", "s": "They enter and remain in the second jhāna …"}, {"key": "dn7:3.2", "p": "tatiyaṁ jhānaṁ ……", "s": "third jhāna …"}, {"key": "dn7:3.3", "p": "catu·t·thaṁ jhānaṁ upasampajja viharati.…", "s": "fourth jhāna."}, {"key": "dn7:3.4", "p": "Yo kho, āvuso, bhikkhu evaṁ jānāti\nevaṁ passati, k…", "s": "When a mendicant knows and sees like this, would it be appropriate to say of them:"}, {"key": "dn7:3.5", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…", "s": "‘The soul and the body are one and the same’ or ‘The soul is one thing, the body another’?”"}, {"key": "dn7:3.6", "p": "Yo so, āvuso, bhikkhu evaṁ jānāti\nevaṁ passati kal…", "s": "“It would, reverend.”"}, {"key": "dn7:3.7", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…"}, {"key": "dn7:3.8", "p": "Ahaṁ kho panetaṁ, āvuso, evaṁ jānāmi evaṁ passāmi.…", "s": "“But reverends, I know and see like this."}, {"key": "dn7:3.9", "p": "Atha ca panāhaṁ na vadāmi:…", "s": "Nevertheless, I do not say:"}, {"key": "dn7:3.10", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…", "s": "‘The soul and the body are one and the same’ or ‘The soul is one thing, the body another’. …"}]}, {"id": "4", "label": "ñāṇa·dassa·nāya cittaṁ abhi·nīharati abhi·ni·n·nāmeti …", "rows": [{"key": "dn7:4.1", "p": "ñāṇa·dassa·nāya cittaṁ abhi·nīharati abhi·ni·n·nām…", "s": "They project and extend the mind toward knowledge and vision …"}, {"key": "dn7:4.2", "p": "yo kho, āvuso, bhikkhu evaṁ jānāti\nevaṁ passati, k…", "s": "When a mendicant knows and sees like this, would it be appropriate to say of them:"}, {"key": "dn7:4.3", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…", "s": "‘The soul and the body are one and the same’ or ‘The soul is one thing, the body another’?”"}, {"key": "dn7:4.4", "p": "Yo so, āvuso, bhikkhu evaṁ jānāti\nevaṁ passati kal…", "s": "“It would, reverend.”"}, {"key": "dn7:4.5", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…"}, {"key": "dn7:4.6", "p": "Ahaṁ kho panetaṁ, āvuso, evaṁ jānāmi evaṁ passāmi.…", "s": "“But reverends, I know and see like this."}, {"key": "dn7:4.7", "p": "Atha ca panāhaṁ na vadāmi:…", "s": "Nevertheless, I do not say:"}, {"key": "dn7:4.8", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…", "s": "‘The soul and the body are one and the same’ or ‘The soul is one thing, the body another’. …"}]}, {"id": "5", "label": "…pe… Nāparaṁ itthattāyāti pajānāti.", "rows": [{"key": "dn7:5.1", "p": "…pe…\nNāparaṁ itthattāyāti pajānāti.…", "s": "They understand:\n‘… there is nothing further for this place.’"}, {"key": "dn7:5.2", "p": "Yo kho, āvuso, bhikkhu evaṁ jānāti\nevaṁ passati, k…", "s": "When a mendicant knows and sees like this, would it be appropriate to say of them:"}, {"key": "dn7:5.3", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…", "s": "‘The soul and the body are one and the same’ or ‘The soul is one thing, the body another’?”"}, {"key": "dn7:5.4", "p": "Yo so, āvuso, bhikkhu evaṁ jānāti\nevaṁ passati, na…", "s": "“It would not, reverend.”"}, {"key": "dn7:5.5", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…"}, {"key": "dn7:5.6", "p": "Ahaṁ kho panetaṁ, āvuso, evaṁ jānāmi evaṁ passāmi.…", "s": "“But reverends, I know and see like this."}, {"key": "dn7:5.7", "p": "Atha ca panāhaṁ na vadāmi:…", "s": "Nevertheless, I do not say:"}, {"key": "dn7:5.8", "p": "‘taṁ jīvaṁ taṁ sarīran’ti vā ‘aññaṁ jīvaṁ\naññaṁ sa…", "s": "‘The soul and the body are one and the same’ or ‘The soul is one thing, the body another’.”"}, {"key": "dn7:5.9", "p": "Idam·avoca bhagavā.…", "s": "That is what the Buddha said."}, {"key": "dn7:5.10", "p": "Atta·manā te dve pabbajitā bhagavato bhāsitaṁ abhi…", "s": "Satisfied, the two renunciates approved what the Buddha said."}, {"key": "dn7:5.11", "p": "Jāliya·suttaṁ niṭṭhitaṁ sa·t·tamaṁ.…"}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "sujato-corrected", "label": "Sujato (Corrected)", "dot": "#c87a5d", "light": {"bg": "#f8f0ec", "text": "#2b150d"}, "dark": {"bg": "#201512", "text": "#d8b8a8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "arabic-esque", "label": "Arabic-esque", "dot": "#c9702c", "light": {"bg": "#f8f0e6", "text": "#2b1608"}, "dark": {"bg": "#201408", "text": "#e8bd90"}, "italic": false, "font_scale": 1.35, "font_family": "'Noto Naskh Arabic','Amiri','Geeza Pro','Segoe UI','Tahoma',serif", "rtl": true, "warn": ""}, {"key": "chinese-esque", "label": "Chinese-esque", "dot": "#c1352e", "light": {"bg": "#f8ecea", "text": "#2b0c08"}, "dark": {"bg": "#200e0c", "text": "#e8b0a8"}, "italic": false, "font_scale": 1.15, "font_family": "'Noto Serif TC','Noto Sans TC','PingFang TC','Microsoft JhengHei','MingLiU',serif", "rtl": false, "warn": ""}, {"key": "ru_dhammagift", "label": "Русский (Dhamma.gift)", "dot": "#c0504d", "light": {"bg": "#f8ecec", "text": "#2b0d0d"}, "dark": {"bg": "#201212", "text": "#e0b0b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "pts", "label": "PTS Rhys Davids", "dot": "#b08948", "light": {"bg": "#f6f0e6", "text": "#2b1d0a"}, "dark": {"bg": "#1e1810", "text": "#d8c098"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "pali_royal_thai", "label": "Siam (Thai)", "dot": "#2f9ea8", "light": {"bg": "#e6f3f5", "text": "#08272b"}, "dark": {"bg": "#0d1e20", "text": "#9cd2da"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "pali_royal_iast", "label": "Siam (IAST)", "dot": "#57bcc4", "light": {"bg": "#ecf7f8", "text": "#0a2a2e"}, "dark": {"bg": "#101f21", "text": "#a8dce2"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "pali_myanmar", "label": "Myanmar (မြန်မာ)", "dot": "#5b6ee1", "light": {"bg": "#ecedfb", "text": "#10163a"}, "dark": {"bg": "#12142a", "text": "#b7c0f0"}, "italic": false, "font_scale": 1.15, "font_family": "'Noto Sans Myanmar','Padauk','Myanmar Text','Myanmar3',sans-serif", "rtl": false, "warn": ""}, {"key": "pali_myanmar_iast", "label": "Myanmar (IAST)", "dot": "#8a97ee", "light": {"bg": "#f0f1fc", "text": "#14183a"}, "dark": {"bg": "#14162b", "text": "#c7cff5"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "pali", "label": "Pāli", "dot": "#c8a860", "light": {"bg": "#f5f0e8", "text": "#2c1e0f"}, "dark": {"bg": "#221c12", "text": "#e0d0a8"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Root Pāli (SuttaCentral / Mahāsaṅgīti edition)"}, {"key": "sujato-corrected", "label": "Sujato (Corrected)", "dot": "#c87a5d", "light": {"bg": "#f8f0ec", "text": "#2b150d"}, "dark": {"bg": "#201512", "text": "#d8b8a8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Sujato with a few critical terms corrected."}, {"key": "bodhi-esque", "label": "Bodhi-esque", "dot": "#8a6ac8", "light": {"bg": "#f0eef8", "text": "#170d2b"}, "dark": {"bg": "#151220", "text": "#b8a8d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI-generated from the Pāli, in Bhikkhu Bodhi's style"}, {"key": "arabic-esque", "label": "Arabic-esque", "dot": "#c9702c", "light": {"bg": "#f8f0e6", "text": "#2b1608"}, "dark": {"bg": "#201408", "text": "#e8bd90"}, "italic": false, "font_scale": 1.35, "font_family": "'Noto Naskh Arabic','Amiri','Geeza Pro','Segoe UI','Tahoma',serif", "rtl": true, "warn": "", "group": "International", "tip": "Arabic — bridged from the Bodhi-esque English, not the Pāli"}, {"key": "chinese-esque", "label": "Chinese-esque", "dot": "#c1352e", "light": {"bg": "#f8ecea", "text": "#2b0c08"}, "dark": {"bg": "#200e0c", "text": "#e8b0a8"}, "italic": false, "font_scale": 1.15, "font_family": "'Noto Serif TC','Noto Sans TC','PingFang TC','Microsoft JhengHei','MingLiU',serif", "rtl": false, "warn": "", "group": "International", "tip": "Traditional Chinese (繁體) — bridged from the Bodhi-esque English, not the Pāli"}, {"key": "ru_dhammagift", "label": "Русский (Dhamma.gift)", "dot": "#c0504d", "light": {"bg": "#f8ecec", "text": "#2b0d0d"}, "dark": {"bg": "#201212", "text": "#e0b0b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "International", "tip": "Russian — Dhamma.gift's curated collection of translators"}, {"key": "pts", "label": "PTS Rhys Davids", "dot": "#b08948", "light": {"bg": "#f6f0e6", "text": "#2b1d0a"}, "dark": {"bg": "#1e1810", "text": "#d8c098"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Pali Text Society legacy translations (Rhys Davids, Horner, Woodward, Hare)"}, {"key": "pali_royal_thai", "label": "Siam (Thai)", "dot": "#2f9ea8", "light": {"bg": "#e6f3f5", "text": "#08272b"}, "dark": {"bg": "#0d1e20", "text": "#9cd2da"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Same canonical Pāli in Royal Thai (Siam Raṭṭha) script"}, {"key": "pali_royal_iast", "label": "Siam (IAST)", "dot": "#57bcc4", "light": {"bg": "#ecf7f8", "text": "#0a2a2e"}, "dark": {"bg": "#101f21", "text": "#a8dce2"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Siam Raṭṭha Pāli, romanised (IAST)"}, {"key": "pali_myanmar", "label": "Myanmar (မြန်မာ)", "dot": "#5b6ee1", "light": {"bg": "#ecedfb", "text": "#10163a"}, "dark": {"bg": "#12142a", "text": "#b7c0f0"}, "italic": false, "font_scale": 1.15, "font_family": "'Noto Sans Myanmar','Padauk','Myanmar Text','Myanmar3',sans-serif", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Same canonical Pāli in Burmese script (CST, Sixth Council)"}, {"key": "pali_myanmar_iast", "label": "Myanmar (IAST)", "dot": "#8a97ee", "light": {"bg": "#f0f1fc", "text": "#14183a"}, "dark": {"bg": "#14162b", "text": "#c7cff5"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "CST (Sixth Council) Pāli, romanised (IAST)"}, {"key": "pali_bjt", "label": "BJT (සිංහල)", "dot": "#b5468f", "light": {"bg": "#f8ecf4", "text": "#330f2a"}, "dark": {"bg": "#251223", "text": "#eab7dc"}, "italic": false, "font_scale": 1.1, "font_family": "'Noto Sans Sinhala','Noto Serif Sinhala','Iskoola Pota','Nirmala UI',sans-serif", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Same canonical Pāli in Sinhala script (Buddha Jayanti Tipiṭaka)"}, {"key": "pali_bjt_iast", "label": "BJT (IAST)", "dot": "#d072b3", "light": {"bg": "#fbf0f8", "text": "#3a1230"}, "dark": {"bg": "#271424", "text": "#f0c7e5"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Pāli", "tip": "Buddha Jayanti (BJT) Pāli, romanised (IAST)"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2074,8 +2135,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2115,30 +2329,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

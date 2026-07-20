@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -970,7 +1029,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "0", "label": "中阿含經 7", "rows": [{"key": "ma7:0.1", "p": "中阿含經 7…", "s": "Medium Discourses 7"}, {"key": "ma7:0.2", "p": "世間福經…", "s": "Worldly Merit"}]}, {"id": "1", "label": "我聞如是：", "rows": [{"key": "ma7:1.1", "p": "我聞如是：…", "s": "Thus I have heard:"}, {"key": "ma7:1.2", "p": "一時，佛遊拘舍彌，在瞿沙羅園。…", "s": "One time, the Buddha traveled to Kauśāmbī and stayed at Ghoṣila’s Park."}]}, {"id": "2", "label": "爾時，尊者摩訶周那則於晡時從宴坐起，往詣佛所。", "rows": [{"key": "ma7:2.1", "p": "爾時，尊者摩訶周那則於晡時從宴坐起，往詣佛所。…", "s": "At the time, the Venerable Mahācunda rose from his seat of repose late in the afternoon and went to visit the Buddha."}, {"key": "ma7:2.2", "p": "到已作禮，却坐一面…", "s": "When he arrived, he paid homage and withdrew to sit at one side."}, {"key": "ma7:2.3", "p": "白曰：…", "s": "He said,"}, {"key": "ma7:2.4", "p": "「世尊，可得施設世間福耶。」…", "s": "“Bhagavān, is it possible to define worldly merit?”"}]}, {"id": "3", "label": "世尊告曰：", "rows": [{"key": "ma7:3.1", "p": "世尊告曰：…", "s": "The Bhagavān told him,"}, {"key": "ma7:3.2", "p": "「可得，周那。…", "s": "“It’s possible, Cunda."}, {"key": "ma7:3.3", "p": "有七世間福，得大福祐得大果報，得大名譽，得大功徳。…", "s": "There are seven worldly merits that obtain great fortune, rewards, renown, and virtue."}, {"key": "ma7:3.4", "p": "云何爲七。…", "s": "What are the seven?"}, {"key": "ma7:3.5", "p": "周那，有信族姓男，族姓女施比丘衆房舍，堂閣。…", "s": "Cunda, there are faithful clansmen and clanswomen who give living quarters and meeting halls to an assembly of monks."}, {"key": "ma7:3.6", "p": "周那，是謂第一世間之福得大福祐，得大果報，得大名譽，得大功徳。…", "s": "This, Cunda, is the first worldly merit that obtains great fortune, rewards, renown, and virtue."}]}, {"id": "4", "label": "「復次，周那，有信族姓男，族姓女於房舍中施與床座，氍𭯫，𣯾𣰆，氈褥，臥具。", "rows": [{"key": "ma7:4.1", "p": "「復次，周那，有信族姓男，族姓女於房舍中施與床座，氍𭯫，𣯾𣰆，氈褥，臥具。…", "s": "“Furthermore, Cunda,\nthere are faithful clansmen and clanswomen who go into the monks’ living quarters and give them seats,\ncarpets, blankets, mattresses, and b…"}, {"key": "ma7:4.2", "p": "周那，是謂第二世間之福得大福祐，得大果報，得大名譽，得大功徳。…", "s": "This, Cunda, is the second worldly merit that obtains great fortune, rewards, renown, and virtue."}]}, {"id": "5", "label": "「復次，周那，有信族姓男，族姓女於房舍中施與一切新淨妙衣。", "rows": [{"key": "ma7:5.1", "p": "「復次，周那，有信族姓男，族姓女於房舍中施與一切新淨妙衣。…", "s": "“Furthermore, Cunda, there are faithful clansmen and clanswomen who go into their living quarters and give them all new,\nclean, and marvelous clothing."}, {"key": "ma7:5.2", "p": "周那，是謂第三世間之福得大福祐，得大果報，得大名譽，得大功徳。…", "s": "This, Cunda, is the third worldly merit that obtains great fortune, rewards, renown, and virtue."}]}, {"id": "6", "label": "「復次，周那，有信族姓男，族姓女於房舍中常施於衆朝粥，中食。", "rows": [{"key": "ma7:6.1", "p": "「復次，周那，有信族姓男，族姓女於房舍中常施於衆朝粥，中食。…", "s": "“Furthermore, Cunda,\nthere are faithful clansmen and clanswomen who go into their living\nquarters and give the community the morning rice gruel and midday meals…"}, {"key": "ma7:6.2", "p": "又，以園民供給使令，若風雨寒雪，躬往園所増施，供養。…", "s": "They also tell their servants to serve the monastery and give\nadditional offerings to the monastery during rain and snowstorms."}, {"key": "ma7:6.3", "p": "諸比丘衆食已，不患風雨寒雪沽漬衣服。…", "s": "After they eat, the assembly of monks then isn’t troubled by the bad weather making their robes wet."}, {"key": "ma7:6.4", "p": "晝夜安樂禪寂，思惟。…", "s": "Instead, they meditate and contemplate day and night in comfort."}, {"key": "ma7:6.5", "p": "周那，是謂第七世間之福得大福祐，得大果報，得大名譽，得大功徳。…", "s": "This, Cunda, is the seventh worldly merit that obtains great fortune, rewards, renown, and virtue."}]}, {"id": "7", "label": "「周那，信族姓男，族姓女已得此七世間福者若去若來，若立若坐，若眠若覺，若晝若夜，其福常生，轉増轉廣。", "rows": [{"key": "ma7:7.1", "p": "「周那，信族姓男，族姓女已得此七世間福者若去若來，若立若坐，若眠若覺，若晝若夜，其福常生，轉増轉廣。…", "s": "“Cunda, these seven worldly merits will always produce fortune for those faithful clansmen\nand clanswomen that becomes greater and broader whether during the pa…"}]}, {"id": "8", "label": "「周那，譬如恒伽水從源流出入于大海，於其中間，轉深轉廣。", "rows": [{"key": "ma7:8.1", "p": "「周那，譬如恒伽水從源流出入于大海，於其中間，轉深轉廣。…", "s": "“Cunda, it’s like the Gaṅgā River, which flows from its source to the ocean and becomes deeper and wider as it goes."}, {"key": "ma7:8.2", "p": "周那，如是，信族姓男，族姓女已得此七世間福者。…", "s": "Thus, Cunda, are these seven worldly merits obtained by faithful clansmen and clanswomen."}, {"key": "ma7:8.3", "p": "若去若來，若立若坐，若眠若覺，若晝若夜，其福常生，轉増轉廣。」…", "s": "They will always produce fortune that becomes greater and broader whether during the past or future,\nwhile standing or sitting, while asleep or awake, or during…"}]}, {"id": "9", "label": "於是，尊者摩訶周那即從坐起，偏袒右肩，右膝著地，長跪叉手。", "rows": [{"key": "ma7:9.1", "p": "於是，尊者摩訶周那即從坐起，偏袒右肩，右膝著地，長跪叉手。…", "s": "Venerable Mahācunda then rose from his seat, bared his right shoulder,\nknelt on his right knee, and saluted with his palms together."}, {"key": "ma7:9.2", "p": "白曰：…", "s": "He said,"}, {"key": "ma7:9.3", "p": "「世尊，可得施設出世間福耶。」…", "s": "“Bhagavān, would it be possible to define merits that transcend the world?”"}]}, {"id": "10", "label": "世尊告曰：", "rows": [{"key": "ma7:10.1", "p": "世尊告曰：…", "s": "The Bhagavān told him,"}, {"key": "ma7:10.2", "p": "「可得，周那。…", "s": "“It’s possible, Cunda."}, {"key": "ma7:10.3", "p": "更有七福出於世間得大福祐，得大果報，得大名譽，得大功徳。…", "s": "There are another seven merits that transcend the world and obtain great fortune, rewards, renown, and virtue."}, {"key": "ma7:10.4", "p": "云何爲七。…", "s": "What are the seven?"}, {"key": "ma7:10.5", "p": "周那，有信族姓男，族姓女聞如來，如來弟子遊於某處。…", "s": "Cunda, there are faithful clansmen and clanswomen who hear that the\nTathāgata or one of his disciples have traveled to certain place."}, {"key": "ma7:10.6", "p": "聞已，歡喜，極懷踊躍。…", "s": "They rejoice when they hear that, celebrating in their hearts."}, {"key": "ma7:10.7", "p": "周那，是謂第一出世間福得大福祐，得大果報，得大名譽，得大功徳。…", "s": "Cunda, this is the first merit that transcends the world and obtains great fortune, rewards, renown, and virtue."}]}, {"id": "11", "label": "「復次，周那，有信族姓男，族姓女聞如來，如來弟子欲從彼至此。", "rows": [{"key": "ma7:11.1", "p": "「復次，周那，有信族姓男，族姓女聞如來，如來弟子欲從彼至此。…", "s": "“Furthermore, Cunda,\nthere are faithful clansmen and clanswomen who hear that the Tathāgata or one\nof his disciples are about to come from that place to their o…"}, {"key": "ma7:11.2", "p": "聞已，歡喜，極懷踊躍。…", "s": "They rejoice when they hear that, celebrating in their hearts."}, {"key": "ma7:11.3", "p": "周那，是謂第二出世間福得大福祐，得大果報，得大名譽，得大功徳。…", "s": "Cunda, this is the second merit that transcends the world and obtains great fortune, rewards, renown, and virtue."}]}, {"id": "12", "label": "「復次，周那，有信族姓男，族姓女聞如來，如來弟子已從彼至此。", "rows": [{"key": "ma7:12.1", "p": "「復次，周那，有信族姓男，族姓女聞如來，如來弟子已從彼至此。…", "s": "“Furthermore, Cunda,\nthere are faithful clansmen and clanswomen who hear that the Tathāgata or one of his disciples has arrived."}, {"key": "ma7:12.2", "p": "聞已，歡喜，極懷踊躍。…", "s": "They rejoice when hear that, celebrating in their hearts."}, {"key": "ma7:12.3", "p": "以清淨心躬往奉見，禮敬，供養。…", "s": "They go personally to see them with a pure heart to pay their respects and make offerings."}, {"key": "ma7:12.4", "p": "既供養已，受三自歸於佛，法，及比丘衆而受禁戒。…", "s": "Once they had made their offerings, they take refuge three times in the Buddha,\nDharma, and Saṅgha of monks and accept the [lay] precepts."}, {"key": "ma7:12.5", "p": "周那，是謂第七出世間福得大福祐，得大果報，得大名譽，得大功徳。…", "s": "Cunda, this is the seventh merit that transcends the world and obtains great fortune, rewards, renown, and virtue."}]}, {"id": "13", "label": "「周那，信族姓男，族姓女，若得此七世間之福及更有七出世間福者，其福不可數。", "rows": [{"key": "ma7:13.1", "p": "「周那，信族姓男，族姓女，若得此七世間之福及更有七出世間福者，其福不可數。…", "s": "“Cunda, if faithful clansmen and clanswomen were to attain these seven\nworldly merits and these other seven merits that transcend the world,\ntheir fortune would…"}, {"key": "ma7:13.2", "p": "有爾所福，爾所福果，爾所福報唯不可限，不可量，不可得，大福之數。…", "s": "Their merits, the results of their merits, and the rewards of their merits simply cannot be delimited or measured,\nand the number of those great merits cannot b…"}]}, {"id": "14", "label": "「周那，譬如從閻浮洲有五河流：", "rows": [{"key": "ma7:14.1", "p": "「周那，譬如從閻浮洲有五河流：…", "s": "“Cunda, it’s like the five rivers of Jambudvīpa:"}, {"key": "ma7:14.2", "p": "一曰恒伽，二曰搖尤那，三曰舍勞浮，四曰阿夷羅婆提，五曰摩企。…", "s": "1. the Gaṅgā, 2.\nYamunā, 3.\n[Sarabhū], 4.\nAjiravatī, and 5.\nMahī."}, {"key": "ma7:14.3", "p": "流入大海，於其中間，水不可數。…", "s": "They flow down into the ocean, and their water is incalculable."}, {"key": "ma7:14.4", "p": "有爾所升斛唯不可限，不可量，不可得，大水之數。…", "s": "Their volume simply cannot be delimited or measured, and the amount of water cannot be determined."}]}, {"id": "15", "label": "「周那，如是，信族姓男，族姓女，若得此七世間之福及更有七出世間福者，其福不可數。", "rows": [{"key": "ma7:15.1", "p": "「周那，如是，信族姓男，族姓女，若得此七世間之福及更有七出世間福者，其福不可數。…", "s": "“Thus, Cunda, if faithful clansmen and clanswomen attain these seven\nworldly merits and these other seven merits that transcend the world,\ntheir fortune would b…"}, {"key": "ma7:15.2", "p": "有爾所福，爾所福果，爾所福報唯不可限，不可量，不可得，大福之數。…", "s": "Their merits, the results of their merits, and the rewards of their merits simply cannot be delimited or measured,\nand the number of those great merits cannot b…"}]}, {"id": "16", "label": "「爾時，世尊而説頌曰：", "rows": [{"key": "ma7:16.1", "p": "「爾時，世尊而説頌曰：…", "s": "At that point, the Bhagavān spoke in verse:"}]}, {"id": "17", "label": "「恒伽之河", "rows": [{"key": "ma7:17.1", "p": "「恒伽之河…", "s": "“The Gaṅgā River"}, {"key": "ma7:17.2", "p": "清淨易渡；…", "s": "Is pure and easy to cross;"}, {"key": "ma7:17.3", "p": "海多珍寶…", "s": "The ocean with its many treasures"}, {"key": "ma7:17.4", "p": "衆水中王。…", "s": "Is the king of myriad rivers."}]}, {"id": "18", "label": "猶若河水，", "rows": [{"key": "ma7:18.1", "p": "猶若河水，…", "s": "Just like a river,"}, {"key": "ma7:18.2", "p": "世人敬奉；…", "s": "A person pays respect to it;"}, {"key": "ma7:18.3", "p": "諸川所歸…", "s": "All the streams take refuge"}, {"key": "ma7:18.4", "p": "引入大海。…", "s": "By flowing into the ocean."}]}, {"id": "19", "label": "如是人者", "rows": [{"key": "ma7:19.1", "p": "如是人者…", "s": "Thus is a person who"}, {"key": "ma7:19.2", "p": "施衣飮食…", "s": "Gives clothes, food, and drink,"}, {"key": "ma7:19.3", "p": "床榻茵褥…", "s": "Beds, sofas, and mats,"}, {"key": "ma7:19.4", "p": "及諸坐具。…", "s": "And things for sitting."}]}, {"id": "20", "label": "無量福報", "rows": [{"key": "ma7:20.1", "p": "無量福報…", "s": "Measureless rewards of merit"}, {"key": "ma7:20.2", "p": "將至妙處；…", "s": "Lead them to a marvelous place;"}, {"key": "ma7:20.3", "p": "猶若河水…", "s": "They’re like those rivers"}, {"key": "ma7:20.4", "p": "引入大海。」…", "s": "Flowing into the ocean.”"}]}, {"id": "21", "label": "佛説如是。", "rows": [{"key": "ma7:21.1", "p": "佛説如是。…", "s": "Thus did the Buddha speak."}, {"key": "ma7:21.2", "p": "尊者摩訶周那及諸比丘聞佛所説，歡喜，奉行。…", "s": "The Venerable Mahācunda and the monks who heard what the Buddha taught rejoiced and approved."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "patton", "label": "Patton", "dot": "#5d8ac8", "light": {"bg": "#eef2f8", "text": "#0d1a2b"}, "dark": {"bg": "#121820", "text": "#a8c0d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "patton", "label": "Patton", "dot": "#5d8ac8", "light": {"bg": "#eef2f8", "text": "#0d1a2b"}, "dark": {"bg": "#121820", "text": "#a8c0d8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Charles Patton's English translation from the Chinese"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2067,8 +2126,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2108,30 +2320,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){

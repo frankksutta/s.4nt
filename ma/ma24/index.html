@@ -300,6 +300,65 @@ html[data-theme="dark"] ::highlight(dblFindCur){ background:#ff8c1a; color:#140a
   transition:background .2s,color .2s,border-color .2s;
 }
 .bar-sel:focus{border-color:var(--accent)}
+/* switcher trigger now shows the current label + a ▾ caret (replaces the native
+   <select>); the per-column color CSS still targets .bar-sel, so it stays tinted. */
+.bar-sel{display:flex;align-items:center;gap:.22rem;text-align:left}
+.bar-sel .bar-sel-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-sel .bar-sel-arr{flex-shrink:0;opacity:.55;font-size:.55rem}
+.bar-sel[aria-expanded="true"]{border-color:var(--accent)}
+/* ── TRANSLATOR SWITCHER POPOVER ── grouped (Root: <lang> / English / International),
+   filterable, with category pills + a one-line description under each edition. Sections
+   alternate between two background shades (zebra) instead of per-row color dots. Built
+   fresh per open and anchored under the trigger (mirrors the depth-picker menu). */
+.bar-menu{position:fixed;z-index:650;width:20rem;max-width:calc(100vw - .8rem);
+  max-height:min(72vh,34rem);display:flex;flex-direction:column;
+  background:var(--bg);color:var(--text);border:1px solid var(--sec-border);
+  border-radius:7px;box-shadow:0 6px 20px rgba(0,0,0,.32);
+  font-family:sans-serif;overflow:hidden}
+.bar-menu-filter{flex-shrink:0;margin:.5rem .55rem .4rem;padding:.36rem .5rem;
+  border:1px solid var(--sec-border);border-radius:5px;background:var(--sec-bg);
+  color:var(--text);font-size:.82rem;font-family:sans-serif}
+.bar-menu-filter::placeholder{color:var(--muted);opacity:.7}
+.bar-menu-filter:focus{outline:none;border-color:var(--accent)}
+/* category pills — narrow the list to All / Root / Eng / Int without scrolling */
+.bar-menu-cats{flex-shrink:0;display:flex;gap:.3rem;flex-wrap:wrap;padding:0 .55rem .5rem}
+.bar-menu-cat{flex:0 0 auto;border:1px solid var(--sec-border);background:var(--sec-bg);
+  color:var(--muted);cursor:pointer;font:inherit;font-size:.7rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:999px;transition:background .12s,color .12s,border-color .12s}
+.bar-menu-cat:hover{color:var(--text)}
+.bar-menu-cat.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.bar-menu-list{overflow-y:auto;padding:0 0 .4rem;border-top:1px solid var(--border);
+  scrollbar-width:thin;scrollbar-color:var(--sec-border) transparent}
+.bar-menu-sec{background:none}
+/* section header = a strong separator: accent-coloured, a gap above + a rule below,
+   so the groups read apart WITHOUT tinting the rows (which would clash with the
+   near-identical hover/selected shades in this palette). */
+.bar-menu-grp{position:sticky;top:0;z-index:1;background:var(--bg);
+  font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;padding:.55rem .6rem .3rem;margin-top:.45rem;
+  border-bottom:1px solid var(--sec-border)}
+.bar-menu-sec:first-child .bar-menu-grp{margin-top:0}
+/* rows: 1.5rem left pad reserves a fixed column for the current-selection dot, so
+   labels stay aligned whether or not a row shows one. */
+.bar-menu-opt{display:block;width:100%;box-sizing:border-box;position:relative;
+  border:none;background:none;color:var(--text);cursor:pointer;font:inherit;text-align:left;
+  padding:.36rem .6rem .36rem 1.5rem}
+.bar-menu-opt.sel{background:var(--toc-act);box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.bar-menu-opt:hover,.bar-menu-opt.kbd{background:var(--toc-hover)}
+/* colour dot marks ONLY the current translation (a locator, not per-row decoration) */
+.bar-menu-dot{position:absolute;left:.62rem;top:.66rem;width:9px;height:9px;border-radius:50%}
+.bar-menu-lbl{font-size:.82rem;font-weight:600;line-height:1.25}
+.bar-menu-lbl .bar-menu-warn{margin-left:.28rem;font-size:.78rem;cursor:help}
+.bar-menu-tip{font-size:.68rem;color:var(--muted);line-height:1.3;margin-top:.06rem}
+/* footnotes action — an inset, bordered card (NOT a full-bleed list row) so it reads
+   as a distinct action, offset from the translation rows below it. */
+.bar-menu-act{display:block;box-sizing:border-box;cursor:pointer;font:inherit;text-align:left;
+  margin:.45rem .5rem;padding:.42rem .55rem;
+  border:1px solid var(--sec-border);border-radius:6px;background:var(--sec-bg);
+  color:var(--accent);font-weight:600;font-size:.78rem;
+  transition:background .12s,border-color .12s}
+.bar-menu-act:hover{background:var(--toc-hover);border-color:var(--accent)}
+.bar-menu-none{padding:.55rem .6rem;color:var(--muted);font-size:.78rem}
 .bar-rm{
   background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:.82rem;padding:0 .12rem;line-height:1;transition:color .12s;flex-shrink:0;
@@ -880,7 +939,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 </div>
 
 <!-- STATIC PAGE FOOTER (shared module footer.py) — aligns with the content column. -->
-<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 19, 2026 at 10:34 PM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
+<footer class="site-footer" id="siteFooter"><a class="ft-logo" href="../../index.html" title="s.4nt.org — home"><img src="../../debabel-logo-1k.jpg" alt="s.4nt.org — Suttas, Side by Side"></a><div class="ft-text"><p class="ft-tagline"><strong>s.4nt.org</strong> — Suttas, Side by Side — a project of the Early Buddhism Meditation Preservation Society</p><nav class="ft-links"><a href="../../help.html">Help</a><a href="../../help.html#about">About</a><a href="../../help.html#legal">Legal</a></nav><p class="ft-copy" title="Page built: Jul 20, 2026 at 07:35 AM Pacific Daylight Time">© 2026 Early Buddhism Meditation Preservation Society</p></div><a class="ft-logo ft-right" href="https://4nt.org" title="Early Buddhism Meditation Preservation Society (4nt.org)"><img src="../../4nt-footer-logo.png" alt="EBMPS — 4nt.org"></a></footer>
 
 <!-- FOOTNOTE PANE — lower-left region of the sidebar on desktop (bottom sheet on
      mobile). Body is populated by openNote() with build-sanitized note HTML. When no
@@ -969,7 +1028,7 @@ body.fn-dragging{user-select:none;cursor:row-resize}
 const TREE=[{"id": "1", "label": "我聞如是：", "rows": [{"key": "ma24:1.1", "p": "我聞如是：…", "s": "Thus have I heard:"}]}, {"id": "2", "label": "一時，佛遊舍衛國，在勝林給孤獨園。", "rows": [{"key": "ma24:2.1", "p": "一時，佛遊舍衛國，在勝林給孤獨園。…", "s": "At one time, the Buddha was traveling in the country of Śrāvastī, staying at the Jeta Grove, Anāthapiṇḍada’s Park."}]}, {"id": "3", "label": "爾時，世尊與大比丘眾俱，於舍衛國而受夏坐，", "rows": [{"key": "ma24:3.1", "p": "爾時，世尊與大比丘眾俱，於舍衛國而受夏坐，…", "s": "At that time, the Blessed One was together with a large community of monks, observing the rains retreat in Śrāvastī."}, {"key": "ma24:3.2", "p": "尊者舍梨子亦遊舍衛國而受夏坐。…", "s": "The venerable Śāriputra was also traveling in Śrāvastī and observing the rains retreat."}, {"key": "ma24:3.3", "p": "於是，尊者舍梨子舍衛國受夏坐訖，…", "s": "Then, after the venerable Śāriputra had completed the rains retreat in Śrāvastī,"}, {"key": "ma24:3.4", "p": "過三月已，補治衣竟，…", "s": "when the three months had passed, he had finished mending his robes,"}, {"key": "ma24:3.5", "p": "攝衣持鉢，往詣佛所，稽首禮足，…", "s": "took his robes and bowl, went to the Buddha,"}, {"key": "ma24:3.6", "p": "却坐一面，白曰：「世尊！…", "s": "bowed with his head at the Blessed One’s feet, sat down to one side, and said:"}, {"key": "ma24:3.7", "p": "我於舍衛國受夏坐訖。世尊！…", "s": "“Blessed One, I have completed the rains retreat in Śrāvastī."}, {"key": "ma24:3.8", "p": "我欲遊行人間。」…", "s": "Blessed One, I wish to travel among the people.”"}]}, {"id": "4", "label": "世尊告曰：「舍梨子！", "rows": [{"key": "ma24:4.1", "p": "世尊告曰：「舍梨子！…", "s": "The Blessed One said:"}, {"key": "ma24:4.2", "p": "汝去，隨所欲，諸未度者當令得度，…", "s": "“Śāriputra, go as you wish."}, {"key": "ma24:4.3", "p": "諸未脫者當令得脫，諸未般涅槃者令得般涅槃。…", "s": "Those who have not yet crossed over, let them cross over;"}, {"key": "ma24:4.4", "p": "舍梨子！…", "s": "those who have not yet been liberated, let them be liberated;"}, {"key": "ma24:4.5", "p": "汝去，隨所欲。」…", "s": "those who have not yet attained Nibbāna, let them attain Nibbāna.\nŚāriputra, go as you wish.”"}]}, {"id": "5", "label": "於是，尊者舍梨子聞佛所說，", "rows": [{"key": "ma24:5.1", "p": "於是，尊者舍梨子聞佛所說，…", "s": "Then, the venerable Śāriputra, having heard what the Buddha said, well received and well held it."}, {"key": "ma24:5.2", "p": "善受善持，即從坐起，稽首佛足，…", "s": "He then rose from his seat, bowed with his head at the Buddha’s feet, circumambulated him three times, and left."}, {"key": "ma24:5.3", "p": "繞三匝而去，還至己房，收舉床座，…", "s": "He returned to his own dwelling, put away his bed and seat,"}, {"key": "ma24:5.4", "p": "攝衣持鉢，即便出去遊行人間。…", "s": "took his robes and bowl, and then set out to travel among the people."}]}, {"id": "6", "label": "尊者舍梨子去後不久，有一梵行在於佛前犯相違法，", "rows": [{"key": "ma24:6.1", "p": "尊者舍梨子去後不久，有一梵行在於佛前犯相違法，…", "s": "Not long after the venerable Śāriputra had left, a certain fellow practitioner,"}, {"key": "ma24:6.2", "p": "白世尊曰：「今日尊者舍梨子輕慢我已，遊行人間。」…", "s": "having committed an offense against the rules in the presence of the Buddha, said to the Blessed One:\n“Today, the venerable Śāriputra has treated me with contem…"}]}, {"id": "7", "label": "世尊聞已，告一比丘：「汝往舍梨子所，", "rows": [{"key": "ma24:7.1", "p": "世尊聞已，告一比丘：「汝往舍梨子所，…"}, {"key": "ma24:7.2", "p": "語舍梨子：『世尊呼汝。…", "s": "The Blessed One heard this and said to a monk,"}, {"key": "ma24:7.3", "p": "汝去不久，有一梵行在於我前犯相違法，…", "s": "\"Go to Sāriputta and tell him,"}, {"key": "ma24:7.4", "p": "而作是語：「世尊！…", "s": "'The Blessed One is calling you."}, {"key": "ma24:7.5", "p": "今日尊者舍梨子輕慢我已，遊行人間。」』」…", "s": "Not long after you left, a fellow practitioner committed an offense in my presence and said,"}]}, {"id": "8", "label": "一比丘受教已，即從坐起，禮佛而去。", "rows": [{"key": "ma24:8.1", "p": "一比丘受教已，即從坐起，禮佛而去。…", "s": "Having received the instruction, that monk rose from his seat, bowed to the Buddha, and left."}, {"key": "ma24:8.2", "p": "於是，尊者阿難住世尊後執拂侍佛。…", "s": "Then the venerable Ānanda, standing behind the Blessed One, fanned him."}]}, {"id": "9", "label": "一比丘去後不久，尊者阿難即持戶鑰，", "rows": [{"key": "ma24:9.1", "p": "一比丘去後不久，尊者阿難即持戶鑰，…", "s": "Not long after that monk had left, the venerable Ānanda took the key and went to all the dwellings, saying to the monks,"}, {"key": "ma24:9.2", "p": "遍至諸房，見諸比丘便作是語：「善哉！諸尊！…", "s": "\"Good, venerable ones!"}, {"key": "ma24:9.3", "p": "速詣講堂，今尊者舍梨子當在佛前而師子吼，…", "s": "Quickly go to the lecture hall."}, {"key": "ma24:9.4", "p": "若尊者舍梨子所說甚深，…", "s": "Today the venerable Sāriputta will roar a lion's roar in the presence of the Buddha."}, {"key": "ma24:9.5", "p": "息中之息，妙中之妙，如是說者，…", "s": "If the venerable Sāriputta speaks something profound—the peace within peace, the sublime within sublime—"}, {"key": "ma24:9.6", "p": "諸尊及我得聞此已，當善誦習，當善受持。…", "s": "then, venerable ones, having heard it, we should recite it well and retain it well.\""}, {"key": "ma24:9.7", "p": "」彼時，諸比丘聞尊者阿難語已，悉詣講堂。…", "s": "At that time, the monks, hearing the venerable Ānanda's words, all went to the lecture hall."}]}, {"id": "10", "label": "爾時，一比丘往詣尊者舍梨子所，白曰：「世尊呼汝。", "rows": [{"key": "ma24:10.1", "p": "爾時，一比丘往詣尊者舍梨子所，白曰：「世尊呼汝。…", "s": "Then a monk went to the venerable Sāriputta and said,"}, {"key": "ma24:10.2", "p": "汝去不久，有一梵行在於我前犯相違法，…", "s": "\"The Blessed One is calling you."}, {"key": "ma24:10.3", "p": "而作是語：『世尊！…", "s": "Not long after you left, a fellow practitioner committed an offense in my presence and said,"}, {"key": "ma24:10.4", "p": "今日尊者舍梨子輕慢我已，遊行人間。』」…", "s": "'Bhante, today the venerable Sāriputta has insulted me and gone traveling among people.'\""}]}, {"id": "11", "label": "於是，尊者舍梨子聞已，即從坐起，", "rows": [{"key": "ma24:11.1", "p": "於是，尊者舍梨子聞已，即從坐起，…"}, {"key": "ma24:11.2", "p": "便還詣佛，稽首禮足，却坐一面。…", "s": "Thereupon, the venerable Sāriputta, having heard this, rose from his seat and returned to the Buddha."}, {"key": "ma24:11.3", "p": "佛便告曰：「舍梨子！…", "s": "He bowed with his head at the Buddha's feet and sat to one side."}, {"key": "ma24:11.4", "p": "汝去不久，有一梵行在於我前犯相違法，…", "s": "The Buddha then said to him,"}, {"key": "ma24:11.5", "p": "而作是語：『世尊！…"}, {"key": "ma24:11.6", "p": "今日尊者舍梨子輕慢我已，遊行人間。…", "s": "\"Sāriputta, not long after you left, a fellow practitioner committed an offense in my presence and said,"}, {"key": "ma24:11.7", "p": "』舍梨子！…", "s": "'Bhante, today the venerable Sāriputta has insulted me and gone traveling among people.'"}, {"key": "ma24:11.8", "p": "汝實輕慢一梵行已而遊人間耶？」…", "s": "Sāriputta, did you actually insult a fellow practitioner and then go traveling among people?\""}]}, {"id": "12", "label": "尊者舍梨子白曰：「世尊！", "rows": [{"key": "ma24:12.1", "p": "尊者舍梨子白曰：「世尊！…", "s": "The venerable Sāriputta said to the Blessed One,"}, {"key": "ma24:12.2", "p": "若無身身念者，彼便輕慢於一梵行而遊人間。世尊！…", "s": "\"Blessed One, one who lacks mindfulness of the body would insult a fellow practitioner and go traveling among people."}, {"key": "ma24:12.3", "p": "我善有身身念，我當云何輕慢一梵行而遊人間？世尊！…", "s": "Blessed One, I am well established in mindfulness of the body.\nHow could I insult a fellow practitioner and go traveling among people?"}, {"key": "ma24:12.4", "p": "猶截角牛，至忍溫良，善調善御，…", "s": "Blessed One, just as a dehorned ox is patient, gentle,"}, {"key": "ma24:12.5", "p": "從村至村，從巷至巷，所遊行處，無所侵犯。世尊！…", "s": "well-trained, and well-controlled, and goes from village to village,"}, {"key": "ma24:12.6", "p": "我亦如是，心如截角牛，無結無怨，無恚無諍，…", "s": "from lane to lane, without causing any harm wherever it travels—so too, Blessed One, my mind is like a dehorned ox:\nwithout knots, without ill will, without ang…"}, {"key": "ma24:12.7", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。世尊！…", "s": "great, immeasurable, well-cultivated, and abiding pervading the entire world."}, {"key": "ma24:12.8", "p": "若無身身念者，彼便輕慢於一梵行而遊人間。世尊！…", "s": "Blessed One, one who lacks mindfulness of the body would insult a fellow practitioner and go traveling among people."}, {"key": "ma24:12.9", "p": "我善有身身念，我當云何輕慢一梵行而遊人間？…", "s": "Blessed One, I am well established in mindfulness of the body.\nHow could I insult a fellow practitioner and go traveling among people?\""}]}, {"id": "13", "label": "「世尊！", "rows": [{"key": "ma24:13.1", "p": "「世尊！…", "s": "\"Blessed One!"}, {"key": "ma24:13.2", "p": "猶旃陀羅子而截兩手，其意至下，…", "s": "Just as a son of an outcast who has had both hands cut off is utterly humble,"}, {"key": "ma24:13.3", "p": "從村至村，從邑至邑，所遊行處，無所侵犯。世尊！…", "s": "and wherever he goes, from village to village, from town to town, he does not cause any offense.\nBlessed One, I am likewise:"}, {"key": "ma24:13.4", "p": "我亦如是，心如截手旃陀羅子，無結無怨，無恚無諍，…", "s": "my mind is like that outcast's son with cut-off hands—without knots, without resentment, without anger,"}, {"key": "ma24:13.5", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。世尊！…", "s": "without contention, extremely vast, great, immeasurably well-cultivated, and I dwell having pervaded the entire world.\nBlessed One, if one lacks mindfulness of …"}, {"key": "ma24:13.6", "p": "若無身身念者，彼便輕慢於一梵行而遊人間。世尊！…", "s": "that person would despise a fellow practitioner while wandering among people."}, {"key": "ma24:13.7", "p": "我善有身身念，我當云何輕慢一梵行而遊人間？…", "s": "Blessed One, I am skilled in mindfulness of the body;\nhow could I despise a fellow practitioner while wandering among people?\""}]}, {"id": "14", "label": "「世尊！", "rows": [{"key": "ma24:14.1", "p": "「世尊！…", "s": "\"Blessed One!"}, {"key": "ma24:14.2", "p": "猶若如地，淨與不淨，大便、小便、涕、唾悉受，…", "s": "Just as the earth receives both the pure and the impure—feces, urine, mucus, and spittle—"}, {"key": "ma24:14.3", "p": "地不以此而有憎愛，不羞不慙，亦不愧恥。世尊！…", "s": "without having affection or aversion toward them, without shame or embarrassment, without feeling disgraced.\nBlessed One, I am likewise:"}, {"key": "ma24:14.4", "p": "我亦如是，心如彼地，無結無怨，無恚無諍，…", "s": "my mind is like that earth—without knots, without resentment, without anger, without contention,"}, {"key": "ma24:14.5", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。世尊！…", "s": "extremely vast, great, immeasurably well-cultivated, and I dwell having pervaded the entire world.\nBlessed One, if one lacks mindfulness of the body,"}, {"key": "ma24:14.6", "p": "若無身身念者，彼便輕慢於一梵行而遊人間。世尊！…", "s": "that person would despise a fellow practitioner while wandering among people."}, {"key": "ma24:14.7", "p": "我善有身身念，我當云何輕慢一梵行而遊人間？…", "s": "Blessed One, I am skilled in mindfulness of the body;\nhow could I despise a fellow practitioner while wandering among people?\""}]}, {"id": "15", "label": "「世尊！", "rows": [{"key": "ma24:15.1", "p": "「世尊！…", "s": "\"Blessed One!"}, {"key": "ma24:15.2", "p": "猶若如水，淨與不淨，大便、小便、涕、唾悉洗，…", "s": "Just as water washes both the pure and the impure—feces, urine, mucus, and spittle—"}, {"key": "ma24:15.3", "p": "水不以此而有憎愛，不羞不慙，亦不愧恥。世尊！…", "s": "without having affection or aversion toward them, without shame or embarrassment, without feeling disgraced.\nBlessed One, I am likewise:"}, {"key": "ma24:15.4", "p": "我亦如是，心如彼水，無結無怨，無恚無諍，…", "s": "my mind is like that water—without knots, without resentment, without anger, without contention,"}, {"key": "ma24:15.5", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。世尊！…", "s": "extremely vast, great, immeasurably well-cultivated, and I dwell having pervaded the entire world.\nBlessed One, if one lacks mindfulness of the body,"}, {"key": "ma24:15.6", "p": "若無身身念者，彼便輕慢於一梵行而遊人間。世尊！…", "s": "that person would despise a fellow practitioner while wandering among people."}, {"key": "ma24:15.7", "p": "我善有身身念，我當云何輕慢一梵行而遊人間？…", "s": "Blessed One, I am skilled in mindfulness of the body;\nhow could I despise a fellow practitioner while wandering among people?\""}]}, {"id": "16", "label": "「世尊！", "rows": [{"key": "ma24:16.1", "p": "「世尊！…", "s": "\"Blessed One!"}, {"key": "ma24:16.2", "p": "猶若如火，淨與不淨，大便、小便、涕、唾悉燒，…", "s": "Just as fire burns both the pure and the impure—feces, urine, mucus, and spittle—"}, {"key": "ma24:16.3", "p": "火不以此而有憎愛，不羞不慙，亦不愧恥。世尊！…", "s": "without having affection or aversion toward them, without shame or embarrassment, without feeling disgraced.\nBlessed One, I am likewise:"}, {"key": "ma24:16.4", "p": "我亦如是，心如彼火，無結無怨，無恚無諍，…", "s": "my mind is like that fire—without knots, without resentment, without anger, without contention,"}, {"key": "ma24:16.5", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。世尊！…", "s": "extremely vast, great, immeasurably well-cultivated, and I dwell having pervaded the entire world.\nBlessed One, if one lacks mindfulness of the body,"}, {"key": "ma24:16.6", "p": "若無身身念者，彼便輕慢於一梵行而遊人間。世尊！…", "s": "that person would despise a fellow practitioner while wandering among people."}, {"key": "ma24:16.7", "p": "我善有身身念，我當云何輕慢一梵行而遊人間？…", "s": "Blessed One, I am skilled in mindfulness of the body;\nhow could I despise a fellow practitioner while wandering among people?\""}]}, {"id": "17", "label": "「世尊！", "rows": [{"key": "ma24:17.1", "p": "「世尊！…", "s": "\"Blessed One!"}, {"key": "ma24:17.2", "p": "猶若如風，淨與不淨，大便、小便、涕、唾悉吹，…", "s": "Just as the wind blows both the pure and the impure—feces, urine, mucus, and spittle—"}, {"key": "ma24:17.3", "p": "風不以此而有憎愛，不羞不慙，亦不愧耻。世尊！…", "s": "without having affection or aversion toward them, without shame or embarrassment, without feeling disgraced.\nBlessed One, I am likewise:"}, {"key": "ma24:17.4", "p": "我亦如是，心如彼風，無結無怨，無恚無諍，…", "s": "my mind is like that wind—without knots, without resentment, without anger, without contention,"}, {"key": "ma24:17.5", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。世尊！…", "s": "extremely vast, great, immeasurably well-cultivated, and I dwell having pervaded the entire world.\nBlessed One, if one lacks mindfulness of the body,"}, {"key": "ma24:17.6", "p": "若無身身念者，彼便輕慢於一梵行而遊人間。世尊！…", "s": "that person would despise a fellow practitioner while wandering among people."}, {"key": "ma24:17.7", "p": "我善有身身念，我當云何輕慢一梵行而遊人間？…", "s": "Blessed One, I am skilled in mindfulness of the body;\nhow could I despise a fellow practitioner while wandering among people?\""}]}, {"id": "18", "label": "「世尊！", "rows": [{"key": "ma24:18.1", "p": "「世尊！…", "s": "\"Blessed One!"}, {"key": "ma24:18.2", "p": "猶如掃箒，淨與不淨，大便、小便、涕、唾悉掃，…", "s": "Just as a broom sweeps both the pure and the impure—feces, urine, mucus, and spittle—"}, {"key": "ma24:18.3", "p": "箒不以此而有憎愛，不羞不慙，亦不愧耻。世尊！…", "s": "without having affection or aversion toward them, without shame or embarrassment, without feeling disgraced.\nBlessed One, I am likewise:"}, {"key": "ma24:18.4", "p": "我亦如是，心如掃箒，無結無怨，無恚無諍，…", "s": "my mind is like that broom—without knots, without resentment, without anger, without contention,"}, {"key": "ma24:18.5", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。世尊！…", "s": "extremely vast, great, immeasurably well-cultivated, and I dwell having pervaded the entire world.\nBlessed One, if one lacks mindfulness of the body,"}, {"key": "ma24:18.6", "p": "若無身身念者，彼便輕慢於一梵行而遊人間。世尊！…", "s": "that person would despise a fellow practitioner while wandering among people."}, {"key": "ma24:18.7", "p": "我善有身身念，我當云何輕慢一梵行而遊人間？…", "s": "Blessed One, I am skilled in mindfulness of the body;\nhow could I despise a fellow practitioner while wandering among people?\""}]}, {"id": "19", "label": "「世尊！", "rows": [{"key": "ma24:19.1", "p": "「世尊！…", "s": "\"Bhante!"}, {"key": "ma24:19.2", "p": "猶晡旃尼，淨與不淨，大便、小便、涕、唾悉拭，…", "s": "Just as a rag, whether clean or dirty, wipes away feces, urine, mucus, and saliva,\nand the rag does not thereby feel love or hate, nor is it ashamed, embarrasse…"}, {"key": "ma24:19.3", "p": "晡旃尼不以此故而有憎愛，不羞不慙，亦不愧耻。世尊！…", "s": "Bhante!\nI am likewise:"}, {"key": "ma24:19.4", "p": "我亦如是，心如晡旃尼，無結無怨，無恚無諍，…", "s": "my mind is like a rag, without knots, without enmity, without anger, without contention,"}, {"key": "ma24:19.5", "p": "極廣甚大，無量善修，遍滿一切世間成就遊。世尊！…", "s": "extremely vast and great, immeasurable, well-cultivated, abiding pervading the entire world.\nBhante!"}, {"key": "ma24:19.6", "p": "若無身身念者，彼便輕慢於一梵行而遊人間。世尊！…", "s": "One who lacks mindfulness of the body would then despise a fellow practitioner while wandering among people.\nBhante!"}, {"key": "ma24:19.7", "p": "我善有身身念，我當云何輕慢一梵行而遊人間？…", "s": "I am skilled in mindfulness of the body;\nhow could I despise a fellow practitioner while wandering among people?\""}]}, {"id": "20", "label": "「世尊！", "rows": [{"key": "ma24:20.1", "p": "「世尊！…", "s": "\"Bhante!"}, {"key": "ma24:20.2", "p": "猶如膏瓶處處裂破，盛滿膏已而著日中，漏遍漏津遍津。…", "s": "Just as an oil jar, cracked in many places, filled with oil and placed in the sun, leaks and oozes everywhere.\nIf a person with eyes comes and stands nearby, th…"}, {"key": "ma24:20.3", "p": "若有目人，來住一面，見此膏瓶處處裂破，…", "s": "cracked in many places, filled with oil and placed in the sun, leaking and oozing everywhere.\nBhante!"}, {"key": "ma24:20.4", "p": "盛滿膏已而著日中，漏遍漏津遍津。世尊！…", "s": "I am likewise:"}, {"key": "ma24:20.5", "p": "我亦如是，常觀此身九孔不淨，漏遍漏津遍津。世尊！…", "s": "I constantly observe this body's nine orifices as impure, leaking and oozing everywhere.\nBhante!"}, {"key": "ma24:20.6", "p": "若無身身念者，彼便輕慢於一梵行而遊人間。世尊！…", "s": "One who lacks mindfulness of the body would then despise a fellow practitioner while wandering among people.\nBhante!"}, {"key": "ma24:20.7", "p": "我善有身身念，我當云何輕慢一梵行而遊人間？…", "s": "I am skilled in mindfulness of the body;\nhow could I despise a fellow practitioner while wandering among people?\""}]}, {"id": "21", "label": "「世尊！", "rows": [{"key": "ma24:21.1", "p": "「世尊！…", "s": "\"Bhante!"}, {"key": "ma24:21.2", "p": "猶如有一自喜年少，沐浴澡洗，熏以塗香，著白淨衣，…", "s": "Just as a handsome young man, who has bathed and washed, anointed with perfume, wearing clean white clothes,\nadorned with jewelry, shaved his beard and groomed …"}, {"key": "ma24:21.3", "p": "瓔珞自嚴，剃鬚治髮，頭冠華鬘，若以三屍，…", "s": "if three corpses—a dead snake, a dead dog, and a dead human—bluish, swollen, extremely foul, rotten,"}, {"key": "ma24:21.4", "p": "死蛇、死狗及以死人，青瘀膖脹，極臭爛壞，…", "s": "and oozing impure fluids, were tied around his neck, he would feel ashamed, embarrassed, and utterly disgusted.\nBhante!"}, {"key": "ma24:21.5", "p": "不淨流漫，繫著咽頸，彼懷羞慙，極惡穢之。世尊！…", "s": "I am likewise:\nI constantly observe this body as foul and impure, feeling ashamed, embarrassed, and utterly disgusted."}, {"key": "ma24:21.6", "p": "我亦如是，常觀此身臭處不淨，心懷羞慙，極惡穢之。世尊！…", "s": "Bhante!"}, {"key": "ma24:21.7", "p": "若無身身念者，彼便輕慢於一梵行而遊人間。世尊！…", "s": "One who lacks mindfulness of the body would then despise a fellow practitioner while wandering among people.\nBhante!"}, {"key": "ma24:21.8", "p": "我善有身身念，我當云何輕慢一梵行而遊人間？」…", "s": "I am skilled in mindfulness of the body;\nhow could I despise a fellow practitioner while wandering among people?\""}]}, {"id": "22", "label": "於是，彼比丘即從坐起，稽首佛足，", "rows": [{"key": "ma24:22.1", "p": "於是，彼比丘即從坐起，稽首佛足，…", "s": "Then that monk rose from his seat, bowed at the Blessed One's feet, and said to the Blessed One:"}, {"key": "ma24:22.2", "p": "白世尊曰：「悔過，世尊！…", "s": "\"I confess, Blessed One!"}, {"key": "ma24:22.3", "p": "自首，善逝！…", "s": "I admit, Well-Gone One!\nI am like a fool, like an idiot, like one unsteady, like one unskillful."}, {"key": "ma24:22.4", "p": "如愚如癡，如不定，如不善。…", "s": "Why is that?"}, {"key": "ma24:22.5", "p": "所以者何？…", "s": "Because I falsely slandered the pure practitioner, the monk Sāriputta, with untrue words.\nBlessed One!"}, {"key": "ma24:22.6", "p": "謂我以虛妄言誣謗清淨梵行舍梨子比丘。世尊！…", "s": "I now confess;"}, {"key": "ma24:22.7", "p": "我今悔過，願為受之，見已發露，後不更作。」…", "s": "may you accept it.\nHaving seen it, I reveal it and will not do it again.\""}]}, {"id": "23", "label": "世尊告曰：「如是。比丘！", "rows": [{"key": "ma24:23.1", "p": "世尊告曰：「如是。比丘！…", "s": "The Blessed One said:"}, {"key": "ma24:23.2", "p": "汝實如愚如癡，如不定，如不善。…", "s": "\"So it is, monk."}, {"key": "ma24:23.3", "p": "所以者何？…", "s": "You are indeed like a fool, like an idiot, like one unsteady, like one unskillful."}, {"key": "ma24:23.4", "p": "謂汝以虛妄言空無真實，誣謗清淨梵行舍梨子比丘。…", "s": "Why is that?\nBecause you falsely slandered the pure practitioner, the monk Sāriputta, with untrue, baseless words."}, {"key": "ma24:23.5", "p": "汝能悔過，見已發露，後不更作。…", "s": "You can confess;"}, {"key": "ma24:23.6", "p": "若有悔過，見已發露，後不更作者，…", "s": "having seen it, you reveal it and will not do it again."}, {"key": "ma24:23.7", "p": "如是長養於聖法、律則不衰退。」…", "s": "If one confesses, having seen it reveals it and does not do it again,\nthen one nurtures growth in the holy teaching and discipline and does not decline.\""}]}, {"id": "24", "label": "於是，佛告尊者舍梨子：「汝速受彼癡人悔過，", "rows": [{"key": "ma24:24.1", "p": "於是，佛告尊者舍梨子：「汝速受彼癡人悔過，…", "s": "Then the Buddha said to the venerable Sāriputta:"}, {"key": "ma24:24.2", "p": "莫令彼比丘即於汝前頭破七分。」…", "s": "\"Quickly accept the confession of that foolish man, lest that monk's head split into seven pieces right before you.\""}]}, {"id": "25", "label": "尊者舍梨子即為哀愍彼比丘故，便受悔過。", "rows": [{"key": "ma24:25.1", "p": "尊者舍梨子即為哀愍彼比丘故，便受悔過。…", "s": "Out of compassion for that monk, the Venerable Sāriputta accepted his confession of wrongdoing."}]}, {"id": "26", "label": "佛說如是。", "rows": [{"key": "ma24:26.1", "p": "佛說如是。…", "s": "Thus spoke the Buddha."}, {"key": "ma24:26.2", "p": "尊者舍梨子及諸比丘，聞佛所說，歡喜奉行。…", "s": "The Venerable Sāriputta and the monks, having heard what the Buddha said, rejoiced and put it into practice."}]}];
 
 // ── TRANSLATIONS ──
-const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": ""}];
+const ALL_TRANSLATIONS = [{"key": "lzh", "label": "Chinese", "dot": "#c85a3c", "light": {"bg": "#f8ece7", "text": "#2b1108"}, "dark": {"bg": "#20120c", "text": "#e8b8a0"}, "italic": true, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "Root: Chinese", "tip": "Chinese root text (Taishō) — the canonical source"}, {"key": "deepsk-2026-v4-fla", "label": "DeepSeek (2026 v4 Flash)", "dot": "#4a9c5a", "light": {"bg": "#eef8ee", "text": "#0d2b10"}, "dark": {"bg": "#0f1f10", "text": "#a8d8b0"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI translation from the Chinese Āgama"}, {"key": "deepsk-2026-line-by-line", "label": "DeepSeek (2026, line-by-line)", "dot": "#c9973c", "light": {"bg": "#f8f0e0", "text": "#2b1c05"}, "dark": {"bg": "#221a0a", "text": "#e8c888"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "AI line-by-line translation from the Chinese Āgama"}, {"key": "bdk_corrected", "label": "BDK (Anālayo, Corrected)", "dot": "#c85d9c", "light": {"bg": "#f8eef4", "text": "#2b0d1e"}, "dark": {"bg": "#20121a", "text": "#e0a8c8"}, "italic": false, "font_scale": 1, "font_family": "", "rtl": false, "warn": "", "group": "English", "tip": "Bhikkhu Anālayo's BDK translation from the Chinese, aligned"}];
 // Diff edition: {base, revised} translator keys, or null on regular pages. When set,
 // words in the revised column that differ from the base text are highlighted (.dw).
 const DIFF = null;
@@ -2066,8 +2125,161 @@ function tocExpandMenu(ev, btn){
 // ── DRAG STATE ──
 let dragSrcIdx = null;
 
+// ── TRANSLATOR SWITCHER POPOVER ──
+// Grouped, filterable replacement for the old per-column native <select>. One menu
+// element at a time, built fresh on open and anchored under the trigger (mirrors the
+// depth-picker menu). An edition's `group` (from render.py) IS its section header —
+// e.g. "Root: Pāli", "Root: Chinese", "English", "International". Sections are ranked
+// so the canonical root text always heads the menu, then English, then International.
+function groupRank(g){ return g.indexOf('Root')===0 ? 0 : (g==='English'?1 : g==='International'?3 : 2); }
+// Coarse category (for the All/Root/Eng/Int filter pills) from a full group header.
+function catOf(g){ return g.indexOf('Root')===0 ? 'root' : g==='English' ? 'eng' : g==='International' ? 'int' : 'other'; }
+const CAT_LABELS={all:'All',root:'Root',eng:'Eng',int:'Int',other:'Other'};
+function orderedGroups(){
+  const seen=[];
+  ALL_TRANSLATIONS.forEach(tr=>{ const g=tr.group||'English'; if(!seen.includes(g)) seen.push(g); });
+  return seen.sort((a,b)=>groupRank(a)-groupRank(b) || a.localeCompare(b));
+}
+let barMenuEl=null, barMenuIdx=null;
+function closeBarMenu(){
+  if(barMenuEl){ barMenuEl.remove(); barMenuEl=null; }
+  if(barMenuIdx!=null){
+    const b=document.querySelector('.bar-col[data-idx="'+barMenuIdx+'"] .bar-sel');
+    if(b) b.setAttribute('aria-expanded','false');
+  }
+  barMenuIdx=null;
+}
+function toggleBarMenu(btn,i){
+  if(barMenuEl && barMenuIdx===i){ closeBarMenu(); return; }
+  openBarMenu(btn,i);
+}
+function openBarMenu(btn,i){
+  closeBarMenu();
+  barMenuIdx=i;
+  const cur=COLS[i];
+  const menu=mk('div','bar-menu'); menu.setAttribute('role','menu');
+
+  // "see their N footnotes" — an ACTION for THIS column (opens the all-notes pane).
+  // Pinned at the very top, right under the trigger and ABOVE the filter, styled as a
+  // distinct card so it doesn't read as one of the translation rows.
+  const noteCount=NOTE_COUNTS[cur]||0;
+  if(noteCount){
+    const act=mk('button','bar-menu-act'); act.type='button';
+    act.textContent='📖 see their '+noteCount+(noteCount===1?' footnote':' footnotes');
+    act.onclick=()=>{ closeBarMenu(); openAllNotes(cur); };
+    menu.appendChild(act);
+  }
+
+  const filter=mk('input','bar-menu-filter');
+  filter.type='text'; filter.placeholder='Filter translations…';
+  filter.setAttribute('aria-label','Filter translations');
+  menu.appendChild(filter);
+
+  // Category pills: "All" (default) + one per category present on this page (Root /
+  // Eng / Int). Clicking narrows the list to that category so the full list needn't
+  // be scrolled. Only categories with members are offered.
+  const groups=orderedGroups();
+  const presentCats=[]; groups.forEach(g=>{ const c=catOf(g); if(!presentCats.includes(c)) presentCats.push(c); });
+  let cat='all';
+  const cats=mk('div','bar-menu-cats');
+  const catBtns={};
+  (presentCats.length>1 ? ['all',...presentCats] : []).forEach(c=>{
+    const b=mk('button','bar-menu-cat'+(c==='all'?' on':'')); b.type='button';
+    b.textContent=CAT_LABELS[c]||c;
+    b.onclick=()=>{ cat=c; Object.values(catBtns).forEach(x=>x.classList.remove('on')); b.classList.add('on'); build(filter.value); filter.focus(); };
+    catBtns[c]=b; cats.appendChild(b);
+  });
+  if(cats.childNodes.length) menu.appendChild(cats);
+
+  const list=mk('div','bar-menu-list');
+  menu.appendChild(list);
+
+  // (Re)build the option rows for the current filter text + category. Sections carry
+  // an accent header separator; the current translation shows a colour-dot locator.
+  function build(q){
+    list.innerHTML='';
+    const nq=(q||'').trim().toLowerCase();
+    let shown=0;
+    groups.forEach(gid=>{
+      if(cat!=='all' && catOf(gid)!==cat) return;
+      const members=ALL_TRANSLATIONS.filter(tr=>(tr.group||'English')===gid)
+        .filter(tr=>!nq || (tr.label+' '+(tr.tip||'')).toLowerCase().includes(nq));
+      if(!members.length) return;
+      const sec=mk('div','bar-menu-sec');
+      const h=mk('div','bar-menu-grp'); h.textContent=gid; sec.appendChild(h);
+      members.forEach(tr=>{
+        const isCur=tr.key===cur;
+        const opt=mk('button','bar-menu-opt'+(isCur?' sel':'')); opt.type='button';
+        opt.dataset.key=tr.key;
+        if(isCur){ const d=mk('span','bar-menu-dot'); d.style.background=tr.dot; opt.appendChild(d); }
+        const lb=mk('span','bar-menu-lbl'); lb.textContent=tr.label;
+        if(tr.warn){ const w=mk('span','bar-menu-warn'); w.textContent='⚠️'; w.title=tr.warn; lb.appendChild(w); }
+        opt.appendChild(lb);
+        if(tr.tip){ const tp=mk('div','bar-menu-tip'); tp.textContent=tr.tip; opt.appendChild(tp); }
+        opt.onclick=()=>chooseBarTranslator(i,tr.key);
+        sec.appendChild(opt);
+        shown++;
+      });
+      list.appendChild(sec);
+    });
+    if(!shown){ const none=mk('div','bar-menu-none'); none.textContent='No matches.'; list.appendChild(none); }
+  }
+  build('');
+
+  // Keyboard: type to filter; ↑/↓ move a highlight over the visible rows; Enter picks
+  // it (or the first row); Esc closes.
+  function opts(){ return [...list.querySelectorAll('.bar-menu-opt')]; }
+  function moveKbd(delta){
+    const o=opts(); if(!o.length) return;
+    let idx=o.findIndex(el=>el.classList.contains('kbd'));
+    if(idx>=0) o[idx].classList.remove('kbd');
+    idx = idx<0 ? (delta>0?0:o.length-1) : (idx+delta+o.length)%o.length;
+    o[idx].classList.add('kbd'); o[idx].scrollIntoView({block:'nearest'});
+  }
+  filter.addEventListener('input',()=>build(filter.value));
+  filter.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); moveKbd(1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); moveKbd(-1); }
+    else if(e.key==='Enter'){ e.preventDefault();
+      const pick=list.querySelector('.bar-menu-opt.kbd')||list.querySelector('.bar-menu-opt');
+      if(pick) chooseBarTranslator(i,pick.dataset.key);
+    } else if(e.key==='Escape'){ e.preventDefault(); closeBarMenu(); btn.focus(); }
+  });
+  menu.addEventListener('mousedown',e=>e.stopPropagation());
+
+  document.body.appendChild(menu);
+  // Anchor below the trigger, nudged to stay inside the viewport (flip above if needed).
+  // Clamp against documentElement.clientWidth/Height — these EXCLUDE the window
+  // scrollbars, so the last column's menu no longer tucks under the vertical scrollbar
+  // (window.innerWidth would include it). max-width:calc(100vw - .8rem) keeps a narrow
+  // phone screen from clipping the fixed-width menu.
+  const vw=document.documentElement.clientWidth, vh=document.documentElement.clientHeight;
+  const r=btn.getBoundingClientRect();
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  let left=r.left, top=r.bottom+4;
+  if(left+mw > vw-8) left=Math.max(8, vw-8-mw);
+  if(top+mh > vh-8) top=Math.max(8, r.top-4-mh);
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  barMenuEl=menu;
+  btn.setAttribute('aria-expanded','true');
+  // Auto-focus the filter for type-ahead on desktop, but NOT on touch — there it would
+  // pop the on-screen keyboard and cover the menu. Tapping the field still focuses it.
+  if(!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches)) filter.focus();
+}
+function chooseBarTranslator(i,key){
+  closeBarMenu();
+  if(COLS[i]===key) return;   // no-op reselect: don't thrash a re-render
+  COLS[i]=key; saveSettings();
+  withScrollAnchor(()=>{ renderColBar(); renderMain(); });
+}
+// Outside-click / Esc close (openers stopPropagation, so the opening click never
+// reaches this — mirrors the depth-menu / #fnMenu listeners).
+document.addEventListener('click',e=>{ if(barMenuEl && !e.target.closest('.bar-menu')) closeBarMenu(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && barMenuEl) closeBarMenu(); });
+
 // ── COLUMN BAR ──
 function renderColBar(){
+  closeBarMenu();   // triggers are about to be rebuilt — never leave a menu orphaned
   const barCols = document.getElementById('barCols');
   barCols.innerHTML = '';
 
@@ -2107,30 +2319,17 @@ function renderColBar(){
     const dot=mk('span','bar-dot'); dot.style.background=t.dot;
     inner.append(grip,dot);
 
-    // The translator is shown by the dropdown's selected option, so there's no
-    // separate label — the pulldown sits where the label used to.
-    const sel=document.createElement('select');
-    sel.className='bar-sel';
-    // First line: "see their N footnotes" when THIS translator has notes on this
-    // sutta — an action item (opens the all-notes pane), not a swap target.
-    const noteCount=NOTE_COUNTS[key]||0;
-    if(noteCount){
-      const seeOpt=document.createElement('option');
-      seeOpt.value='__seenotes__';
-      seeOpt.textContent='📖 see their '+noteCount+' footnotes';
-      sel.appendChild(seeOpt);
-    }
-    ALL_TRANSLATIONS.forEach(tr=>{
-      const opt=document.createElement('option');
-      opt.value=tr.key; opt.textContent=tr.label;
-      if(tr.key===key) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    sel.onchange=()=>{
-      if(sel.value==='__seenotes__'){ openAllNotes(key); sel.value=key; return; }
-      COLS[i]=sel.value;saveSettings();withScrollAnchor(()=>{renderColBar();renderMain();});
-    };
-    sel.addEventListener('mousedown',e=>e.stopPropagation());
+    // The current translator's label sits where the label used to; clicking opens
+    // the grouped switcher popover (Pāli / Source / English / International, with a
+    // one-line description per edition). Replaces the old flat native <select>.
+    const sel=mk('button','bar-sel'); sel.type='button';
+    sel.setAttribute('aria-haspopup','menu'); sel.setAttribute('aria-expanded','false');
+    sel.title='Switch translation';
+    const cap=mk('span','bar-sel-cap'); cap.textContent=t.label;
+    const arr=mk('span','bar-sel-arr'); arr.textContent='▾';
+    sel.append(cap,arr);
+    sel.addEventListener('mousedown',e=>e.stopPropagation());  // don't start a column drag
+    sel.onclick=e=>{ e.stopPropagation(); toggleBarMenu(sel,i); };
     inner.appendChild(sel);
 
     if(t.warn){
